@@ -6,6 +6,7 @@ import singleInstance from "./singleInstance";
 import dynamicRenderer from "./dynamicRenderer";
 import titleBarActionsModule from "./modules/titleBarActions";
 import updaterModule from "./modules/updater";
+import trpcHandlerModule from "./modules/trpcHandler";
 
 // Initilize
 // =========
@@ -13,8 +14,7 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 const isProduction = process.env.NODE_ENV !== "development";
 const platform = process.platform as "darwin" | "win32" | "linux";
 const architucture: "64" | "32" = os.arch() === "x64" ? "64" : "32";
-const headerSize = 32;
-const modules = [titleBarActionsModule, updaterModule];
+const modules = [titleBarActionsModule, updaterModule, trpcHandlerModule];
 
 // Initialize app window
 // =====================

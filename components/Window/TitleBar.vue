@@ -26,7 +26,10 @@
          ></Icon>
       </div>
       <div class="flex gap-1">
-         <div class="box">
+         <div
+            class="box"
+            @click="minimize"
+         >
             <Icon
                name="ic:round-minus"
                size="20"
@@ -38,7 +41,10 @@
                size="17"
             ></Icon>
          </div>
-         <div class="box">
+         <div
+            class="box"
+            @click="close"
+         >
             <Icon
                name="ic:round-close"
                size="20"
@@ -50,6 +56,7 @@
 
 <script setup lang="ts">
 const { options, loopSwitchTheme } = useTheme();
+const { close, minimize } = useElectronWindow();
 </script>
 
 <style lang="css" scoped>
