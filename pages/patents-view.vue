@@ -5,7 +5,7 @@
 
 <script lang="ts" setup>
 definePageMeta({
-   name: "home",
+   name: "patents-view",
 });
 </script>
 

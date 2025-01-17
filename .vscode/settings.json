@@ -1,13 +1,24 @@
 {
-  "editor.formatOnSave": false,
-  "editor.codeActionsOnSave": { "source.fixAll": "always" },
-  "[vue]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
+   "editor.formatOnSave": false,
+   "editor.codeActionsOnSave": { "source.fixAll": "always" },
+   "[vue]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+   },
+   "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+   },
+   "[jsonc]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+   },
+   "tailwindCSS.experimental.classRegex": [
+      "tw`(.*?)`",
+      "tw\\('(.*?)'\\)",
+      "tw\\(\\s*('(.*?)'|\"(.*?)\")\\s*\\)"
+   ],
+   "files.associations": {
+      "*.css": "tailwindcss"
+   },
+   "editor.quickSuggestions": {
+      "strings": true
+   }
 }

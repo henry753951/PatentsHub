@@ -231,3 +231,7 @@ defineProps<Props>();
 - **功能分支**：`feature/功能描述`
 - **修復分支**：`fix/問題描述`
 - **發布分支**：`release/版本號`
+
+### **6.2 Commit 規範**
+- **Commit Message 格式**：`<類型>(範圍): 信息`
+- **類型**：`feat`（新功能）、`fix`（修復）、`docs`（文檔）、`style`（格式）、`refactor`（重構）、`test`（測試）、`chore`（其他）
