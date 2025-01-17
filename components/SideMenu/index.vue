@@ -1,14 +1,19 @@
 <template>
    <div class="h-full flex flex-col items-center outter">
-      <div class="flex flex-col gap-4 items-center px-2 pt-3">
-         <SideMenuToggle />
-         <SideMenuNavs :items="navItems" />
-         <SideMenuDivider />
-         <SideMenuNavsItem
-            icon="basil:add-outline"
-            title="更多"
-         />
-      </div>
+      <OverlayScrollbarsComponent
+         :options="{ scrollbars: { autoHide: 'leave' } }"
+         class="px-2 py-2"
+      >
+         <div class="flex flex-col gap-4 items-center">
+            <SideMenuToggle />
+            <SideMenuNavs :items="navItems" />
+            <SideMenuDivider />
+            <SideMenuNavsItem
+               icon="basil:add-outline"
+               title="更多"
+            />
+         </div>
+      </OverlayScrollbarsComponent>
 
       <SideMenuActions
          class="mt-auto"
@@ -18,6 +23,8 @@
 </template>
 
 <script lang="ts" setup>
+import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
+
 const navItems = [
    {
       title: "首頁",
@@ -68,6 +75,10 @@ const navActions = [
 </script>
 
 <style scoped>
+* {
+   user-select: none;
+}
+
 .outter {
    position: relative;
 }

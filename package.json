@@ -29,6 +29,7 @@
       "nuxt-lodash": "^2.5.3",
       "nuxt-marquee": "^1.0.4",
       "nuxt-typed-router": "^3.7.3",
+      "overlayscrollbars-vue": "^0.5.9",
       "tailwindcss": "^3.4.17",
       "vue": "latest",
       "vue-router": "latest",

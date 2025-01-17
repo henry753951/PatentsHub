@@ -1,5 +1,5 @@
 <template>
-   <div class="w-12">
+   <div class="w-12 p-4">
       {{ data }}
       <Button @click="refresh()">
          Refresh

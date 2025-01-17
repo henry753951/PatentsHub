@@ -4,6 +4,10 @@
    </NuxtLayout>
 </template>
 
+<script lang="ts" setup>
+import "overlayscrollbars/overlayscrollbars.css";
+</script>
+
 <style>
 body {
    background-color: rgba(240, 240, 240, 0.7);

@@ -1,5 +1,5 @@
 <template>
-   <div class="flex flex-col items-center gap-3 pb-6">
+   <div class="flex flex-col items-center gap-3 pb-6 pt-3">
       <SideMenuActionsButton
          v-for="item in props.items"
          :key="item.title"
