@@ -44,11 +44,10 @@ export default (mainWindow: BrowserWindow) => {
    });
 
    mainWindow.on("maximize", () => {
-      consola.log("Window maximized");
       mainWindow.webContents.send("window:maximizeChanged", true);
+      mainWindow.setBackgroundColor("#ffffff");
    });
    mainWindow.on("unmaximize", () => {
-      consola.log("Window unmaximized");
       mainWindow.webContents.send("window:maximizeChanged", false);
    });
    mainWindow.on("enter-full-screen", () =>

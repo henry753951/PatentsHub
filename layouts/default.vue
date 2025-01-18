@@ -21,7 +21,7 @@ import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 
 <style scoped>
 .inner-page {
-   border-top-left-radius: 1rem;
+   border-top-left-radius: 15px;
    height: 100%;
 }
 </style>

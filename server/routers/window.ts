@@ -9,10 +9,31 @@ export default router({
          window.close();
       }
    }),
-   minimizeCurrent: procedure.input(z.object({}).nullish()).query(({ input }) => {
-      const window = BrowserWindow.getFocusedWindow();
-      if (window) {
-         window.minimize();
-      }
-   }),
+   maximizeCurrent: procedure
+      .input(
+         z
+            .object({
+               maximize: z.boolean().optional(),
+            })
+            .nullish(),
+      )
+      .query(({ input }) => {
+         const window = BrowserWindow.getFocusedWindow();
+         if (window) {
+            if (window.isMaximized() && !input?.maximize) {
+               window.unmaximize();
+            }
+            else {
+               window.maximize();
+            }
+         }
+      }),
+   minimizeCurrent: procedure
+      .input(z.object({}).nullish())
+      .query(({ input }) => {
+         const window = BrowserWindow.getFocusedWindow();
+         if (window) {
+            window.minimize();
+         }
+      }),
 });

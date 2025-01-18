@@ -86,15 +86,15 @@ const navActions = [
    content: "";
    position: absolute;
    top: 0px;
-   right: -20px;
-   height: 20px;
-   width: 20px;
+   right: -15px;
+   height: 15px;
+   width: 15px;
    background-color: white;
    mask-image: radial-gradient(
-      circle 20px at 100% 100%,
+      circle 15px at 100% 100%,
       transparent 0,
-      transparent 20px,
-      black 21px
+      transparent 15px,
+      black 16px
    );
 }
 .dark .outter:before {

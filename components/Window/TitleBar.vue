@@ -2,16 +2,23 @@
    <div class="flex items-center w-full gap-4 window-control">
       <div class="flex gap-1 h-full pl-4">
          <div class="flex-1 flex items-center justify-center">
-            <div class="flex items-center gap-2">
-               <NuxtImg
-                  src="/images/logo.jpg"
-                  width="21"
-                  height="21"
-               />
-               <div class="font-bold">
+            <div class="flex items-center gap-2 h-full">
+               <div class="w-5 h-5">
+                  <NuxtImg
+                     src="/images/logo.jpg"
+                     class="w-full h-full rounded-sm"
+                     width="100"
+                     height="100"
+                     draggable="false"
+                  />
+               </div>
+               <div class="font-bold text-xl whitespace-nowrap">
                   高大專利系統
                </div>
-               <div>|</div>
+               <div
+                  class="bg-gray-400"
+                  style="width: 1px; height: 20px"
+               ></div>
                <div class="text-xs">
                   v1.0.0
                </div>
@@ -23,7 +30,7 @@
             name="ic:round-dark-mode"
             size="20"
             @click="loopSwitchTheme"
-         ></Icon>
+         />
       </div>
       <div class="flex gap-1">
          <div
@@ -33,13 +40,17 @@
             <Icon
                name="ic:round-minus"
                size="20"
-            ></Icon>
+            />
          </div>
-         <div class="box">
+         <div
+            v-show="false"
+            class="box"
+            @click="maximize"
+         >
             <Icon
                name="material-symbols:square-outline-rounded"
                size="17"
-            ></Icon>
+            />
          </div>
          <div
             class="box"
@@ -48,7 +59,7 @@
             <Icon
                name="ic:round-close"
                size="20"
-            ></Icon>
+            />
          </div>
       </div>
    </div>
@@ -56,7 +67,7 @@
 
 <script setup lang="ts">
 const { options, loopSwitchTheme } = useTheme();
-const { close, minimize } = useElectronWindow();
+const { close, maximize, minimize } = useElectronWindow();
 </script>
 
 <style lang="css" scoped>

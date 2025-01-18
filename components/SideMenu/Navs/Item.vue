@@ -6,7 +6,7 @@
       >
          <Icon
             :class="isActive ? 'opacity-100' : 'opacity-80'"
-            :name="icon"
+            :name="iconName"
             size="1.4rem"
          />
       </div>
@@ -14,37 +14,34 @@
          class="whitespace-nowrap text-xs"
          :class="isActive ? 'opacity-100' : 'opacity-60'"
       >
-         {{ props.title }}
+         {{ title }}
       </div>
    </div>
 </template>
 
 <script lang="ts" setup>
-const props = withDefaults(
-   defineProps<{
-      icon?:
-        | string
-        | {
-           normal: string
-           active: string
-        }
-      title?: string
-      routeKey?: string
-   }>(),
-   {
-      icon: "",
-      title: "",
-      routeKey: undefined,
-   },
-);
+const {
+   icon = "basil:add-outline",
+   title = "",
+   routeKey = "",
+} = defineProps<{
+   icon?:
+     | string
+     | {
+        normal: string
+        active: string
+     }
+   title?: string
+   routeKey?: string
+}>();
 
 const router = useRouter();
 
 // 是否為啟用狀態
 const isActive = computed(() => {
    return (
-      router.currentRoute.value.name === props.routeKey
-      || router.currentRoute.value.path === props.routeKey
+      router.currentRoute.value.name === routeKey
+      || router.currentRoute.value.path === routeKey
    );
 });
 
@@ -58,11 +55,11 @@ const iconClasses = computed(() => {
 });
 
 // icon 啟用與否的圖示
-const icon = computed(() => {
-   if (typeof props.icon === "string") {
-      return props.icon;
+const iconName = computed(() => {
+   if (typeof icon === "string") {
+      return icon;
    }
-   return isActive.value ? props.icon.active : props.icon.normal;
+   return isActive.value ? icon.active : icon.normal;
 });
 </script>
 

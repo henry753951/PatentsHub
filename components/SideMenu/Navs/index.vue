@@ -1,7 +1,7 @@
 <template>
    <div class="flex flex-col items-center gap-4">
       <SideMenuNavsItem
-         v-for="item in props.items"
+         v-for="item in items"
          :key="item.title"
          :icon="item.icon"
          :title="item.title"
@@ -12,14 +12,9 @@
 </template>
 
 <script lang="ts" setup>
-const props = withDefaults(
-   defineProps<{
-      items?: INavItem[]
-   }>(),
-   {
-      items: () => [] as INavItem[],
-   },
-);
+const { items = [] } = defineProps<{
+   items?: INavItem[]
+}>();
 
 const onItemClick = (item: INavItem) => {
    if (item.action) {

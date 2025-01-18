@@ -4,6 +4,9 @@ export const useElectronWindow = () => {
       minimize: () => {
          $trpc.window.minimizeCurrent.query();
       },
+      maximize: () => {
+         $trpc.window.maximizeCurrent.query();
+      },
       close: () => {
          $trpc.window.closeCurrent.query();
       },
