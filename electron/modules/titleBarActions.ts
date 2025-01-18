@@ -1,50 +1,20 @@
-import { ipcMain, BrowserWindow } from "electron";
+import type { BrowserWindow } from "electron";
 import { consola } from "consola";
-const getWindowFromEvent = (event: Electron.IpcMainInvokeEvent) => {
-   const webContents = event.sender;
-   const win = BrowserWindow.fromWebContents(webContents);
-   return win;
-};
-
 export default (mainWindow: BrowserWindow) => {
-   ipcMain.handle("isMaximized:app", (event) => {
-      const win = getWindowFromEvent(event);
-      return win?.isMaximized();
-   });
+   // !! [DEPRECATED] 改用 tRPC
+   // ipcMain.handle("isMaximized:app", (event) => {
+   //    const win = getWindowFromEvent(event);
+   //    return win?.isMaximized();
+   // });
 
-   ipcMain.handle(
-      "titlebar:action",
-      (event, action: "toggleMaximize" | "minimize") => {
-         const win = getWindowFromEvent(event);
-         if (!win) return;
-         switch (action) {
-            case "toggleMaximize":
-               if (win.isMaximized()) {
-                  win.unmaximize();
-               }
-               else {
-                  win.maximize();
-               }
-               break;
-            case "minimize":
-               win.minimize();
-               break;
-         }
-      },
-   );
-
-   ipcMain.handle("close:app", (event) => {
-      const win = getWindowFromEvent(event);
-      if (!win) return;
-      win.close();
-   });
-
-   ipcMain.handle("get:windowVisible", (_event) => {
-      return mainWindow.isVisible();
-   });
+   // ipcMain.handle("get:windowVisible", (_event) => {
+   //    return mainWindow.isVisible();
+   // });
 
    mainWindow.on("maximize", () => {
       mainWindow.webContents.send("window:maximizeChanged", true);
+      // Electron 無解 bug，有 Material 最大化後背景色會變成黑色、 Frame 邊框壞掉，重開才能解決，
+      // 所以這邊強制改回白色，雖然 frame 還是會變不 round，但至少不會全黑。
       mainWindow.setBackgroundColor("#ffffff");
    });
    mainWindow.on("unmaximize", () => {
