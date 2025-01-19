@@ -67,6 +67,9 @@ export default defineNuxtConfig({
       disableDefaultOptions: true,
    },
    primevue: {
+      components: {
+         prefix: "P",
+      },
       options: {
          theme: {
             preset: appPreset,

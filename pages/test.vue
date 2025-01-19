@@ -1,5 +1,5 @@
 <template>
-   <div class="p-4 w-full prose">
+   <div class="p-4 w-full prose dark:prose-invert">
       <div>
          <h2>現有 Modals</h2>
          {{ modals }}

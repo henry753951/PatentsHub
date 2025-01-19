@@ -25,7 +25,6 @@ export const useForm = <
    const form = useVeeForm(opts);
 
    watch(form.values, (values) => {
-      consola.info("Caching form values", values);
       if (Object.values(values).some(v => v !== undefined)) {
          cache.value = { ...values };
       }
