@@ -6,7 +6,7 @@
          <div class="inner-page w-full h-full">
             <OverlayScrollbarsComponent
                :options="{ scrollbars: { autoHide: 'leave' } }"
-               class="p-2 container"
+               class="h-full w-full"
             >
                <slot />
             </OverlayScrollbarsComponent>
@@ -22,6 +22,5 @@ import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 <style scoped>
 .inner-page {
    border-top-left-radius: 15px;
-   height: 100%;
 }
 </style>

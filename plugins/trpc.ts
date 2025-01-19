@@ -1,10 +1,10 @@
 import { createTRPCProxyClient } from "@trpc/client";
-import type { AppRouter } from "~/server/appRouter";
+import type { MainRouter } from "~/server/mainRouter";
 import { ipcLink } from "electron-trpc/renderer";
 
 export default defineNuxtPlugin(() => {
    try {
-      const trpc = createTRPCProxyClient<AppRouter>({
+      const trpc = createTRPCProxyClient<MainRouter>({
          links: [ipcLink()],
       });
       return {

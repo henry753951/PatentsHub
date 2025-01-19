@@ -12,6 +12,11 @@
                icon="basil:add-outline"
                title="更多"
             />
+            <SideMenuNavsItem
+               icon="basil:explore-outline"
+               title="Debug"
+               @click="() => navigateTo({ name: 'debug' })"
+            />
          </div>
       </OverlayScrollbarsComponent>
 

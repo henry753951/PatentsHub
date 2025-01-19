@@ -2,13 +2,13 @@ export const useElectronWindow = () => {
    const { $trpc } = useNuxtApp();
    return {
       minimize: () => {
-         $trpc.window.minimizeCurrent.query();
+         $trpc.app.window.minimizeCurrent.query();
       },
       maximize: () => {
-         $trpc.window.maximizeCurrent.query();
+         $trpc.app.window.maximizeCurrent.query();
       },
       close: () => {
-         $trpc.window.closeCurrent.query();
+         $trpc.app.window.closeCurrent.query();
       },
    };
 };

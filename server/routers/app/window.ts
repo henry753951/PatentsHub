@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { procedure, router } from "../trpc";
+import { procedure, router } from "../../trpc";
 import { BrowserWindow } from "electron";
 
 export default router({
