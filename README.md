@@ -69,7 +69,7 @@ pnpm run build # build for Nuxt
    - - `test/test-name` for testing
 
 - Commit messages
-  請使用以下格式撰寫 commit message
+  請使用以下格式撰寫 commit message，若有詳細內容請換行並在下方描述
   `Type(scope): subject or Type: subject`
 
 1. `feat(auth): ✨ add user login functionality`
