@@ -39,6 +39,7 @@ export default defineNuxtConfig({
       "@vueuse/nuxt",
       "@primevue/nuxt-module",
       "@nuxt/image",
+      "shadcn-nuxt",
    ],
    tailwindcss: {
       viewer: true,
@@ -75,6 +76,9 @@ export default defineNuxtConfig({
          },
       },
    },
+   colorMode: {
+      classSuffix: "",
+   },
    ssr: false,
    devtools: { enabled: true },
    nitro: {
@@ -82,9 +86,7 @@ export default defineNuxtConfig({
    },
    experimental: {
       appManifest: false,
-   },
-   colorMode: {
-      classSuffix: "",
+      watcher: "parcel",
    },
    compatibilityDate: "2024-11-01",
 });
