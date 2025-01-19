@@ -14,7 +14,10 @@ export default defineNuxtModule({
    },
    async setup(_, nuxt) {
       const logger = useLogger("modal-types");
-      const modalDir = resolve(nuxt.options.rootDir, "components/global/modals");
+      const modalDir = resolve(
+         nuxt.options.rootDir,
+         "components/global/modals",
+      );
       const typeFile = resolve(nuxt.options.buildDir, "app/modal-types.d.ts");
       // 遞歸讀取所有模態框文件
       const getModalFiles = async (dir: string): Promise<string[]> => {
@@ -39,23 +42,25 @@ export default defineNuxtModule({
       const generateTypeFile = async () => {
          try {
             const files = await getModalFiles(modalDir);
-            const modalNames = files.map((file) => {
-               const relativePathIndex = file.indexOf(modalDir);
-               if (relativePathIndex === -1) {
-                  throw new Error(
-                     `File "${file}" is not in the components/global/modals directory.`,
+            const modalNames = files
+               .map((file) => {
+                  const relativePathIndex = file.indexOf(modalDir);
+                  if (relativePathIndex === -1) {
+                     throw new Error(
+                        `File "${file}" is not in the components/global/modals directory.`,
+                     );
+                  }
+                  const file_ = file.slice(
+                     relativePathIndex + modalDir.length + 1,
                   );
-               }
-               const file_ = file.slice(
-                  relativePathIndex + modalDir.length + 1,
-               );
-               const relativePath = file_
-                  .replace(/\\/g, "/")
-                  .replace(/\.vue$/, "")
-                  .replace("/", "");
+                  const relativePath = file_
+                     .replace(/\\/g, "/")
+                     .replace(/\.vue$/, "")
+                     .replaceAll("/", "");
 
-               return relativePath;
-            }).filter(name => name.endsWith("Modal"));
+                  return relativePath;
+               })
+               .filter(name => name.endsWith("Modal"));
 
             if (modalNames.length === 0) {
                logger.warn(
@@ -87,7 +92,8 @@ export type ModalName = ${modalNames.map(name => `'${name}'`).join(" | ")};
       };
 
       // 監聽模態框目錄變化
-      nuxt.hook("builder:watch", async (event, path) => {
+      nuxt.hook("builder:watch", async (event, path_) => {
+         const path = resolve(nuxt.options.rootDir, path_);
          if (path.startsWith(modalDir)) {
             logger.info(
                `Detected change in ${path}, regenerating modal types...`,
