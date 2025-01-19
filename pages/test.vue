@@ -1,5 +1,9 @@
 <template>
-   <div class="p-4 w-full">
+   <div class="p-4 w-full prose">
+      <div>
+         <h2>現有 Modals</h2>
+         {{ modals }}
+      </div>
       <div>
          <h2>測試資料庫</h2>
          <div class="flex gap-2">
@@ -17,6 +21,11 @@
       </div>
       <div>
          <h2>專利 UI</h2>
+         <Button
+            @click="open('PatentCreateModal', { props: { side: 'bottom' } })"
+         >
+            Open Sheet
+         </Button>
          <PatentRow
             name="hi"
             :expiry-date="'2025/01/30'"
@@ -27,11 +36,13 @@
 </template>
 
 <script lang="ts" setup>
-import consola from "consola";
+import type { SideMenu } from "#components";
 
 definePageMeta({
    name: "debug",
 });
+
+const { open, modals } = useModals();
 const { $trpc } = useNuxtApp();
 
 const { data, refresh } = useAsyncData("getGreetings", async () => {

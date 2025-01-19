@@ -12,10 +12,12 @@
             </OverlayScrollbarsComponent>
          </div>
       </div>
+      <ModalsService />
    </div>
 </template>
 
 <script lang="ts" setup>
+import { ModalsService } from "#components";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 </script>
 
