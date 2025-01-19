@@ -58,17 +58,18 @@ pnpm run build # build for Nuxt
 
 ### Git Workflow
 
-- Branch naming convention
+- Branch 命名規則
 
-   - `release/v1.0.0` for releases
-   - `refactor/refactor-name` for refactoring
-   - `feature/feature-name` for new features
-   - `bugfix/bug-name` for bug fixes
-   - `chore/chore-name` for chores
-   - `test/test-name` for testing
+   - `release/[type] for release e.g. release/stable`
+   - `main` for main branch
+   - - `refactor/refactor-name` for refactoring
+   - - `feature/feature-name` for new features
+   - - `bugfix/bug-name` for bug fixes
+   - - `chore/chore-name` for chores
+   - - `test/test-name` for testing
 
 - Commit messages
-  Use the following format for commit messages:
+  請使用以下格式撰寫 commit message
   `Type(scope): subject or Type: subject`
 
 1. `feat(auth): ✨ add user login functionality`
@@ -79,5 +80,4 @@ pnpm run build # build for Nuxt
 6. `refactor(auth): ♻️ move login logic to separate file`
 
 ### Code guidelines
-
-Check out the [our code guidelines](./docs/code-guidelines.md) for more information on how to write clean and maintainable code.
+請參閱[我們的程式碼指南](./docs/code-guidelines.md)以獲取有關如何撰寫乾淨且可維護程式碼的更多資訊。
