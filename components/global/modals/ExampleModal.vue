@@ -1,37 +1,30 @@
 <template>
    <div>
-      <Dialog v-model:open="isOpen">
-         <DialogContent>
-            <DialogHeader>
-               <DialogTitle>新增專利</DialogTitle>
-               <DialogDescription>請填寫專利資訊</DialogDescription>
-            </DialogHeader>
+      <Sheet v-model:open="isOpen">
+         <SheetContent :side="props.side">
+            <SheetHeader>
+               <SheetTitle>新增專利</SheetTitle>
+               <SheetDescription> 請填寫專利資訊 </SheetDescription>
+            </SheetHeader>
+            {{ form.values }}
             <AutoForm
                :form="form"
                :schema="schema"
                @submit="onSubmit"
             >
-               <div class="flex justify-end">
-                  <Button type="submit">
-                     新增
-                  </Button>
-               </div>
-            </autoform>
-         </DialogContent>
-      </Dialog>
+               <Button type="submit">
+                  Send now
+               </Button>
+            </AutoForm>
+         </SheetContent>
+      </Sheet>
    </div>
 </template>
 
 <script lang="ts" setup>
 import { z } from "zod";
-import {
-   Dialog,
-   DialogContent,
-   DialogHeader,
-   DialogTitle,
-   DialogDescription,
-} from "@/components/ui/dialog";
-import { AutoForm } from "@/components/ui/auto-form";
+import { AutoForm, AutoFormField } from "@/components/ui/auto-form";
+import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 const { open } = useModals();
 

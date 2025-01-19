@@ -9,7 +9,7 @@
          :modal-name="modal.modalName"
          :props="modal.props"
          :open="modal.isOpen"
-         @close="close(modal.id)"
+         @close="close(modal.id, modal.id.startsWith('temp'))"
       />
    </div>
 </template>

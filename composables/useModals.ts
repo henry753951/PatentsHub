@@ -13,11 +13,13 @@ export const useModals = () => {
     * @param modalName - 模態框名稱
     * @param event - 點擊事件 (用於插入位置)
     * @param options - 傳遞的屬性和可選的 ID
+    * @returns 模態框的唯一標識 ID
     */
    const open = (
       modalName: ModalName,
       options?: { id?: string, props?: Record<string, any> },
    ) => {
+      const id = options?.id || "temp-" + Math.random().toString(36).slice(2);
       const existingModal = options?.id
          ? modals.value.find(modal => modal.id === options.id)
          : undefined;
@@ -27,23 +29,33 @@ export const useModals = () => {
       }
       else {
          modals.value.push({
-            id: options?.id || "TEMP-" + Math.random().toString(36).slice(2),
+            id: id,
             modalName: `Modals${modalName}`,
             isOpen: true,
             props: options?.props || {},
          });
       }
+      return id;
    };
 
    /**
     * 當模態框發出 close 時的行為
     * @param id - 模態框的唯一標識
-    * @param modal - 關閉的模態框實例
+    * @param remove - 是否從列表中刪除 (是否保留資料)
     */
-   const close = (id: string) => {
-      const index = modals.value.findIndex(modal => modal.id === id);
-      if (index !== -1) {
-         modals.value.splice(index, 1);
+   const close = (id: string, remove: boolean = false) => {
+      if (remove) {
+         const index = modals.value.findIndex(modal => modal.id === id);
+         if (index !== -1) {
+            modals.value.splice(index, 1);
+         }
+         return;
+      }
+      else {
+         const modal = modals.value.find(modal => modal.id === id);
+         if (modal) {
+            modal.isOpen = false;
+         }
       }
    };
 

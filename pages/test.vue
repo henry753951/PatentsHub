@@ -22,7 +22,12 @@
       <div>
          <h2>專利 UI</h2>
          <Button
-            @click="open('PatentCreateModal', { props: { side: 'bottom' } })"
+            @click="
+               open('PatentCreateModal', {
+                  id: 'hi',
+                  props: { side: 'bottom' },
+               })
+            "
          >
             Open Sheet
          </Button>

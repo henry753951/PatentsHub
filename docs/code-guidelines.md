@@ -285,7 +285,7 @@ emits('change', 1, 'value');
 ## **5. ZOD 規範**
 
 表單變數等等，使用 ZOD 來定義類型，這樣可以確保資料的正確性，並且可以自動生成表單驗證的規則。
-透過 VeeValidate 將 ZOD 與 Vue 進行結合，可以更方便的進行表單驗證。 (ERROR 狀態等等，自動表單驗證)
+可以用 Shadcn 的 auto-form 來[自動生成表單](https://www.shadcn-vue.com/docs/components/auto-form.html)，或是透過 VeeValidate 將 ZOD 與 Vue 進行結合，可以更方便的進行表單驗證。 (ERROR 狀態等等，自動表單驗證)
 [https://vee-validate.logaretm.com/v4/guide/overview/](https://vee-validate.logaretm.com/v4/guide/overview/)
 
 ```typescript
