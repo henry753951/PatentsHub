@@ -25,7 +25,6 @@
             @click="
                open('PatentCreateModal', {
                   id: 'hi',
-                  props: { side: 'bottom' },
                })
             "
          >

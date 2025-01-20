@@ -18,6 +18,13 @@ declare global {
       title: string
       action: () => void
    }
+
+   interface IFormStep {
+      component: Component
+      name: string
+      description?: string
+      step: number
+   }
 }
 
 export {};

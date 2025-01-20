@@ -1,5 +1,6 @@
 <template>
    <Stepper
+      v-model:model-value="currentStep"
       orientation="vertical"
       class="flex flex-col justify-start gap-4 select-none"
    >
@@ -25,7 +26,7 @@
                   :class="[state === 'completed' && 'opacity-50']"
                   class="text-sm font-semibold transition"
                >
-                  {{ step.title }}
+                  {{ step.name }}
                </StepperTitle>
                <StepperDescription
                   :class="[state === 'completed' && 'opacity-50']"
@@ -48,24 +49,12 @@ import {
    StepperTrigger,
 } from "@/components/ui/stepper";
 
-const steps = [
-   {
-      step: 1,
-      title: "Your details",
-      description:
-         "Provide your name and email address. We will use this information to create your account",
-   },
-   {
-      step: 2,
-      title: "Company details",
-      description:
-         "A few details about your company will help us personalize your experience",
-   },
-   {
-      step: 3,
-      title: "Invite your team",
-      description:
-         "Start collaborating with your team by inviting them to join your account. You can skip this step and invite them later",
-   },
-];
+const { steps = [] } = defineProps<{
+   steps?: IFormStep[]
+}>();
+
+const currentStep = defineModel("currentStep", {
+   type: Number,
+   default: 1,
+});
 </script>
