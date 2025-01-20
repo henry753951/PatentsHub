@@ -1,22 +1,20 @@
 model Inventor {
-    InventorID    Int     @id @default(autoincrement()) // 發明人ID
-    Name          String // 發明人姓名
-    Department    Int // 隸屬單位
-    Email         String? // 電子郵件（可選）
-    ContactInfoID Int?    @unique // 聯絡資訊ID，一對一必須唯一
-
-    department  Department       @relation(fields: [Department], references: [DepartmentID]) // 發明人所屬系所
-    patents     PatentInventor[] // 發明人參與的專利
-    contactInfo ContactInfo?     @relation("InventorContact", fields: [ContactInfoID], references: [ContactInfoID]) // 聯絡資訊
+  InventorID    Int              @id @default(autoincrement())
+  Name          String
+  Department    Int
+  Email         String?
+  ContactInfoID Int?             @unique
+  contactInfo   ContactInfo?     @relation("InventorContact", fields: [ContactInfoID], references: [ContactInfoID])
+  department    Department       @relation(fields: [Department], references: [DepartmentID])
+  patents       PatentInventor[]
 }
 
 model PatentInventor {
-    PatentID   Int // 專利ID
-    InventorID Int // 發明人ID
-    Main       Boolean // 主要或共同
+  PatentID   Int
+  InventorID Int
+  Main       Boolean
+  inventor   Inventor @relation(fields: [InventorID], references: [InventorID])
+  patent     Patent   @relation(fields: [PatentID], references: [PatentID])
 
-    patent   Patent   @relation(fields: [PatentID], references: [PatentID])
-    inventor Inventor @relation(fields: [InventorID], references: [InventorID])
-
-    @@id([PatentID, InventorID]) // 主鍵是專利ID與發明人ID的組合
+  @@id([PatentID, InventorID])
 }

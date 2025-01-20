@@ -1,15 +1,15 @@
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider        = "prisma-client-js"
+  output          = "../generated/client"
   previewFeatures = ["prismaSchemaFolder"]
-  output          = "../../../node_modules/.prisma/client"
 }
 
 generator zod {
-  provider       = "zod-prisma-types"
-  output = "../zod"
+  provider = "zod-prisma-types"
+  output   = "../zod"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }

@@ -1,5 +1,5 @@
 import path from "path";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "./generated/client";
 import { app } from "electron";
 import * as dbZod from "./zod";
 

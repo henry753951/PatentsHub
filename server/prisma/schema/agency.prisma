@@ -1,30 +1,27 @@
 model Agency {
-    AgencyID Int    @id @default(autoincrement()) // 事務所ID
-    Name     String // 事務所名稱
-
-    contacts AgencyContactPerson[]
-    patents  AgencyPatent[]
+  AgencyID Int                   @id @default(autoincrement())
+  Name     String
+  contacts AgencyContactPerson[]
+  patents  AgencyPatent[]
 }
 
 model AgencyPatent {
-    PatentID Int // 專利ID
-    AgencyID Int // 事務所ID
-    FileCode String // 事務所檔號
-    Role     String // 承辦或初評
-    Details  String? // 額外備註，例如合作方式或工作範圍
+  PatentID Int
+  AgencyID Int
+  FileCode String
+  Role     String
+  Details  String?
+  agency   Agency  @relation(fields: [AgencyID], references: [AgencyID])
+  patent   Patent  @relation(fields: [PatentID], references: [PatentID])
 
-    patent Patent @relation(fields: [PatentID], references: [PatentID])
-    agency Agency @relation(fields: [AgencyID], references: [AgencyID])
-
-    @@id([PatentID, AgencyID]) // 主鍵是專利ID與事務所ID的組合
+  @@id([PatentID, AgencyID])
 }
 
 model AgencyContactPerson {
-    ContactPersonID Int    @id @default(autoincrement()) // 聯絡人ID
-    AgencyID        Int // 對應的事務所ID
-    Position        String // 聯絡人職位
-    ContactInfoID   Int?   @unique // 聯絡資訊ID，一對一必須唯一
-
-    agency      Agency       @relation(fields: [AgencyID], references: [AgencyID]) // 聯絡人所屬事務所
-    contactInfo ContactInfo? @relation("AgencyContact", fields: [ContactInfoID], references: [ContactInfoID]) // 聯絡資訊
+  ContactPersonID Int          @id @default(autoincrement())
+  AgencyID        Int
+  Position        String
+  ContactInfoID   Int?         @unique
+  contactInfo     ContactInfo? @relation("AgencyContact", fields: [ContactInfoID], references: [ContactInfoID])
+  agency          Agency       @relation(fields: [AgencyID], references: [AgencyID])
 }

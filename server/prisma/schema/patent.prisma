@@ -1,53 +1,49 @@
 model Patent {
-    PatentID     Int     @id @default(autoincrement()) // 專利ID
-    Year         String // 資料記錄的年度
-    InternalID   String // 校內編號，用於校內專利管理
-    Title        String // 發明名稱
-    DepartmentID Int // 系所ID
-    CollegeID    Int // 學院ID
-    TitleEnglish String? // 發明英文名稱
-
-    department  Department                 @relation(fields: [DepartmentID], references: [DepartmentID]) // 專利隸屬於系所
-    college     College                    @relation(fields: [CollegeID], references: [CollegeID]) // 專利隸屬於學院
-    status      PatentStatus?
-    application PatentApplicationData?
-    technical   PatentTechnicalAttributes?
-    funding     PatentFunding[]
-    inventors   PatentInventor[]
-    agencies    AgencyPatent[]
+  PatentID     Int                        @id @default(autoincrement())
+  Year         String
+  InternalID   String
+  Title        String
+  DepartmentID Int
+  CollegeID    Int
+  TitleEnglish String?
+  agencies     AgencyPatent[]
+  college      College                    @relation(fields: [CollegeID], references: [CollegeID])
+  department   Department                 @relation(fields: [DepartmentID], references: [DepartmentID])
+  application  PatentApplicationData?
+  funding      PatentFunding[]
+  inventors    PatentInventor[]
+  status       PatentStatus?
+  technical    PatentTechnicalAttributes?
 }
 
 model PatentStatus {
-    PatentID                     Int       @id // 專利ID
-    ExpiryDate                   DateTime? // 專利到期日期
-    Status                       String // 專利狀態，例如放棄、終止維護、撤案等
-    TechnicalCommitteeReviewDate DateTime? // 技推委員會審理日期
-    MaintenanceYear              Int? // 維護年度
-    MaintenanceStartDate         DateTime? // 專利維護期程的開始日期
-    MaintenanceEndDate           DateTime? // 專利維護期程的結束日期
-
-    patent Patent @relation(fields: [PatentID], references: [PatentID])
+  PatentID                     Int       @id @default(autoincrement())
+  ExpiryDate                   DateTime?
+  Status                       String
+  TechnicalCommitteeReviewDate DateTime?
+  MaintenanceYear              Int?
+  MaintenanceStartDate         DateTime?
+  MaintenanceEndDate           DateTime?
+  patent                       Patent    @relation(fields: [PatentID], references: [PatentID])
 }
 
 model PatentApplicationData {
-    PatentID          Int       @id // 專利ID
-    CountryID         Int // 專利國家ID
-    PatentNumber      String // 專利號碼
-    FilingDate        DateTime? // 申請日期
-    GrantDate         DateTime? // 獲證日期
-    PatentType        String // 專利類別
-    ApplicationNumber String // 申請案號
-
-    country Country @relation(fields: [CountryID], references: [CountryID]) // 專利申請的國家
-    patent  Patent  @relation(fields: [PatentID], references: [PatentID])
+  PatentID          Int       @id @default(autoincrement())
+  CountryID         Int
+  PatentNumber      String
+  FilingDate        DateTime?
+  GrantDate         DateTime?
+  PatentType        String
+  ApplicationNumber String
+  patent            Patent    @relation(fields: [PatentID], references: [PatentID])
+  country           Country   @relation(fields: [CountryID], references: [CountryID])
 }
 
 model PatentTechnicalAttributes {
-    PatentID      Int    @id // 專利ID
-    IPC           String // 國際專利分類號
-    Scope         String // 專利範圍
-    MaturityLevel String // 技術成熟度
-    Keywords      String // 技術關鍵字，用於描述專利技術內容
-
-    patent Patent @relation(fields: [PatentID], references: [PatentID])
+  PatentID      Int    @id @default(autoincrement())
+  IPC           String
+  Scope         String
+  MaturityLevel String
+  Keywords      String
+  patent        Patent @relation(fields: [PatentID], references: [PatentID])
 }

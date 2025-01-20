@@ -1,17 +1,15 @@
 model FundingPlan {
-    PlanID   Int @id @default(autoincrement()) // 自動生成
-    PlanType Int // A,B,C,D... 對應的計算方式
-
-    fundings PatentFunding[]
+  PlanID   Int             @id @default(autoincrement())
+  PlanType Int
+  fundings PatentFunding[]
 }
 
 model PatentFunding {
-    FundingID     Int    @id @default(autoincrement()) // 資助計畫ID
-    PatentID      Int // 專利ID
-    FundingAgency String // 資助單位名稱
-    ProjectNumber String // 計畫編號
-    PlanID        Int // 方案
-
-    patent Patent      @relation(fields: [PatentID], references: [PatentID]) // 專利
-    plan   FundingPlan @relation(fields: [PlanID], references: [PlanID]) // 方案
+  FundingID     Int         @id @default(autoincrement())
+  PatentID      Int
+  FundingAgency String
+  ProjectNumber String
+  PlanID        Int
+  plan          FundingPlan @relation(fields: [PlanID], references: [PlanID])
+  patent        Patent      @relation(fields: [PatentID], references: [PatentID])
 }

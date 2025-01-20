@@ -1,41 +1,36 @@
 model College {
-    CollegeID   Int     @id @default(autoincrement()) // 學院ID
-    Name        String // 學院名稱
-    Description String? // 學院描述
-
-    departments Department[]
-    patents     Patent[]
+  CollegeID   Int          @id @default(autoincrement())
+  Name        String
+  Description String?
+  departments Department[]
+  patents     Patent[]
 }
 
 model Department {
-    DepartmentID Int     @id @default(autoincrement()) // 系所ID
-    Name         String // 系所名稱
-    CollegeID    Int // 學院ID
-    Description  String? // 系所描述
-
-    college   College    @relation(fields: [CollegeID], references: [CollegeID]) // 系所隸屬於學院
-    patents   Patent[]
-    inventors Inventor[]
+  DepartmentID Int        @id @default(autoincrement())
+  Name         String
+  CollegeID    Int
+  Description  String?
+  college      College    @relation(fields: [CollegeID], references: [CollegeID])
+  inventors    Inventor[]
+  patents      Patent[]
 }
 
 model Country {
-    CountryID   Int    @id @default(autoincrement()) // 專利國家ID
-    CountryName String // 專利國家
-    ISOCode     String // 國家代碼
-
-    applications PatentApplicationData[]
+  CountryID    Int                     @id @default(autoincrement())
+  CountryName  String
+  ISOCode      String
+  applications PatentApplicationData[]
 }
 
 model ContactInfo {
-    ContactInfoID Int     @id @default(autoincrement()) // 聯絡資訊ID
-    Name          String // 聯絡人姓名
-    Email         String // 聯絡人電子郵件
-    OfficeNumber  String? // 聯絡人市話（可選）
-    PhoneNumber   String? // 聯絡人手機（可選）
-    Position      String? // 聯絡人職位（可選）
-    Note          String? // 備註
-
-    // 讓其他模型可以關聯到聯絡資訊
-    inventor      Inventor?            @relation("InventorContact")
-    agencyContact AgencyContactPerson? @relation("AgencyContact")
+  ContactInfoID Int                  @id @default(autoincrement())
+  Name          String
+  Email         String
+  OfficeNumber  String?
+  PhoneNumber   String?
+  Position      String?
+  Note          String?
+  agencyContact AgencyContactPerson? @relation("AgencyContact")
+  inventor      Inventor?            @relation("InventorContact")
 }
