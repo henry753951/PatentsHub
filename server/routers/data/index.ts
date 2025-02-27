@@ -1,3 +1,7 @@
 import { router } from "../../trpc";
-
-export default router({});
+import country from "./country";
+import patent from "./patent";
+export default router({
+   country: country,
+   patent: patent,
+});

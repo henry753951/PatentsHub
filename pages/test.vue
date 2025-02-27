@@ -24,7 +24,16 @@
          <Button
             @click="
                open('PatentCreateModal', {
-                  id: 'hi',
+                  props: {},
+               })
+            "
+         >
+            Open Sheet
+         </Button>
+         <Button
+            @click="
+               open('Example2Modal', {
+                  id: '123',
                })
             "
          >
@@ -40,8 +49,6 @@
 </template>
 
 <script lang="ts" setup>
-import type { SideMenu } from "#components";
-
 definePageMeta({
    name: "debug",
 });

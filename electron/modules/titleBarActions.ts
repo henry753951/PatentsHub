@@ -15,7 +15,6 @@ export default (mainWindow: BrowserWindow) => {
       mainWindow.webContents.send("window:maximizeChanged", true);
       // Electron 無解 bug，有 Material 最大化後背景色會變成黑色、 Frame 邊框壞掉，重開才能解決，
       // 所以這邊強制改回白色，雖然 frame 還是會變不 round，但至少不會全黑。
-      mainWindow.setBackgroundColor("#ffffff");
    });
    mainWindow.on("unmaximize", () => {
       mainWindow.webContents.send("window:maximizeChanged", false);

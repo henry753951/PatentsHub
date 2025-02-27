@@ -43,7 +43,6 @@
             />
          </div>
          <div
-            v-show="false"
             class="box"
             @click="maximize"
          >

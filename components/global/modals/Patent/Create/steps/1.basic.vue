@@ -18,7 +18,7 @@
 import { z } from "zod";
 import { AutoForm } from "@/components/ui/auto-form";
 import { toTypedSchema } from "@vee-validate/zod";
-
+import { useField } from "vee-validate";
 enum PatentType {
    Invention = "Invention",
    UtilityModel = "UtilityModel",
@@ -39,13 +39,16 @@ export const schema = z.object({
          required_error: "Expiry date is required.",
       })
       .nonempty()
-      .describe("到期日"),
+      .describe("到期日")
+      .regex(/^\d{4}\/\d{2}\/\d{2}$/, {
+         message: "Expiry date must be in the format YYYY/MM/DD.",
+      }),
 
    patentNumber: z
       .string({
          required_error: "Patent number is required.",
       })
-      .nonempty()
+      .nonempty("Patent number is required.")
       .describe("專利編號"),
    patentType: z.nativeEnum(PatentType).describe("專利類型"),
 });
