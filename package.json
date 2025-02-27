@@ -12,15 +12,16 @@
       "dev": "nuxt dev --host --dotenv .env",
       "generate": "nuxt generate",
       "preview": "nuxt preview",
-      "postinstall": "pnpm prisma generate && nuxt prepare"
+      "postinstall": "pnpm dlx prisma generate && nuxt prepare"
    },
    "prisma": {
       "schema": "./server/prisma/schema/"
    },
    "dependencies": {
       "@nuxt/image": "1.9.0",
+      "@primevue/nuxt-module": "^4.2.5",
       "@primevue/themes": "^4.2.5",
-      "@prisma/client": "6.2.1",
+      "@prisma/client": "6.4.1",
       "@trpc/client": "^10.45.2",
       "@trpc/server": "^10.45.2",
       "@vee-validate/zod": "^4.15.0",
@@ -28,7 +29,6 @@
       "clsx": "^2.1.1",
       "consola": "^3.4.0",
       "date-fns": "^4.1.0",
-      "electron": "^33.3.1",
       "electron-log": "^5.2.4",
       "electron-trpc": "^0.7.1",
       "electron-updater": "^6.3.9",
@@ -40,7 +40,8 @@
       "nuxt-typed-router": "^3.7.3",
       "overlayscrollbars": "^2.10.1",
       "overlayscrollbars-vue": "^0.5.9",
-      "prisma": "^6.2.1",
+      "primevue": "^4.2.5",
+      "prisma": "^6.4.1",
       "radix-vue": "^1.9.12",
       "shadcn-nuxt": "0.11.3",
       "tailwind-merge": "^2.6.0",
@@ -53,6 +54,7 @@
    },
    "packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1",
    "devDependencies": {
+      "electron": "^33.3.1",
       "@nuxt/eslint": "^0.7.5",
       "@nuxt/fonts": "^0.10.3",
       "@nuxt/icon": "^1.10.3",
@@ -60,7 +62,6 @@
       "@nuxtjs/color-mode": "^3.5.2",
       "@nuxtjs/tailwindcss": "npm:@nuxtjs/tailwindcss@nightly",
       "@parcel/watcher": "^2.5.0",
-      "@primevue/nuxt-module": "^4.2.5",
       "@stylistic/eslint-plugin": "^2.13.0",
       "@stylistic/eslint-plugin-js": "^2.13.0",
       "@stylistic/eslint-plugin-jsx": "^2.13.0",

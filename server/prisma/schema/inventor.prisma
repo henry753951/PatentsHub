@@ -4,8 +4,8 @@ model Inventor {
   Department    Int
   Email         String?
   ContactInfoID Int?             @unique
-  contactInfo   ContactInfo?     @relation("InventorContact", fields: [ContactInfoID], references: [ContactInfoID])
   department    Department       @relation(fields: [Department], references: [DepartmentID])
+  contactInfo   ContactInfo?     @relation("InventorContact", fields: [ContactInfoID], references: [ContactInfoID])
   patents       PatentInventor[]
 }
 
@@ -13,8 +13,8 @@ model PatentInventor {
   PatentID   Int
   InventorID Int
   Main       Boolean
-  inventor   Inventor @relation(fields: [InventorID], references: [InventorID])
   patent     Patent   @relation(fields: [PatentID], references: [PatentID])
+  inventor   Inventor @relation(fields: [InventorID], references: [InventorID])
 
   @@id([PatentID, InventorID])
 }

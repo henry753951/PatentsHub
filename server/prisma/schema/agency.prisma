@@ -11,8 +11,8 @@ model AgencyPatent {
   FileCode String
   Role     String
   Details  String?
-  agency   Agency  @relation(fields: [AgencyID], references: [AgencyID])
   patent   Patent  @relation(fields: [PatentID], references: [PatentID])
+  agency   Agency  @relation(fields: [AgencyID], references: [AgencyID])
 
   @@id([PatentID, AgencyID])
 }
@@ -22,6 +22,6 @@ model AgencyContactPerson {
   AgencyID        Int
   Position        String
   ContactInfoID   Int?         @unique
-  contactInfo     ContactInfo? @relation("AgencyContact", fields: [ContactInfoID], references: [ContactInfoID])
   agency          Agency       @relation(fields: [AgencyID], references: [AgencyID])
+  contactInfo     ContactInfo? @relation("AgencyContact", fields: [ContactInfoID], references: [ContactInfoID])
 }

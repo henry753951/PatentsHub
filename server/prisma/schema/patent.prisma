@@ -7,8 +7,8 @@ model Patent {
   CollegeID    Int
   TitleEnglish String?
   agencies     AgencyPatent[]
-  college      College                    @relation(fields: [CollegeID], references: [CollegeID])
   department   Department                 @relation(fields: [DepartmentID], references: [DepartmentID])
+  college      College                    @relation(fields: [CollegeID], references: [CollegeID])
   application  PatentApplicationData?
   funding      PatentFunding[]
   inventors    PatentInventor[]
@@ -35,8 +35,8 @@ model PatentApplicationData {
   GrantDate         DateTime?
   PatentType        String
   ApplicationNumber String
-  patent            Patent    @relation(fields: [PatentID], references: [PatentID])
   country           Country   @relation(fields: [CountryID], references: [CountryID])
+  patent            Patent    @relation(fields: [PatentID], references: [PatentID])
 }
 
 model PatentTechnicalAttributes {

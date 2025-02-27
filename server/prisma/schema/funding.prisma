@@ -10,6 +10,6 @@ model PatentFunding {
   FundingAgency String
   ProjectNumber String
   PlanID        Int
-  plan          FundingPlan @relation(fields: [PlanID], references: [PlanID])
   patent        Patent      @relation(fields: [PatentID], references: [PatentID])
+  plan          FundingPlan @relation(fields: [PlanID], references: [PlanID])
 }

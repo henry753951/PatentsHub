@@ -21,6 +21,11 @@ const viteElectronBuildConfig = (type: "es" | "cjs", ext: string) => {
             "~": __dirname,
          },
       },
+      // Disable Vite's optimization of dependencies
+      optimizeDeps: {
+         entries: ["components/**/*.vue"],
+         include: ["zod", "vee-validate", "lucide-vue-next", "@vee-validate/zod"],
+      },
    } as InlineConfig;
 };
 
@@ -50,14 +55,10 @@ export default defineNuxtConfig({
       build: [
          {
             entry: "electron/main.ts",
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
             vite: viteElectronBuildConfig("cjs", "js"),
          },
          {
             entry: "electron/preload.ts",
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
             vite: viteElectronBuildConfig("cjs", "js"),
             onstart(options) {
                options.reload();
