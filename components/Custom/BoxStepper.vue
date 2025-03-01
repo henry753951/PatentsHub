@@ -5,11 +5,11 @@
       class="flex flex-col justify-start gap-4 select-none"
    >
       <StepperItem
-         v-for="step in steps"
-         :key="step.step"
+         v-for="step, index in steps"
+         :key="index"
          v-slot="{ state }"
          class="relative flex items-start"
-         :step="step.step"
+         :step="index"
       >
          <StepperTrigger
             as-child
@@ -26,7 +26,7 @@
                   :class="[state === 'completed' && 'opacity-50']"
                   class="text-sm font-semibold transition"
                >
-                  {{ step.name }}
+                  {{ step.title }}
                </StepperTitle>
                <StepperDescription
                   :class="[state === 'completed' && 'opacity-50']"
@@ -55,6 +55,6 @@ const { steps = [] } = defineProps<{
 
 const currentStep = defineModel("currentStep", {
    type: Number,
-   default: 1,
+   default: 0,
 });
 </script>

@@ -24,6 +24,7 @@
          <Button
             @click="
                open('PatentCreateModal', {
+                  id: '123',
                   props: {},
                })
             "

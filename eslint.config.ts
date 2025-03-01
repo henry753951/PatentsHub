@@ -16,6 +16,7 @@ export default withNuxt([...pluginVue.configs["flat/strongly-recommended"]])
          ...stylistic.configs["recommended-flat"].rules,
          "@stylistic/indent": ["warn", 3],
          "@stylistic/quotes": ["warn", "double"],
+         "@stylistic/arrow-parens": ["warn", "always"],
          "@stylistic/semi": ["warn", "always"],
          "@stylistic/no-trailing-spaces": "warn",
       },

@@ -20,10 +20,8 @@ declare global {
    }
 
    interface IFormStep {
-      component: Component
-      name: string
+      title: string
       description?: string
-      step: number
    }
 }
 

@@ -21,7 +21,7 @@ export const useModals = () => {
    ) => {
       const id = options?.id || "temp-" + Math.random().toString(36).slice(2);
       const existingModal = options?.id
-         ? modals.value.find(modal => modal.id === options.id)
+         ? modals.value.find((modal) => modal.id === options.id && modal.modalName === `Modals${modalName}`)
          : undefined;
 
       if (existingModal) {
@@ -45,14 +45,14 @@ export const useModals = () => {
     */
    const close = (id: string, remove: boolean = false) => {
       if (remove) {
-         const index = modals.value.findIndex(modal => modal.id === id);
+         const index = modals.value.findIndex((modal) => modal.id === id);
          if (index !== -1) {
             modals.value.splice(index, 1);
          }
          return;
       }
       else {
-         const modal = modals.value.find(modal => modal.id === id);
+         const modal = modals.value.find((modal) => modal.id === id);
          if (modal) {
             modal.isOpen = false;
          }

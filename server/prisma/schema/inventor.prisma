@@ -13,6 +13,7 @@ model PatentInventor {
   PatentID   Int
   InventorID Int
   Main       Boolean
+  Contribution Float?
   patent     Patent   @relation(fields: [PatentID], references: [PatentID])
   inventor   Inventor @relation(fields: [InventorID], references: [InventorID])
 

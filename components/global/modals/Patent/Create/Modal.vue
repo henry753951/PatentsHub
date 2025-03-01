@@ -9,22 +9,16 @@
                      <DialogDescription>請填寫專利資訊</DialogDescription>
                   </DialogHeader>
                   <CustomBoxStepper
-                     v-model:current-step="currentStep"
-                     :steps="steps"
+                     v-if="patentCreateFormRef"
+                     v-model:current-step="patentCreateFormRef.patentCreation.currentStep.value"
+                     :steps="patentCreateFormRef.patentCreation.steps"
                   />
                </div>
                <OverlayScrollbarsComponent
                   :options="{ scrollbars: { autoHide: 'leave' } }"
                   class="flex-1 px-8 py-4 bg-zinc-100 dark:bg-[#0e0e12] rounded min-h-0"
                >
-                  <CustomStepperView
-                     ref="stepView"
-                     v-model:current-step="currentStep"
-                     v-model:steps-data-readonly="stepsDataRead"
-                     :schema="combinedSchema"
-                     :steps="steps"
-                  />
-                  {{ stepsDataRead }}
+                  <PatentCreateForm ref="patentCreateFormRef" />
                </OverlayScrollbarsComponent>
             </div>
          </DialogContent>
@@ -33,9 +27,6 @@
 </template>
 
 <script lang="ts" setup>
-import { CustomStepperView } from "#components";
-import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
-import steps, { combinedSchema } from "./steps";
 import {
    Dialog,
    DialogContent,
@@ -43,7 +34,7 @@ import {
    DialogTitle,
    DialogDescription,
 } from "@/components/ui/dialog";
-import type { z } from "zod";
+import PatentCreateForm from "./Form.vue";
 
 const isOpen = defineModel("open", {
    type: Boolean,
@@ -54,8 +45,8 @@ const { props } = defineProps<{
    props: Record<string, any>
 }>();
 
-const currentStep = ref(1);
-const stepsDataRead = ref({} as z.infer<typeof combinedSchema>);
+const patentCreateFormRef = useTemplateRef<ComponentExposed<typeof PatentCreateForm>>("patentCreateFormRef");
+
 </script>
 
 <style scoped></style>

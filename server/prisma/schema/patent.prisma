@@ -1,11 +1,15 @@
+// ========================
+// 專利
+// ========================
 model Patent {
   PatentID     Int                        @id @default(autoincrement())
   Year         String
-  InternalID   String
-  Title        String
+  InternalID   String                     @unique
+  DraftTitle   String                     @default("")
+  Title        String                     @default("")
+  TitleEnglish String                     @default("")
   DepartmentID Int
   CollegeID    Int
-  TitleEnglish String?
   agencies     AgencyPatent[]
   department   Department                 @relation(fields: [DepartmentID], references: [DepartmentID])
   college      College                    @relation(fields: [CollegeID], references: [CollegeID])
@@ -14,7 +18,15 @@ model Patent {
   inventors    PatentInventor[]
   status       PatentStatus?
   technical    PatentTechnicalAttributes?
+
+  @@index([InternalID, Year])
 }
+
+// ========================
+
+// ========================
+// 專利維護資訊
+// ========================
 
 model PatentStatus {
   PatentID                     Int       @id @default(autoincrement())
@@ -27,23 +39,50 @@ model PatentStatus {
   patent                       Patent    @relation(fields: [PatentID], references: [PatentID])
 }
 
-model PatentApplicationData {
-  PatentID          Int       @id @default(autoincrement())
-  CountryID         Int
-  PatentNumber      String
-  FilingDate        DateTime?
-  GrantDate         DateTime?
-  PatentType        String
-  ApplicationNumber String
-  country           Country   @relation(fields: [CountryID], references: [CountryID])
-  patent            Patent    @relation(fields: [PatentID], references: [PatentID])
+// ========================
+
+// ========================
+// 專利申請資訊
+// ========================
+
+enum EnumPatentType {
+  INVENTION // 發明專利
+  UTILITY_MODEL // 新型專利
+  DESIGN // 設計專利
+  PLANT // 植物專利 (US only)
 }
 
-model PatentTechnicalAttributes {
-  PatentID      Int    @id @default(autoincrement())
-  IPC           String
-  Scope         String
-  MaturityLevel String
-  Keywords      String
-  patent        Patent @relation(fields: [PatentID], references: [PatentID])
+model PatentApplicationData {
+  PatentID          Int            @id @default(autoincrement())
+  CountryID         Int?
+  PatentType        EnumPatentType?
+  // 申請後的資料
+  PatentNumber      String? // 專利號碼
+  ApplicationNumber String? // 申請案號
+  FilingDate        DateTime? // 申請日
+  PublicationDate   DateTime? // 公開日
+
+  country Country? @relation(fields: [CountryID], references: [CountryID])
+  patent  Patent  @relation(fields: [PatentID], references: [PatentID])
 }
+
+// ========================
+
+// ========================
+// 專利技術資訊
+// ========================
+
+model PatentTechnicalAttributes {
+  PatentID      Int                @id
+  MaturityLevel String?
+  keywords      TechnicalKeyword[]
+  patent        Patent             @relation(fields: [PatentID], references: [PatentID])
+}
+
+model TechnicalKeyword {
+  KeywordID                 Int                         @id @default(autoincrement())
+  Keyword                   String                      @unique
+  patentTechnicalAttributes PatentTechnicalAttributes[]
+}
+
+// ========================

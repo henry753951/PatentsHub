@@ -1,3 +1,56 @@
-import { router } from "../../trpc";
-
-export default router({});
+import { z } from "zod";
+import { procedure, router } from "../../trpc";
+import CustomZodType from "~/server/prisma/customZod";
+export default router({
+   createPatent: procedure
+      .input(
+         CustomZodType.PatentCreate.merge(
+            CustomZodType.PatentInventor,
+         ),
+      )
+      .mutation(async ({ input }) => {
+         return await prisma.patent.create({
+            data: {
+               DraftTitle: input.draftTitle,
+               Year: input.year,
+               InternalID: input.internalID,
+               DepartmentID: input.belongs.departmentID,
+               CollegeID: input.belongs.collegeID,
+               technical: {
+                  create: {
+                     MaturityLevel: input.technical.maturityLevel,
+                     keywords: {
+                        connectOrCreate: input.technical.keywords.map(
+                           (keyword) => ({
+                              create: { Keyword: keyword },
+                              where: { Keyword: keyword },
+                           }),
+                        ),
+                     },
+                  },
+               },
+               application: {
+                  create: {
+                     country: {
+                        connect: {
+                           CountryID: input.countryId,
+                        },
+                     },
+                     PatentType: input.type,
+                  },
+               },
+               inventors: {
+                  create: input.inventors.map((inventor) => ({
+                     Main: inventor.isMain,
+                     contribution: inventor.contribution,
+                     inventor: {
+                        connect: {
+                           InventorID: inventor.inventorID,
+                        },
+                     },
+                  })),
+               },
+            },
+         });
+      }),
+});
