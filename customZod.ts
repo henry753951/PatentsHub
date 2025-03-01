@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const PatentCreate = z.object({
-   internalID: z.string(),
+   internalID: z.string().min(1, "專利編號不得為空"),
    year: z.string(),
    draftTitle: z.string().min(1, "專利名稱不得為空"),
    type: z.enum(["INVENTION", "UTILITY_MODEL", "DESIGN", "PLANT"]).optional(),

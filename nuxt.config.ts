@@ -45,6 +45,7 @@ export default defineNuxtConfig({
       "@primevue/nuxt-module",
       "@nuxt/image",
       "shadcn-nuxt",
+      "@formkit/auto-animate/nuxt",
    ],
    tailwindcss: {
       viewer: true,

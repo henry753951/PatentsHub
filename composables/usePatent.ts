@@ -1,18 +1,12 @@
 import { toTypedSchema } from "@vee-validate/zod";
 import type { GenericObject } from "vee-validate";
 import type { z } from "zod";
-import CustomZodType from "~/server/prisma/customZod";
+import CustomZodType from "~/customZod";
 export const usePatent = () => {
    const { $trpc } = useNuxtApp();
 
-   const useCreation = (
-      currentStepRef: Ref<number> | undefined = undefined,
-   ) => {
+   const useCreation = () => {
       // ========= 修改這裡 =========
-      // 定義 ValuesType
-      type ValuesType = z.infer<typeof CustomZodType.PatentCreate> &
-        z.infer<typeof CustomZodType.PatentInventor>;
-
       // 多步骤表单ZOD格式
       const steps = [
          {
@@ -26,31 +20,60 @@ export const usePatent = () => {
             description: "發明人資料與貢獻度",
          },
       ];
-
-      // 表單提交處理
-      const handleSubmit = async (values: ValuesType) => {
-         await $trpc.data.patent.createPatent.mutate(values);
-      };
+      // 組合所有步驟的ZOD格式
+      const schemas = CustomZodType.PatentCreate.merge(
+         CustomZodType.PatentInventor,
+      );
 
       // ===========================
-
-      const currentStep = currentStepRef || ref(0);
-      const currentSchema = computed(() => {
-         return toTypedSchema(steps[currentStep.value].schema);
+      const {
+         values,
+         handleSubmit,
+         validateField,
+         defineField,
+         errorBag,
+         errors,
+      } = useForm({
+         keepValuesOnUnmount: true,
+         validationSchema: toTypedSchema(schemas),
       });
-      const nextStep = (values: GenericObject) => {
-         if (currentStep.value < steps.length - 1) currentStep.value++;
-         else handleSubmit(values as ValuesType);
+
+      handleSubmit(async (values) => {
+         await $trpc.data.patent.createPatent.mutate(values);
+      });
+
+      const currentStep = ref(0);
+      const currentSchema = computed(() => {
+         return steps[currentStep.value].schema;
+      });
+
+      const nextStep = async () => {
+         const keys = Object.keys(currentSchema.value.shape) as (keyof z.infer<
+            typeof schemas
+         >)[];
+         let isValidate = true;
+         for (const key of keys) {
+            const { valid } = await validateField(key);
+            if (!valid) isValidate = false;
+            consola.info("驗證", key, valid);
+         }
+         if (currentStep.value < steps.length - 1 && isValidate) {
+            currentStep.value++;
+         }
       };
       const prevStep = () => {
          if (currentStep.value > 0) currentStep.value--;
       };
 
       return {
+         defineField,
          nextStep,
          prevStep,
          currentStep,
          currentSchema,
+         values,
+         errorBag,
+         errors,
          steps,
       };
    };

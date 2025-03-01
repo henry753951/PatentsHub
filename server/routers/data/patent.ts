@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
-import CustomZodType from "~/server/prisma/customZod";
+import CustomZodType from "~/customZod";
 export default router({
    createPatent: procedure
       .input(

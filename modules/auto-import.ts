@@ -3,8 +3,7 @@ import { defineNuxtModule, addImports, createResolver } from "@nuxt/kit";
 export default defineNuxtModule({
    setup(options, nuxt) {
       const modules = {
-         "zod": ["z"],
-         "overlayscrollbars-vue": ["OverlayScrollbarsComponent"],
+         zod: ["z"],
       };
       const typeModules = {
          "vue-component-type-helpers": ["ComponentExposed"],
