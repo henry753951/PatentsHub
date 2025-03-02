@@ -2,14 +2,33 @@ import { defineStore } from "pinia";
 import type { z } from "zod";
 
 export const useCollegesStore = defineStore("collegesStore", {
-   state: () => ({
-      colleges: [] as RouterOutput["data"]["college"]["getColleges"],
-   }),
+   state: () => {
+      const initialState = {
+         colleges: [] as RouterOutput["data"]["college"]["getColleges"],
+         isInitialized: false,
+      };
+      if (!initialState.isInitialized) {
+         (async () => {
+            try {
+               const { $trpc } = useNuxtApp();
+               const data = await $trpc.data.college.getColleges.query();
+               initialState.colleges = data;
+               initialState.isInitialized = true;
+            }
+            catch (error) {
+               console.error("Failed to initialize colleges:", error);
+            }
+         })();
+      }
+      return initialState;
+   },
+
    actions: {
       // 刷新所有 Colleges 資料
       async refresh() {
          const { $trpc } = useNuxtApp();
          this.colleges = await $trpc.data.college.getColleges.query();
+         return this.colleges;
       },
 
       // 新增 College
