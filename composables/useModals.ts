@@ -67,6 +67,20 @@ export const useModals = () => {
       }
    };
 
+   /**
+    * 打開自動生成的模態框
+    * @param title - 標題
+    * @param description - 描述
+    * @param schema - Zod 格式
+    * @param callback - 回調函數
+    * @param fieldConfig - 欄位設定
+    * @param passthrough - 透傳參數
+    * @param defaultValues - 預設值
+    * @returns 模態框的唯一標識 ID
+    *
+    * @example
+    * 參考 `components\Form\CollageManage.vue` 使用的範例
+    */
    const openAutoModal = <T extends ZodObjectOrWrapped>(
       title: string,
       description: string,
@@ -74,6 +88,7 @@ export const useModals = () => {
       callback: (data: z.infer<T>, passthrough?: any) => Promise<void>,
       fieldConfig?: Config<z.infer<T>>,
       passthrough?: any,
+      defaultValues?: z.infer<T>,
    ) => {
       const id = open("AutoModal", {
          props: {
@@ -83,6 +98,7 @@ export const useModals = () => {
             fieldConfig,
             callback,
             passthrough,
+            defaultValues,
          },
       });
       return id;

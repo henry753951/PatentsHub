@@ -2,7 +2,7 @@
    <div>
       <Dialog v-model:open="isOpen">
          <DialogContent>
-            <DialogHeader>
+            <DialogHeader class="select-none">
                <DialogTitle>{{ props.title }}</DialogTitle>
                <DialogDescription>{{ props.description }}</DialogDescription>
             </DialogHeader>
@@ -10,7 +10,8 @@
                class="space-y-6"
                :schema="props.schema"
                :field-config="props.fieldConfig"
-               @submit="onSubmit"
+               :form="form"
+               @submit="handleSubmit"
             >
                <DialogFooter>
                   <Button
@@ -42,6 +43,7 @@ import {
 import type { ZodObjectOrWrapped } from "~/components/ui/auto-form/utils";
 import type { Config } from "~/components/ui/auto-form";
 import type { z } from "zod";
+import { toTypedSchema } from "@vee-validate/zod";
 const isOpen = defineModel("open", {
    type: Boolean,
    default: false,
@@ -55,14 +57,24 @@ const { props } = defineProps<{
       fieldConfig?: Config<z.infer<T>>
       callback: (data: z.infer<T>, passthrough?: any) => void
       passthrough?: any
+      defaultValues?: z.infer<T>
    }
 }>();
 
-const onSubmit = async (data: z.infer<T>) => {
+const form = useForm({
+   validationSchema: toTypedSchema(props.schema),
+});
+
+const handleSubmit = (data: z.infer<T>) => {
    props.callback(data, props.passthrough);
-   console.log(data);
    isOpen.value = false;
 };
+
+onMounted(() => {
+   if (props.defaultValues) {
+      form.setValues(props.defaultValues);
+   }
+});
 </script>
 
 <style scoped></style>

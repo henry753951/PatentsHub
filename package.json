@@ -9,7 +9,7 @@
       "build:all": "nuxt build && electron-builder build --config electron-builder.cjs",
       "build:app": "electron-builder build --config electron-builder.cjs",
       "build": "nuxt build",
-      "dev": "nuxt dev --host --dotenv .env",
+      "dev": "nuxt dev --host 127.0.0.1 --dotenv .env",
       "generate": "nuxt generate",
       "preview": "nuxt preview",
       "postinstall": "pnpm dlx prisma generate && nuxt prepare"

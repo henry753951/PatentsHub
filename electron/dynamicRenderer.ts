@@ -14,15 +14,15 @@ export default function (mainWindow: BrowserWindow) {
       let url = "http://127.0.0.1:3000";
       if (process.env.__NUXT_DEV__) {
          const nuxtDevConfig = JSON.parse(process.env.__NUXT_DEV__);
-         url = nuxtDevConfig.proxy.url;
+         url = nuxtDevConfig.proxy.url.replace("localhost", "127.0.0.1");
       }
       return mainWindow.loadURL(url);
    }
    const app = express();
    app.use("/", serveStatic(path.join(__dirname, "../public")));
-   const listener = app.listen(8079, "localhost", () => {
+   const listener = app.listen(8079, "127.0.0.1", () => {
       const port = (listener.address() as any).port;
       consola.log("Dynamic-Renderer Listening on", port);
-      mainWindow.loadURL(`http://localhost:${port}`);
+      mainWindow.loadURL(`http://127.0.0.1:${port}`);
    });
 }

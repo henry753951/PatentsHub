@@ -10,7 +10,7 @@ import "overlayscrollbars/overlayscrollbars.css";
 
 <style>
 body {
-   background-color: rgba(240, 240, 240, 0.7);
+   background-color: #e7ecf3d2;
 }
 
 .dark body {

@@ -13,23 +13,27 @@ export const useCollagesStore = defineStore("collagesStore", {
       },
 
       // 新增 College
-      async insert(collageName: string) {
+      async insert(collageName: string, description: string) {
          const { $trpc } = useNuxtApp();
          const newCollage = await $trpc.data.collage.createCollage.mutate({
             name: collageName,
-            description: "", // 提供預設描述，或根據需求修改
+            description: description,
          });
          await this.refresh();
       },
 
       // 新增 Department 並關聯到指定 College
-      async insertWithDepartment(collageID: number, departmentName: string) {
+      async insertWithDepartment(
+         collageID: number,
+         departmentName: string,
+         description: string,
+      ) {
          const { $trpc } = useNuxtApp();
          const newDepartment = await $trpc.data.collage.createDepartment.mutate(
             {
                name: departmentName,
-               description: "", // 提供預設描述，或根據需求修改
-               collageID: collageID, // 注意這裡使用了 "collageID"，與你的 TRPC 輸入一致
+               description: description,
+               collageID: collageID,
             },
          );
          await this.refresh();
@@ -41,8 +45,7 @@ export const useCollagesStore = defineStore("collagesStore", {
          await $trpc.data.collage.deleteCollage.mutate({
             collageID: collageID,
          });
-         // 從本地狀態移除被刪除的 College
-         this.collages = this.collages.filter((c) => c.CollegeID !== collageID);
+         await this.refresh();
       },
 
       // 刪除特定 Department
@@ -50,6 +53,38 @@ export const useCollagesStore = defineStore("collagesStore", {
          const { $trpc } = useNuxtApp();
          await $trpc.data.collage.deleteDepartment.mutate({
             departmentID: departmentID,
+         });
+         await this.refresh();
+      },
+
+      // 更新 College 資料
+      async updateCollege(
+         collageID: number,
+         name: string,
+         description: string,
+      ) {
+         const { $trpc } = useNuxtApp();
+         await $trpc.data.collage.updateCollage.mutate({
+            ID: collageID,
+            name: name,
+            description: description,
+         });
+         await this.refresh();
+      },
+
+      // 更新 Department 資料
+      async updateDepartment(
+         departmentID: number,
+         collageID: number,
+         name: string,
+         description: string,
+      ) {
+         const { $trpc } = useNuxtApp();
+         await $trpc.data.collage.updateDepartment.mutate({
+            ID: departmentID,
+            collageID: collageID,
+            name: name,
+            description: description,
          });
          await this.refresh();
       },
