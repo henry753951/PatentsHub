@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { procedure, router } from "../trpc";
-import { dbZ, prisma } from "../prisma";
+import { dbZ, prisma } from "..";
 
 export default router({
    getAllContries: procedure

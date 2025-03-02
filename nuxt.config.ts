@@ -46,6 +46,7 @@ export default defineNuxtConfig({
       "@nuxt/image",
       "shadcn-nuxt",
       "@formkit/auto-animate/nuxt",
+      "@pinia/nuxt",
    ],
    tailwindcss: {
       viewer: true,

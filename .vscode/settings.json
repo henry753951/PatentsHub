@@ -20,5 +20,6 @@
    },
    "editor.quickSuggestions": {
       "strings": true
-   }
+   },
+   "favorites.sortDirection": "DESC"
 }

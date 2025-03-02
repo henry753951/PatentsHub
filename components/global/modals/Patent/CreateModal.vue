@@ -11,7 +11,7 @@
                   <CustomBoxStepper
                      v-if="patentCreateFormRef"
                      v-model:current-step="
-                        patentCreateFormRef.patentCreation.currentStep.value
+                        patentCreateFormRef!.patentCreation.currentStep.value
                      "
                      :steps="patentCreateFormRef.patentCreation.steps"
                   />
@@ -23,14 +23,14 @@
                      class="flex-1 min-h-0 px-8 py-5 "
                      :options="{ scrollbars: { autoHide: 'leave' } }"
                   >
-                     <PatentCreateForm
+                     <FormPatentCreate
                         ref="patentCreateFormRef"
                      />
                   </OverlayScrollbarsComponent>
                   <div class="flex justify-end gap-2">
                      <Button
                         v-if="patentCreateFormRef"
-                        @click="patentCreateFormRef.patentCreation.nextStep"
+                        @click="patentCreateFormRef!.patentCreation.nextStep"
                      >
                         {{
                            patentCreateFormRef.patentCreation.currentStep
@@ -49,6 +49,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { FormPatentCreate } from "#components";
 import {
    Dialog,
    DialogContent,
@@ -57,7 +58,6 @@ import {
    DialogDescription,
 } from "@/components/ui/dialog";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
-import PatentCreateForm from "./Form.vue";
 
 const isOpen = defineModel("open", {
    type: Boolean,
@@ -69,7 +69,7 @@ const { props } = defineProps<{
 }>();
 
 const patentCreateFormRef = useTemplateRef<
-   ComponentExposed<typeof PatentCreateForm>
+   ComponentExposed<typeof FormPatentCreate>
 >("patentCreateFormRef");
 </script>
 

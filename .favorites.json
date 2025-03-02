@@ -1,0 +1,115 @@
+[
+    {
+        "type": "Directory",
+        "name": "h:\\Repos\\PatentsHub\\stores",
+        "parent_id": null,
+        "fsPath": "h:\\Repos\\PatentsHub\\stores",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "bJtBW1A2svEF89xk"
+    },
+    {
+        "type": "Group",
+        "name": "components",
+        "parent_id": "bJtBW1A2svEF89xk",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "al2IgxMLiV0j6fy3"
+    },
+    {
+        "type": "Group",
+        "name": "AA",
+        "parent_id": "bJtBW1A2svEF89xk",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "3Mkgy9vaPLIAZxXE"
+    },
+    {
+        "type": "Group",
+        "name": "Component",
+        "parent_id": null,
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "3fegyC8IY2xFnBq1"
+    },
+    {
+        "type": "Directory",
+        "name": "h:\\Repos\\PatentsHub\\components",
+        "parent_id": "3fegyC8IY2xFnBq1",
+        "fsPath": "h:\\Repos\\PatentsHub\\components",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "3r7AMDyQLJmet5wS"
+    },
+    {
+        "type": "Directory",
+        "name": "h:\\Repos\\PatentsHub\\components\\global\\modals",
+        "parent_id": "3fegyC8IY2xFnBq1",
+        "fsPath": "h:\\Repos\\PatentsHub\\components\\global\\modals",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "N3lasKOdWZShyQ1P"
+    },
+    {
+        "type": "Directory",
+        "name": "h:\\Repos\\PatentsHub\\composables",
+        "parent_id": null,
+        "fsPath": "h:\\Repos\\PatentsHub\\composables",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "5gXOlyNoWHRQvDFL"
+    },
+    {
+        "type": "Directory",
+        "name": "h:\\Repos\\PatentsHub\\pages",
+        "parent_id": null,
+        "fsPath": "h:\\Repos\\PatentsHub\\pages",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "xtqVF1gmMoG84kbL"
+    },
+    {
+        "type": "Group",
+        "name": "Backend",
+        "parent_id": null,
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "7zyeipqmu2wQKUt3"
+    },
+    {
+        "type": "Directory",
+        "name": "h:\\Repos\\PatentsHub\\server\\routers",
+        "parent_id": "7zyeipqmu2wQKUt3",
+        "fsPath": "h:\\Repos\\PatentsHub\\server\\routers",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "0PqseywlRDp32VJC"
+    },
+    {
+        "type": "Directory",
+        "name": "h:\\Repos\\PatentsHub\\server\\prisma",
+        "parent_id": "7zyeipqmu2wQKUt3",
+        "fsPath": "h:\\Repos\\PatentsHub\\server\\prisma",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "3B7yA0JSbcwoj2GO"
+    },
+    {
+        "type": "File",
+        "name": "h:\\Repos\\PatentsHub\\customZod.ts",
+        "parent_id": null,
+        "fsPath": "h:\\Repos\\PatentsHub\\customZod.ts",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "BEnlqudxAahTYwsG"
+    },
+    {
+        "type": "File",
+        "name": "h:\\Repos\\PatentsHub\\nuxt.config.ts",
+        "parent_id": null,
+        "fsPath": "h:\\Repos\\PatentsHub\\nuxt.config.ts",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "kdmQAXnFp7OYzGou"
+    }
+]

@@ -40,7 +40,7 @@
          >
             Open Sheet
          </Button>
-         <PatentRow
+         <BlockPatentRow
             name="hi"
             :expiry-date="'2025/01/30'"
             author="me"

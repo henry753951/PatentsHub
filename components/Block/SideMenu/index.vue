@@ -5,14 +5,14 @@
          class="px-2 py-2"
       >
          <div class="flex flex-col gap-4 items-center">
-            <SideMenuToggle />
-            <SideMenuNavs :items="navItems" />
-            <SideMenuDivider />
-            <SideMenuNavsItem
+            <BlockSideMenuToggle />
+            <BlockSideMenuNavs :items="navItems" />
+            <BlockSideMenuDivider />
+            <BlockSideMenuNavsItem
                icon="basil:add-outline"
                title="更多"
             />
-            <SideMenuNavsItem
+            <BlockSideMenuNavsItem
                icon="basil:explore-outline"
                title="Debug"
                @click="() => navigateTo({ name: 'debug' })"
@@ -20,7 +20,7 @@
          </div>
       </OverlayScrollbarsComponent>
 
-      <SideMenuActions
+      <BlockSideMenuActions
          class="mt-auto"
          :items="navActions"
       />

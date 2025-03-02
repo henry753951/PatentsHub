@@ -88,6 +88,21 @@ export default router({
 });
 ```
 
+## 輸入輸出型態
+- https://trpc.io/docs/client/vanilla/infer-types
+使用 `~/server/index.ts` 中的
+
+```ts
+export type RouterInput = inferRouterInputs<MainRouter>;
+export type RouterOutput = inferRouterOutputs<MainRouter>;
+```
+
+來取得所有路由的輸入輸出型態，這樣就可以在所有地方中使用。 如下
+```ts
+type PostCreateInput = RouterInput['post']['create'];
+type PostCreateOutput = RouterOutput['post']['create'];
+```
+
 # Prisma
 
 ## 生成 Prisma Client

@@ -11,7 +11,7 @@ model Department {
   Name         String
   CollegeID    Int
   Description  String?
-  college      College    @relation(fields: [CollegeID], references: [CollegeID])
+  college      College    @relation(fields: [CollegeID], references: [CollegeID], onDelete: Cascade)
   inventors    Inventor[]
   patents      Patent[]
 }

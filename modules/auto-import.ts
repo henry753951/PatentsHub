@@ -7,6 +7,7 @@ export default defineNuxtModule({
       };
       const typeModules = {
          "vue-component-type-helpers": ["ComponentExposed"],
+         "~/server": ["dbZ", "RouterInput", "RouterOutput"],
       };
       Object.entries(modules).forEach(([name, imports]) => {
          imports.forEach((importName) =>

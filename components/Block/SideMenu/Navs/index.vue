@@ -1,10 +1,11 @@
 <template>
-   <div class="flex flex-col items-center gap-3 pb-6 pt-3">
-      <SideMenuActionsButton
+   <div class="flex flex-col items-center gap-4">
+      <BlockSideMenuNavsItem
          v-for="item in items"
          :key="item.title"
          :icon="item.icon"
-         :tooltip="item.title"
+         :title="item.title"
+         :route-key="item.to?.name?.toString() ?? item.to?.path"
          @click="onItemClick(item)"
       />
    </div>
@@ -12,12 +13,15 @@
 
 <script lang="ts" setup>
 const { items = [] } = defineProps<{
-   items?: INavAction[]
+   items?: INavItem[]
 }>();
 
 const onItemClick = (item: INavItem) => {
    if (item.action) {
       item.action();
+   }
+   if (item.to) {
+      navigateTo(item.to);
    }
 };
 </script>

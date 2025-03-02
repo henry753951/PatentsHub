@@ -1,11 +1,9 @@
 import { toTypedSchema } from "@vee-validate/zod";
-import type { GenericObject } from "vee-validate";
 import type { z } from "zod";
 import CustomZodType from "~/customZod";
-export const usePatent = () => {
-   const { $trpc } = useNuxtApp();
-
-   const useCreation = () => {
+export const patent = {
+   useCreation: () => {
+      const { $trpc } = useNuxtApp();
       // ========= 修改這裡 =========
       // 多步骤表单ZOD格式
       const steps = [
@@ -76,9 +74,5 @@ export const usePatent = () => {
          errors,
          steps,
       };
-   };
-
-   return {
-      useCreation,
-   };
+   },
 };

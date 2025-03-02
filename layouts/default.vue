@@ -1,8 +1,8 @@
 <template>
    <div class="flex flex-col max-h-screen h-screen overflow-hidden">
-      <WindowTitleBar class="bg-white dark:bg-zinc-900" />
+      <BlockWindowTitleBar class="bg-white dark:bg-zinc-900" />
       <div class="flex flex-1 min-h-0">
-         <SideMenu class="bg-white dark:bg-zinc-900" />
+         <BlockSideMenu class="bg-white dark:bg-zinc-900" />
          <div class="inner-page w-full h-full">
             <OverlayScrollbarsComponent
                :options="{ scrollbars: { autoHide: 'leave' } }"

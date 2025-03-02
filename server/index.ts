@@ -1,7 +1,9 @@
 import path from "path";
 import { PrismaClient } from "@prisma/client";
 import { app } from "electron";
-import * as dbZod from "./zod";
+import * as dbZod from "./prisma/zod";
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+import type { MainRouter } from "./mainRouter";
 
 // Prevent multiple instances of Prisma Client in development
 // https://www.prisma.io/docs/guides/performance-and-optimization/connection-management#prevent-hot-reloading-from-creating-new-instances-of-prismaclient
@@ -28,4 +30,8 @@ export const prisma
      });
 
 export const dbZ = dbZod;
+
+export type RouterInput = inferRouterInputs<MainRouter>;
+export type RouterOutput = inferRouterOutputs<MainRouter>;
+
 if (!isProduction) global.prisma = prisma;
