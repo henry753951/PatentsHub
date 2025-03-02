@@ -1,3 +1,7 @@
+import type { ZodObjectOrWrapped } from "~/components/ui/auto-form/utils";
+import type { Config } from "~/components/ui/auto-form";
+import type { z } from "zod";
+
 interface ModalInstance {
    id: string // 的唯一標識
    modalName: `Modals${ModalName}` // 模態框名稱
@@ -21,7 +25,11 @@ export const useModals = () => {
    ) => {
       const id = options?.id || "temp-" + Math.random().toString(36).slice(2);
       const existingModal = options?.id
-         ? modals.value.find((modal) => modal.id === options.id && modal.modalName === `Modals${modalName}`)
+         ? modals.value.find(
+            (modal) =>
+               modal.id === options.id
+               && modal.modalName === `Modals${modalName}`,
+         )
          : undefined;
 
       if (existingModal) {
@@ -59,9 +67,31 @@ export const useModals = () => {
       }
    };
 
+   const openAutoModal = <T extends ZodObjectOrWrapped>(
+      title: string,
+      description: string,
+      schema: T,
+      callback: (data: z.infer<T>, passthrough?: any) => Promise<void>,
+      fieldConfig?: Config<z.infer<T>>,
+      passthrough?: any,
+   ) => {
+      const id = open("AutoModal", {
+         props: {
+            title,
+            description,
+            schema,
+            fieldConfig,
+            callback,
+            passthrough,
+         },
+      });
+      return id;
+   };
+
    return {
       modals,
       open,
       close,
+      openAutoModal,
    };
 };
