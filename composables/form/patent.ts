@@ -1,11 +1,11 @@
 import { toTypedSchema } from "@vee-validate/zod";
 import type { z } from "zod";
-import CustomZodType from "~/customZod";
+import CustomZodType from "~/zod.dto";
 export const patent = {
    useCreation: () => {
       const { $trpc } = useNuxtApp();
       // ========= 修改這裡 =========
-      // 多步骤表单ZOD格式
+      // 多步骤表单 ZOD 格式
       const steps = [
          {
             schema: CustomZodType.PatentCreate,
@@ -36,9 +36,11 @@ export const patent = {
          validationSchema: toTypedSchema(schemas),
       });
 
+      // ========= 修改這裡 =========
       handleSubmit(async (values) => {
          await $trpc.data.patent.createPatent.mutate(values);
       });
+      // ===========================
 
       const currentStep = ref(0);
       const currentSchema = computed(() => {

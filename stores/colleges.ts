@@ -1,22 +1,22 @@
 import { defineStore } from "pinia";
 import type { z } from "zod";
 
-export const useCollagesStore = defineStore("collagesStore", {
+export const useCollegesStore = defineStore("collegesStore", {
    state: () => ({
-      collages: [] as RouterOutput["data"]["collage"]["getCollages"],
+      colleges: [] as RouterOutput["data"]["college"]["getColleges"],
    }),
    actions: {
       // 刷新所有 Colleges 資料
       async refresh() {
          const { $trpc } = useNuxtApp();
-         this.collages = await $trpc.data.collage.getCollages.query();
+         this.colleges = await $trpc.data.college.getColleges.query();
       },
 
       // 新增 College
-      async insert(collageName: string, description: string) {
+      async insert(collegeName: string, description: string) {
          const { $trpc } = useNuxtApp();
-         const newCollage = await $trpc.data.collage.createCollage.mutate({
-            name: collageName,
+         const newCollege = await $trpc.data.college.createCollege.mutate({
+            name: collegeName,
             description: description,
          });
          await this.refresh();
@@ -24,34 +24,34 @@ export const useCollagesStore = defineStore("collagesStore", {
 
       // 新增 Department 並關聯到指定 College
       async insertWithDepartment(
-         collageID: number,
+         collegeID: number,
          departmentName: string,
          description: string,
       ) {
          const { $trpc } = useNuxtApp();
-         const newDepartment = await $trpc.data.collage.createDepartment.mutate(
+         const newDepartment = await $trpc.data.college.createDepartment.mutate(
             {
                name: departmentName,
                description: description,
-               collageID: collageID,
+               collegeID: collegeID,
             },
          );
          await this.refresh();
       },
 
       // 刪除 College（由於已設定級聯刪除，相關 Department 會自動刪除）
-      async delete(collageID: number) {
+      async delete(collegeID: number) {
          const { $trpc } = useNuxtApp();
-         await $trpc.data.collage.deleteCollage.mutate({
-            collageID: collageID,
+         await $trpc.data.college.deleteCollege.mutate({
+            collegeID: collegeID,
          });
          await this.refresh();
       },
 
       // 刪除特定 Department
-      async deleteDepartment(collageID: number, departmentID: number) {
+      async deleteDepartment(collegeID: number, departmentID: number) {
          const { $trpc } = useNuxtApp();
-         await $trpc.data.collage.deleteDepartment.mutate({
+         await $trpc.data.college.deleteDepartment.mutate({
             departmentID: departmentID,
          });
          await this.refresh();
@@ -59,13 +59,13 @@ export const useCollagesStore = defineStore("collagesStore", {
 
       // 更新 College 資料
       async updateCollege(
-         collageID: number,
+         collegeID: number,
          name: string,
          description: string,
       ) {
          const { $trpc } = useNuxtApp();
-         await $trpc.data.collage.updateCollage.mutate({
-            ID: collageID,
+         await $trpc.data.college.updateCollege.mutate({
+            ID: collegeID,
             name: name,
             description: description,
          });
@@ -75,14 +75,14 @@ export const useCollagesStore = defineStore("collagesStore", {
       // 更新 Department 資料
       async updateDepartment(
          departmentID: number,
-         collageID: number,
+         collegeID: number,
          name: string,
          description: string,
       ) {
          const { $trpc } = useNuxtApp();
-         await $trpc.data.collage.updateDepartment.mutate({
+         await $trpc.data.college.updateDepartment.mutate({
             ID: departmentID,
-            collageID: collageID,
+            collegeID: collegeID,
             name: name,
             description: description,
          });

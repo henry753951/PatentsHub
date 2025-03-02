@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
-import CustomZodType from "~/customZod";
+import CustomZodType from "~/zod.dto";
 export default router({
    createPatent: procedure
       .input(

@@ -89,33 +89,17 @@
                </FormItem>
             </FormField>
 
-            <div class="grid grid-cols-2 gap-3">
-               <FormField
-                  v-slot="{ componentField }"
-                  name="belongs.collegeID"
-               >
-                  <FormItem v-auto-animate>
-                     <FormLabel>學院</FormLabel>
-                     <Input
-                        type="number"
-                        v-bind="componentField"
-                     />
-                  </FormItem>
-               </FormField>
-               <FormField
-                  v-slot="{ componentField }"
-                  name="belongs.departmentID"
-               >
-                  <FormItem v-auto-animate>
-                     <FormLabel>系所</FormLabel>
-                     <Input
-                        type="number"
-                        v-bind="componentField"
-                     />
-                  </FormItem>
-               </FormField>
-            </div>
+            <FormField
+               v-slot="{ componentField }"
+               name="belongs"
+            >
+               <FormItem v-auto-animate>
+                  <FormLabel>學院與系所</FormLabel>
+                  <FormDepartmentSelect v-bind="componentField" />
+               </FormItem>
+            </FormField>
          </div>
+
          <div class="space-y-3">
             <h1>技術</h1>
             <FormField
@@ -162,6 +146,7 @@
 </template>
 
 <script lang="ts" setup>
+import { FormDepartmentSelect } from "#components";
 import {
    TagsInput,
    TagsInputInput,

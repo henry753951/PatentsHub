@@ -79,7 +79,7 @@ export const useModals = () => {
     * @returns 模態框的唯一標識 ID
     *
     * @example
-    * 參考 `components\Form\CollageManage.vue` 使用的範例
+    * 參考 `components\Form\CollegeManage.vue` 使用的範例
     */
    const openAutoModal = <T extends ZodObjectOrWrapped>(
       title: string,

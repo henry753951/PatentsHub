@@ -3,7 +3,7 @@
       <div
          class="h-full w-full bg-white rounded-lg shadow-md dark:bg-zinc-900 min-h-0 overflow-hidden"
       >
-         <FormCollageManage :selectable="true" />
+         <FormCollegeManage :selectable="true" />
       </div>
       <div></div>
    </div>
@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 
 definePageMeta({
-   name: "common-collageManage",
+   name: "common-collegeManage",
 });
 </script>
 

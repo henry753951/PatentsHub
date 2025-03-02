@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
-import CustomZodType from "~/customZod";
+import CustomZodType from "~/zod.dto";
 export default router({
    // Create
-   createCollage: procedure
+   createCollege: procedure
       .input(
          z.object({
             name: z.string(),
@@ -23,7 +23,7 @@ export default router({
          z.object({
             name: z.string(),
             description: z.string(),
-            collageID: z.number(),
+            collegeID: z.number(),
          }),
       )
       .mutation(async ({ input }) => {
@@ -31,13 +31,13 @@ export default router({
             data: {
                Name: input.name,
                Description: input.description,
-               CollegeID: input.collageID,
+               CollegeID: input.collegeID,
             },
          });
       }),
 
    // Read
-   getCollages: procedure.query(async () => {
+   getColleges: procedure.query(async () => {
       return await prisma.college.findMany({
          select: {
             Name: true,
@@ -49,7 +49,7 @@ export default router({
    }),
 
    // Update
-   updateCollage: procedure
+   updateCollege: procedure
       .input(
          z.object({
             ID: z.number(),
@@ -72,7 +72,7 @@ export default router({
       .input(
          z.object({
             ID: z.number(),
-            collageID: z.number(),
+            collegeID: z.number(),
             name: z.string(),
             description: z.string(),
          }),
@@ -83,7 +83,7 @@ export default router({
                DepartmentID: input.ID,
             },
             data: {
-               CollegeID: input.collageID,
+               CollegeID: input.collegeID,
                Name: input.name,
                Description: input.description,
             },
@@ -91,16 +91,16 @@ export default router({
       }),
 
    // Delete
-   deleteCollage: procedure
+   deleteCollege: procedure
       .input(
          z.object({
-            collageID: z.number(),
+            collegeID: z.number(),
          }),
       )
       .mutation(async ({ input }) => {
          return await prisma.college.delete({
             where: {
-               CollegeID: input.collageID,
+               CollegeID: input.collegeID,
             },
          });
       }),

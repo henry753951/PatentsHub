@@ -1,7 +1,7 @@
 <template>
    <div class="flex flex-col h-full">
       <!-- 標題和新增學院按鈕 -->
-      <div class="flex items-center justify-between mb-6 p-6">
+      <div class="flex items-center justify-between pt-6 px-6">
          <h1 class="text-2xl font-bold">
             學院管理
          </h1>
@@ -32,7 +32,7 @@
             type="single"
          >
             <AccordionItem
-               v-for="college in collages"
+               v-for="college in colleges"
                :key="college.CollegeID"
                :value="college.CollegeID.toString()"
             >
@@ -63,7 +63,7 @@
                      </ContextMenuItem>
                      <ContextMenuItem
                         class="text-red-600"
-                        @click="collagesStore.delete(college.CollegeID)"
+                        @click="collegesStore.delete(college.CollegeID)"
                      >
                         刪除學院
                      </ContextMenuItem>
@@ -73,25 +73,24 @@
                <AccordionContent>
                   <div
                      v-if="college.departments?.length"
-                     class="space-y-1"
+                     class="space-y-2 rounded-lg bg-gray-100 dark:bg-zinc-900 p-3"
                   >
                      <div
                         v-for="department in college.departments"
                         :key="department.DepartmentID"
-                        class="border rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow flex items-center justify-between"
+                        :class="[
+                           'rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow flex items-center justify-between',
+                           selectable && isSelected(department)
+                              ? 'bg-blue-100 border-blue-300 dark:bg-blue-900 dark:border-blue-700'
+                              : 'bg-white dark:bg-zinc-800',
+                        ]"
+                        @click="
+                           selectable ? selectDepartment(department) : null
+                        "
                      >
-                        <div class="flex items-center space-x-3">
-                           <!-- 選擇功能 -->
-                           <Checkbox
-                              v-if="selectable"
-                              :id="`dept-${department.DepartmentID}`"
-                              :checked="isSelected(department)"
-                              @update:checked="toggleSelection(department)"
-                           />
-                           <span class="font-medium">
-                              {{ department.Name }}
-                           </span>
-                        </div>
+                        <span class="font-medium">
+                           {{ department.Name }}
+                        </span>
                         <DropdownMenu>
                            <DropdownMenuTrigger as-child>
                               <Button
@@ -105,7 +104,7 @@
                               <DropdownMenuItem
                                  class="text-red-600"
                                  @click="
-                                    collagesStore.deleteDepartment(
+                                    collegesStore.deleteDepartment(
                                        college.CollegeID,
                                        department.DepartmentID,
                                     )
@@ -178,69 +177,55 @@ import type { Config } from "~/components/ui/auto-form/interface";
 import { z } from "zod";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 
-interface Department {
-   DepartmentID: number
-   Name: string
-   CollegeID: number
-}
-
+type Department = RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
 // Props 定義
 const props = defineProps<{
    selectable?: boolean
-   modelValue?: Department[]
+   modelValue?: Department | null // 單選，允許 null
 }>();
 
 const emits = defineEmits<{
-   (e: "update:modelValue", value: Department[]): void
+   (e: "update:modelValue", value: Department | null): void
 }>();
 
 // Pinia store
-const collagesStore = useCollagesStore();
-const { collages } = storeToRefs(collagesStore);
+const collegesStore = useCollegesStore();
+const { colleges } = storeToRefs(collegesStore);
 
-// 管理選中的系所
-const selectedDepartments = ref<Department[]>(props.modelValue || []);
+// 管理選中的系所（單選）
+const selectedDepartment = ref<Department | null>(props.modelValue || null);
 
 const { openAutoModal } = useModals();
 
 // 載入初始資料
 onMounted(async () => {
-   await collagesStore.refresh();
+   await collegesStore.refresh();
 });
 
 // 同步 v-model
 watch(
    () => props.modelValue,
    (newValue) => {
-      selectedDepartments.value = newValue || [];
+      selectedDepartment.value = newValue || null;
    },
-   { deep: true },
 );
 
-watch(
-   selectedDepartments,
-   (newValue) => {
-      emits("update:modelValue", newValue);
-   },
-   { deep: true },
-);
+watch(selectedDepartment, (newValue) => {
+   emits("update:modelValue", newValue);
+});
 
 // 檢查系所是否被選中
 const isSelected = (department: Department) => {
-   return selectedDepartments.value.some(
-      (d) => d.DepartmentID === department.DepartmentID,
-   );
+   return selectedDepartment.value?.DepartmentID === department.DepartmentID;
 };
 
-// 切換系所選擇狀態
-const toggleSelection = (department: Department) => {
+// 選擇系所（單選）
+const selectDepartment = (department: Department) => {
    if (isSelected(department)) {
-      selectedDepartments.value = selectedDepartments.value.filter(
-         (d) => d.DepartmentID !== department.DepartmentID,
-      );
+      selectedDepartment.value = null; // 取消選擇
    }
    else {
-      selectedDepartments.value.push(department);
+      selectedDepartment.value = department; // 選擇新系所
    }
 };
 
@@ -283,7 +268,7 @@ const addCollege = async (
    data: z.infer<typeof schemas.college>,
    passthrough: any,
 ) => {
-   await collagesStore.insert(data.name, data.description || "");
+   await collegesStore.insert(data.name, data.description || "");
 };
 
 // 新增系所
@@ -291,7 +276,7 @@ const addDepartment = async (
    data: z.infer<typeof schemas.department>,
    passthrough: { collegeID: number },
 ) => {
-   await collagesStore.insertWithDepartment(
+   await collegesStore.insertWithDepartment(
       passthrough.collegeID,
       data.name,
       data.description || "",
@@ -303,7 +288,7 @@ const updateDepartment = async (
    data: z.infer<typeof schemas.department>,
    passthrough: { collegeID: number, departmentID: number },
 ) => {
-   await collagesStore.updateDepartment(
+   await collegesStore.updateDepartment(
       passthrough.departmentID,
       passthrough.collegeID,
       data.name,
