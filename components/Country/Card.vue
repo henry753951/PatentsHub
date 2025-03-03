@@ -3,6 +3,7 @@ interface CountryCardProps {
    title: string;
    isoCode: string;
    caseCount: number;
+   isSelected: boolean;
 }
 
 const props = defineProps<CountryCardProps>();
@@ -14,10 +15,15 @@ const capitalizeFirstLetter = (string: string) => {
 </script>
 
 <template>
-   <div class="relative px-6 pt-12 pb-6 bg-white rounded-xl">
-      <CountryFlag :name=props.title />
+   <div
+      :class="{ 'border-2 border-red-500': props.isSelected }"
+      class="relative px-6 pt-12 pb-6 bg-white rounded-xl"
+   >
+      <CountryFlag :name="props.title" />
       <div class="text-center">
-         <h2 class="mb-1 text-lg text-neutral-900">{{ capitalizeFirstLetter(props.title) }}</h2>
+         <h2 class="mb-1 text-lg text-neutral-900">
+            {{ capitalizeFirstLetter(props.title) }}
+         </h2>
          <p class="mb-8 text-sm text-stone-500">ISOCode: {{ isoCode }}</p>
          <div class="mb-8">
             <div

@@ -10,6 +10,9 @@ type Country = RouterOutput["data"]["country"]["getAllContries"][0];
 onMounted(async () => {
    await countriesStore.refresh();
 });
+// 勾選模式狀態
+const isSelectionMode = ref(false);
+const selectedCountries = ref<Set<number>>(new Set());
 
 // Pinia store
 const countriesStore = useCountriesStore();
@@ -48,9 +51,32 @@ const addCountry = async (
 ) => {
    await countriesStore.insert(data.id, data.countryname, data.isocode);
 };
-
+// 刪除單個國家
+const deleteCountry = async (countryID: number) => {
+   countriesStore.delete(countryID);
+};
+// 刪除選中的國家
+const deleteCountries = async () => {
+   for (const countryID of selectedCountries.value) {
+      await countriesStore.delete(countryID);
+   }
+   selectedCountries.value.clear();
+};
+// 刪除所有國家
+const deleteAllCountries = async () => {
+   await countriesStore.clearCountries();
+};
 // 使用模態框
 const { openAutoModal } = useModals();
+
+// 勾選或取消勾選國家
+const toggleCountrySelection = (countryID: number) => {
+   if (selectedCountries.value.has(countryID)) {
+      selectedCountries.value.delete(countryID);
+   } else {
+      selectedCountries.value.add(countryID);
+   }
+};
 </script>
 
 <template>
@@ -61,6 +87,7 @@ const { openAutoModal } = useModals();
          >
             <button
                class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
+               v-tooltip.top="'新增國家'"
             >
                <Icon
                   name="uil:create-dashboard"
@@ -78,9 +105,20 @@ const { openAutoModal } = useModals();
             </button>
             <button
                class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
+               v-tooltip.top="'點選國家可以大量刪除'"
             >
                <Icon
                   name="mdi:delete-sweep-outline"
+                  class="w-6 h-6 text-black dark:text-white"
+               />
+            </button>
+            <button
+               class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
+               v-tooltip.top="'清空所有國家ㄑ'"
+               @click="deleteAllCountries"
+            >
+               <Icon
+                  name="icon-park-outline:clear"
                   class="w-6 h-6 text-black dark:text-white"
                />
             </button>
@@ -96,6 +134,8 @@ const { openAutoModal } = useModals();
             :title="country.CountryName"
             :iso-code="country.ISOCode"
             case-count="95"
+            :is-selected="selectedCountries.has(country.CountryID)"
+            @click="toggleCountrySelection(country.CountryID)"
          />
       </div>
    </div>

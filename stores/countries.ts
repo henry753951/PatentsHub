@@ -13,8 +13,7 @@ export const useCountriesStore = defineStore("countriesStore", {
                const data = await $trpc.data.country.getAllContries.query();
                initialState.countries = data;
                initialState.isInitialized = true;
-            }
-            catch (error) {
+            } catch (error) {
                console.error("Failed to initialize countries:", error);
             }
          })();
@@ -58,6 +57,12 @@ export const useCountriesStore = defineStore("countriesStore", {
             countryName: countryname,
             isoCode: isocode,
          });
+         await this.refresh();
+      },
+      // 清空所有 Country
+      async clearCountries() {
+         const { $trpc } = useNuxtApp();
+         await $trpc.data.country.clearCountries.mutate();
          await this.refresh();
       },
    },
