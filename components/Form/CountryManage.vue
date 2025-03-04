@@ -12,7 +12,7 @@ onMounted(async () => {
 });
 // 勾選模式狀態
 const isSelectionMode = ref(false);
-const selectedCountries = ref<Set<number>>(new Set());
+const selectedCountries = ref<Set<Country>>(new Set());
 
 // Pinia store
 const countriesStore = useCountriesStore();
@@ -20,7 +20,6 @@ const { countries } = storeToRefs(countriesStore);
 
 const schemas = {
    country: z.object({
-      id: z.number({ message: "無效的 ID" }),
       countryname: z
          .string({ required_error: "國家名稱不可為空" })
          .nonempty("國家名稱不可為空"),
@@ -32,11 +31,8 @@ const schemas = {
 
 const fields = {
    country: {
-      id: {
-         label: "ID",
-      },
       countryname: {
-         label: "國家名稱",
+         label: "國家名稱(全英文小寫可自動抓國旗)",
       },
       isocode: {
          label: "ISO 代碼",
@@ -49,32 +45,67 @@ const addCountry = async (
    data: z.infer<typeof schemas.country>,
    passthrough: any,
 ) => {
-   await countriesStore.insert(data.id, data.countryname, data.isocode);
+   await countriesStore.insert(data.countryname, data.isocode);
+};
+
+// 編輯國家
+const editCountryByCard = (country: Country) => {
+   openAutoModal(
+      "編輯國家",
+      "編輯國家資訊",
+      schemas.country,
+      editCountry,
+      fields.country,
+      { countryID: country.CountryID },
+      {
+         countryname: country.CountryName,
+         isocode: country.ISOCode || "",
+      },
+   );
+};
+const editCountry = async (
+   data: z.infer<typeof schemas.country>,
+   passthrough: { countryID: number },
+) => {
+   await countriesStore.updateCountry(
+      passthrough.countryID,
+      data.countryname,
+      data.isocode,
+   );
 };
 // 刪除單個國家
-const deleteCountry = async (countryID: number) => {
-   countriesStore.delete(countryID);
+const deleteCountry = async (data: any, passthrough: { countryID: number }) => {
+   await countriesStore.delete(passthrough.countryID);
 };
-// 刪除選中的國家
-const deleteCountries = async () => {
-   for (const countryID of selectedCountries.value) {
-      await countriesStore.delete(countryID);
+
+// 刪除選擇的多個國家
+const deleteSelectedCountries = async () => {
+   for (const country of selectedCountries.value) {
+      await deleteCountry({}, { countryID: country.CountryID });
    }
    selectedCountries.value.clear();
+   await countriesStore.refresh(); // 確保狀態被正確更新
 };
+
 // 刪除所有國家
 const deleteAllCountries = async () => {
    await countriesStore.clearCountries();
 };
+
 // 使用模態框
 const { openAutoModal } = useModals();
 
-// 勾選或取消勾選國家
-const toggleCountrySelection = (countryID: number) => {
-   if (selectedCountries.value.has(countryID)) {
-      selectedCountries.value.delete(countryID);
+// 檢查國家是否被選中
+const isSelected = (country: Country) => {
+   return selectedCountries.value.has(country);
+};
+
+// 選擇或取消選擇國家
+const toggleCountrySelection = (country: Country) => {
+   if (isSelected(country)) {
+      selectedCountries.value.delete(country);
    } else {
-      selectedCountries.value.add(countryID);
+      selectedCountries.value.add(country);
    }
 };
 </script>
@@ -106,6 +137,15 @@ const toggleCountrySelection = (countryID: number) => {
             <button
                class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
                v-tooltip.top="'點選國家可以大量刪除'"
+               @click="
+                  openAutoModal(
+                     '確認刪除',
+                     '你確定要刪除選擇的國家嗎？',
+                     z.object({}),
+                     deleteSelectedCountries,
+                     undefined,
+                  )
+               "
             >
                <Icon
                   name="mdi:delete-sweep-outline"
@@ -134,8 +174,9 @@ const toggleCountrySelection = (countryID: number) => {
             :title="country.CountryName"
             :iso-code="country.ISOCode"
             case-count="95"
-            :is-selected="selectedCountries.has(country.CountryID)"
-            @click="toggleCountrySelection(country.CountryID)"
+            :is-selected="isSelected(country)"
+            @click="toggleCountrySelection(country)"
+            @edit="editCountryByCard(country)"
          />
       </div>
    </div>
