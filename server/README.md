@@ -146,7 +146,7 @@ model Country {
 但你就要自己定義這個格式的 ZOD Schema，所以可以引入生成的 ZOD Schema 來挑選你要的格式 (dbZ)
 
 ```ts
-import { dbZ, prisma } from "../prisma";
+import { dbZ, prisma } from "~/server";
 
 export default router({
    insertCountry: procedure

@@ -23,9 +23,8 @@ export const useForm = <
 ) => {
    const cache = ref<TValues | null>(null);
    const form = useVeeForm(opts);
-
    watch(form.values, (values) => {
-      if (Object.values(values).some(v => v !== undefined)) {
+      if (Object.values(values).some((v) => v !== undefined)) {
          cache.value = { ...values };
       }
       else if (cache.value) {

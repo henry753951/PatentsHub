@@ -1,6 +1,6 @@
 model College {
   CollegeID   Int          @id @default(autoincrement())
-  Name        String
+  Name        String       @unique
   Description String?
   departments Department[]
   patents     Patent[]
@@ -8,7 +8,7 @@ model College {
 
 model Department {
   DepartmentID Int        @id @default(autoincrement())
-  Name         String
+  Name         String     @unique
   CollegeID    Int
   Description  String?
   college      College    @relation(fields: [CollegeID], references: [CollegeID], onDelete: Cascade)
@@ -18,8 +18,8 @@ model Department {
 
 model Country {
   CountryID    Int                     @id @default(autoincrement())
-  CountryName  String
-  ISOCode      String
+  CountryName  String                  @unique
+  ISOCode      String                  @unique
   applications PatentApplicationData[]
 }
 
