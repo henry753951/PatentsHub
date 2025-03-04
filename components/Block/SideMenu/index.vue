@@ -48,6 +48,14 @@ const navItems = [
       to: { name: "patents-view" },
    },
    {
+      title: "國家",
+      icon: {
+         normal: "solar:flag-linear",
+         active: "solar:flag-bold-duotone",
+      },
+      to: { name: "country-view" },
+   },
+   {
       title: "搜尋",
       icon: {
          normal: "basil:search-outline",
