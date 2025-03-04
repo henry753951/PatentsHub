@@ -21,11 +21,6 @@ const viteElectronBuildConfig = (type: "es" | "cjs", ext: string) => {
             "~": __dirname,
          },
       },
-      // Disable Vite's optimization of dependencies
-      optimizeDeps: {
-         entries: ["components/**/*.vue"],
-         include: ["zod", "vee-validate", "lucide-vue-next", "@vee-validate/zod"],
-      },
    } as InlineConfig;
 };
 
@@ -91,8 +86,27 @@ export default defineNuxtConfig({
       preset: "static",
    },
    experimental: {
-      appManifest: false,
       watcher: "parcel",
+      buildCache: true,
+      typedPages: true,
+   },
+   vite: {
+      optimizeDeps: {
+         entries: ["components/**/*.vue"],
+         include: [
+            "zod",
+            "vee-validate",
+            "@vee-validate/zod",
+            "class-variance-authority",
+            "tailwind-merge",
+            "clsx",
+            "overlayscrollbars-vue",
+            "primevue/tooltip",
+            "radix-vue",
+            "radix-ui",
+            "lucide-vue-next",
+         ],
+      },
    },
    compatibilityDate: "2024-11-01",
 });
