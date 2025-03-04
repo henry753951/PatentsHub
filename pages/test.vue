@@ -46,6 +46,15 @@
             author="me"
          />
       </div>
+      <BlockPatentInventorRow
+         class="h-[88px]"
+         name="XXX"
+         job="XX"
+         :belong="{
+            college: 'college',
+            department: 'department',
+         }"
+      />
       <BlockPatentInventorEditList />
    </div>
 </template>

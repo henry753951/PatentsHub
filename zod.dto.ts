@@ -41,4 +41,7 @@ const PatentInventor = z.object({
    ),
 });
 
-export default { PatentCreate, PatentInventor };
+export const CustomZodType = {
+   PatentCreate,
+   PatentInventor,
+};

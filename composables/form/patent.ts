@@ -1,6 +1,6 @@
 import { toTypedSchema } from "@vee-validate/zod";
 import type { z } from "zod";
-import CustomZodType from "~/zod.dto";
+import { CustomZodType } from "~/zod.dto";
 export const patent = {
    useCreation: () => {
       const { $trpc } = useNuxtApp();

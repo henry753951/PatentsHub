@@ -26,6 +26,9 @@ const viteElectronBuildConfig = (type: "es" | "cjs", ext: string) => {
 
 // https://nuxt.com/docs/api/configuration/nuxt-config@ext:hwencc.html-tag-wrapper
 export default defineNuxtConfig({
+   imports: {
+      dirs: ["composables", "composables/*/index.{ts,js,mjs,mts}"],
+   },
    modules: [
       "nuxt-typed-router",
       "nuxt-lodash",

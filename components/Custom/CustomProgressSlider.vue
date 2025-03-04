@@ -1,7 +1,7 @@
 <template>
    <div
       ref="container"
-      class="w-full rounded-lg h-5 bg-zinc-200 dark:bg-zinc-700 cursor-pointer"
+      class="w-full rounded-lg bg-zinc-200 dark:bg-zinc-700 cursor-pointer"
       @mousedown="isDragging = true"
       @mouseup="isDragging = false"
       @selectstart.prevent

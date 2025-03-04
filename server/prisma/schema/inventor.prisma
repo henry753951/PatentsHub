@@ -1,10 +1,9 @@
 model Inventor {
   InventorID    Int              @id @default(autoincrement())
   Name          String
-  Department    Int
-  Email         String?
+  DepartmentID    Int
   ContactInfoID Int?             @unique
-  department    Department       @relation(fields: [Department], references: [DepartmentID])
+  department    Department       @relation(fields: [DepartmentID], references: [DepartmentID])
   contactInfo   ContactInfo?     @relation("InventorContact", fields: [ContactInfoID], references: [ContactInfoID])
   patents       PatentInventor[]
 }
