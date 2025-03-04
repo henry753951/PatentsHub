@@ -148,8 +148,7 @@
             />
          </div>
       </template>
-      <div>{{ form.inventors[0].value }}</div>
-      <div>{{ patentCreation.values }}</div>
+      <div>{{ patentCreation.errors }}</div>
    </div>
 </template>
 
@@ -188,7 +187,7 @@ const form = {
 watch(form.insideInventors.value, (value) => {
    form.inventors[0].value = value.map((inventor) => ({
       inventorID: inventor.id,
-      isMain: false,
+      isMain: inventor.isMain,
       contribution: inventor.contribution,
    }));
 }, { deep: true });

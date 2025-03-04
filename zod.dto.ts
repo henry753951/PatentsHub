@@ -26,7 +26,10 @@ const PatentCreate = z.object({
          keywords: z.array(z.string()),
          maturityLevel: z.string(),
       })
-      .required(),
+      .default({
+         keywords: [],
+         maturityLevel: "",
+      }),
 });
 
 const PatentInventor = z.object({

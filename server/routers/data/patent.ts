@@ -3,11 +3,7 @@ import { procedure, router } from "../../trpc";
 import { CustomZodType } from "~/zod.dto";
 export default router({
    createPatent: procedure
-      .input(
-         CustomZodType.PatentCreate.merge(
-            CustomZodType.PatentInventor,
-         ),
-      )
+      .input(CustomZodType.PatentCreate.merge(CustomZodType.PatentInventor))
       .mutation(async ({ input }) => {
          return await prisma.patent.create({
             data: {
@@ -31,18 +27,13 @@ export default router({
                },
                application: {
                   create: {
-                     country: {
-                        connect: {
-                           CountryID: input.countryId,
-                        },
-                     },
                      PatentType: input.type,
                   },
                },
                inventors: {
                   create: input.inventors.map((inventor) => ({
                      Main: inventor.isMain,
-                     contribution: inventor.contribution,
+                     Contribution: inventor.contribution,
                      inventor: {
                         connect: {
                            InventorID: inventor.inventorID,
