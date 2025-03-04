@@ -29,7 +29,9 @@ Main technologies used in this project are:
 ├── server/     # tRPC 溝通 Router [Main Process]
 |   └── ...     # 請看 server/README.md
 |
-└── ...         # Nuxt.js 檔案 [Renderer Process]
+├── ...         # Nuxt.js 檔案 [Renderer Process]
+└── stores/
+    └── ...     # 請看 stores/README.md
 ```
 ### Initial setup
 

@@ -1,4 +1,5 @@
 .vscode
+.git
 noed_modules
 .output
 dist

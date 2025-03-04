@@ -93,7 +93,7 @@
                v-slot="{ componentField }"
                name="belongs"
             >
-               <FormItem v-auto-animate>
+               <FormItem>
                   <FormLabel>學院與系所</FormLabel>
                   <FormDepartmentSelect v-bind="componentField" />
                </FormItem>

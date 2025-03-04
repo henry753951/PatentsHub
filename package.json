@@ -65,7 +65,7 @@
       "@nuxt/kit": "^3.15.2",
       "@nuxtjs/color-mode": "^3.5.2",
       "@nuxtjs/tailwindcss": "npm:@nuxtjs/tailwindcss@nightly",
-      "@parcel/watcher": "^2.5.0",
+      "@parcel/watcher": "^2.5.1",
       "@stylistic/eslint-plugin": "^2.13.0",
       "@stylistic/eslint-plugin-js": "^2.13.0",
       "@stylistic/eslint-plugin-jsx": "^2.13.0",
