@@ -14,7 +14,6 @@ export default router({
    createCountry: procedure
       .input(
          z.object({
-            countryID: z.number(),
             countryName: z.string(),
             isoCode: z.string(),
          }),
@@ -22,7 +21,6 @@ export default router({
       .mutation(({ input }) => {
          return prisma.country.create({
             data: {
-               CountryID: input.countryID,
                CountryName: input.countryName,
                ISOCode: input.isoCode,
             },

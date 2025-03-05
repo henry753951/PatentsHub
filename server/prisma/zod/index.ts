@@ -22,7 +22,7 @@ export const FundingPlanScalarFieldEnumSchema = z.enum(['PlanID','PlanType']);
 
 export const PatentFundingScalarFieldEnumSchema = z.enum(['FundingID','PatentID','FundingAgency','ProjectNumber','PlanID']);
 
-export const InventorScalarFieldEnumSchema = z.enum(['InventorID','Name','Department','Email','ContactInfoID']);
+export const InventorScalarFieldEnumSchema = z.enum(['InventorID','Name','DepartmentID','ContactInfoID']);
 
 export const PatentInventorScalarFieldEnumSchema = z.enum(['PatentID','InventorID','Main','Contribution']);
 
@@ -126,8 +126,7 @@ export type PatentFunding = z.infer<typeof PatentFundingSchema>
 export const InventorSchema = z.object({
   InventorID: z.number().int(),
   Name: z.string(),
-  Department: z.number().int(),
-  Email: z.string().nullable(),
+  DepartmentID: z.number().int(),
   ContactInfoID: z.number().int().nullable(),
 })
 
@@ -427,8 +426,7 @@ export const InventorCountOutputTypeSelectSchema: z.ZodType<Prisma.InventorCount
 export const InventorSelectSchema: z.ZodType<Prisma.InventorSelect> = z.object({
   InventorID: z.boolean().optional(),
   Name: z.boolean().optional(),
-  Department: z.boolean().optional(),
-  Email: z.boolean().optional(),
+  DepartmentID: z.boolean().optional(),
   ContactInfoID: z.boolean().optional(),
   department: z.union([z.boolean(),z.lazy(() => DepartmentArgsSchema)]).optional(),
   contactInfo: z.union([z.boolean(),z.lazy(() => ContactInfoArgsSchema)]).optional(),
@@ -1033,8 +1031,7 @@ export const InventorWhereInputSchema: z.ZodType<Prisma.InventorWhereInput> = z.
   NOT: z.union([ z.lazy(() => InventorWhereInputSchema),z.lazy(() => InventorWhereInputSchema).array() ]).optional(),
   InventorID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  Department: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  Email: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  DepartmentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   ContactInfoID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
   department: z.union([ z.lazy(() => DepartmentScalarRelationFilterSchema),z.lazy(() => DepartmentWhereInputSchema) ]).optional(),
   contactInfo: z.union([ z.lazy(() => ContactInfoNullableScalarRelationFilterSchema),z.lazy(() => ContactInfoWhereInputSchema) ]).optional().nullable(),
@@ -1044,8 +1041,7 @@ export const InventorWhereInputSchema: z.ZodType<Prisma.InventorWhereInput> = z.
 export const InventorOrderByWithRelationInputSchema: z.ZodType<Prisma.InventorOrderByWithRelationInput> = z.object({
   InventorID: z.lazy(() => SortOrderSchema).optional(),
   Name: z.lazy(() => SortOrderSchema).optional(),
-  Department: z.lazy(() => SortOrderSchema).optional(),
-  Email: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  DepartmentID: z.lazy(() => SortOrderSchema).optional(),
   ContactInfoID: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   department: z.lazy(() => DepartmentOrderByWithRelationInputSchema).optional(),
   contactInfo: z.lazy(() => ContactInfoOrderByWithRelationInputSchema).optional(),
@@ -1071,8 +1067,7 @@ export const InventorWhereUniqueInputSchema: z.ZodType<Prisma.InventorWhereUniqu
   OR: z.lazy(() => InventorWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => InventorWhereInputSchema),z.lazy(() => InventorWhereInputSchema).array() ]).optional(),
   Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  Department: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  Email: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  DepartmentID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   department: z.union([ z.lazy(() => DepartmentScalarRelationFilterSchema),z.lazy(() => DepartmentWhereInputSchema) ]).optional(),
   contactInfo: z.union([ z.lazy(() => ContactInfoNullableScalarRelationFilterSchema),z.lazy(() => ContactInfoWhereInputSchema) ]).optional().nullable(),
   patents: z.lazy(() => PatentInventorListRelationFilterSchema).optional()
@@ -1081,8 +1076,7 @@ export const InventorWhereUniqueInputSchema: z.ZodType<Prisma.InventorWhereUniqu
 export const InventorOrderByWithAggregationInputSchema: z.ZodType<Prisma.InventorOrderByWithAggregationInput> = z.object({
   InventorID: z.lazy(() => SortOrderSchema).optional(),
   Name: z.lazy(() => SortOrderSchema).optional(),
-  Department: z.lazy(() => SortOrderSchema).optional(),
-  Email: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  DepartmentID: z.lazy(() => SortOrderSchema).optional(),
   ContactInfoID: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   _count: z.lazy(() => InventorCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => InventorAvgOrderByAggregateInputSchema).optional(),
@@ -1097,8 +1091,7 @@ export const InventorScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Inve
   NOT: z.union([ z.lazy(() => InventorScalarWhereWithAggregatesInputSchema),z.lazy(() => InventorScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   InventorID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   Name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  Department: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  Email: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  DepartmentID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   ContactInfoID: z.union([ z.lazy(() => IntNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
 }).strict();
 
@@ -1530,15 +1523,24 @@ export const CollegeOrderByWithRelationInputSchema: z.ZodType<Prisma.CollegeOrde
   patents: z.lazy(() => PatentOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
-export const CollegeWhereUniqueInputSchema: z.ZodType<Prisma.CollegeWhereUniqueInput> = z.object({
-  CollegeID: z.number().int()
-})
+export const CollegeWhereUniqueInputSchema: z.ZodType<Prisma.CollegeWhereUniqueInput> = z.union([
+  z.object({
+    CollegeID: z.number().int(),
+    Name: z.string()
+  }),
+  z.object({
+    CollegeID: z.number().int(),
+  }),
+  z.object({
+    Name: z.string(),
+  }),
+])
 .and(z.object({
   CollegeID: z.number().int().optional(),
+  Name: z.string().optional(),
   AND: z.union([ z.lazy(() => CollegeWhereInputSchema),z.lazy(() => CollegeWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => CollegeWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => CollegeWhereInputSchema),z.lazy(() => CollegeWhereInputSchema).array() ]).optional(),
-  Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   Description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   departments: z.lazy(() => DepartmentListRelationFilterSchema).optional(),
   patents: z.lazy(() => PatentListRelationFilterSchema).optional()
@@ -1587,15 +1589,24 @@ export const DepartmentOrderByWithRelationInputSchema: z.ZodType<Prisma.Departme
   patents: z.lazy(() => PatentOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
-export const DepartmentWhereUniqueInputSchema: z.ZodType<Prisma.DepartmentWhereUniqueInput> = z.object({
-  DepartmentID: z.number().int()
-})
+export const DepartmentWhereUniqueInputSchema: z.ZodType<Prisma.DepartmentWhereUniqueInput> = z.union([
+  z.object({
+    DepartmentID: z.number().int(),
+    Name: z.string()
+  }),
+  z.object({
+    DepartmentID: z.number().int(),
+  }),
+  z.object({
+    Name: z.string(),
+  }),
+])
 .and(z.object({
   DepartmentID: z.number().int().optional(),
+  Name: z.string().optional(),
   AND: z.union([ z.lazy(() => DepartmentWhereInputSchema),z.lazy(() => DepartmentWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => DepartmentWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => DepartmentWhereInputSchema),z.lazy(() => DepartmentWhereInputSchema).array() ]).optional(),
-  Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   CollegeID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   Description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   college: z.union([ z.lazy(() => CollegeScalarRelationFilterSchema),z.lazy(() => CollegeWhereInputSchema) ]).optional(),
@@ -1642,16 +1653,41 @@ export const CountryOrderByWithRelationInputSchema: z.ZodType<Prisma.CountryOrde
   applications: z.lazy(() => PatentApplicationDataOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
-export const CountryWhereUniqueInputSchema: z.ZodType<Prisma.CountryWhereUniqueInput> = z.object({
-  CountryID: z.number().int()
-})
+export const CountryWhereUniqueInputSchema: z.ZodType<Prisma.CountryWhereUniqueInput> = z.union([
+  z.object({
+    CountryID: z.number().int(),
+    CountryName: z.string(),
+    ISOCode: z.string()
+  }),
+  z.object({
+    CountryID: z.number().int(),
+    CountryName: z.string(),
+  }),
+  z.object({
+    CountryID: z.number().int(),
+    ISOCode: z.string(),
+  }),
+  z.object({
+    CountryID: z.number().int(),
+  }),
+  z.object({
+    CountryName: z.string(),
+    ISOCode: z.string(),
+  }),
+  z.object({
+    CountryName: z.string(),
+  }),
+  z.object({
+    ISOCode: z.string(),
+  }),
+])
 .and(z.object({
   CountryID: z.number().int().optional(),
+  CountryName: z.string().optional(),
+  ISOCode: z.string().optional(),
   AND: z.union([ z.lazy(() => CountryWhereInputSchema),z.lazy(() => CountryWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => CountryWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => CountryWhereInputSchema),z.lazy(() => CountryWhereInputSchema).array() ]).optional(),
-  CountryName: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  ISOCode: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   applications: z.lazy(() => PatentApplicationDataListRelationFilterSchema).optional()
 }).strict());
 
@@ -1975,7 +2011,6 @@ export const PatentFundingUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Paten
 
 export const InventorCreateInputSchema: z.ZodType<Prisma.InventorCreateInput> = z.object({
   Name: z.string(),
-  Email: z.string().optional().nullable(),
   department: z.lazy(() => DepartmentCreateNestedOneWithoutInventorsInputSchema),
   contactInfo: z.lazy(() => ContactInfoCreateNestedOneWithoutInventorInputSchema).optional(),
   patents: z.lazy(() => PatentInventorCreateNestedManyWithoutInventorInputSchema).optional()
@@ -1984,15 +2019,13 @@ export const InventorCreateInputSchema: z.ZodType<Prisma.InventorCreateInput> = 
 export const InventorUncheckedCreateInputSchema: z.ZodType<Prisma.InventorUncheckedCreateInput> = z.object({
   InventorID: z.number().int().optional(),
   Name: z.string(),
-  Department: z.number().int(),
-  Email: z.string().optional().nullable(),
+  DepartmentID: z.number().int(),
   ContactInfoID: z.number().int().optional().nullable(),
   patents: z.lazy(() => PatentInventorUncheckedCreateNestedManyWithoutInventorInputSchema).optional()
 }).strict();
 
 export const InventorUpdateInputSchema: z.ZodType<Prisma.InventorUpdateInput> = z.object({
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   department: z.lazy(() => DepartmentUpdateOneRequiredWithoutInventorsNestedInputSchema).optional(),
   contactInfo: z.lazy(() => ContactInfoUpdateOneWithoutInventorNestedInputSchema).optional(),
   patents: z.lazy(() => PatentInventorUpdateManyWithoutInventorNestedInputSchema).optional()
@@ -2001,8 +2034,7 @@ export const InventorUpdateInputSchema: z.ZodType<Prisma.InventorUpdateInput> = 
 export const InventorUncheckedUpdateInputSchema: z.ZodType<Prisma.InventorUncheckedUpdateInput> = z.object({
   InventorID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Department: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  DepartmentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ContactInfoID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   patents: z.lazy(() => PatentInventorUncheckedUpdateManyWithoutInventorNestedInputSchema).optional()
 }).strict();
@@ -2010,21 +2042,18 @@ export const InventorUncheckedUpdateInputSchema: z.ZodType<Prisma.InventorUnchec
 export const InventorCreateManyInputSchema: z.ZodType<Prisma.InventorCreateManyInput> = z.object({
   InventorID: z.number().int().optional(),
   Name: z.string(),
-  Department: z.number().int(),
-  Email: z.string().optional().nullable(),
+  DepartmentID: z.number().int(),
   ContactInfoID: z.number().int().optional().nullable()
 }).strict();
 
 export const InventorUpdateManyMutationInputSchema: z.ZodType<Prisma.InventorUpdateManyMutationInput> = z.object({
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const InventorUncheckedUpdateManyInputSchema: z.ZodType<Prisma.InventorUncheckedUpdateManyInput> = z.object({
   InventorID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Department: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  DepartmentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ContactInfoID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
@@ -2945,36 +2974,33 @@ export const PatentInventorOrderByRelationAggregateInputSchema: z.ZodType<Prisma
 export const InventorCountOrderByAggregateInputSchema: z.ZodType<Prisma.InventorCountOrderByAggregateInput> = z.object({
   InventorID: z.lazy(() => SortOrderSchema).optional(),
   Name: z.lazy(() => SortOrderSchema).optional(),
-  Department: z.lazy(() => SortOrderSchema).optional(),
-  Email: z.lazy(() => SortOrderSchema).optional(),
+  DepartmentID: z.lazy(() => SortOrderSchema).optional(),
   ContactInfoID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const InventorAvgOrderByAggregateInputSchema: z.ZodType<Prisma.InventorAvgOrderByAggregateInput> = z.object({
   InventorID: z.lazy(() => SortOrderSchema).optional(),
-  Department: z.lazy(() => SortOrderSchema).optional(),
+  DepartmentID: z.lazy(() => SortOrderSchema).optional(),
   ContactInfoID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const InventorMaxOrderByAggregateInputSchema: z.ZodType<Prisma.InventorMaxOrderByAggregateInput> = z.object({
   InventorID: z.lazy(() => SortOrderSchema).optional(),
   Name: z.lazy(() => SortOrderSchema).optional(),
-  Department: z.lazy(() => SortOrderSchema).optional(),
-  Email: z.lazy(() => SortOrderSchema).optional(),
+  DepartmentID: z.lazy(() => SortOrderSchema).optional(),
   ContactInfoID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const InventorMinOrderByAggregateInputSchema: z.ZodType<Prisma.InventorMinOrderByAggregateInput> = z.object({
   InventorID: z.lazy(() => SortOrderSchema).optional(),
   Name: z.lazy(() => SortOrderSchema).optional(),
-  Department: z.lazy(() => SortOrderSchema).optional(),
-  Email: z.lazy(() => SortOrderSchema).optional(),
+  DepartmentID: z.lazy(() => SortOrderSchema).optional(),
   ContactInfoID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const InventorSumOrderByAggregateInputSchema: z.ZodType<Prisma.InventorSumOrderByAggregateInput> = z.object({
   InventorID: z.lazy(() => SortOrderSchema).optional(),
-  Department: z.lazy(() => SortOrderSchema).optional(),
+  DepartmentID: z.lazy(() => SortOrderSchema).optional(),
   ContactInfoID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -5385,7 +5411,6 @@ export const PatentCreateOrConnectWithoutInventorsInputSchema: z.ZodType<Prisma.
 
 export const InventorCreateWithoutPatentsInputSchema: z.ZodType<Prisma.InventorCreateWithoutPatentsInput> = z.object({
   Name: z.string(),
-  Email: z.string().optional().nullable(),
   department: z.lazy(() => DepartmentCreateNestedOneWithoutInventorsInputSchema),
   contactInfo: z.lazy(() => ContactInfoCreateNestedOneWithoutInventorInputSchema).optional()
 }).strict();
@@ -5393,8 +5418,7 @@ export const InventorCreateWithoutPatentsInputSchema: z.ZodType<Prisma.InventorC
 export const InventorUncheckedCreateWithoutPatentsInputSchema: z.ZodType<Prisma.InventorUncheckedCreateWithoutPatentsInput> = z.object({
   InventorID: z.number().int().optional(),
   Name: z.string(),
-  Department: z.number().int(),
-  Email: z.string().optional().nullable(),
+  DepartmentID: z.number().int(),
   ContactInfoID: z.number().int().optional().nullable()
 }).strict();
 
@@ -5458,7 +5482,6 @@ export const InventorUpdateToOneWithWhereWithoutPatentsInputSchema: z.ZodType<Pr
 
 export const InventorUpdateWithoutPatentsInputSchema: z.ZodType<Prisma.InventorUpdateWithoutPatentsInput> = z.object({
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   department: z.lazy(() => DepartmentUpdateOneRequiredWithoutInventorsNestedInputSchema).optional(),
   contactInfo: z.lazy(() => ContactInfoUpdateOneWithoutInventorNestedInputSchema).optional()
 }).strict();
@@ -5466,8 +5489,7 @@ export const InventorUpdateWithoutPatentsInputSchema: z.ZodType<Prisma.InventorU
 export const InventorUncheckedUpdateWithoutPatentsInputSchema: z.ZodType<Prisma.InventorUncheckedUpdateWithoutPatentsInput> = z.object({
   InventorID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Department: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  DepartmentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ContactInfoID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
@@ -6302,7 +6324,6 @@ export const CollegeCreateOrConnectWithoutDepartmentsInputSchema: z.ZodType<Pris
 
 export const InventorCreateWithoutDepartmentInputSchema: z.ZodType<Prisma.InventorCreateWithoutDepartmentInput> = z.object({
   Name: z.string(),
-  Email: z.string().optional().nullable(),
   contactInfo: z.lazy(() => ContactInfoCreateNestedOneWithoutInventorInputSchema).optional(),
   patents: z.lazy(() => PatentInventorCreateNestedManyWithoutInventorInputSchema).optional()
 }).strict();
@@ -6310,7 +6331,6 @@ export const InventorCreateWithoutDepartmentInputSchema: z.ZodType<Prisma.Invent
 export const InventorUncheckedCreateWithoutDepartmentInputSchema: z.ZodType<Prisma.InventorUncheckedCreateWithoutDepartmentInput> = z.object({
   InventorID: z.number().int().optional(),
   Name: z.string(),
-  Email: z.string().optional().nullable(),
   ContactInfoID: z.number().int().optional().nullable(),
   patents: z.lazy(() => PatentInventorUncheckedCreateNestedManyWithoutInventorInputSchema).optional()
 }).strict();
@@ -6410,8 +6430,7 @@ export const InventorScalarWhereInputSchema: z.ZodType<Prisma.InventorScalarWher
   NOT: z.union([ z.lazy(() => InventorScalarWhereInputSchema),z.lazy(() => InventorScalarWhereInputSchema).array() ]).optional(),
   InventorID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  Department: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  Email: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  DepartmentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   ContactInfoID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
 }).strict();
 
@@ -6505,7 +6524,6 @@ export const AgencyContactPersonCreateOrConnectWithoutContactInfoInputSchema: z.
 
 export const InventorCreateWithoutContactInfoInputSchema: z.ZodType<Prisma.InventorCreateWithoutContactInfoInput> = z.object({
   Name: z.string(),
-  Email: z.string().optional().nullable(),
   department: z.lazy(() => DepartmentCreateNestedOneWithoutInventorsInputSchema),
   patents: z.lazy(() => PatentInventorCreateNestedManyWithoutInventorInputSchema).optional()
 }).strict();
@@ -6513,8 +6531,7 @@ export const InventorCreateWithoutContactInfoInputSchema: z.ZodType<Prisma.Inven
 export const InventorUncheckedCreateWithoutContactInfoInputSchema: z.ZodType<Prisma.InventorUncheckedCreateWithoutContactInfoInput> = z.object({
   InventorID: z.number().int().optional(),
   Name: z.string(),
-  Department: z.number().int(),
-  Email: z.string().optional().nullable(),
+  DepartmentID: z.number().int(),
   patents: z.lazy(() => PatentInventorUncheckedCreateNestedManyWithoutInventorInputSchema).optional()
 }).strict();
 
@@ -6558,7 +6575,6 @@ export const InventorUpdateToOneWithWhereWithoutContactInfoInputSchema: z.ZodTyp
 
 export const InventorUpdateWithoutContactInfoInputSchema: z.ZodType<Prisma.InventorUpdateWithoutContactInfoInput> = z.object({
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   department: z.lazy(() => DepartmentUpdateOneRequiredWithoutInventorsNestedInputSchema).optional(),
   patents: z.lazy(() => PatentInventorUpdateManyWithoutInventorNestedInputSchema).optional()
 }).strict();
@@ -6566,8 +6582,7 @@ export const InventorUpdateWithoutContactInfoInputSchema: z.ZodType<Prisma.Inven
 export const InventorUncheckedUpdateWithoutContactInfoInputSchema: z.ZodType<Prisma.InventorUncheckedUpdateWithoutContactInfoInput> = z.object({
   InventorID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Department: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  DepartmentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   patents: z.lazy(() => PatentInventorUncheckedUpdateManyWithoutInventorNestedInputSchema).optional()
 }).strict();
 
@@ -6862,7 +6877,6 @@ export const PatentUncheckedUpdateManyWithoutCollegeInputSchema: z.ZodType<Prism
 export const InventorCreateManyDepartmentInputSchema: z.ZodType<Prisma.InventorCreateManyDepartmentInput> = z.object({
   InventorID: z.number().int().optional(),
   Name: z.string(),
-  Email: z.string().optional().nullable(),
   ContactInfoID: z.number().int().optional().nullable()
 }).strict();
 
@@ -6878,7 +6892,6 @@ export const PatentCreateManyDepartmentInputSchema: z.ZodType<Prisma.PatentCreat
 
 export const InventorUpdateWithoutDepartmentInputSchema: z.ZodType<Prisma.InventorUpdateWithoutDepartmentInput> = z.object({
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   contactInfo: z.lazy(() => ContactInfoUpdateOneWithoutInventorNestedInputSchema).optional(),
   patents: z.lazy(() => PatentInventorUpdateManyWithoutInventorNestedInputSchema).optional()
 }).strict();
@@ -6886,7 +6899,6 @@ export const InventorUpdateWithoutDepartmentInputSchema: z.ZodType<Prisma.Invent
 export const InventorUncheckedUpdateWithoutDepartmentInputSchema: z.ZodType<Prisma.InventorUncheckedUpdateWithoutDepartmentInput> = z.object({
   InventorID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   ContactInfoID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   patents: z.lazy(() => PatentInventorUncheckedUpdateManyWithoutInventorNestedInputSchema).optional()
 }).strict();
@@ -6894,7 +6906,6 @@ export const InventorUncheckedUpdateWithoutDepartmentInputSchema: z.ZodType<Pris
 export const InventorUncheckedUpdateManyWithoutDepartmentInputSchema: z.ZodType<Prisma.InventorUncheckedUpdateManyWithoutDepartmentInput> = z.object({
   InventorID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   ContactInfoID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 

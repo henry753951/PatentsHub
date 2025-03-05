@@ -1,6 +1,6 @@
 import { toTypedSchema } from "@vee-validate/zod";
 import type { z } from "zod";
-import CustomZodType from "~/zod.dto";
+import { CustomZodType } from "~/zod.dto";
 export const patent = {
    useCreation: () => {
       const { $trpc } = useNuxtApp();
@@ -22,7 +22,11 @@ export const patent = {
       const schemas = CustomZodType.PatentCreate.merge(
          CustomZodType.PatentInventor,
       );
-
+      const submitForm = async (values: z.infer<typeof schemas>) => {
+         const json = JSON.stringify(values, null, 2);
+         const object = JSON.parse(json) as z.infer<typeof schemas>;
+         await $trpc.data.patent.createPatent.mutate(object);
+      };
       // ===========================
       const {
          values,
@@ -31,15 +35,12 @@ export const patent = {
          defineField,
          errorBag,
          errors,
+         resetForm,
       } = useForm({
          keepValuesOnUnmount: true,
          validationSchema: toTypedSchema(schemas),
       });
 
-      // ========= 修改這裡 =========
-      handleSubmit(async (values) => {
-         await $trpc.data.patent.createPatent.mutate(values);
-      });
       // ===========================
 
       const currentStep = ref(0);
@@ -54,8 +55,12 @@ export const patent = {
          let isValidate = true;
          for (const key of keys) {
             const { valid } = await validateField(key);
+            console.log(key, valid);
             if (!valid) isValidate = false;
-            consola.info("驗證", key, valid);
+         }
+         if (currentStep.value === steps.length - 1 && isValidate) {
+            submitForm(values as z.infer<typeof schemas>);
+            return;
          }
          if (currentStep.value < steps.length - 1 && isValidate) {
             currentStep.value++;

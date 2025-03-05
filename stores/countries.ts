@@ -30,10 +30,9 @@ export const useCountriesStore = defineStore("countriesStore", {
       },
 
       // 新增 Country
-      async insert(id: number, countryName: string, isoCode: string) {
+      async insert(countryName: string, isoCode: string) {
          const { $trpc } = useNuxtApp();
          const newCountry = await $trpc.data.country.createCountry.mutate({
-            countryID: id,
             countryName: countryName,
             isoCode: isoCode,
          });

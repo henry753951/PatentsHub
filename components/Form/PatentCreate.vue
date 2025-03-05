@@ -140,8 +140,15 @@
          </div>
       </template>
       <template v-else-if="patentCreation.currentStep.value === 1">
+         <div class="space-y-3">
+            <h1>發明人</h1>
+            <BlockPatentInventorEditList
+               v-model="form.insideInventors.value"
+               class="select-none"
+            />
+         </div>
       </template>
-      <div>{{ patentCreation.values }}</div>
+      <div>{{ patentCreation.errors }}</div>
    </div>
 </template>
 
@@ -155,12 +162,35 @@ import {
    TagsInputItemText,
 } from "@/components/ui/tags-input";
 import { TabsInput } from "~/components/ui/tabs";
+interface Inventor {
+   id: number
+   name: string
+   job: string
+   belong: {
+      college: string
+      department: string
+   }
+}
 
 const patentCreation = useFormData().patent.useCreation();
 
 const form = {
-   title: patentCreation.defineField("draftTitle"),
+   insideInventors: ref<
+      (Inventor & {
+         isMain: boolean
+         contribution: number
+      })[]
+   >([]),
+   inventors: patentCreation.defineField("inventors"),
 };
+
+watch(form.insideInventors.value, (value) => {
+   form.inventors[0].value = value.map((inventor) => ({
+      inventorID: inventor.id,
+      isMain: inventor.isMain,
+      contribution: inventor.contribution,
+   }));
+}, { deep: true });
 
 defineExpose({
    patentCreation,
