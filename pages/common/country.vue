@@ -5,9 +5,6 @@
       >
          <FormCountryManage></FormCountryManage>
       </div>
-      <div class="grid grid-cols-3 gap-4 container mx-auto p-6 h-full">
-         <div></div>
-      </div>
    </div>
 </template>
 

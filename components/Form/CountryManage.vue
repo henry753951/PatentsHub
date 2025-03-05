@@ -32,10 +32,10 @@ const schemas = {
 const fields = {
    country: {
       countryname: {
-         label: "國家名稱(全英文小寫可自動抓國旗)",
+         label: "國家名稱",
       },
       isocode: {
-         label: "ISO 代碼",
+         label: "ISO 代碼(需用兩碼代碼，如 TW)",
       },
    } as Config<z.infer<typeof schemas.country>>,
 };
