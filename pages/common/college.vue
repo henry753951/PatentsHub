@@ -6,7 +6,6 @@
          <FormCollegeManage
             v-model="selectedDepartment"
             :selectable="true"
-            @update:model-value="onDepartmentSelected"
          />
       </div>
       <div
@@ -18,30 +17,20 @@
 </template>
 
 <script lang="ts" setup>
-import { useInventorsStore } from "~/stores/inventors";
-
 definePageMeta({
    name: "common-collegeManage",
 });
 
 const collegesStore = useCollegesStore();
-const inventorsStore = useInventorsStore();
 
-const selectedDepartment = ref<Department | null>(null);
+const selectedDepartment = ref<Department>();
 
-type Department = RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
+type Department =
+   RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
 
 onMounted(async () => {
    await collegesStore.refresh();
 });
-
-const onDepartmentSelected = async (department: Department | null) => {
-   selectedDepartment.value = department;
-   if (department) {
-      inventorsStore.setDepartmentFilter(department.DepartmentID);
-      await inventorsStore.fetchInventors(department.DepartmentID);
-   }
-};
 </script>
 
 <style scoped></style>

@@ -259,8 +259,8 @@ export type Country = z.infer<typeof CountrySchema>
 
 export const ContactInfoSchema = z.object({
   ContactInfoID: z.number().int(),
-  Name: z.string(),
-  Email: z.string(),
+  Name: z.string().nullable(),
+  Email: z.string().nullable(),
   OfficeNumber: z.string().nullable(),
   PhoneNumber: z.string().nullable(),
   Position: z.string().nullable(),
@@ -1716,8 +1716,8 @@ export const ContactInfoWhereInputSchema: z.ZodType<Prisma.ContactInfoWhereInput
   OR: z.lazy(() => ContactInfoWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => ContactInfoWhereInputSchema),z.lazy(() => ContactInfoWhereInputSchema).array() ]).optional(),
   ContactInfoID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  Email: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Name: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  Email: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   OfficeNumber: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   PhoneNumber: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   Position: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
@@ -1728,8 +1728,8 @@ export const ContactInfoWhereInputSchema: z.ZodType<Prisma.ContactInfoWhereInput
 
 export const ContactInfoOrderByWithRelationInputSchema: z.ZodType<Prisma.ContactInfoOrderByWithRelationInput> = z.object({
   ContactInfoID: z.lazy(() => SortOrderSchema).optional(),
-  Name: z.lazy(() => SortOrderSchema).optional(),
-  Email: z.lazy(() => SortOrderSchema).optional(),
+  Name: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  Email: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   OfficeNumber: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   PhoneNumber: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   Position: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
@@ -1746,8 +1746,8 @@ export const ContactInfoWhereUniqueInputSchema: z.ZodType<Prisma.ContactInfoWher
   AND: z.union([ z.lazy(() => ContactInfoWhereInputSchema),z.lazy(() => ContactInfoWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => ContactInfoWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => ContactInfoWhereInputSchema),z.lazy(() => ContactInfoWhereInputSchema).array() ]).optional(),
-  Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  Email: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Name: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  Email: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   OfficeNumber: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   PhoneNumber: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   Position: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
@@ -1758,8 +1758,8 @@ export const ContactInfoWhereUniqueInputSchema: z.ZodType<Prisma.ContactInfoWher
 
 export const ContactInfoOrderByWithAggregationInputSchema: z.ZodType<Prisma.ContactInfoOrderByWithAggregationInput> = z.object({
   ContactInfoID: z.lazy(() => SortOrderSchema).optional(),
-  Name: z.lazy(() => SortOrderSchema).optional(),
-  Email: z.lazy(() => SortOrderSchema).optional(),
+  Name: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  Email: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   OfficeNumber: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   PhoneNumber: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   Position: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
@@ -1776,8 +1776,8 @@ export const ContactInfoScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.C
   OR: z.lazy(() => ContactInfoScalarWhereWithAggregatesInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => ContactInfoScalarWhereWithAggregatesInputSchema),z.lazy(() => ContactInfoScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   ContactInfoID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  Name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  Email: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  Name: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  Email: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   OfficeNumber: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   PhoneNumber: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   Position: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
@@ -2555,8 +2555,8 @@ export const CountryUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CountryUnch
 }).strict();
 
 export const ContactInfoCreateInputSchema: z.ZodType<Prisma.ContactInfoCreateInput> = z.object({
-  Name: z.string(),
-  Email: z.string(),
+  Name: z.string().optional().nullable(),
+  Email: z.string().optional().nullable(),
   OfficeNumber: z.string().optional().nullable(),
   PhoneNumber: z.string().optional().nullable(),
   Position: z.string().optional().nullable(),
@@ -2567,8 +2567,8 @@ export const ContactInfoCreateInputSchema: z.ZodType<Prisma.ContactInfoCreateInp
 
 export const ContactInfoUncheckedCreateInputSchema: z.ZodType<Prisma.ContactInfoUncheckedCreateInput> = z.object({
   ContactInfoID: z.number().int().optional(),
-  Name: z.string(),
-  Email: z.string(),
+  Name: z.string().optional().nullable(),
+  Email: z.string().optional().nullable(),
   OfficeNumber: z.string().optional().nullable(),
   PhoneNumber: z.string().optional().nullable(),
   Position: z.string().optional().nullable(),
@@ -2578,8 +2578,8 @@ export const ContactInfoUncheckedCreateInputSchema: z.ZodType<Prisma.ContactInfo
 }).strict();
 
 export const ContactInfoUpdateInputSchema: z.ZodType<Prisma.ContactInfoUpdateInput> = z.object({
-  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   OfficeNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   PhoneNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2590,8 +2590,8 @@ export const ContactInfoUpdateInputSchema: z.ZodType<Prisma.ContactInfoUpdateInp
 
 export const ContactInfoUncheckedUpdateInputSchema: z.ZodType<Prisma.ContactInfoUncheckedUpdateInput> = z.object({
   ContactInfoID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   OfficeNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   PhoneNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2602,8 +2602,8 @@ export const ContactInfoUncheckedUpdateInputSchema: z.ZodType<Prisma.ContactInfo
 
 export const ContactInfoCreateManyInputSchema: z.ZodType<Prisma.ContactInfoCreateManyInput> = z.object({
   ContactInfoID: z.number().int().optional(),
-  Name: z.string(),
-  Email: z.string(),
+  Name: z.string().optional().nullable(),
+  Email: z.string().optional().nullable(),
   OfficeNumber: z.string().optional().nullable(),
   PhoneNumber: z.string().optional().nullable(),
   Position: z.string().optional().nullable(),
@@ -2611,8 +2611,8 @@ export const ContactInfoCreateManyInputSchema: z.ZodType<Prisma.ContactInfoCreat
 }).strict();
 
 export const ContactInfoUpdateManyMutationInputSchema: z.ZodType<Prisma.ContactInfoUpdateManyMutationInput> = z.object({
-  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   OfficeNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   PhoneNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2621,8 +2621,8 @@ export const ContactInfoUpdateManyMutationInputSchema: z.ZodType<Prisma.ContactI
 
 export const ContactInfoUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ContactInfoUncheckedUpdateManyInput> = z.object({
   ContactInfoID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   OfficeNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   PhoneNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4982,8 +4982,8 @@ export const AgencyCreateOrConnectWithoutContactsInputSchema: z.ZodType<Prisma.A
 }).strict();
 
 export const ContactInfoCreateWithoutAgencyContactInputSchema: z.ZodType<Prisma.ContactInfoCreateWithoutAgencyContactInput> = z.object({
-  Name: z.string(),
-  Email: z.string(),
+  Name: z.string().optional().nullable(),
+  Email: z.string().optional().nullable(),
   OfficeNumber: z.string().optional().nullable(),
   PhoneNumber: z.string().optional().nullable(),
   Position: z.string().optional().nullable(),
@@ -4993,8 +4993,8 @@ export const ContactInfoCreateWithoutAgencyContactInputSchema: z.ZodType<Prisma.
 
 export const ContactInfoUncheckedCreateWithoutAgencyContactInputSchema: z.ZodType<Prisma.ContactInfoUncheckedCreateWithoutAgencyContactInput> = z.object({
   ContactInfoID: z.number().int().optional(),
-  Name: z.string(),
-  Email: z.string(),
+  Name: z.string().optional().nullable(),
+  Email: z.string().optional().nullable(),
   OfficeNumber: z.string().optional().nullable(),
   PhoneNumber: z.string().optional().nullable(),
   Position: z.string().optional().nullable(),
@@ -5041,8 +5041,8 @@ export const ContactInfoUpdateToOneWithWhereWithoutAgencyContactInputSchema: z.Z
 }).strict();
 
 export const ContactInfoUpdateWithoutAgencyContactInputSchema: z.ZodType<Prisma.ContactInfoUpdateWithoutAgencyContactInput> = z.object({
-  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   OfficeNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   PhoneNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -5052,8 +5052,8 @@ export const ContactInfoUpdateWithoutAgencyContactInputSchema: z.ZodType<Prisma.
 
 export const ContactInfoUncheckedUpdateWithoutAgencyContactInputSchema: z.ZodType<Prisma.ContactInfoUncheckedUpdateWithoutAgencyContactInput> = z.object({
   ContactInfoID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   OfficeNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   PhoneNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -5243,8 +5243,8 @@ export const DepartmentCreateOrConnectWithoutInventorsInputSchema: z.ZodType<Pri
 }).strict();
 
 export const ContactInfoCreateWithoutInventorInputSchema: z.ZodType<Prisma.ContactInfoCreateWithoutInventorInput> = z.object({
-  Name: z.string(),
-  Email: z.string(),
+  Name: z.string().optional().nullable(),
+  Email: z.string().optional().nullable(),
   OfficeNumber: z.string().optional().nullable(),
   PhoneNumber: z.string().optional().nullable(),
   Position: z.string().optional().nullable(),
@@ -5254,8 +5254,8 @@ export const ContactInfoCreateWithoutInventorInputSchema: z.ZodType<Prisma.Conta
 
 export const ContactInfoUncheckedCreateWithoutInventorInputSchema: z.ZodType<Prisma.ContactInfoUncheckedCreateWithoutInventorInput> = z.object({
   ContactInfoID: z.number().int().optional(),
-  Name: z.string(),
-  Email: z.string(),
+  Name: z.string().optional().nullable(),
+  Email: z.string().optional().nullable(),
   OfficeNumber: z.string().optional().nullable(),
   PhoneNumber: z.string().optional().nullable(),
   Position: z.string().optional().nullable(),
@@ -5327,8 +5327,8 @@ export const ContactInfoUpdateToOneWithWhereWithoutInventorInputSchema: z.ZodTyp
 }).strict();
 
 export const ContactInfoUpdateWithoutInventorInputSchema: z.ZodType<Prisma.ContactInfoUpdateWithoutInventorInput> = z.object({
-  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   OfficeNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   PhoneNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -5338,8 +5338,8 @@ export const ContactInfoUpdateWithoutInventorInputSchema: z.ZodType<Prisma.Conta
 
 export const ContactInfoUncheckedUpdateWithoutInventorInputSchema: z.ZodType<Prisma.ContactInfoUncheckedUpdateWithoutInventorInput> = z.object({
   ContactInfoID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  Email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   OfficeNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   PhoneNumber: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -8023,7 +8023,7 @@ export const AgencyUpdateManyArgsSchema: z.ZodType<Prisma.AgencyUpdateManyArgs> 
   limit: z.number().optional(),
 }).strict() ;
 
-export const AgencyUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.AgencyUpdateManyAndReturnArgs> = z.object({
+export const updateManyAgencyCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyAgencyCreateManyAndReturnArgs> = z.object({
   data: z.union([ AgencyUpdateManyMutationInputSchema,AgencyUncheckedUpdateManyInputSchema ]),
   where: AgencyWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8075,7 +8075,7 @@ export const AgencyPatentUpdateManyArgsSchema: z.ZodType<Prisma.AgencyPatentUpda
   limit: z.number().optional(),
 }).strict() ;
 
-export const AgencyPatentUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.AgencyPatentUpdateManyAndReturnArgs> = z.object({
+export const updateManyAgencyPatentCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyAgencyPatentCreateManyAndReturnArgs> = z.object({
   data: z.union([ AgencyPatentUpdateManyMutationInputSchema,AgencyPatentUncheckedUpdateManyInputSchema ]),
   where: AgencyPatentWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8127,7 +8127,7 @@ export const AgencyContactPersonUpdateManyArgsSchema: z.ZodType<Prisma.AgencyCon
   limit: z.number().optional(),
 }).strict() ;
 
-export const AgencyContactPersonUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.AgencyContactPersonUpdateManyAndReturnArgs> = z.object({
+export const updateManyAgencyContactPersonCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyAgencyContactPersonCreateManyAndReturnArgs> = z.object({
   data: z.union([ AgencyContactPersonUpdateManyMutationInputSchema,AgencyContactPersonUncheckedUpdateManyInputSchema ]),
   where: AgencyContactPersonWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8179,7 +8179,7 @@ export const FundingPlanUpdateManyArgsSchema: z.ZodType<Prisma.FundingPlanUpdate
   limit: z.number().optional(),
 }).strict() ;
 
-export const FundingPlanUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.FundingPlanUpdateManyAndReturnArgs> = z.object({
+export const updateManyFundingPlanCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyFundingPlanCreateManyAndReturnArgs> = z.object({
   data: z.union([ FundingPlanUpdateManyMutationInputSchema,FundingPlanUncheckedUpdateManyInputSchema ]),
   where: FundingPlanWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8231,7 +8231,7 @@ export const PatentFundingUpdateManyArgsSchema: z.ZodType<Prisma.PatentFundingUp
   limit: z.number().optional(),
 }).strict() ;
 
-export const PatentFundingUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentFundingUpdateManyAndReturnArgs> = z.object({
+export const updateManyPatentFundingCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyPatentFundingCreateManyAndReturnArgs> = z.object({
   data: z.union([ PatentFundingUpdateManyMutationInputSchema,PatentFundingUncheckedUpdateManyInputSchema ]),
   where: PatentFundingWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8283,7 +8283,7 @@ export const InventorUpdateManyArgsSchema: z.ZodType<Prisma.InventorUpdateManyAr
   limit: z.number().optional(),
 }).strict() ;
 
-export const InventorUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.InventorUpdateManyAndReturnArgs> = z.object({
+export const updateManyInventorCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyInventorCreateManyAndReturnArgs> = z.object({
   data: z.union([ InventorUpdateManyMutationInputSchema,InventorUncheckedUpdateManyInputSchema ]),
   where: InventorWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8335,7 +8335,7 @@ export const PatentInventorUpdateManyArgsSchema: z.ZodType<Prisma.PatentInventor
   limit: z.number().optional(),
 }).strict() ;
 
-export const PatentInventorUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentInventorUpdateManyAndReturnArgs> = z.object({
+export const updateManyPatentInventorCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyPatentInventorCreateManyAndReturnArgs> = z.object({
   data: z.union([ PatentInventorUpdateManyMutationInputSchema,PatentInventorUncheckedUpdateManyInputSchema ]),
   where: PatentInventorWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8387,7 +8387,7 @@ export const PatentUpdateManyArgsSchema: z.ZodType<Prisma.PatentUpdateManyArgs> 
   limit: z.number().optional(),
 }).strict() ;
 
-export const PatentUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentUpdateManyAndReturnArgs> = z.object({
+export const updateManyPatentCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyPatentCreateManyAndReturnArgs> = z.object({
   data: z.union([ PatentUpdateManyMutationInputSchema,PatentUncheckedUpdateManyInputSchema ]),
   where: PatentWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8439,7 +8439,7 @@ export const PatentStatusUpdateManyArgsSchema: z.ZodType<Prisma.PatentStatusUpda
   limit: z.number().optional(),
 }).strict() ;
 
-export const PatentStatusUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentStatusUpdateManyAndReturnArgs> = z.object({
+export const updateManyPatentStatusCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyPatentStatusCreateManyAndReturnArgs> = z.object({
   data: z.union([ PatentStatusUpdateManyMutationInputSchema,PatentStatusUncheckedUpdateManyInputSchema ]),
   where: PatentStatusWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8491,7 +8491,7 @@ export const PatentApplicationDataUpdateManyArgsSchema: z.ZodType<Prisma.PatentA
   limit: z.number().optional(),
 }).strict() ;
 
-export const PatentApplicationDataUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentApplicationDataUpdateManyAndReturnArgs> = z.object({
+export const updateManyPatentApplicationDataCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyPatentApplicationDataCreateManyAndReturnArgs> = z.object({
   data: z.union([ PatentApplicationDataUpdateManyMutationInputSchema,PatentApplicationDataUncheckedUpdateManyInputSchema ]),
   where: PatentApplicationDataWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8543,7 +8543,7 @@ export const PatentTechnicalAttributesUpdateManyArgsSchema: z.ZodType<Prisma.Pat
   limit: z.number().optional(),
 }).strict() ;
 
-export const PatentTechnicalAttributesUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentTechnicalAttributesUpdateManyAndReturnArgs> = z.object({
+export const updateManyPatentTechnicalAttributesCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyPatentTechnicalAttributesCreateManyAndReturnArgs> = z.object({
   data: z.union([ PatentTechnicalAttributesUpdateManyMutationInputSchema,PatentTechnicalAttributesUncheckedUpdateManyInputSchema ]),
   where: PatentTechnicalAttributesWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8595,7 +8595,7 @@ export const TechnicalKeywordUpdateManyArgsSchema: z.ZodType<Prisma.TechnicalKey
   limit: z.number().optional(),
 }).strict() ;
 
-export const TechnicalKeywordUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.TechnicalKeywordUpdateManyAndReturnArgs> = z.object({
+export const updateManyTechnicalKeywordCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyTechnicalKeywordCreateManyAndReturnArgs> = z.object({
   data: z.union([ TechnicalKeywordUpdateManyMutationInputSchema,TechnicalKeywordUncheckedUpdateManyInputSchema ]),
   where: TechnicalKeywordWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8647,7 +8647,7 @@ export const CollegeUpdateManyArgsSchema: z.ZodType<Prisma.CollegeUpdateManyArgs
   limit: z.number().optional(),
 }).strict() ;
 
-export const CollegeUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.CollegeUpdateManyAndReturnArgs> = z.object({
+export const updateManyCollegeCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyCollegeCreateManyAndReturnArgs> = z.object({
   data: z.union([ CollegeUpdateManyMutationInputSchema,CollegeUncheckedUpdateManyInputSchema ]),
   where: CollegeWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8699,7 +8699,7 @@ export const DepartmentUpdateManyArgsSchema: z.ZodType<Prisma.DepartmentUpdateMa
   limit: z.number().optional(),
 }).strict() ;
 
-export const DepartmentUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.DepartmentUpdateManyAndReturnArgs> = z.object({
+export const updateManyDepartmentCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyDepartmentCreateManyAndReturnArgs> = z.object({
   data: z.union([ DepartmentUpdateManyMutationInputSchema,DepartmentUncheckedUpdateManyInputSchema ]),
   where: DepartmentWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8751,7 +8751,7 @@ export const CountryUpdateManyArgsSchema: z.ZodType<Prisma.CountryUpdateManyArgs
   limit: z.number().optional(),
 }).strict() ;
 
-export const CountryUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.CountryUpdateManyAndReturnArgs> = z.object({
+export const updateManyCountryCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyCountryCreateManyAndReturnArgs> = z.object({
   data: z.union([ CountryUpdateManyMutationInputSchema,CountryUncheckedUpdateManyInputSchema ]),
   where: CountryWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -8765,7 +8765,7 @@ export const CountryDeleteManyArgsSchema: z.ZodType<Prisma.CountryDeleteManyArgs
 export const ContactInfoCreateArgsSchema: z.ZodType<Prisma.ContactInfoCreateArgs> = z.object({
   select: ContactInfoSelectSchema.optional(),
   include: ContactInfoIncludeSchema.optional(),
-  data: z.union([ ContactInfoCreateInputSchema,ContactInfoUncheckedCreateInputSchema ]),
+  data: z.union([ ContactInfoCreateInputSchema,ContactInfoUncheckedCreateInputSchema ]).optional(),
 }).strict() ;
 
 export const ContactInfoUpsertArgsSchema: z.ZodType<Prisma.ContactInfoUpsertArgs> = z.object({
@@ -8803,7 +8803,7 @@ export const ContactInfoUpdateManyArgsSchema: z.ZodType<Prisma.ContactInfoUpdate
   limit: z.number().optional(),
 }).strict() ;
 
-export const ContactInfoUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.ContactInfoUpdateManyAndReturnArgs> = z.object({
+export const updateManyContactInfoCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyContactInfoCreateManyAndReturnArgs> = z.object({
   data: z.union([ ContactInfoUpdateManyMutationInputSchema,ContactInfoUncheckedUpdateManyInputSchema ]),
   where: ContactInfoWhereInputSchema.optional(),
   limit: z.number().optional(),

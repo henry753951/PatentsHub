@@ -25,8 +25,8 @@ model Country {
 
 model ContactInfo {
   ContactInfoID Int                  @id @default(autoincrement())
-  Name          String
-  Email         String
+  Name          String?
+  Email         String?
   OfficeNumber  String?
   PhoneNumber   String?
   Position      String?

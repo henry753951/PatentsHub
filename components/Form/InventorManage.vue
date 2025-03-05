@@ -14,14 +14,15 @@
                   schemas.inventor,
                   addInventor,
                   fields.inventor,
-                  { departmentID: props.department.DepartmentID },
+                  { departmentID: props.department?.DepartmentID },
                )
             "
          >
             <PlusIcon class="mr-2 h-4 w-4" />
             新增發明人
          </Button>
-      </div><!-- 發明人列表 -->
+      </div>
+      <!-- 發明人列表 -->
       <OverlayScrollbarsComponent
          :options="{ scrollbars: { autoHide: 'leave' } }"
          class="h-full min-h-0 px-6"
@@ -33,7 +34,7 @@
             載入中...
          </div>
          <div
-            v-else-if="inventors.length"
+            v-else-if="inventors"
             class="space-y-2"
          >
             <div
@@ -66,10 +67,12 @@
                               schemas.inventor,
                               updateInventor,
                               fields.inventor,
-                              { inventorID: inventor.InventorID, departmentID: inventor.Department },
+                              {
+                                 inventorID: inventor.InventorID,
+                              },
                               {
                                  name: inventor.Name,
-                                 email: inventor.Email || '',
+                                 email: inventor.contactInfo?.Email || '',
                               },
                            )
                         "
@@ -102,36 +105,32 @@ import { PlusIcon, MoreHorizontalIcon } from "lucide-vue-next";
 import type { Config } from "~/components/ui/auto-form/interface";
 import { z } from "zod";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
-import { useInventorsStore } from "~/stores/inventors";
-
-// Props 定義
-const props = defineProps<{
-   department: Department
-}>();
-
-// Pinia store
-const inventorsStore = useInventorsStore();
-
-// Modal 管理
-const { openAutoModal } = useModals();
 
 // 型態定義
 type Department =
    RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
-type Inventor = RouterOutput["data"]["inventor"]["getInventors"][0];
 
-// 查詢發明人資料
+// Props 定義
+const props = defineProps<{
+   department?: Department
+}>();
+
+// Modal 管理
+const { openAutoModal } = useModals();
+
+// 發明人資料
 const {
    data: inventors,
+   fillter,
+   crud,
    status,
-   error,
-   refresh,
-} = useAsyncData(
-   "inventors",
-   () => inventorsStore.fetchInventors(props.department.DepartmentID),
-   {
-      watch: [() => props.department?.DepartmentID], // 監聽系所變化
-      default: () => [],
+   forceRefresh,
+} = useDatabase().useInventor();
+
+watch(
+   () => props.department,
+   async (department) => {
+      fillter.value = { DepartmentID: department?.DepartmentID ?? undefined };
    },
 );
 
@@ -157,26 +156,53 @@ const addInventor = async (
    if (!passthrough.departmentID) {
       throw new Error("系所 ID 未提供");
    }
-   await inventorsStore.insert(data.name, data.email || "", passthrough.departmentID);
-   await refresh();
+   await crud.createInventor({
+      Name: data.name,
+      contactInfo: {
+         create: {
+            Email: data.email,
+         },
+      },
+      department: {
+         connect: {
+            DepartmentID: passthrough.departmentID,
+         },
+      },
+   });
+   await forceRefresh();
 };
 
 const updateInventor = async (
    data: z.infer<typeof schemas.inventor>,
    passthrough: { inventorID: number, departmentID: number },
 ) => {
-   await inventorsStore.update(
-      passthrough.inventorID,
-      data.name,
-      data.email || "",
-      passthrough.departmentID,
-   );
-   await refresh();
+   if (!passthrough.inventorID) {
+      throw new Error("發明人 ID 未提供");
+   }
+   await crud.updateInventor({
+      where: { InventorID: passthrough.inventorID },
+      data: {
+         Name: data.name,
+         contactInfo: {
+            upsert: {
+               create: {
+                  Email: data.email,
+               },
+               update: {
+                  Email: data.email,
+               },
+            },
+         },
+      },
+   });
+   await forceRefresh();
 };
 
 const deleteInventor = async (inventorID: number) => {
-   await inventorsStore.delete(inventorID);
-   await refresh();
+   await crud.deleteInventor({
+      where: { InventorID: inventorID },
+   });
+   await forceRefresh();
 };
 </script>
 
