@@ -1,11 +1,19 @@
 <template>
    <div class="container mx-auto">
-      hi
+      <Button
+         @click="
+            open('PatentModal', {
+               props: {},
+            })
+         "
+      >
+         Open Sheet
+      </Button>
    </div>
 </template>
 
 <script lang="ts" setup>
-import consola from "consola";
+const { open } = useModals();
 
 definePageMeta({
    name: "home",

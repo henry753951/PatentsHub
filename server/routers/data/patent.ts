@@ -44,4 +44,34 @@ export default router({
             },
          });
       }),
+   getPatent: procedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+         return await prisma.patent.findUnique({
+            where: {
+               PatentID: input.id,
+            },
+            include: {
+               technical: {
+                  include: {
+                     keywords: true,
+                  },
+               },
+               application: {
+                  include: {
+                     country: true,
+                  },
+               },
+               inventors: {
+                  include: {
+                     inventor: {
+                        include: {
+                           contactInfo: true,
+                        },
+                     },
+                  },
+               },
+            },
+         });
+      }),
 });
