@@ -113,55 +113,58 @@ const toggleCountrySelection = (country: Country) => {
 <template>
    <div class="px-8 py-2.5 min-h-screen bg-gray-100">
       <div class="flex px-8 py-2.5 mt-2 mb-6 max-sm:px-4 max-sm:py-2.5">
-         <div
-            class="flex gap-4 px-2.5 py-0 bg-white rounded-xl max-sm:px-2 max-sm:py-0 dark:bg-black dark:border-2 dark:border-white"
-         >
-            <button
-               class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
-               v-tooltip.top="'新增國家'"
+         <div class="flex flex-col">
+            <h1 class="flex text-2xl font-bold mb-8 bg-gray-300 rounded-lg justify-center">國家管理</h1>
+            <div
+               class="flex gap-4 px-2.5 py-0 bg-white rounded-xl max-sm:px-2 max-sm:py-0 dark:bg-black dark:border-2 dark:border-white"
             >
-               <Icon
-                  name="uil:create-dashboard"
-                  class="w-6 h-6 text-black dark:text-white"
+               <button
+                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
+                  v-tooltip.top="'新增國家'"
+               >
+                  <Icon
+                     name="uil:create-dashboard"
+                     class="w-6 h-6 text-black dark:text-white"
+                     @click="
+                        openAutoModal(
+                           '新增國家',
+                           '新增國家至清單',
+                           schemas.country,
+                           addCountry,
+                           fields.country,
+                        )
+                     "
+                  />
+               </button>
+               <button
+                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
+                  v-tooltip.top="'點選國家可以大量刪除'"
                   @click="
                      openAutoModal(
-                        '新增國家',
-                        '新增國家至清單',
-                        schemas.country,
-                        addCountry,
-                        fields.country,
+                        '確認刪除',
+                        '你確定要刪除選擇的國家嗎？',
+                        z.object({}),
+                        deleteSelectedCountries,
+                        undefined,
                      )
                   "
-               />
-            </button>
-            <button
-               class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
-               v-tooltip.top="'點選國家可以大量刪除'"
-               @click="
-                  openAutoModal(
-                     '確認刪除',
-                     '你確定要刪除選擇的國家嗎？',
-                     z.object({}),
-                     deleteSelectedCountries,
-                     undefined,
-                  )
-               "
-            >
-               <Icon
-                  name="mdi:delete-sweep-outline"
-                  class="w-6 h-6 text-black dark:text-white"
-               />
-            </button>
-            <button
-               class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
-               v-tooltip.top="'清空所有國家ㄑ'"
-               @click="deleteAllCountries"
-            >
-               <Icon
-                  name="icon-park-outline:clear"
-                  class="w-6 h-6 text-black dark:text-white"
-               />
-            </button>
+               >
+                  <Icon
+                     name="mdi:delete-sweep-outline"
+                     class="w-6 h-6 text-black dark:text-white"
+                  />
+               </button>
+               <button
+                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
+                  v-tooltip.top="'清空所有國家ㄑ'"
+                  @click="deleteAllCountries"
+               >
+                  <Icon
+                     name="icon-park-outline:clear"
+                     class="w-6 h-6 text-black dark:text-white"
+                  />
+               </button>
+            </div>
          </div>
       </div>
 
