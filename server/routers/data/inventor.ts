@@ -7,7 +7,7 @@ export default router({
       .input(
          z.object({
             name: z.string().nonempty("發明人姓名不可為空"),
-            email: z.string().email("請輸入有效的 Email").optional(),
+            email: z.string().optional(),
             departmentID: z.number().int(),
          }),
       )
@@ -53,7 +53,7 @@ export default router({
          z.object({
             id: z.number(),
             name: z.string().nonempty("發明人姓名不可為空"),
-            email: z.string().email("請輸入有效的 Email").optional(),
+            email: z.string().optional(),
             departmentID: z.number().int(),
          }),
       )

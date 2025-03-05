@@ -37,8 +37,10 @@ onMounted(async () => {
 
 const onDepartmentSelected = async (department: Department | null) => {
    selectedDepartment.value = department;
-   inventorsStore.setDepartmentFilter(department?.DepartmentID);
-   await inventorsStore.fetchInventors(department?.DepartmentID);
+   if (department) {
+      inventorsStore.setDepartmentFilter(department.DepartmentID);
+      await inventorsStore.fetchInventors(department.DepartmentID);
+   }
 };
 </script>
 

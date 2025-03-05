@@ -15,11 +15,6 @@
                   addInventor,
                   fields.inventor,
                   { departmentID: props.department.DepartmentID },
-                  {
-                     name: '',
-                     email: '',
-                     departmentID: props.department.DepartmentID,
-                  },
                )
             "
          >
@@ -59,7 +54,7 @@
                   <DropdownMenuContent>
                      <DropdownMenuItem
                         class="text-red-600"
-                        @click="inventorsStore.delete(inventor.InventorID)"
+                        @click="deleteInventor(inventor.InventorID)"
                      >
                         刪除發明人
                      </DropdownMenuItem>
@@ -71,11 +66,10 @@
                               schemas.inventor,
                               updateInventor,
                               fields.inventor,
-                              { inventorID: inventor.InventorID },
+                              { inventorID: inventor.InventorID, departmentID: inventor.Department },
                               {
                                  name: inventor.Name,
                                  email: inventor.Email || '',
-                                 departmentID: inventor.Department,
                               },
                            )
                         "
@@ -90,7 +84,7 @@
             v-else
             class="text-muted-foreground text-sm p-4"
          >
-            尚無發明人
+            請選擇系所
          </div>
       </OverlayScrollbarsComponent>
    </div>
@@ -145,21 +139,14 @@ const {
 const schemas = {
    inventor: z.object({
       name: z.string().nonempty("發明人姓名不可為空"),
-      email: z.string().email("請輸入有效的 Email").optional(),
-      departmentID: z.number().int(),
+      email: z.string().optional(),
    }),
 };
 
 const fields = computed(() => ({
    inventor: {
       name: { label: "發明人姓名" },
-      email: { label: "Email" },
-      departmentID: {
-         label: "所屬系所",
-         readonly: true,
-         defaultValue: props.department?.DepartmentID,
-         description: props.department?.Name || "未選擇系所",
-      },
+      email: { label: "電子信箱" },
    } as Config<z.infer<typeof schemas.inventor>>,
 }));
 
@@ -176,13 +163,13 @@ const addInventor = async (
 
 const updateInventor = async (
    data: z.infer<typeof schemas.inventor>,
-   passthrough: { inventorID: number },
+   passthrough: { inventorID: number, departmentID: number },
 ) => {
    await inventorsStore.update(
       passthrough.inventorID,
       data.name,
       data.email || "",
-      data.departmentID,
+      passthrough.departmentID,
    );
    await refresh();
 };
