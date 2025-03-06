@@ -19,7 +19,7 @@ const capitalizeFirstLetter = (string: string) => {
       :class="{ 'border-2 border-red-500': props.isSelected }"
       class="relative px-6 pt-12 pb-6 bg-white rounded-xl"
    >
-      <CountryFlag :name="props.title" />
+      <CountryFlag :name="props.title" :isocode="props.isoCode" />
       <div class="text-center">
          <h2 class="mb-1 text-lg text-neutral-900">
             {{ capitalizeFirstLetter(props.title) }}
