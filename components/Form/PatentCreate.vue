@@ -184,13 +184,17 @@ const form = {
    inventors: patentCreation.defineField("inventors"),
 };
 
-watch(form.insideInventors.value, (value) => {
-   form.inventors[0].value = value.map((inventor) => ({
-      inventorID: inventor.id,
-      isMain: inventor.isMain,
-      contribution: inventor.contribution,
-   }));
-}, { deep: true });
+watch(
+   form.insideInventors.value,
+   (value) => {
+      form.inventors[0].value = value.map((inventor) => ({
+         inventorID: inventor.id,
+         isMain: inventor.isMain,
+         contribution: inventor.contribution,
+      }));
+   },
+   { deep: true },
+);
 
 defineExpose({
    patentCreation,

@@ -77,6 +77,9 @@ const belongs = defineModel("modelValue", {
 
 const collegesStore = useCollegesStore();
 const { colleges } = storeToRefs(collegesStore);
+onMounted(async () => {
+   await collegesStore.refresh();
+});
 
 const currentCollegeAndDepartment = computed(() => {
    const college = colleges.value.find(
