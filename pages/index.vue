@@ -1,5 +1,5 @@
 <template>
-   <div class="container mx-auto">
+   <div>
       <Button
          @click="
             open('PatentModal', {
@@ -20,4 +20,4 @@ definePageMeta({
 });
 </script>
 
-<style></style>
+<style scoped></style>
