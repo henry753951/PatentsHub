@@ -1,6 +1,7 @@
 <template>
    <div class="container mx-auto">
-      hi
+      <CustomStatusBlock title="類別">
+      </CustomStatusBlock>
    </div>
 </template>
 
