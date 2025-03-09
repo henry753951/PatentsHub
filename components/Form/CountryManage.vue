@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { z } from "zod";
 import { useModals } from "~/composables/useModals";
 import type { Config } from "~/components/ui/auto-form/interface";
+import LiaisonManage from "./LiaisonManage.vue";
 // 定義模式和欄位
 type Country = RouterOutput["data"]["country"]["getAllContries"][0];
 
@@ -111,10 +112,14 @@ const toggleCountrySelection = (country: Country) => {
 </script>
 
 <template>
-   <div class="px-8 py-2.5 min-h-screen bg-gray-100">
+   <div class="px-8 py-2.5 bg-gray-100 overflow-auto h-full">
       <div class="flex px-8 py-2.5 mt-2 mb-6 max-sm:px-4 max-sm:py-2.5">
          <div class="flex flex-col">
-            <h1 class="flex text-2xl font-bold mb-8 bg-gray-300 rounded-lg justify-center">國家管理</h1>
+            <h1
+               class="rounded-tr-lg rounded-bl-lg flex text-2xl font-bold mb-8 bg-gray-300 justify-center"
+            >
+               國家管理
+            </h1>
             <div
                class="flex gap-4 px-2.5 py-0 bg-white rounded-xl max-sm:px-2 max-sm:py-0 dark:bg-black dark:border-2 dark:border-white"
             >
@@ -156,7 +161,7 @@ const toggleCountrySelection = (country: Country) => {
                </button>
                <button
                   class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
-                  v-tooltip.top="'清空所有國家ㄑ'"
+                  v-tooltip.top="'清空所有國家'"
                   @click="deleteAllCountries"
                >
                   <Icon
@@ -167,7 +172,6 @@ const toggleCountrySelection = (country: Country) => {
             </div>
          </div>
       </div>
-
       <div
          class="grid gap-12 px-8 py-0 grid-cols-[repeat(3,1fr)] max-md:px-4 max-md:py-0 max-md:grid-cols-[repeat(2,1fr)] max-sm:px-2 max-sm:py-0 max-sm:grid-cols-[1fr]"
       >
@@ -182,6 +186,7 @@ const toggleCountrySelection = (country: Country) => {
             @edit="editCountryByCard(country)"
          />
       </div>
+      <LiaisonManage class="mt-8" />
    </div>
 </template>
 
