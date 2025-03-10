@@ -2,24 +2,26 @@ import type { z } from "zod";
 import type { RouterOutput, dbZ } from "~/server";
 
 export const useInventor = (
-   defaultFillter: z.infer<typeof dbZ.InventorWhereInputSchema> = {},
+   defaultFilter: z.infer<typeof dbZ.InventorWhereInputSchema> = {
+   },
 ) => {
    const { $trpc } = useNuxtApp();
-   // [State]
-   const fillter
-      = ref<z.infer<typeof dbZ.InventorWhereInputSchema>>(defaultFillter);
+   // 篩選條件
+   const filter
+      = ref<z.infer<typeof dbZ.InventorWhereInputSchema>>(defaultFilter);
+   // 查詢數據
    const { data, refresh, status } = useAsyncData<
       RouterOutput["data"]["inventor"]["getInventors"]
    >(
       "inventor",
       async () => {
-         // 若預設不全選，則不顯示任何資料 (看需求)
-         console.log(getInventors({ where: fillter.value }));
-         if (Object.keys(fillter.value).length === 0) return [];
-         return await getInventors({ where: fillter.value });
+         // 若篩選條件為空，則不顯示任何資料 (看需求)
+         console.log(getInventors({ where: filter.value }));
+         if (Object.keys(filter.value).length === 0) return [];
+         return await getInventors({ where: filter.value });
       },
       {
-         watch: [fillter],
+         watch: [filter], // 監聽篩選條件變化
       },
    );
 
@@ -28,7 +30,8 @@ export const useInventor = (
    const createInventor = async (
       data: z.infer<typeof dbZ.InventorCreateInputSchema>,
    ) => {
-      return await $trpc.data.inventor.createInventor.mutate(serialize(data));
+      await $trpc.data.inventor.createInventor.mutate(serialize(data));
+      await refresh();
    };
 
    // Read
@@ -45,30 +48,26 @@ export const useInventor = (
       where: z.infer<typeof dbZ.InventorWhereUniqueInputSchema>
       data: z.infer<typeof dbZ.InventorUpdateInputSchema>
    }) => {
-      return await $trpc.data.inventor.updateInventor.mutate(
-         serialize({
-            where: args.where,
-            data: args.data,
-         }),
+      await $trpc.data.inventor.updateInventor.mutate(
+         serialize({ where: args.where, data: args.data }),
       );
+      await refresh();
    };
 
    // Delete
    const deleteInventor = async (args: {
       where: z.infer<typeof dbZ.InventorWhereUniqueInputSchema>
    }) => {
-      return await $trpc.data.inventor.deleteInventor.mutate(
-         serialize({
-            where: args.where,
-         }),
+      await $trpc.data.inventor.deleteInventor.mutate(
+         serialize({ where: args.where }),
       );
+      await refresh();
    };
-
    return {
-      data,
-      fillter,
-      status,
-      forceRefresh: refresh,
+      data, // 查詢結果
+      filter, // 篩選條件
+      status, // 查詢狀態
+      forceRefresh: refresh, // 手動刷新
       crud: {
          getInventors,
          createInventor,

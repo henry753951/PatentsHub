@@ -5,7 +5,12 @@
             v-auto-animate
             class="bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl w-full border border-slate-200 dark:border-zinc-800 hover:shadow-sm transition-shadow select-none cursor-pointer"
          >
-            <template v-if="currentCollegeAndDepartment.college && currentCollegeAndDepartment.department">
+            <template
+               v-if="
+                  currentCollegeAndDepartment.college &&
+                     currentCollegeAndDepartment.department
+               "
+            >
                <div class="font-semibold color-slate-800 dark:color-zinc-100">
                   {{ currentCollegeAndDepartment.college?.Name }}
                </div>
@@ -15,7 +20,7 @@
             </template>
             <template v-else>
                <div class="color-slate-400 dark:color-zinc-400">
-                  請選擇學院與系所
+                  請選擇系所
                </div>
             </template>
          </div>
@@ -45,8 +50,8 @@
                               belongs?.departmentID !== department.DepartmentID,
                         }"
                         @click="
-                           belongs!.collegeID = college.CollegeID;
-                           belongs!.departmentID = department.DepartmentID;
+                           belongs.collegeID = college.CollegeID;
+                           belongs.departmentID = department.DepartmentID;
                         "
                      >
                         {{ department.Name }}
@@ -80,12 +85,27 @@ const { colleges } = storeToRefs(collegesStore);
 
 const currentCollegeAndDepartment = computed(() => {
    const college = colleges.value.find(
-      (college) => belongs.value && college.CollegeID === belongs.value.collegeID,
+      (college) =>
+         belongs.value && college.CollegeID === belongs.value.collegeID,
    );
    const department = college?.departments.find(
-      (department) => belongs.value && department.DepartmentID === belongs.value.departmentID,
+      (department) =>
+         belongs.value
+         && department.DepartmentID === belongs.value.departmentID,
    );
    return { college, department };
+});
+
+watchEffect(() => {
+   if (belongs.value.departmentID) {
+      belongs.value.collegeID = colleges.value.find(
+         (college) =>
+            college.departments.find(
+               (department) =>
+                  department.DepartmentID === belongs.value.departmentID,
+            ),
+      )?.CollegeID;
+   }
 });
 </script>
 

@@ -38,6 +38,7 @@ export default router({
          }),
       )
       .mutation(async ({ input }) => {
+         console.log("Received input:", input);
          return await prisma.inventor.update({
             where: input.where,
             data: input.data,
