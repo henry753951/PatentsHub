@@ -1,7 +1,7 @@
 <template>
    <div>
       <Dialog v-model:open="isOpen">
-         <DialogContent class="w-[90%] h-[90%] max-w-none flex flex-col p-0">
+         <DialogContent class="w-[90%] h-[90%] max-w-none flex flex-col p-0 overflow-hidden">
             <DialogHeader class="hidden">
                <DialogTitle>專利資訊</DialogTitle>
                <DialogDescription></DialogDescription>

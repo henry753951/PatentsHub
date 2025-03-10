@@ -1,27 +1,36 @@
-model Agency {
-  AgencyID Int                   @id @default(autoincrement())
-  Name     String
-  contacts AgencyContactPerson[]
-  patents  AgencyPatent[]
+model AgencyUnit {
+  AgencyUnitID         Int                         @id @default(autoincrement())
+  Name                 String
+  Description          String?
+  Persons              AgencyUnitPerson[]
+  InitialReviewPatents PatentInitiatorAgencyUnit[]
+  TakerPatents         PatentTakerAgencyUnit[]
 }
 
-model AgencyPatent {
-  PatentID Int
-  AgencyID Int
-  FileCode String
-  Role     String
-  Details  String?
-  patent   Patent  @relation(fields: [PatentID], references: [PatentID])
-  agency   Agency  @relation(fields: [AgencyID], references: [AgencyID])
+model PatentTakerAgencyUnit {
+  PatentID       Int
+  AgencyUnitID   Int
+  FileCode       String
+  agencyUnit     AgencyUnit     @relation(fields: [AgencyUnitID], references: [AgencyUnitID])
+  patentInternal PatentInternal @relation(fields: [PatentID], references: [PatentID])
 
-  @@id([PatentID, AgencyID])
+  @@id([PatentID, AgencyUnitID])
 }
 
-model AgencyContactPerson {
-  ContactPersonID Int          @id @default(autoincrement())
-  AgencyID        Int
-  Position        String
-  ContactInfoID   Int?         @unique
-  agency          Agency       @relation(fields: [AgencyID], references: [AgencyID])
-  contactInfo     ContactInfo? @relation("AgencyContact", fields: [ContactInfoID], references: [ContactInfoID])
+model PatentInitiatorAgencyUnit {
+  PatentID       Int
+  AgencyUnitID   Int
+  agencyUnit     AgencyUnit     @relation(fields: [AgencyUnitID], references: [AgencyUnitID])
+  patentInternal PatentInternal @relation(fields: [PatentID], references: [PatentID])
+
+  @@id([PatentID, AgencyUnitID])
+}
+
+model AgencyUnitPerson {
+  AgencyUnitID  Int
+  ContactInfoID Int         @unique
+  agencyUnit    AgencyUnit  @relation(fields: [AgencyUnitID], references: [AgencyUnitID])
+  contactInfo   ContactInfo @relation(fields: [ContactInfoID], references: [ContactInfoID])
+
+  @@id([AgencyUnitID, ContactInfoID])
 }

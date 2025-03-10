@@ -9,9 +9,7 @@ export default router({
             data: {
                DraftTitle: input.draftTitle,
                Year: input.year,
-               InternalID: input.internalID,
                DepartmentID: input.belongs.departmentID,
-               CollegeID: input.belongs.collegeID,
                technical: {
                   create: {
                      MaturityLevel: input.technical.maturityLevel,
@@ -52,14 +50,41 @@ export default router({
                PatentID: input.id,
             },
             include: {
+               country: true,
+               department: {
+                  include: {
+                     college: true,
+                  },
+               },
+               internal: {
+                  include: {
+                     InitialReviewAgencies: {
+                        include: {
+                           agencyUnit: true,
+                        },
+                     },
+                     TakerAgencies: {
+                        include: {
+                           agencyUnit: true,
+                        },
+                     },
+                  },
+               },
+               external: true,
                technical: {
                   include: {
                      keywords: true,
                   },
                },
-               application: {
+               application: true,
+               funding: {
                   include: {
-                     country: true,
+                     plan: true,
+                     fundingUnitsDatas: {
+                        include: {
+                           fundingUnit: true,
+                        },
+                     },
                   },
                },
                inventors: {
@@ -67,6 +92,11 @@ export default router({
                      inventor: {
                         include: {
                            contactInfo: true,
+                           department: {
+                              include: {
+                                 college: true,
+                              },
+                           },
                         },
                      },
                   },
