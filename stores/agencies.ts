@@ -1,12 +1,14 @@
 import { defineStore } from "pinia";
-import type { z } from "zod";
 
 export const useAgenciesStore = defineStore("agenciesStore", {
    state: () => {
       const initialState = {
          agencies: [] as RouterOutput["data"]["agency"]["getAgencies"],
          isInitialized: false,
+         isLoading: false,
+         error: null as string | null,
       };
+
       if (!initialState.isInitialized) {
          (async () => {
             try {
@@ -14,140 +16,186 @@ export const useAgenciesStore = defineStore("agenciesStore", {
                const data = await $trpc.data.agency.getAgencies.query();
                initialState.agencies = data;
                initialState.isInitialized = true;
-            }
-            catch (error) {
+            } catch (error) {
                console.error("Failed to initialize agencies:", error);
+               initialState.error = (error as Error).message || "初始化失敗";
             }
          })();
       }
+
       return initialState;
    },
 
    actions: {
-      // 刷新所有 Agencies 資料
       async refresh() {
          const { $trpc } = useNuxtApp();
-         this.agencies = await $trpc.data.agency.getAgencies.query();
-         return this.agencies;
+         try {
+            this.isLoading = true;
+            this.error = null;
+            this.agencies = await $trpc.data.agency.getAgencies.query();
+            return this.agencies;
+         } catch (error) {
+            this.error = (error as Error).message || "刷新失敗";
+            throw error;
+         } finally {
+            this.isLoading = false;
+         }
       },
 
-      // 新增 Agency
       async insert(agencyName: string) {
          const { $trpc } = useNuxtApp();
-         const newAgency = await $trpc.data.agency.createAgency.mutate({
-            name: agencyName,
-         });
-         await this.refresh();
+         try {
+            this.isLoading = true;
+            this.error = null;
+            await $trpc.data.agency.createAgency.mutate({ name: agencyName });
+            await this.refresh(); // 刷新以保持數據一致
+         } catch (error) {
+            this.error = (error as Error).message || "新增失敗";
+            throw error;
+         } finally {
+            this.isLoading = false;
+         }
       },
 
-      // 更新 Agency 資料
       async update(agencyID: number, name: string) {
          const { $trpc } = useNuxtApp();
-         await $trpc.data.agency.updateAgency.mutate({
-            agencyID,
-            name,
-         });
-         await this.refresh();
+         try {
+            this.isLoading = true;
+            this.error = null;
+            await $trpc.data.agency.updateAgency.mutate({ agencyID, name });
+            await this.refresh();
+         } catch (error) {
+            this.error = (error as Error).message || "更新失敗";
+            throw error;
+         } finally {
+            this.isLoading = false;
+         }
       },
 
-      // 刪除 Agency
       async delete(agencyID: number) {
          const { $trpc } = useNuxtApp();
-         await $trpc.data.agency.deleteAgency.mutate({
-            agencyID,
-         });
-         await this.refresh();
+         try {
+            this.isLoading = true;
+            this.error = null;
+            await $trpc.data.agency.deleteAgency.mutate({ agencyID });
+            await this.refresh();
+         } catch (error) {
+            this.error = (error as Error).message || "刪除失敗";
+            throw error;
+         } finally {
+            this.isLoading = false;
+         }
       },
 
-      // 新增 AgencyPatent
-      async insertPatent(
-         patentID: number,
-         agencyID: number,
-         fileCode: string,
-         role: string,
-         details?: string,
-      ) {
-         const { $trpc } = useNuxtApp();
-         const newPatent = await $trpc.data.agency.createAgencyPatent.mutate({
-            patentID,
-            agencyID,
-            fileCode,
-            role,
-            details,
-         });
-         await this.refresh();
-      },
-
-      // 更新 AgencyPatent 資料
-      async updatePatent(
-         patentID: number,
-         agencyID: number,
-         fileCode: string,
-         role: string,
-         details?: string,
-      ) {
-         const { $trpc } = useNuxtApp();
-         await $trpc.data.agency.updateAgencyPatent.mutate({
-            patentID,
-            agencyID,
-            fileCode,
-            role,
-            details,
-         });
-         await this.refresh();
-      },
-
-      // 刪除 AgencyPatent
-      async deletePatent(patentID: number, agencyID: number) {
-         const { $trpc } = useNuxtApp();
-         await $trpc.data.agency.deleteAgencyPatent.mutate({
-            patentID,
-            agencyID,
-         });
-         await this.refresh();
-      },
-
-      // 新增 AgencyContactPerson
       async insertContact(
          agencyID: number,
-         position: string,
-         contactInfoID?: number,
+         contactInfo: {
+            Name: string;
+            Email?: string;
+            OfficeNumber?: string;
+            PhoneNumber?: string;
+            Position?: string;
+            Note?: string;
+         },
       ) {
          const { $trpc } = useNuxtApp();
-         const newContact = await $trpc.data.agency.createAgencyContactPerson.mutate(
-            {
+         try {
+            this.isLoading = true;
+            this.error = null;
+            await $trpc.data.agency.createAgencyContactPerson.mutate({
                agencyID,
-               position,
-               contactInfoID,
-            },
-         );
-         await this.refresh();
+               contactInfo,
+            });
+            await this.refresh();
+         } catch (error) {
+            this.error = (error as Error).message || "新增聯絡人失敗";
+            throw error;
+         } finally {
+            this.isLoading = false;
+         }
       },
 
-      // 更新 AgencyContactPerson 資料
       async updateContact(
          contactPersonID: number,
-         agencyID: number,
-         position: string,
-         contactInfoID?: number,
+         agencyID?: number,
+         contactInfo?: {
+            Name?: string;
+            Email?: string;
+            OfficeNumber?: string;
+            PhoneNumber?: string;
+            Position?: string;
+            Note?: string;
+         },
       ) {
          const { $trpc } = useNuxtApp();
-         await $trpc.data.agency.updateAgencyContactPerson.mutate({
-            contactPersonID,
-            agencyID,
-            position,
-            contactInfoID,
-         });
-         await this.refresh();
+         try {
+            this.isLoading = true;
+            this.error = null;
+            await $trpc.data.agency.updateAgencyContactPerson.mutate({
+               contactPersonID,
+               agencyID,
+               contactInfo,
+            });
+            await this.refresh();
+         } catch (error) {
+            this.error = (error as Error).message || "更新聯絡人失敗";
+            throw error;
+         } finally {
+            this.isLoading = false;
+         }
       },
 
-      // 刪除 AgencyContactPerson
       async deleteContact(contactPersonID: number) {
          const { $trpc } = useNuxtApp();
-         await $trpc.data.agency.deleteAgencyContactPerson.mutate({
-            contactPersonID,
-         });
-         await this.refresh();
+         try {
+            this.isLoading = true;
+            this.error = null;
+            await $trpc.data.agency.deleteAgencyContactPerson.mutate({
+               contactPersonID,
+            });
+            await this.refresh();
+         } catch (error) {
+            this.error = (error as Error).message || "刪除聯絡人失敗";
+            throw error;
+         } finally {
+            this.isLoading = false;
+         }
+      },
+
+      async assignContactToPatent(contactPersonID: number, patentID: number) {
+         const { $trpc } = useNuxtApp();
+         try {
+            this.isLoading = true;
+            this.error = null;
+            await $trpc.data.agency.assignContactToPatent.mutate({
+               contactPersonID,
+               patentID,
+            });
+            await this.refresh();
+         } catch (error) {
+            this.error = (error as Error).message || "分配聯絡人失敗";
+            throw error;
+         } finally {
+            this.isLoading = false;
+         }
+      },
+
+      async removeContactFromPatent(contactPersonID: number, patentID: number) {
+         const { $trpc } = useNuxtApp();
+         try {
+            this.isLoading = true;
+            this.error = null;
+            await $trpc.data.agency.removeContactFromPatent.mutate({
+               contactPersonID,
+               patentID,
+            });
+            await this.refresh();
+         } catch (error) {
+            this.error = (error as Error).message || "移除聯絡人失敗";
+            throw error;
+         } finally {
+            this.isLoading = false;
+         }
       },
    },
 });

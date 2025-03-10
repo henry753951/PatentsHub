@@ -116,6 +116,9 @@ dependencies:
   vue-router:
     specifier: latest
     version: 4.5.0(vue@3.5.13)
+  vue-toastification:
+    specifier: ^1.7.14
+    version: 1.7.14(vue@3.5.13)
   zod:
     specifier: ^3.24.1
     version: 3.24.2
@@ -10437,6 +10440,7 @@ packages:
 
   /undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
+    requiresBuild: true
 
   /undici@7.4.0:
     resolution: {integrity: sha512-PUQM3/es3noM24oUn10u3kNNap0AbxESOmnssmW+dOi9yGwlUSi5nTNYl3bNbTkWOF8YZDkx2tCmj9OtQ3iGGw==}
@@ -11187,6 +11191,14 @@ packages:
     dependencies:
       '@vue/devtools-api': 6.6.4
       vue: 3.5.13(typescript@5.7.3)
+
+  /vue-toastification@1.7.14(vue@3.5.13):
+    resolution: {integrity: sha512-khZR8t3NWZ/JJ2MZxXLbesHrRJ8AKa75PY5Zq8yMifF9x8lHq8ljYkC0d2PD9yahooygQB5tcFyRDkbbIPx8hw==}
+    peerDependencies:
+      vue: ^2.0.0
+    dependencies:
+      vue: 3.5.13(typescript@5.7.3)
+    dev: false
 
   /vue@3.5.13(typescript@5.7.3):
     resolution: {integrity: sha512-wmeiSMxkZCSc+PM2w2VRsOYAZC8GdipNFRTsLSfodVqI9mbejKeXEGr8SckuLnrQPGe3oJN5c3K0vpoU9q/wCQ==}

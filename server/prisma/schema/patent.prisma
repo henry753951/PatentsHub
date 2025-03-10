@@ -13,6 +13,7 @@ model Patent {
   agencies     AgencyPatent[]
   department   Department                 @relation(fields: [DepartmentID], references: [DepartmentID])
   college      College                    @relation(fields: [CollegeID], references: [CollegeID])
+  patentContacts AgencyPatentContact[]    // 專利與聯絡人的關聯
   application  PatentApplicationData?
   funding      PatentFunding[]
   inventors    PatentInventor[]

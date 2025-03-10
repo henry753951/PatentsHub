@@ -5,23 +5,29 @@ model Agency {
   patents  AgencyPatent[]
 }
 
+model AgencyContactPerson {
+  ContactPersonID Int                   @id @default(autoincrement())
+  AgencyID        Int
+  ContactInfoID   Int?                  @unique
+  agency          Agency                @relation(fields: [AgencyID], references: [AgencyID])
+  contactInfo     ContactInfo?          @relation("AgencyContact", fields: [ContactInfoID], references: [ContactInfoID])
+  patentContacts  AgencyPatentContact[] // 聯絡人與專利的關聯
+}
 model AgencyPatent {
   PatentID Int
   AgencyID Int
   FileCode String
-  Role     String
-  Details  String?
-  patent   Patent  @relation(fields: [PatentID], references: [PatentID])
-  agency   Agency  @relation(fields: [AgencyID], references: [AgencyID])
+  patent   Patent                @relation(fields: [PatentID], references: [PatentID])
+  agency   Agency                @relation(fields: [AgencyID], references: [AgencyID])
 
   @@id([PatentID, AgencyID])
 }
 
-model AgencyContactPerson {
-  ContactPersonID Int          @id @default(autoincrement())
-  AgencyID        Int
-  Position        String
-  ContactInfoID   Int?         @unique
-  agency          Agency       @relation(fields: [AgencyID], references: [AgencyID])
-  contactInfo     ContactInfo? @relation("AgencyContact", fields: [ContactInfoID], references: [ContactInfoID])
+model AgencyPatentContact {
+  ContactPersonID Int
+  PatentID        Int
+  AgencyContactPerson AgencyContactPerson @relation(fields: [ContactPersonID], references: [ContactPersonID])
+  patent          Patent                 @relation(fields: [PatentID], references: [PatentID])
+
+  @@id([ContactPersonID, PatentID])
 }
