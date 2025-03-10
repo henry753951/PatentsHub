@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
 import { CustomZodType } from "~/zod.dto";
+import { dbZ } from "~/server";
+
 export default router({
    createPatent: procedure
       .input(CustomZodType.PatentCreate.merge(CustomZodType.PatentInventor))
@@ -10,6 +12,7 @@ export default router({
                DraftTitle: input.draftTitle,
                Year: input.year,
                DepartmentID: input.belongs.departmentID,
+               PatentType: input.type,
                technical: {
                   create: {
                      MaturityLevel: input.technical.maturityLevel,
@@ -21,11 +24,6 @@ export default router({
                            }),
                         ),
                      },
-                  },
-               },
-               application: {
-                  create: {
-                     PatentType: input.type,
                   },
                },
                inventors: {
@@ -43,12 +41,10 @@ export default router({
          });
       }),
    getPatent: procedure
-      .input(z.object({ id: z.number() }))
+      .input(dbZ.PatentWhereUniqueInputSchema)
       .query(async ({ input }) => {
          return await prisma.patent.findUnique({
-            where: {
-               PatentID: input.id,
-            },
+            where: input,
             include: {
                country: true,
                department: {
@@ -102,6 +98,21 @@ export default router({
                   },
                },
             },
+         });
+      }),
+   updatePatent: procedure
+      .input(
+         z.object({
+            patentID: z.number(),
+            data: dbZ.PatentUpdateInputSchema,
+         }),
+      )
+      .mutation(async ({ input }) => {
+         return await prisma.patent.update({
+            where: {
+               PatentID: input.patentID,
+            },
+            data: input.data,
          });
       }),
 });

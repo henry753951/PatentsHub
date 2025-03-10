@@ -4,12 +4,28 @@
       class="grid grid-cols-3 gap-4 relative"
    >
       <div class="col-span-2">
-         <CustomContentBlock title="技術資訊">
+         <CustomContentBlock
+            title="技術資訊"
+            tclass="sticky top-[87px]"
+         >
             <CustomContentBlockRow
                v-if="patent.technical"
                title="技術關鍵字"
             >
-               {{ patent.technical.keywords }}
+               <TagsInput
+                  v-model="patent.technical.keywords"
+                  class="min-h-10"
+               >
+                  <TagsInputItem
+                     v-for="item in patent.technical.keywords"
+                     :key="item.KeywordID"
+                     :value="item"
+                  >
+                     <TagsInputItemText />
+                     <TagsInputItemDelete />
+                  </TagsInputItem>
+                  <TagsInputInput placeholder="關鍵字..." />
+               </TagsInput>
             </CustomContentBlockRow>
             <CustomContentBlockRow
                v-if="patent.technical"
@@ -18,7 +34,10 @@
                {{ patent.technical.MaturityLevel }}
             </CustomContentBlockRow>
          </CustomContentBlock>
-         <CustomContentBlock title="資助資訊">
+         <CustomContentBlock
+            title="資助資訊"
+            tclass="sticky top-[87px]"
+         >
             <CustomContentBlockRow title="資助單位">
                <div
                   v-for="funding in patent.funding?.fundingUnitsDatas"
@@ -32,6 +51,7 @@
          <CustomContentBlock
             v-if="patent.internal"
             title="校內資訊"
+            tclass="sticky top-[87px]"
          >
             <CustomContentBlockRow title="校內編號">
                {{ patent.internal.InternalID }}
@@ -52,6 +72,7 @@
          <CustomContentBlock
             v-if="patent.application"
             title="申請資訊"
+            tclass="sticky top-[87px]"
          >
             <div class="grid grid-cols-2 gap-4">
                <CustomContentBlockRow title="申請日期">
@@ -73,6 +94,7 @@
          <CustomContentBlock
             v-if="patent.external"
             title="證書資訊"
+            tclass="sticky top-[87px]"
          >
             <CustomContentBlockRow title="專利號碼">
                {{ patent.external.PatentNumber }}
@@ -93,13 +115,34 @@
          </CustomContentBlock>
       </div>
       <div class="col-span-1 sticky top-[87px] self-start">
-         <CustomContentBlock title="基本資訊">
-            <CustomContentBlockRow title="年度">
-               {{ patent.Year }}
-            </CustomContentBlockRow>
+         <CustomContentBlock
+            title="基本資訊"
+            :save-button="!basicData.isSynced.value"
+            @save="basicData.save"
+         >
+            <CustomContentBlockRow
+               v-model="basicData.data.value.Year"
+               title="年度"
+            />
+
+            <CustomContentBlockRow
+               v-model="basicData.data.value.Title"
+               title="發明名稱"
+            />
+            <CustomContentBlockRow
+               v-model="basicData.data.value.TitleEnglish"
+               title="發明名稱(英)"
+            />
+            <CustomContentBlockRow
+               v-model="basicData.data.value.DraftTitle"
+               title="草案名稱"
+            />
             <CustomContentBlockRow title="學院與系所">
-               {{ patent.department.college.Name }} /
-               {{ patent.department.Name }}
+               <div class="py-1">
+                  <FormDepartmentSelect
+                     v-model:belongs-in-db="basicData.data.value.department"
+                  />
+               </div>
             </CustomContentBlockRow>
             <CustomContentBlockRow
                v-if="patent.application"
@@ -111,10 +154,13 @@
                v-if="patent.application"
                title="專利類別"
             >
-               {{ patent.application.PatentType }}
+               {{ patent.PatentType }}
             </CustomContentBlockRow>
          </CustomContentBlock>
-         <CustomContentBlock title="發明人">
+         <CustomContentBlock
+            title="發明人"
+            tclass="sticky top-[87px]"
+         >
             <BlockPatentInventorRow
                v-for="inventor in patent.inventors"
                :key="inventor.InventorID"
@@ -135,6 +181,32 @@ const patent = defineModel({
    type: Object as PropType<RouterOutput["data"]["patent"]["getPatent"]>,
    required: true,
 });
+
+const basicData = useSyncData(
+   computed(() => {
+      if (!patent.value) return {};
+      return {
+         Year: patent.value.Year,
+         DraftTitle: patent.value.DraftTitle,
+         Title: patent.value.Title,
+         TitleEnglish: patent.value.TitleEnglish,
+         PatentType: patent.value.PatentType,
+         country: patent.value.country,
+         department: patent.value.department,
+      };
+   }),
+   async (newData) => {
+      if (!patent.value) return;
+      patent.value.Year = newData.Year ?? "";
+      patent.value.DraftTitle = newData.DraftTitle ?? "";
+      patent.value.Title = newData.Title ?? "";
+      patent.value.TitleEnglish = newData.TitleEnglish ?? "";
+      patent.value.country = newData.country ?? null;
+      patent.value.PatentType = newData.PatentType ?? null;
+      if (newData.department) patent.value.department = newData.department;
+      console.log("saved", patent.value);
+   },
+);
 </script>
 
 <style scoped></style>

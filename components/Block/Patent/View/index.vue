@@ -59,13 +59,13 @@
                      icon="ic:baseline-category"
                   >
                      {{
-                        patent.application && patent.application.PatentType
+                        patent.PatentType
                            ? {
                               DESIGN: "設計",
                               UTILITY_MODEL: "實用新型",
                               INVENTION: "發明",
                               PLANT: "植物",
-                           }[patent.application.PatentType]
+                           }[patent.PatentType]
                            : ""
                      }}
                   </CustomStatusBlock>
@@ -193,10 +193,10 @@ const patent = ref<RouterOutput["data"]["patent"]["getPatent"]>({
       MaturityLevel: "高",
       keywords: [],
    },
+   PatentType: "DESIGN",
    DepartmentID: 101,
    application: {
       PatentID: 1,
-      PatentType: "DESIGN",
       ApplicationNumber: "202301040001",
       FilingDate: "2023-01-04",
       RDResultNumber: null,
@@ -220,11 +220,11 @@ const patent = ref<RouterOutput["data"]["patent"]["getPatent"]>({
       PatentID: 0,
    },
    department: {
-      CollegeID: 202,
-      DepartmentID: 101,
+      CollegeID: 1,
+      DepartmentID: 1,
       Name: "資訊工程學系",
       college: {
-         CollegeID: 202,
+         CollegeID: 1,
          Name: "工學院",
          Description: "",
       },

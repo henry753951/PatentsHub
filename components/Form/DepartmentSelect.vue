@@ -5,7 +5,12 @@
             v-auto-animate
             class="bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl w-full border border-slate-200 dark:border-zinc-800 hover:shadow-sm transition-shadow select-none cursor-pointer"
          >
-            <template v-if="currentCollegeAndDepartment.college && currentCollegeAndDepartment.department">
+            <template
+               v-if="
+                  currentCollegeAndDepartment.college &&
+                     currentCollegeAndDepartment.department
+               "
+            >
                <div class="font-semibold color-slate-800 dark:color-zinc-100">
                   {{ currentCollegeAndDepartment.college?.Name }}
                </div>
@@ -45,8 +50,11 @@
                               belongs?.departmentID !== department.DepartmentID,
                         }"
                         @click="
-                           belongs!.collegeID = college.CollegeID;
-                           belongs!.departmentID = department.DepartmentID;
+                           belongs = {
+                              collegeID: department.CollegeID,
+                              departmentID: department.DepartmentID,
+                           };
+                           updateBelongsInDbModel();
                         "
                      >
                         {{ department.Name }}
@@ -67,6 +75,9 @@
 
 <script lang="ts" setup>
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
+import type { z } from "zod";
+import type { dbZ } from "~/server";
+
 const belongs = defineModel("modelValue", {
    type: Object as PropType<{
       collegeID: number
@@ -75,21 +86,74 @@ const belongs = defineModel("modelValue", {
    required: false,
 });
 
+const belongsInDb = defineModel("belongsInDb", {
+   type: Object as PropType<{
+      Name: string
+      Description: string | null
+      college: {
+         Name: string
+         Description: string | null
+         CollegeID: number
+      }
+      DepartmentID: number
+      CollegeID: number
+   }>,
+   required: false,
+});
+
+watch(
+   () => belongsInDb.value,
+   (value) => {
+      if (value) {
+         belongs.value = {
+            collegeID: value.CollegeID,
+            departmentID: value.DepartmentID,
+         };
+      }
+   },
+   {
+      deep: true,
+   },
+);
+
 const collegesStore = useCollegesStore();
 const { colleges } = storeToRefs(collegesStore);
+
 onMounted(async () => {
    await collegesStore.refresh();
 });
 
 const currentCollegeAndDepartment = computed(() => {
    const college = colleges.value.find(
-      (college) => belongs.value && college.CollegeID === belongs.value.collegeID,
+      (college) =>
+         belongs.value && college.CollegeID === belongs.value.collegeID,
    );
    const department = college?.departments.find(
-      (department) => belongs.value && department.DepartmentID === belongs.value.departmentID,
+      (department) =>
+         belongs.value
+         && department.DepartmentID === belongs.value.departmentID,
    );
    return { college, department };
 });
+
+const updateBelongsInDbModel = () => {
+   if (
+      !currentCollegeAndDepartment.value.college
+      || !currentCollegeAndDepartment.value.department
+   )
+      return;
+   belongsInDb.value = {
+      Name: currentCollegeAndDepartment.value.department.Name,
+      Description: currentCollegeAndDepartment.value.department.Description,
+      college: {
+         Name: currentCollegeAndDepartment.value.college.Name,
+         Description: currentCollegeAndDepartment.value.college.Description,
+         CollegeID: currentCollegeAndDepartment.value.college.CollegeID,
+      },
+      DepartmentID: currentCollegeAndDepartment.value.department.DepartmentID,
+      CollegeID: currentCollegeAndDepartment.value.college.CollegeID,
+   };
+};
 </script>
 
 <style scoped>

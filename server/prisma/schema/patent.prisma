@@ -12,6 +12,7 @@ model Patent {
   CountryID    Int?
   country      Country?                   @relation(fields: [CountryID], references: [CountryID])
   department   Department                 @relation(fields: [DepartmentID], references: [DepartmentID])
+  PatentType   EnumPatentType?
   inventors    PatentInventor[]
   application  PatentApplicationData?
   funding      PatentFunding?
@@ -35,9 +36,7 @@ enum EnumPatentType {
 }
 
 model PatentApplicationData {
-  PatentID Int @id @default(autoincrement())
-
-  PatentType        EnumPatentType?
+  PatentID          Int       @id @default(autoincrement())
   // 申請後的資料
   ApplicationNumber String? // 申請案號
   FilingDate        DateTime? // 申請日
@@ -45,7 +44,7 @@ model PatentApplicationData {
   RDResultNumber    String? // 研究成果編號
   NSCNumber         String? // 國科會編號
 
-  patent           Patent   @relation(fields: [PatentID], references: [PatentID])
+  patent Patent @relation(fields: [PatentID], references: [PatentID])
 }
 
 // ========================
