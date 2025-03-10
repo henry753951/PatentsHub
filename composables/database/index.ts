@@ -1,7 +1,7 @@
-import { inventor } from "./inventor";
+import { useInventor } from "./inventor";
 
 export const useDatabase = () => {
    return {
-      inventor,
+      useInventor,
    };
 };

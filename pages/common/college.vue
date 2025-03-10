@@ -3,16 +3,33 @@
       <div
          class="h-full w-full bg-white rounded-lg shadow-md dark:bg-zinc-900 min-h-0 overflow-hidden"
       >
-         <FormCollegeManage :selectable="true" />
+         <FormCollegeManage
+            v-model="selectedDepartment"
+            :selectable="true"
+         />
       </div>
-      <div></div>
+      <div
+         class="h-full w-full bg-white rounded-lg shadow-md dark:bg-zinc-900 min-h-0 overflow-hidden"
+      >
+         <FormInventorManage :department="selectedDepartment" />
+      </div>
    </div>
 </template>
 
 <script lang="ts" setup>
-
 definePageMeta({
    name: "common-collegeManage",
+});
+
+const collegesStore = useCollegesStore();
+
+const selectedDepartment = ref<Department>();
+
+type Department =
+   RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
+
+onMounted(async () => {
+   await collegesStore.refresh();
 });
 </script>
 
