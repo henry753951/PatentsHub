@@ -1,15 +1,32 @@
 model FundingPlan {
   PlanID   Int             @id @default(autoincrement())
   PlanType Int
+  Name     String
   fundings PatentFunding[]
 }
 
+model FundingUnit {
+  UnitID          Int               @id @default(autoincrement())
+  Name            String
+  FundingUnitData FundingUnitData[]
+}
+
+model FundingUnitData {
+  FundingUnitID         Int
+  PatentID              Int
+  ProjectCode           String?
+  Amount                Float
+  fundingUnit           FundingUnit    @relation(fields: [FundingUnitID], references: [UnitID])
+  PatentFunding         PatentFunding? @relation(fields: [patentFundingPatentID], references: [PatentID])
+  patentFundingPatentID Int?
+
+  @@id([FundingUnitID, PatentID])
+}
+
 model PatentFunding {
-  FundingID     Int         @id @default(autoincrement())
-  PatentID      Int
-  FundingAgency String
-  ProjectNumber String
-  PlanID        Int
-  patent        Patent      @relation(fields: [PatentID], references: [PatentID])
-  plan          FundingPlan @relation(fields: [PlanID], references: [PlanID])
+  PatentID          Int               @id
+  fundingPlanPlanID Int
+  patent            Patent            @relation(fields: [PatentID], references: [PatentID])
+  plan              FundingPlan       @relation(fields: [fundingPlanPlanID], references: [PlanID])
+  fundingUnitsDatas FundingUnitData[]
 }

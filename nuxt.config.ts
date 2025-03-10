@@ -93,6 +93,7 @@ export default defineNuxtConfig({
       buildCache: true,
       typedPages: true,
    },
+   logLevel: "verbose",
    vite: {
       optimizeDeps: {
          entries: ["components/**/*.vue"],

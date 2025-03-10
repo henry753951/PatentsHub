@@ -1,17 +1,28 @@
 <template>
    <div>
       <Dialog v-model:open="isOpen">
-         <DialogContent class="w-[90%] h-[90%] max-w-none p-1 flex flex-col">
+         <DialogContent class="w-[90%] h-[90%] max-w-none flex flex-col p-0 overflow-hidden">
+            <DialogHeader class="hidden">
+               <DialogTitle>專利資訊</DialogTitle>
+               <DialogDescription></DialogDescription>
+            </DialogHeader>
+            <OverlayScrollbarsComponent
+               :options="{ scrollbars: { autoHide: 'leave' } }"
+            >
+               <BlockPatentView :patent-id="props.patentId" />
+            </OverlayScrollbarsComponent>
          </DialogContent>
       </Dialog>
    </div>
 </template>
 
 <script lang="ts" setup>
-import type { FormPatentCreate } from "#components";
 import {
    Dialog,
    DialogContent,
+   DialogHeader,
+   DialogTitle,
+   DialogDescription,
 } from "@/components/ui/dialog";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 
@@ -21,7 +32,9 @@ const isOpen = defineModel("open", {
 });
 
 const { props } = defineProps<{
-   props: Record<string, any>
+   props: {
+      patentId?: string
+   }
 }>();
 
 </script>

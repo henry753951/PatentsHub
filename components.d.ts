@@ -7,6 +7,11 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    PTab: typeof import('primevue/tab')['default']
+    PTabList: typeof import('primevue/tablist')['default']
+    PTabPanel: typeof import('primevue/tabpanel')['default']
+    PTabPanels: typeof import('primevue/tabpanels')['default']
+    PTabs: typeof import('primevue/tabs')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

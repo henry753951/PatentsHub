@@ -43,7 +43,11 @@ export default router({
             Name: true,
             Description: true,
             CollegeID: true,
-            departments: true,
+            departments: {
+               include: {
+                  college: true,
+               },
+            },
          },
       });
    }),

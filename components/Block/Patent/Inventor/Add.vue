@@ -30,8 +30,8 @@
                v-for="inventor in inventors"
                :key="inventor.InventorID"
                class="h-[88px] mb-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700"
-               :name="inventor.Name"
-               :job="inventor.contactInfo?.Position ?? ''"
+               :name="inventor.contactInfo?.Name ?? ''"
+               :job="inventor.contactInfo?.Role ?? ''"
                :belong="{
                   college: inventor.department?.college.Name ?? '',
                   department: inventor.department?.Name ?? '',
@@ -39,8 +39,8 @@
                @click="
                   emits('select', {
                      id: inventor.InventorID,
-                     name: inventor.Name,
-                     job: inventor.contactInfo?.Position ?? '',
+                     name: inventor.contactInfo?.Name ?? '',
+                     job: inventor.contactInfo?.Role ?? '',
                      belong: {
                         college: inventor.department?.college.Name ?? '',
                         department: inventor.department?.Name ?? '',
@@ -73,8 +73,10 @@ const search = ref<string>("");
 const { data: inventors, refresh } = await useAsyncData(async () => {
    const { $trpc } = useNuxtApp();
    return await $trpc.data.inventor.getInventors.query({
-      Name: {
-         contains: search.value,
+      contactInfo: {
+         Name: {
+            contains: search.value,
+         },
       },
    });
 });

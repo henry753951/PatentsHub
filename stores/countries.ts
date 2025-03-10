@@ -13,7 +13,8 @@ export const useCountriesStore = defineStore("countriesStore", {
                const data = await $trpc.data.country.getAllContries.query();
                initialState.countries = data;
                initialState.isInitialized = true;
-            } catch (error) {
+            }
+            catch (error) {
                console.error("Failed to initialize countries:", error);
             }
          })();

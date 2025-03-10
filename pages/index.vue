@@ -1,16 +1,23 @@
 <template>
-   <div class="container mx-auto">
-      <CustomStatusBlock title="類別">
-      </CustomStatusBlock>
+   <div>
+      <Button
+         @click="
+            open('PatentModal', {
+               props: {},
+            })
+         "
+      >
+         Open Sheet
+      </Button>
    </div>
 </template>
 
 <script lang="ts" setup>
-import consola from "consola";
+const { open } = useModals();
 
 definePageMeta({
    name: "home",
 });
 </script>
 
-<style></style>
+<style scoped></style>
