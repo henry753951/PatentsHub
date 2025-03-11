@@ -114,7 +114,7 @@
             </CustomContentBlockRow>
          </CustomContentBlock>
       </div>
-      <div class="col-span-1 sticky top-[87px] self-start">
+      <div class="col-span-1 self-start sticky top-[87px]">
          <CustomContentBlock
             title="基本資訊"
             :save-button="!basicData.isSynced.value"
@@ -122,6 +122,7 @@
          >
             <CustomContentBlockRow
                v-model="basicData.data.value.Year"
+               :is-synced="basicData.data.value.Year === basicData.refData.value.Year"
                title="年度"
             />
 
@@ -157,10 +158,7 @@
                {{ patent.PatentType }}
             </CustomContentBlockRow>
          </CustomContentBlock>
-         <CustomContentBlock
-            title="發明人"
-            tclass="sticky top-[87px]"
-         >
+         <CustomContentBlock title="發明人">
             <BlockPatentInventorRow
                v-for="inventor in patent.inventors"
                :key="inventor.InventorID"

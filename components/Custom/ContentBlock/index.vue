@@ -1,7 +1,7 @@
 <template>
    <div>
       <div
-         class="flex justify-between items-center self-start w-full dark:bg-[#09090b] bg-white"
+         class="flex justify-between items-center w-full dark:bg-[#09090b] bg-white z-[3]"
          :class="tclass"
       >
          <h3

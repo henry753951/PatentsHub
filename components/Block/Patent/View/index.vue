@@ -257,68 +257,6 @@ const patent = ref<RouterOutput["data"]["patent"]["getPatent"]>({
          Main: false,
          Contribution: null,
       },
-      {
-         InventorID: 4,
-         PatentID: 2,
-         inventor: {
-            department: {
-               CollegeID: 1,
-               DepartmentID: 2,
-               Name: "化學工程及材料工程學系",
-               college: {
-                  CollegeID: 1,
-                  Name: "工學院",
-                  Description: "",
-               },
-               Description: "",
-            },
-            DepartmentID: 2,
-            InventorID: 4,
-            ContactInfoID: 4,
-            contactInfo: {
-               Name: "楊乾信", // 共同發明人3
-               ContactInfoID: 4,
-               Email: null,
-               OfficeNumber: null,
-               PhoneNumber: null,
-               Role: "共同發明人",
-               Note: null,
-            },
-         },
-         Main: false,
-         Contribution: null,
-      },
-      {
-         InventorID: 5,
-         PatentID: 2,
-         inventor: {
-            department: {
-               CollegeID: 1,
-               DepartmentID: 2,
-               Name: "化學工程及材料工程學系",
-               college: {
-                  CollegeID: 1,
-                  Name: "工學院",
-                  Description: "",
-               },
-               Description: "",
-            },
-            DepartmentID: 2,
-            InventorID: 5,
-            ContactInfoID: 5,
-            contactInfo: {
-               Name: "施昇宏", // 共同發明人4
-               ContactInfoID: 5,
-               Email: null,
-               OfficeNumber: null,
-               PhoneNumber: null,
-               Role: "共同發明人",
-               Note: null,
-            },
-         },
-         Main: false,
-         Contribution: null,
-      },
    ],
    technical: {
       PatentID: 2,
@@ -339,15 +277,17 @@ const patent = ref<RouterOutput["data"]["patent"]["getPatent"]>({
       InternalID: "10413", // 校內編號
       InitialReviewDate: "2015-11-03", // 技推委員會審理日期（104.11.03）
       InitialReviewNumber: null,
-      InitialReviewAgencies: [{
-         agencyUnit: {
-            Name: "初評事務所",
+      InitialReviewAgencies: [
+         {
+            agencyUnit: {
+               Name: "初評事務所",
+               AgencyUnitID: 0,
+               Description: "",
+            },
             AgencyUnitID: 0,
-            Description: "",
+            PatentID: 0,
          },
-         AgencyUnitID: 0,
-         PatentID: 0,
-      }], // 初評事務所
+      ], // 初評事務所
       TakerAgencies: [
          {
             agencyUnit: {
@@ -389,17 +329,19 @@ const patent = ref<RouterOutput["data"]["patent"]["getPatent"]>({
          PlanID: 1,
          Name: "C", // 方案
       },
-      fundingUnitsDatas: [{
-         fundingUnit: {
-            Name: "科技部",
-            UnitID: 0,
+      fundingUnitsDatas: [
+         {
+            fundingUnit: {
+               Name: "科技部",
+               UnitID: 0,
+            },
+            PatentID: 0,
+            ProjectCode: "",
+            Amount: 0,
+            FundingUnitID: 0,
+            patentFundingPatentID: null,
          },
-         PatentID: 0,
-         ProjectCode: "",
-         Amount: 0,
-         FundingUnitID: 0,
-         patentFundingPatentID: null,
-      }], // 資助單位
+      ], // 資助單位
       fundingPlanPlanID: 1,
    },
 });
