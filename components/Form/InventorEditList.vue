@@ -3,9 +3,13 @@
       :open="props.isOpen"
       @update:open="closeModal"
    >
-      <DialogContent class="sm:max-w-[425px] rounded-xl bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700">
+      <DialogContent
+         class="sm:max-w-[425px] rounded-xl bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 h-fit"
+      >
          <DialogHeader>
-            <DialogTitle class="text-xl font-bold text-slate-800 dark:text-zinc-100">
+            <DialogTitle
+               class="text-xl font-bold text-slate-800 dark:text-zinc-100"
+            >
                {{ props.title }}
             </DialogTitle>
             <DialogDescription class="text-slate-600 dark:text-zinc-400">
@@ -20,7 +24,9 @@
                <Label
                   for="name"
                   class="text-sm font-medium text-slate-700 dark:text-zinc-300"
-               >發明人姓名</Label>
+               >
+                  發明人姓名
+               </Label>
                <Input
                   id="name"
                   v-model="formData.name"
@@ -33,7 +39,9 @@
                <Label
                   for="email"
                   class="text-sm font-medium text-slate-700 dark:text-zinc-300"
-               >電子信箱</Label>
+               >
+                  電子信箱
+               </Label>
                <Input
                   id="email"
                   v-model="formData.email"
@@ -43,26 +51,42 @@
             </div>
             <div>
                <Label
-                  for="department"
+                  for="role"
                   class="text-sm font-medium text-slate-700 dark:text-zinc-300"
-               >所屬系所</Label>
-               <DepartmentSelect
-                  v-model="formData.belongs"
-                  class="mt-1"
-               />
-            </div>
-            <DialogFooter>
-               <Button
-                  type="button"
-                  variant="outline"
-                  @click="closeModal"
                >
-                  取消
-               </Button>
-               <Button type="submit">
-                  確認
-               </Button>
-            </DialogFooter>
+                  職稱
+               </Label>
+               <Input
+                  id="role"
+                  v-model="formData.role"
+                  class="mt-1 w-full rounded-lg border border-slate-200 dark:border-zinc-600 bg-slate-50 dark:bg-zinc-900 text-slate-800 dark:text-zinc-100"
+                  placeholder="請輸入職稱（選填）"
+               />
+               <div>
+                  <Label
+                     for="department"
+                     class="text-sm font-medium text-slate-700 dark:text-zinc-300"
+                  >
+                     所屬系所
+                  </Label>
+                  <DepartmentSelect
+                     v-model="formData.belongs"
+                     class="mb-2"
+                  />
+               </div>
+               <DialogFooter>
+                  <Button
+                     type="button"
+                     variant="outline"
+                     @click="closeModal"
+                  >
+                     取消
+                  </Button>
+                  <Button type="submit">
+                     確認
+                  </Button>
+               </DialogFooter>
+            </div>
          </form>
       </DialogContent>
    </Dialog>
@@ -86,7 +110,13 @@ const props = defineProps<{
    isOpen: boolean
    title: string
    description: string
-   initialData?: { name: string, email?: string, departmentID: number }
+   initialData?: {
+      name: string
+      email?: string
+      role?: string
+      departmentID: number
+      collegeID: number
+   }
 }>();
 
 const emit = defineEmits(["submit", "close"]);
@@ -94,33 +124,36 @@ const emit = defineEmits(["submit", "close"]);
 const formData = ref({
    name: "",
    email: "",
-   belongs: {
-      departmentID: 0,
-   },
+   role: "",
+   belongs: null as {
+      departmentID: number
+      collegeID: number
+   } | null,
 });
 
-// 初始化表單數據
 watch(
-   () => props.initialData,
-   (data) => {
-      if (data) {
+   () => props.isOpen,
+   (isOpen) => {
+      if (isOpen && props.initialData) {
          formData.value = {
-            name: data.name,
-            email: data.email || "",
+            name: props.initialData.name,
+            email: props.initialData.email ?? "",
+            role: props.initialData.role ?? "",
             belongs: {
-               departmentID: data.departmentID,
+               departmentID: props.initialData.departmentID,
+               collegeID: props.initialData.collegeID,
             },
          };
       }
    },
-   { immediate: true },
 );
 
 const submitForm = () => {
    emit("submit", {
       name: formData.value.name,
       email: formData.value.email,
-      departmentID: formData.value.belongs.departmentID,
+      departmentID: formData.value.belongs?.departmentID ?? null,
+      role: formData.value.role,
    });
 };
 
@@ -129,5 +162,4 @@ const closeModal = () => {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -49,10 +49,12 @@ export const patent = {
       });
 
       const nextStep = async () => {
-         const keys = Object.keys(currentSchema.value.shape) as (keyof z.infer<
-            typeof schemas
-         >)[];
          let isValidate = true;
+         let keys = [] as (keyof z.infer<typeof schemas>)[];
+         for (let i: number = 0; i <= currentStep.value; i++) {
+            console.log(steps[i].schema.shape);
+            keys = keys.concat(Object.keys(steps[i].schema.shape) as (keyof z.infer<typeof schemas>)[]);
+         }
          for (const key of keys) {
             const { valid } = await validateField(key);
             console.log(key, valid);

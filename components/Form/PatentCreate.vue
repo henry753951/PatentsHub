@@ -148,7 +148,6 @@
             />
          </div>
       </template>
-      <div>{{ patentCreation.errors }}</div>
    </div>
 </template>
 
@@ -171,7 +170,7 @@ interface Inventor {
       department: string
    }
 }
-
+const { $trpc } = useNuxtApp();
 const patentCreation = useFormData().patent.useCreation();
 
 const form = {
@@ -182,7 +181,13 @@ const form = {
       })[]
    >([]),
    inventors: patentCreation.defineField("inventors"),
+   internalID: patentCreation.defineField("internalID"),
 };
+
+onMounted(async () => {
+   const internalID = await $trpc.data.patent.getLastInternalID.query();
+   form.internalID[0].value = internalID;
+});
 
 watch(
    form.insideInventors.value,

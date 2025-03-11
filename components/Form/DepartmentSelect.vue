@@ -1,15 +1,10 @@
 <template>
-   <Popover>
-      <PopoverTrigger as-child>
-         <div
-            v-auto-animate
-            class="bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl w-full border border-slate-200 dark:border-zinc-800 hover:shadow-sm transition-shadow select-none cursor-pointer"
-         >
-            <template
-               v-if="
-                  currentCollegeAndDepartment.college &&
-                     currentCollegeAndDepartment.department
-               "
+   <div>
+      <Popover>
+         <PopoverTrigger as-child>
+            <div
+               v-auto-animate
+               class="bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl w-full border border-slate-200 dark:border-zinc-800 hover:shadow-sm transition-shadow select-none cursor-pointer"
             >
                <template
                   v-if="
@@ -17,11 +12,13 @@
                         currentCollegeAndDepartment.department
                   "
                >
-                  <div class="font-semibold color-slate-800 dark:color-zinc-100">
-                     {{ currentCollegeAndDepartment.college?.Name }}
+                  <div
+                     class="font-semibold color-slate-800 dark:color-zinc-100"
+                  >
+                     {{ currentCollegeAndDepartment.college.Name }}
                   </div>
                   <div class="color-slate-600 dark:color-zinc-400">
-                     {{ currentCollegeAndDepartment.department?.Name }}
+                     {{ currentCollegeAndDepartment.department.Name }}
                   </div>
                </template>
                <template v-else>
@@ -29,55 +26,59 @@
                      請選擇系所
                   </div>
                </template>
-            </template>
-         </div>
-      </PopoverTrigger>
-      <PopoverContent class="w-[var(--radix-popper-anchor-width)] rounded-xl">
-         <OverlayScrollbarsComponent>
-            <div class="flex gap-8 pb-3 select-none">
-               <div
-                  v-for="college in colleges"
-                  :key="college.CollegeID"
-                  class="flex flex-col gap-2"
-               >
+            </div>
+         </PopoverTrigger>
+         <PopoverContent
+            class="w-[var(--radix-popper-anchor-width)] rounded-xl"
+         >
+            <OverlayScrollbarsComponent>
+               <div class="flex gap-8 pb-3 select-none">
                   <div
-                     class="w-full font-semibold college-title border-b border-slate-200 dark:border-zinc-800 pe-2 text-nowrap"
+                     v-for="college in colleges"
+                     :key="college.CollegeID"
+                     class="flex flex-col gap-2"
                   >
-                     {{ college.Name }}
-                  </div>
-                  <div class="flex gap-3 flex-1">
                      <div
-                        v-for="department in college.departments"
-                        :key="department.DepartmentID"
-                        class="department-option letter-vertical"
-                        :class="{
-                           'bg-blue-100 dark:bg-blue-950':
-                              belongs?.departmentID === department.DepartmentID,
-                           'bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800':
-                              belongs?.departmentID !== department.DepartmentID,
-                        }"
-                        @click="
-                           belongs = {
-                              collegeID: department.CollegeID,
-                              departmentID: department.DepartmentID,
-                           };
-                           updateBelongsInDbModel();
-                        "
+                        class="w-full font-semibold college-title border-b border-slate-200 dark:border-zinc-800 pe-2 text-nowrap"
                      >
-                        {{ department.Name }}
+                        {{ college.Name }}
                      </div>
-                     <div
-                        v-if="!college.departments.length"
-                        class="text-slate-400 dark:text-zinc-400 letter-vertical flex items-center justify-center w-full"
-                     >
-                        尚無系所
+                     <div class="flex gap-3 flex-1">
+                        <div
+                           v-for="department in college.departments"
+                           :key="department.DepartmentID"
+                           class="department-option letter-vertical"
+                           :class="{
+                              'bg-blue-100 dark:bg-blue-950':
+                                 belongs?.departmentID ===
+                                 department.DepartmentID,
+                              'bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800':
+                                 belongs?.departmentID !==
+                                 department.DepartmentID,
+                           }"
+                           @click="
+                              belongs = {
+                                 collegeID: department.CollegeID,
+                                 departmentID: department.DepartmentID,
+                              };
+                              nextTick(updateBelongsInDbModel);
+                           "
+                        >
+                           {{ department.Name }}
+                        </div>
+                        <div
+                           v-if="!college.departments.length"
+                           class="text-slate-400 dark:text-zinc-400 letter-vertical flex items-center justify-center w-full"
+                        >
+                           尚無系所
+                        </div>
                      </div>
                   </div>
                </div>
-            </div>
-         </OverlayScrollbarsComponent>
-      </PopoverContent>
-   </Popover>
+            </OverlayScrollbarsComponent>
+         </PopoverContent>
+      </Popover>
+   </div>
 </template>
 
 <script lang="ts" setup>
@@ -89,7 +90,7 @@ const belongs = defineModel("modelValue", {
    type: Object as PropType<{
       collegeID: number
       departmentID: number
-   }>,
+   } | null>,
    required: false,
 });
 
@@ -111,7 +112,9 @@ const belongsInDb = defineModel("belongsInDb", {
 watch(
    () => belongsInDb.value,
    (value) => {
-      if (value) {
+      if (!value) return;
+      if (value.DepartmentID !== belongs.value?.departmentID) {
+         console.log("update", value);
          belongs.value = {
             collegeID: value.CollegeID,
             departmentID: value.DepartmentID,
@@ -131,16 +134,12 @@ onMounted(async () => {
 });
 
 const currentCollegeAndDepartment = computed(() => {
+   console.log(colleges.value);
    const college = colleges.value.find(
-      (college) =>
-         belongs.value && college.CollegeID === belongs.value.collegeID,
       (college) =>
          belongs.value && college.CollegeID === belongs.value.collegeID,
    );
    const department = college?.departments.find(
-      (department) =>
-         belongs.value
-         && department.DepartmentID === belongs.value.departmentID,
       (department) =>
          belongs.value
          && department.DepartmentID === belongs.value.departmentID,
@@ -154,6 +153,7 @@ const updateBelongsInDbModel = () => {
       || !currentCollegeAndDepartment.value.department
    )
       return;
+
    belongsInDb.value = {
       Name: currentCollegeAndDepartment.value.department.Name,
       Description: currentCollegeAndDepartment.value.department.Description,
@@ -165,6 +165,7 @@ const updateBelongsInDbModel = () => {
       DepartmentID: currentCollegeAndDepartment.value.department.DepartmentID,
       CollegeID: currentCollegeAndDepartment.value.college.CollegeID,
    };
+   consola.info("updateBelongsInDbModel", belongsInDb.value);
 };
 </script>
 

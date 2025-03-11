@@ -4,6 +4,25 @@ import { CustomZodType } from "~/zod.dto";
 import { dbZ } from "~/server";
 
 export default router({
+   getLastInternalID: procedure
+      .input(z.object({}).nullish())
+      .query(async ({ input }) => {
+         const lastPatent = await prisma.patent.findFirst({
+            orderBy: {
+               internal: {
+                  InternalID: "desc",
+               },
+            },
+            include: {
+               internal: true,
+            },
+         });
+         const year = new Date().getFullYear() - 1911;
+         return (
+            lastPatent?.internal?.InternalID
+            ?? `${year}${(1).toString().padStart(4, "0")}`
+         );
+      }),
    createPatent: procedure
       .input(CustomZodType.PatentCreate.merge(CustomZodType.PatentInventor))
       .mutation(async ({ input }) => {
@@ -24,6 +43,11 @@ export default router({
                            }),
                         ),
                      },
+                  },
+               },
+               internal: {
+                  create: {
+                     InternalID: input.internalID,
                   },
                },
                inventors: {

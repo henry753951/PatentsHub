@@ -1,14 +1,23 @@
 <template>
-   <div>
+   <div class="container mx-auto">
       <Button
          @click="
             open('PatentModal', {
-               props: {},
+               props: {
+                  patentId: 1,
+               },
             })
          "
       >
          Open Sheet
       </Button>
+      <div class="grid grid-cols-1 gap-4">
+         <BlockPatentRow
+            v-for="i in 10"
+            :key="i"
+            class="rounded-lg"
+         />
+      </div>
    </div>
 </template>
 

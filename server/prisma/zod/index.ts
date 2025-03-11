@@ -9968,15 +9968,9 @@ export const AgencyUnitUpdateManyArgsSchema: z.ZodType<Prisma.AgencyUnitUpdateMa
   limit: z.number().optional(),
 }).strict() ;
 
-<<<<<<< HEAD
-export const updateManyAgencyUnitCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyAgencyUnitCreateManyAndReturnArgs> = z.object({
+export const AgencyUnitUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.AgencyUnitUpdateManyAndReturnArgs> = z.object({
   data: z.union([ AgencyUnitUpdateManyMutationInputSchema,AgencyUnitUncheckedUpdateManyInputSchema ]),
   where: AgencyUnitWhereInputSchema.optional(),
-=======
-export const AgencyUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.AgencyUpdateManyAndReturnArgs> = z.object({
-  data: z.union([ AgencyUpdateManyMutationInputSchema,AgencyUncheckedUpdateManyInputSchema ]),
-  where: AgencyWhereInputSchema.optional(),
->>>>>>> origin/Inventor
   limit: z.number().optional(),
 }).strict() ;
 
@@ -10026,15 +10020,9 @@ export const PatentTakerAgencyUnitUpdateManyArgsSchema: z.ZodType<Prisma.PatentT
   limit: z.number().optional(),
 }).strict() ;
 
-<<<<<<< HEAD
-export const updateManyPatentTakerAgencyUnitCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyPatentTakerAgencyUnitCreateManyAndReturnArgs> = z.object({
+export const PatentTakerAgencyUnitUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentTakerAgencyUnitUpdateManyAndReturnArgs> = z.object({
   data: z.union([ PatentTakerAgencyUnitUpdateManyMutationInputSchema,PatentTakerAgencyUnitUncheckedUpdateManyInputSchema ]),
   where: PatentTakerAgencyUnitWhereInputSchema.optional(),
-=======
-export const AgencyPatentUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.AgencyPatentUpdateManyAndReturnArgs> = z.object({
-  data: z.union([ AgencyPatentUpdateManyMutationInputSchema,AgencyPatentUncheckedUpdateManyInputSchema ]),
-  where: AgencyPatentWhereInputSchema.optional(),
->>>>>>> origin/Inventor
   limit: z.number().optional(),
 }).strict() ;
 
@@ -10084,15 +10072,9 @@ export const PatentInitiatorAgencyUnitUpdateManyArgsSchema: z.ZodType<Prisma.Pat
   limit: z.number().optional(),
 }).strict() ;
 
-<<<<<<< HEAD
-export const updateManyPatentInitiatorAgencyUnitCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyPatentInitiatorAgencyUnitCreateManyAndReturnArgs> = z.object({
+export const PatentInitiatorAgencyUnitUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentInitiatorAgencyUnitUpdateManyAndReturnArgs> = z.object({
   data: z.union([ PatentInitiatorAgencyUnitUpdateManyMutationInputSchema,PatentInitiatorAgencyUnitUncheckedUpdateManyInputSchema ]),
   where: PatentInitiatorAgencyUnitWhereInputSchema.optional(),
-=======
-export const AgencyContactPersonUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.AgencyContactPersonUpdateManyAndReturnArgs> = z.object({
-  data: z.union([ AgencyContactPersonUpdateManyMutationInputSchema,AgencyContactPersonUncheckedUpdateManyInputSchema ]),
-  where: AgencyContactPersonWhereInputSchema.optional(),
->>>>>>> origin/Inventor
   limit: z.number().optional(),
 }).strict() ;
 
@@ -10142,7 +10124,7 @@ export const AgencyUnitPersonUpdateManyArgsSchema: z.ZodType<Prisma.AgencyUnitPe
   limit: z.number().optional(),
 }).strict() ;
 
-export const updateManyAgencyUnitPersonCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyAgencyUnitPersonCreateManyAndReturnArgs> = z.object({
+export const AgencyUnitPersonUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.AgencyUnitPersonUpdateManyAndReturnArgs> = z.object({
   data: z.union([ AgencyUnitPersonUpdateManyMutationInputSchema,AgencyUnitPersonUncheckedUpdateManyInputSchema ]),
   where: AgencyUnitPersonWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -10246,7 +10228,7 @@ export const FundingUnitUpdateManyArgsSchema: z.ZodType<Prisma.FundingUnitUpdate
   limit: z.number().optional(),
 }).strict() ;
 
-export const updateManyFundingUnitCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyFundingUnitCreateManyAndReturnArgs> = z.object({
+export const FundingUnitUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.FundingUnitUpdateManyAndReturnArgs> = z.object({
   data: z.union([ FundingUnitUpdateManyMutationInputSchema,FundingUnitUncheckedUpdateManyInputSchema ]),
   where: FundingUnitWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -10298,7 +10280,7 @@ export const FundingUnitDataUpdateManyArgsSchema: z.ZodType<Prisma.FundingUnitDa
   limit: z.number().optional(),
 }).strict() ;
 
-export const updateManyFundingUnitDataCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyFundingUnitDataCreateManyAndReturnArgs> = z.object({
+export const FundingUnitDataUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.FundingUnitDataUpdateManyAndReturnArgs> = z.object({
   data: z.union([ FundingUnitDataUpdateManyMutationInputSchema,FundingUnitDataUncheckedUpdateManyInputSchema ]),
   where: FundingUnitDataWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -10517,61 +10499,6 @@ export const PatentDeleteManyArgsSchema: z.ZodType<Prisma.PatentDeleteManyArgs> 
   limit: z.number().optional(),
 }).strict() ;
 
-<<<<<<< HEAD
-=======
-export const PatentStatusCreateArgsSchema: z.ZodType<Prisma.PatentStatusCreateArgs> = z.object({
-  select: PatentStatusSelectSchema.optional(),
-  include: PatentStatusIncludeSchema.optional(),
-  data: z.union([ PatentStatusCreateInputSchema,PatentStatusUncheckedCreateInputSchema ]),
-}).strict() ;
-
-export const PatentStatusUpsertArgsSchema: z.ZodType<Prisma.PatentStatusUpsertArgs> = z.object({
-  select: PatentStatusSelectSchema.optional(),
-  include: PatentStatusIncludeSchema.optional(),
-  where: PatentStatusWhereUniqueInputSchema,
-  create: z.union([ PatentStatusCreateInputSchema,PatentStatusUncheckedCreateInputSchema ]),
-  update: z.union([ PatentStatusUpdateInputSchema,PatentStatusUncheckedUpdateInputSchema ]),
-}).strict() ;
-
-export const PatentStatusCreateManyArgsSchema: z.ZodType<Prisma.PatentStatusCreateManyArgs> = z.object({
-  data: z.union([ PatentStatusCreateManyInputSchema,PatentStatusCreateManyInputSchema.array() ]),
-}).strict() ;
-
-export const PatentStatusCreateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentStatusCreateManyAndReturnArgs> = z.object({
-  data: z.union([ PatentStatusCreateManyInputSchema,PatentStatusCreateManyInputSchema.array() ]),
-}).strict() ;
-
-export const PatentStatusDeleteArgsSchema: z.ZodType<Prisma.PatentStatusDeleteArgs> = z.object({
-  select: PatentStatusSelectSchema.optional(),
-  include: PatentStatusIncludeSchema.optional(),
-  where: PatentStatusWhereUniqueInputSchema,
-}).strict() ;
-
-export const PatentStatusUpdateArgsSchema: z.ZodType<Prisma.PatentStatusUpdateArgs> = z.object({
-  select: PatentStatusSelectSchema.optional(),
-  include: PatentStatusIncludeSchema.optional(),
-  data: z.union([ PatentStatusUpdateInputSchema,PatentStatusUncheckedUpdateInputSchema ]),
-  where: PatentStatusWhereUniqueInputSchema,
-}).strict() ;
-
-export const PatentStatusUpdateManyArgsSchema: z.ZodType<Prisma.PatentStatusUpdateManyArgs> = z.object({
-  data: z.union([ PatentStatusUpdateManyMutationInputSchema,PatentStatusUncheckedUpdateManyInputSchema ]),
-  where: PatentStatusWhereInputSchema.optional(),
-  limit: z.number().optional(),
-}).strict() ;
-
-export const PatentStatusUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentStatusUpdateManyAndReturnArgs> = z.object({
-  data: z.union([ PatentStatusUpdateManyMutationInputSchema,PatentStatusUncheckedUpdateManyInputSchema ]),
-  where: PatentStatusWhereInputSchema.optional(),
-  limit: z.number().optional(),
-}).strict() ;
-
-export const PatentStatusDeleteManyArgsSchema: z.ZodType<Prisma.PatentStatusDeleteManyArgs> = z.object({
-  where: PatentStatusWhereInputSchema.optional(),
-  limit: z.number().optional(),
-}).strict() ;
-
->>>>>>> origin/Inventor
 export const PatentApplicationDataCreateArgsSchema: z.ZodType<Prisma.PatentApplicationDataCreateArgs> = z.object({
   select: PatentApplicationDataSelectSchema.optional(),
   include: PatentApplicationDataIncludeSchema.optional(),
@@ -10769,7 +10696,7 @@ export const PatentInternalUpdateManyArgsSchema: z.ZodType<Prisma.PatentInternal
   limit: z.number().optional(),
 }).strict() ;
 
-export const updateManyPatentInternalCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyPatentInternalCreateManyAndReturnArgs> = z.object({
+export const PatentInternalUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentInternalUpdateManyAndReturnArgs> = z.object({
   data: z.union([ PatentInternalUpdateManyMutationInputSchema,PatentInternalUncheckedUpdateManyInputSchema ]),
   where: PatentInternalWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -10821,7 +10748,7 @@ export const PatentExternalUpdateManyArgsSchema: z.ZodType<Prisma.PatentExternal
   limit: z.number().optional(),
 }).strict() ;
 
-export const updateManyPatentExternalCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyPatentExternalCreateManyAndReturnArgs> = z.object({
+export const PatentExternalUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentExternalUpdateManyAndReturnArgs> = z.object({
   data: z.union([ PatentExternalUpdateManyMutationInputSchema,PatentExternalUncheckedUpdateManyInputSchema ]),
   where: PatentExternalWhereInputSchema.optional(),
   limit: z.number().optional(),
@@ -10873,7 +10800,7 @@ export const PatentStatusUpdateManyArgsSchema: z.ZodType<Prisma.PatentStatusUpda
   limit: z.number().optional(),
 }).strict() ;
 
-export const updateManyPatentStatusCreateManyAndReturnArgsSchema: z.ZodType<Prisma.updateManyPatentStatusCreateManyAndReturnArgs> = z.object({
+export const PatentStatusUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentStatusUpdateManyAndReturnArgs> = z.object({
   data: z.union([ PatentStatusUpdateManyMutationInputSchema,PatentStatusUncheckedUpdateManyInputSchema ]),
   where: PatentStatusWhereInputSchema.optional(),
   limit: z.number().optional(),

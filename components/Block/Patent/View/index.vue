@@ -135,6 +135,11 @@ import TabList from "primevue/tablist";
 import Tab from "primevue/tab";
 import TabPanels from "primevue/tabpanels";
 import TabPanel from "primevue/tabpanel";
+import type { z } from "zod";
+const porps = defineProps<{
+   patentID: number
+}>();
+
 const state = useClosestScrollState("viewRef");
 const title = computed(() => {
    if (!patent.value) return { english: "", native: "" };
@@ -144,43 +149,170 @@ const title = computed(() => {
    };
 });
 
+const { usePatent } = useDatabase();
+// const { data: patent, forceRefresh } = await usePatent({ PatentID: porps.patentID });
+
 const patent = ref<RouterOutput["data"]["patent"]["getPatent"]>({
-   PatentID: 1,
-   Year: "2023",
-   Title: "血液分離萃取方法及其裝置",
-   DraftTitle: "血液分離萃取方法及其裝置草稿",
-   TitleEnglish: "Blood Separation Extraction Method and Device",
+   PatentID: 2, // 假設新的專利ID為2
+   Year: "2016", // 公告/獲證年度為105年（2016）
+   Title: "分子拓印薄膜之製備方法及其分子拓印薄膜",
+   DraftTitle: "以導電高分子拓印荷爾蒙製備生物感測電極", // 發明名稱(稿)
+   TitleEnglish: "", // 未提供英文名稱，留空
    country: {
       CountryID: 1,
       ISOCode: "TW",
-      CountryName: "Taiwan",
+      CountryName: "中華民國", // 專利國家
    },
    inventors: [
       {
          InventorID: 1,
-         PatentID: 0,
+         PatentID: 2,
          inventor: {
             department: {
-               CollegeID: 0,
-               DepartmentID: 0,
-               Name: "資訊工程學系",
+               CollegeID: 1,
+               DepartmentID: 2,
+               Name: "化學工程及材料工程學系", // 單位系所
                college: {
-                  CollegeID: 0,
+                  CollegeID: 1,
+                  Name: "工學院", // 學院
+                  Description: "",
+               },
+               Description: "",
+            },
+            DepartmentID: 2,
+            InventorID: 1,
+            ContactInfoID: 1,
+            contactInfo: {
+               Name: "林宏殷", // 發明人
+               ContactInfoID: 1,
+               Email: null,
+               OfficeNumber: null,
+               PhoneNumber: null,
+               Role: "發明人",
+               Note: null,
+            },
+         },
+         Main: true, // 假設林宏殷為主要發明人
+         Contribution: null,
+      },
+      {
+         InventorID: 2,
+         PatentID: 2,
+         inventor: {
+            department: {
+               CollegeID: 1,
+               DepartmentID: 2,
+               Name: "化學工程及材料工程學系",
+               college: {
+                  CollegeID: 1,
                   Name: "工學院",
                   Description: "",
                },
                Description: "",
             },
-            DepartmentID: 0,
-            InventorID: 0,
-            ContactInfoID: 0,
+            DepartmentID: 2,
+            InventorID: 2,
+            ContactInfoID: 2,
             contactInfo: {
-               Name: "",
-               ContactInfoID: 0,
+               Name: "李玫樺", // 共同發明人1
+               ContactInfoID: 2,
                Email: null,
                OfficeNumber: null,
                PhoneNumber: null,
-               Role: null,
+               Role: "共同發明人",
+               Note: null,
+            },
+         },
+         Main: false,
+         Contribution: null,
+      },
+      {
+         InventorID: 3,
+         PatentID: 2,
+         inventor: {
+            department: {
+               CollegeID: 1,
+               DepartmentID: 2,
+               Name: "化學工程及材料工程學系",
+               college: {
+                  CollegeID: 1,
+                  Name: "工學院",
+                  Description: "",
+               },
+               Description: "",
+            },
+            DepartmentID: 2,
+            InventorID: 3,
+            ContactInfoID: 3,
+            contactInfo: {
+               Name: "郭漢章", // 共同發明人2
+               ContactInfoID: 3,
+               Email: null,
+               OfficeNumber: null,
+               PhoneNumber: null,
+               Role: "共同發明人",
+               Note: null,
+            },
+         },
+         Main: false,
+         Contribution: null,
+      },
+      {
+         InventorID: 4,
+         PatentID: 2,
+         inventor: {
+            department: {
+               CollegeID: 1,
+               DepartmentID: 2,
+               Name: "化學工程及材料工程學系",
+               college: {
+                  CollegeID: 1,
+                  Name: "工學院",
+                  Description: "",
+               },
+               Description: "",
+            },
+            DepartmentID: 2,
+            InventorID: 4,
+            ContactInfoID: 4,
+            contactInfo: {
+               Name: "楊乾信", // 共同發明人3
+               ContactInfoID: 4,
+               Email: null,
+               OfficeNumber: null,
+               PhoneNumber: null,
+               Role: "共同發明人",
+               Note: null,
+            },
+         },
+         Main: false,
+         Contribution: null,
+      },
+      {
+         InventorID: 5,
+         PatentID: 2,
+         inventor: {
+            department: {
+               CollegeID: 1,
+               DepartmentID: 2,
+               Name: "化學工程及材料工程學系",
+               college: {
+                  CollegeID: 1,
+                  Name: "工學院",
+                  Description: "",
+               },
+               Description: "",
+            },
+            DepartmentID: 2,
+            InventorID: 5,
+            ContactInfoID: 5,
+            contactInfo: {
+               Name: "施昇宏", // 共同發明人4
+               ContactInfoID: 5,
+               Email: null,
+               OfficeNumber: null,
+               PhoneNumber: null,
+               Role: "共同發明人",
                Note: null,
             },
          },
@@ -189,40 +321,59 @@ const patent = ref<RouterOutput["data"]["patent"]["getPatent"]>({
       },
    ],
    technical: {
-      PatentID: 1,
-      MaturityLevel: "高",
-      keywords: [],
+      PatentID: 2,
+      MaturityLevel: "4", // 技術成熟度TRL
+      keywords: [], // 未提供技術關鍵字，留空
    },
-   PatentType: "DESIGN",
-   DepartmentID: 101,
+   PatentType: "INVENTION", // 專利類別：發明
+   DepartmentID: 2, // 假設化學工程及材料工程學系的ID為2
    application: {
-      PatentID: 1,
-      ApplicationNumber: "202301040001",
-      FilingDate: "2023-01-04",
-      RDResultNumber: null,
-      NSCNumber: null,
+      PatentID: 2,
+      ApplicationNumber: "105101952", // 申請案號
+      FilingDate: "2016-01-22", // 申請日期（105.01.22）
+      RDResultNumber: "108HFA140019", // 研發成果編號（STRIKE）
+      NSCNumber: "109-390-001", // 國科會編號（STRIKE）
    },
    internal: {
-      PatentID: 0,
-      InternalID: "",
-      InitialReviewDate: null,
+      PatentID: 2,
+      InternalID: "10413", // 校內編號
+      InitialReviewDate: "2015-11-03", // 技推委員會審理日期（104.11.03）
       InitialReviewNumber: null,
-      InitialReviewAgencies: [],
-      TakerAgencies: [],
+      InitialReviewAgencies: [{
+         agencyUnit: {
+            Name: "初評事務所",
+            AgencyUnitID: 0,
+            Description: "",
+         },
+         AgencyUnitID: 0,
+         PatentID: 0,
+      }], // 初評事務所
+      TakerAgencies: [
+         {
+            agencyUnit: {
+               Name: "台一",
+               AgencyUnitID: 0,
+               Description: "",
+            },
+            AgencyUnitID: 0,
+            PatentID: 0,
+            FileCode: "",
+         },
+      ], // 承辦事務所
    },
    external: {
-      PatentNumber: "I723456",
-      PublicationDate: "2023-06-01",
-      StartDate: null,
-      EndDate: null,
-      IPCNumber: null,
-      PatentScope: null,
-      PatentID: 0,
+      PatentNumber: "I561821", // 專利號碼
+      PublicationDate: "2016-12-11", // 公告/獲證日期（105.12.11）
+      StartDate: "2016-12-11", // 專利權期間開始
+      EndDate: "2036-01-21", // 專利權期間結束
+      IPCNumber: null, // 未提供國際專利分類號IPC
+      PatentScope: null, // 未提供專利範圍
+      PatentID: 2,
    },
    department: {
       CollegeID: 1,
-      DepartmentID: 1,
-      Name: "資訊工程學系",
+      DepartmentID: 2,
+      Name: "化學工程及材料工程學系",
       college: {
          CollegeID: 1,
          Name: "工學院",
@@ -232,14 +383,24 @@ const patent = ref<RouterOutput["data"]["patent"]["getPatent"]>({
    },
    CountryID: 1,
    funding: {
-      PatentID: 0,
+      PatentID: 2,
       plan: {
-         PlanType: 0,
-         PlanID: 0,
-         Name: "A",
+         PlanType: 0, // 未明確提供，假設為0
+         PlanID: 1,
+         Name: "C", // 方案
       },
-      fundingUnitsDatas: [],
-      fundingPlanPlanID: 0,
+      fundingUnitsDatas: [{
+         fundingUnit: {
+            Name: "科技部",
+            UnitID: 0,
+         },
+         PatentID: 0,
+         ProjectCode: "",
+         Amount: 0,
+         FundingUnitID: 0,
+         patentFundingPatentID: null,
+      }], // 資助單位
+      fundingPlanPlanID: 1,
    },
 });
 </script>

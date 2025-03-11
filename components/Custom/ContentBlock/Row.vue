@@ -10,7 +10,7 @@
             'px-2 bg-white dark:bg-zinc-700': isFocus,
             'cursor-pointer': !isFocus,
          }"
-         class="font-bold w-full hover:bg-white hover:px-2 rounded-lg py-[0.4rem] transition-all duration-300 dark:hover:bg-zinc-700"
+         class="font-bold w-full hover:bg-white hover:px-2 rounded-lg py-[0.4rem] transition-all duration-300 dark:hover:bg-zinc-700 min-h-[37.7px]"
          @dblclick="isFocus = true"
       >
          <div
@@ -24,7 +24,6 @@
             class="border-b border-gray-300 dark:border-zinc-800"
          >
             <input
-
                v-model="str"
                type="text"
                class="input"

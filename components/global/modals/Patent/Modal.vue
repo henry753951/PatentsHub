@@ -9,7 +9,7 @@
             <OverlayScrollbarsComponent
                :options="{ scrollbars: { autoHide: 'leave' } }"
             >
-               <BlockPatentView :patent-id="props.patentId" />
+               <BlockPatentView :patent-i-d="props.patentId" />
             </OverlayScrollbarsComponent>
          </DialogContent>
       </Dialog>
@@ -33,7 +33,7 @@ const isOpen = defineModel("open", {
 
 const { props } = defineProps<{
    props: {
-      patentId?: string
+      patentId: number
    }
 }>();
 

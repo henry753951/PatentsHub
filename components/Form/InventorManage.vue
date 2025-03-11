@@ -31,7 +31,7 @@
                :key="inventor.InventorID"
                class="rounded-lg shadow-sm p-4 bg-white dark:bg-zinc-800 hover:shadow-md transition-shadow flex items-center justify-between"
             >
-               <span class="font-medium">{{ inventor.Name }}</span>
+               <span class="font-medium">{{ inventor.contactInfo?.Name }}</span>
                <DropdownMenu>
                   <DropdownMenuTrigger as-child>
                      <Button
@@ -84,22 +84,32 @@
 
 <script lang="ts" setup>
 import { Button } from "~/components/ui/button";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "~/components/ui/dropdown-menu";
+import {
+   DropdownMenu,
+   DropdownMenuTrigger,
+   DropdownMenuContent,
+   DropdownMenuItem,
+} from "~/components/ui/dropdown-menu";
 import { PlusIcon, MoreHorizontalIcon } from "lucide-vue-next";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 import { useInventor } from "~/composables/database/inventor";
 import InventorEditList from "~/components/Form/InventorEditList.vue";
 
-type Department = RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
+type Department =
+   RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
 
 const props = defineProps<{
    department?: Department
 }>();
 
-const { data: inventors, filter, status, crud } = useInventor({
+const {
+   data: inventors,
+   filter,
+   status,
+   crud,
+} = useInventor({
    DepartmentID: props.department?.DepartmentID,
-},
-);
+});
 
 // watch(
 //    () => props.department,
@@ -124,49 +134,88 @@ watch(
 
 const showAddModal = ref(false);
 const showEditModal = ref(false);
-const editData = ref<{ name: string, email?: string, departmentID: number }>();
+const editData = ref<{
+   name: string
+   email?: string
+   role: string
+   departmentID: number
+   collegeID: number
+}>();
 const editInventorID = ref<number>();
 
 const openAddModal = () => {
+   if (!props.department) return;
    editData.value = {
       name: "",
       email: "",
-      departmentID: props.department?.DepartmentID || 0,
+      role: "教授",
+      departmentID: props.department.DepartmentID,
+      collegeID: props.department.CollegeID,
    };
    showAddModal.value = true;
 };
 
-const openEditModal = (inventor: RouterOutput["data"]["inventor"]["getInventors"][0]) => {
+const openEditModal = (
+   inventor: RouterOutput["data"]["inventor"]["getInventors"][0],
+) => {
    editData.value = {
-      name: inventor.Name,
+      name: inventor.contactInfo?.Name || "",
       email: inventor.contactInfo?.Email || "",
+      role: inventor.contactInfo?.Role || "教授",
       departmentID: inventor.department.DepartmentID,
+      collegeID: inventor.department.CollegeID,
    };
    editInventorID.value = inventor.InventorID;
    showEditModal.value = true;
 };
 
-const handleAddSubmit = async (data: { name: string, email?: string, departmentID: number }) => {
-   console.log("data", data);
+const handleAddSubmit = async (data: {
+   name: string
+   email?: string
+   departmentID: number
+   role: string
+}) => {
    const departmentID = data.departmentID || props.department?.DepartmentID;
    if (!departmentID) throw new Error("系所 ID 未提供");
    await crud.createInventor({
-      Name: data.name,
-      contactInfo: data.email ? { create: { Email: data.email } } : undefined,
-      department: { connect: { DepartmentID: departmentID } },
+      department: {
+         connect: { DepartmentID: departmentID },
+      },
+      contactInfo: {
+         create: {
+            Name: data.name,
+            Email: data.email,
+            Role: data.role,
+         },
+      },
    });
    showAddModal.value = false;
 };
 
-const handleEditSubmit = async (data: { name: string, email?: string, departmentID: number }) => {
+const handleEditSubmit = async (data: {
+   name: string
+   email?: string
+   departmentID: number
+   role: string
+}) => {
    if (!editInventorID.value) return;
    await crud.updateInventor({
       where: { InventorID: editInventorID.value },
       data: {
-         Name: data.name,
-         contactInfo: data.email
-            ? { upsert: { create: { Email: data.email }, update: { Email: data.email } } }
-            : undefined,
+         contactInfo: {
+            upsert: {
+               create: {
+                  Name: data.name,
+                  Email: data.email,
+                  Role: data.role,
+               },
+               update: {
+                  Name: data.name,
+                  Email: data.email,
+                  Role: data.role,
+               },
+            },
+         },
          department: { connect: { DepartmentID: data.departmentID } },
       },
    });
@@ -178,6 +227,4 @@ const deleteInventor = async (inventorID: number) => {
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
