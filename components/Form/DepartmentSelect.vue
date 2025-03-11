@@ -11,17 +11,24 @@
                      currentCollegeAndDepartment.department
                "
             >
-               <div class="font-semibold color-slate-800 dark:color-zinc-100">
-                  {{ currentCollegeAndDepartment.college?.Name }}
-               </div>
-               <div class="color-slate-600 dark:color-zinc-400">
-                  {{ currentCollegeAndDepartment.department?.Name }}
-               </div>
-            </template>
-            <template v-else>
-               <div class="color-slate-400 dark:color-zinc-400">
-                  請選擇學院與系所
-               </div>
+               <template
+                  v-if="
+                     currentCollegeAndDepartment.college &&
+                        currentCollegeAndDepartment.department
+                  "
+               >
+                  <div class="font-semibold color-slate-800 dark:color-zinc-100">
+                     {{ currentCollegeAndDepartment.college?.Name }}
+                  </div>
+                  <div class="color-slate-600 dark:color-zinc-400">
+                     {{ currentCollegeAndDepartment.department?.Name }}
+                  </div>
+               </template>
+               <template v-else>
+                  <div class="color-slate-400 dark:color-zinc-400">
+                     請選擇系所
+                  </div>
+               </template>
             </template>
          </div>
       </PopoverTrigger>
@@ -127,8 +134,13 @@ const currentCollegeAndDepartment = computed(() => {
    const college = colleges.value.find(
       (college) =>
          belongs.value && college.CollegeID === belongs.value.collegeID,
+      (college) =>
+         belongs.value && college.CollegeID === belongs.value.collegeID,
    );
    const department = college?.departments.find(
+      (department) =>
+         belongs.value
+         && department.DepartmentID === belongs.value.departmentID,
       (department) =>
          belongs.value
          && department.DepartmentID === belongs.value.departmentID,

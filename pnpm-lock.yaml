@@ -203,7 +203,7 @@ devDependencies:
     specifier: ^2.2.0
     version: 2.2.4
   zod-prisma-types:
-    specifier: ^3.2.1
+    specifier: ^3.2.4
     version: 3.2.4(@prisma/client@6.4.1)(prisma@6.4.1)
 
 packages:
