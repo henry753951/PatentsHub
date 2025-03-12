@@ -12,7 +12,7 @@ import type { Prisma } from '../../../node_modules/@prisma/client/node_modules/.
 
 export const TransactionIsolationLevelSchema = z.enum(['Serializable']);
 
-export const AgencyScalarFieldEnumSchema = z.enum(['AgencyID','Name']);
+export const AgencyScalarFieldEnumSchema = z.enum(['AgencyID','Name','Description']);
 
 export const AgencyContactPersonScalarFieldEnumSchema = z.enum(['ContactPersonID','AgencyID','ContactInfoID']);
 
@@ -65,6 +65,7 @@ export type EnumPatentTypeType = `${z.infer<typeof EnumPatentTypeSchema>}`
 export const AgencySchema = z.object({
   AgencyID: z.number().int(),
   Name: z.string(),
+  Description: z.string().nullable(),
 })
 
 export type Agency = z.infer<typeof AgencySchema>
@@ -309,6 +310,7 @@ export const AgencyCountOutputTypeSelectSchema: z.ZodType<Prisma.AgencyCountOutp
 export const AgencySelectSchema: z.ZodType<Prisma.AgencySelect> = z.object({
   AgencyID: z.boolean().optional(),
   Name: z.boolean().optional(),
+  Description: z.boolean().optional(),
   contacts: z.union([z.boolean(),z.lazy(() => AgencyContactPersonFindManyArgsSchema)]).optional(),
   patents: z.union([z.boolean(),z.lazy(() => AgencyPatentFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => AgencyCountOutputTypeArgsSchema)]).optional(),
@@ -786,6 +788,7 @@ export const AgencyWhereInputSchema: z.ZodType<Prisma.AgencyWhereInput> = z.obje
   NOT: z.union([ z.lazy(() => AgencyWhereInputSchema),z.lazy(() => AgencyWhereInputSchema).array() ]).optional(),
   AgencyID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   contacts: z.lazy(() => AgencyContactPersonListRelationFilterSchema).optional(),
   patents: z.lazy(() => AgencyPatentListRelationFilterSchema).optional()
 }).strict();
@@ -793,6 +796,7 @@ export const AgencyWhereInputSchema: z.ZodType<Prisma.AgencyWhereInput> = z.obje
 export const AgencyOrderByWithRelationInputSchema: z.ZodType<Prisma.AgencyOrderByWithRelationInput> = z.object({
   AgencyID: z.lazy(() => SortOrderSchema).optional(),
   Name: z.lazy(() => SortOrderSchema).optional(),
+  Description: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   contacts: z.lazy(() => AgencyContactPersonOrderByRelationAggregateInputSchema).optional(),
   patents: z.lazy(() => AgencyPatentOrderByRelationAggregateInputSchema).optional()
 }).strict();
@@ -806,6 +810,7 @@ export const AgencyWhereUniqueInputSchema: z.ZodType<Prisma.AgencyWhereUniqueInp
   OR: z.lazy(() => AgencyWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => AgencyWhereInputSchema),z.lazy(() => AgencyWhereInputSchema).array() ]).optional(),
   Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   contacts: z.lazy(() => AgencyContactPersonListRelationFilterSchema).optional(),
   patents: z.lazy(() => AgencyPatentListRelationFilterSchema).optional()
 }).strict());
@@ -813,6 +818,7 @@ export const AgencyWhereUniqueInputSchema: z.ZodType<Prisma.AgencyWhereUniqueInp
 export const AgencyOrderByWithAggregationInputSchema: z.ZodType<Prisma.AgencyOrderByWithAggregationInput> = z.object({
   AgencyID: z.lazy(() => SortOrderSchema).optional(),
   Name: z.lazy(() => SortOrderSchema).optional(),
+  Description: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   _count: z.lazy(() => AgencyCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => AgencyAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => AgencyMaxOrderByAggregateInputSchema).optional(),
@@ -826,6 +832,7 @@ export const AgencyScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Agency
   NOT: z.union([ z.lazy(() => AgencyScalarWhereWithAggregatesInputSchema),z.lazy(() => AgencyScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   AgencyID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   Name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  Description: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
 }).strict();
 
 export const AgencyContactPersonWhereInputSchema: z.ZodType<Prisma.AgencyContactPersonWhereInput> = z.object({
@@ -1868,6 +1875,7 @@ export const ContactInfoScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.C
 
 export const AgencyCreateInputSchema: z.ZodType<Prisma.AgencyCreateInput> = z.object({
   Name: z.string(),
+  Description: z.string().optional().nullable(),
   contacts: z.lazy(() => AgencyContactPersonCreateNestedManyWithoutAgencyInputSchema).optional(),
   patents: z.lazy(() => AgencyPatentCreateNestedManyWithoutAgencyInputSchema).optional()
 }).strict();
@@ -1875,12 +1883,14 @@ export const AgencyCreateInputSchema: z.ZodType<Prisma.AgencyCreateInput> = z.ob
 export const AgencyUncheckedCreateInputSchema: z.ZodType<Prisma.AgencyUncheckedCreateInput> = z.object({
   AgencyID: z.number().int().optional(),
   Name: z.string(),
+  Description: z.string().optional().nullable(),
   contacts: z.lazy(() => AgencyContactPersonUncheckedCreateNestedManyWithoutAgencyInputSchema).optional(),
   patents: z.lazy(() => AgencyPatentUncheckedCreateNestedManyWithoutAgencyInputSchema).optional()
 }).strict();
 
 export const AgencyUpdateInputSchema: z.ZodType<Prisma.AgencyUpdateInput> = z.object({
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   contacts: z.lazy(() => AgencyContactPersonUpdateManyWithoutAgencyNestedInputSchema).optional(),
   patents: z.lazy(() => AgencyPatentUpdateManyWithoutAgencyNestedInputSchema).optional()
 }).strict();
@@ -1888,22 +1898,26 @@ export const AgencyUpdateInputSchema: z.ZodType<Prisma.AgencyUpdateInput> = z.ob
 export const AgencyUncheckedUpdateInputSchema: z.ZodType<Prisma.AgencyUncheckedUpdateInput> = z.object({
   AgencyID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   contacts: z.lazy(() => AgencyContactPersonUncheckedUpdateManyWithoutAgencyNestedInputSchema).optional(),
   patents: z.lazy(() => AgencyPatentUncheckedUpdateManyWithoutAgencyNestedInputSchema).optional()
 }).strict();
 
 export const AgencyCreateManyInputSchema: z.ZodType<Prisma.AgencyCreateManyInput> = z.object({
   AgencyID: z.number().int().optional(),
-  Name: z.string()
+  Name: z.string(),
+  Description: z.string().optional().nullable()
 }).strict();
 
 export const AgencyUpdateManyMutationInputSchema: z.ZodType<Prisma.AgencyUpdateManyMutationInput> = z.object({
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const AgencyUncheckedUpdateManyInputSchema: z.ZodType<Prisma.AgencyUncheckedUpdateManyInput> = z.object({
   AgencyID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const AgencyContactPersonCreateInputSchema: z.ZodType<Prisma.AgencyContactPersonCreateInput> = z.object({
@@ -2756,6 +2770,20 @@ export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
   not: z.union([ z.string(),z.lazy(() => NestedStringFilterSchema) ]).optional(),
 }).strict();
 
+export const StringNullableFilterSchema: z.ZodType<Prisma.StringNullableFilter> = z.object({
+  equals: z.string().optional().nullable(),
+  in: z.string().array().optional().nullable(),
+  notIn: z.string().array().optional().nullable(),
+  lt: z.string().optional(),
+  lte: z.string().optional(),
+  gt: z.string().optional(),
+  gte: z.string().optional(),
+  contains: z.string().optional(),
+  startsWith: z.string().optional(),
+  endsWith: z.string().optional(),
+  not: z.union([ z.string(),z.lazy(() => NestedStringNullableFilterSchema) ]).optional().nullable(),
+}).strict();
+
 export const AgencyContactPersonListRelationFilterSchema: z.ZodType<Prisma.AgencyContactPersonListRelationFilter> = z.object({
   every: z.lazy(() => AgencyContactPersonWhereInputSchema).optional(),
   some: z.lazy(() => AgencyContactPersonWhereInputSchema).optional(),
@@ -2768,6 +2796,11 @@ export const AgencyPatentListRelationFilterSchema: z.ZodType<Prisma.AgencyPatent
   none: z.lazy(() => AgencyPatentWhereInputSchema).optional()
 }).strict();
 
+export const SortOrderInputSchema: z.ZodType<Prisma.SortOrderInput> = z.object({
+  sort: z.lazy(() => SortOrderSchema),
+  nulls: z.lazy(() => NullsOrderSchema).optional()
+}).strict();
+
 export const AgencyContactPersonOrderByRelationAggregateInputSchema: z.ZodType<Prisma.AgencyContactPersonOrderByRelationAggregateInput> = z.object({
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -2778,7 +2811,8 @@ export const AgencyPatentOrderByRelationAggregateInputSchema: z.ZodType<Prisma.A
 
 export const AgencyCountOrderByAggregateInputSchema: z.ZodType<Prisma.AgencyCountOrderByAggregateInput> = z.object({
   AgencyID: z.lazy(() => SortOrderSchema).optional(),
-  Name: z.lazy(() => SortOrderSchema).optional()
+  Name: z.lazy(() => SortOrderSchema).optional(),
+  Description: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const AgencyAvgOrderByAggregateInputSchema: z.ZodType<Prisma.AgencyAvgOrderByAggregateInput> = z.object({
@@ -2787,12 +2821,14 @@ export const AgencyAvgOrderByAggregateInputSchema: z.ZodType<Prisma.AgencyAvgOrd
 
 export const AgencyMaxOrderByAggregateInputSchema: z.ZodType<Prisma.AgencyMaxOrderByAggregateInput> = z.object({
   AgencyID: z.lazy(() => SortOrderSchema).optional(),
-  Name: z.lazy(() => SortOrderSchema).optional()
+  Name: z.lazy(() => SortOrderSchema).optional(),
+  Description: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const AgencyMinOrderByAggregateInputSchema: z.ZodType<Prisma.AgencyMinOrderByAggregateInput> = z.object({
   AgencyID: z.lazy(() => SortOrderSchema).optional(),
-  Name: z.lazy(() => SortOrderSchema).optional()
+  Name: z.lazy(() => SortOrderSchema).optional(),
+  Description: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const AgencySumOrderByAggregateInputSchema: z.ZodType<Prisma.AgencySumOrderByAggregateInput> = z.object({
@@ -2832,6 +2868,23 @@ export const StringWithAggregatesFilterSchema: z.ZodType<Prisma.StringWithAggreg
   _max: z.lazy(() => NestedStringFilterSchema).optional()
 }).strict();
 
+export const StringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.StringNullableWithAggregatesFilter> = z.object({
+  equals: z.string().optional().nullable(),
+  in: z.string().array().optional().nullable(),
+  notIn: z.string().array().optional().nullable(),
+  lt: z.string().optional(),
+  lte: z.string().optional(),
+  gt: z.string().optional(),
+  gte: z.string().optional(),
+  contains: z.string().optional(),
+  startsWith: z.string().optional(),
+  endsWith: z.string().optional(),
+  not: z.union([ z.string(),z.lazy(() => NestedStringNullableWithAggregatesFilterSchema) ]).optional().nullable(),
+  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _min: z.lazy(() => NestedStringNullableFilterSchema).optional(),
+  _max: z.lazy(() => NestedStringNullableFilterSchema).optional()
+}).strict();
+
 export const IntNullableFilterSchema: z.ZodType<Prisma.IntNullableFilter> = z.object({
   equals: z.number().optional().nullable(),
   in: z.number().array().optional().nullable(),
@@ -2857,11 +2910,6 @@ export const AgencyPatentContactListRelationFilterSchema: z.ZodType<Prisma.Agenc
   every: z.lazy(() => AgencyPatentContactWhereInputSchema).optional(),
   some: z.lazy(() => AgencyPatentContactWhereInputSchema).optional(),
   none: z.lazy(() => AgencyPatentContactWhereInputSchema).optional()
-}).strict();
-
-export const SortOrderInputSchema: z.ZodType<Prisma.SortOrderInput> = z.object({
-  sort: z.lazy(() => SortOrderSchema),
-  nulls: z.lazy(() => NullsOrderSchema).optional()
 }).strict();
 
 export const AgencyPatentContactOrderByRelationAggregateInputSchema: z.ZodType<Prisma.AgencyPatentContactOrderByRelationAggregateInput> = z.object({
@@ -3331,20 +3379,6 @@ export const EnumEnumPatentTypeNullableFilterSchema: z.ZodType<Prisma.EnumEnumPa
   not: z.union([ z.lazy(() => EnumPatentTypeSchema),z.lazy(() => NestedEnumEnumPatentTypeNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
-export const StringNullableFilterSchema: z.ZodType<Prisma.StringNullableFilter> = z.object({
-  equals: z.string().optional().nullable(),
-  in: z.string().array().optional().nullable(),
-  notIn: z.string().array().optional().nullable(),
-  lt: z.string().optional(),
-  lte: z.string().optional(),
-  gt: z.string().optional(),
-  gte: z.string().optional(),
-  contains: z.string().optional(),
-  startsWith: z.string().optional(),
-  endsWith: z.string().optional(),
-  not: z.union([ z.string(),z.lazy(() => NestedStringNullableFilterSchema) ]).optional().nullable(),
-}).strict();
-
 export const CountryNullableScalarRelationFilterSchema: z.ZodType<Prisma.CountryNullableScalarRelationFilter> = z.object({
   is: z.lazy(() => CountryWhereInputSchema).optional().nullable(),
   isNot: z.lazy(() => CountryWhereInputSchema).optional().nullable()
@@ -3398,23 +3432,6 @@ export const EnumEnumPatentTypeNullableWithAggregatesFilterSchema: z.ZodType<Pri
   _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
   _min: z.lazy(() => NestedEnumEnumPatentTypeNullableFilterSchema).optional(),
   _max: z.lazy(() => NestedEnumEnumPatentTypeNullableFilterSchema).optional()
-}).strict();
-
-export const StringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.StringNullableWithAggregatesFilter> = z.object({
-  equals: z.string().optional().nullable(),
-  in: z.string().array().optional().nullable(),
-  notIn: z.string().array().optional().nullable(),
-  lt: z.string().optional(),
-  lte: z.string().optional(),
-  gt: z.string().optional(),
-  gte: z.string().optional(),
-  contains: z.string().optional(),
-  startsWith: z.string().optional(),
-  endsWith: z.string().optional(),
-  not: z.union([ z.string(),z.lazy(() => NestedStringNullableWithAggregatesFilterSchema) ]).optional().nullable(),
-  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
-  _min: z.lazy(() => NestedStringNullableFilterSchema).optional(),
-  _max: z.lazy(() => NestedStringNullableFilterSchema).optional()
 }).strict();
 
 export const TechnicalKeywordListRelationFilterSchema: z.ZodType<Prisma.TechnicalKeywordListRelationFilter> = z.object({
@@ -3684,6 +3701,10 @@ export const AgencyPatentUncheckedCreateNestedManyWithoutAgencyInputSchema: z.Zo
 
 export const StringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.StringFieldUpdateOperationsInput> = z.object({
   set: z.string().optional()
+}).strict();
+
+export const NullableStringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableStringFieldUpdateOperationsInput> = z.object({
+  set: z.string().optional().nullable()
 }).strict();
 
 export const AgencyContactPersonUpdateManyWithoutAgencyNestedInputSchema: z.ZodType<Prisma.AgencyContactPersonUpdateManyWithoutAgencyNestedInput> = z.object({
@@ -4394,10 +4415,6 @@ export const NullableEnumEnumPatentTypeFieldUpdateOperationsInputSchema: z.ZodTy
   set: z.lazy(() => EnumPatentTypeSchema).optional().nullable()
 }).strict();
 
-export const NullableStringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableStringFieldUpdateOperationsInput> = z.object({
-  set: z.string().optional().nullable()
-}).strict();
-
 export const CountryUpdateOneWithoutApplicationsNestedInputSchema: z.ZodType<Prisma.CountryUpdateOneWithoutApplicationsNestedInput> = z.object({
   create: z.union([ z.lazy(() => CountryCreateWithoutApplicationsInputSchema),z.lazy(() => CountryUncheckedCreateWithoutApplicationsInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => CountryCreateOrConnectWithoutApplicationsInputSchema).optional(),
@@ -4819,6 +4836,20 @@ export const NestedStringFilterSchema: z.ZodType<Prisma.NestedStringFilter> = z.
   not: z.union([ z.string(),z.lazy(() => NestedStringFilterSchema) ]).optional(),
 }).strict();
 
+export const NestedStringNullableFilterSchema: z.ZodType<Prisma.NestedStringNullableFilter> = z.object({
+  equals: z.string().optional().nullable(),
+  in: z.string().array().optional().nullable(),
+  notIn: z.string().array().optional().nullable(),
+  lt: z.string().optional(),
+  lte: z.string().optional(),
+  gt: z.string().optional(),
+  gte: z.string().optional(),
+  contains: z.string().optional(),
+  startsWith: z.string().optional(),
+  endsWith: z.string().optional(),
+  not: z.union([ z.string(),z.lazy(() => NestedStringNullableFilterSchema) ]).optional().nullable(),
+}).strict();
+
 export const NestedIntWithAggregatesFilterSchema: z.ZodType<Prisma.NestedIntWithAggregatesFilter> = z.object({
   equals: z.number().optional(),
   in: z.number().array().optional(),
@@ -4861,6 +4892,23 @@ export const NestedStringWithAggregatesFilterSchema: z.ZodType<Prisma.NestedStri
   _count: z.lazy(() => NestedIntFilterSchema).optional(),
   _min: z.lazy(() => NestedStringFilterSchema).optional(),
   _max: z.lazy(() => NestedStringFilterSchema).optional()
+}).strict();
+
+export const NestedStringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedStringNullableWithAggregatesFilter> = z.object({
+  equals: z.string().optional().nullable(),
+  in: z.string().array().optional().nullable(),
+  notIn: z.string().array().optional().nullable(),
+  lt: z.string().optional(),
+  lte: z.string().optional(),
+  gt: z.string().optional(),
+  gte: z.string().optional(),
+  contains: z.string().optional(),
+  startsWith: z.string().optional(),
+  endsWith: z.string().optional(),
+  not: z.union([ z.string(),z.lazy(() => NestedStringNullableWithAggregatesFilterSchema) ]).optional().nullable(),
+  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _min: z.lazy(() => NestedStringNullableFilterSchema).optional(),
+  _max: z.lazy(() => NestedStringNullableFilterSchema).optional()
 }).strict();
 
 export const NestedIntNullableFilterSchema: z.ZodType<Prisma.NestedIntNullableFilter> = z.object({
@@ -4962,20 +5010,6 @@ export const NestedEnumEnumPatentTypeNullableFilterSchema: z.ZodType<Prisma.Nest
   not: z.union([ z.lazy(() => EnumPatentTypeSchema),z.lazy(() => NestedEnumEnumPatentTypeNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
-export const NestedStringNullableFilterSchema: z.ZodType<Prisma.NestedStringNullableFilter> = z.object({
-  equals: z.string().optional().nullable(),
-  in: z.string().array().optional().nullable(),
-  notIn: z.string().array().optional().nullable(),
-  lt: z.string().optional(),
-  lte: z.string().optional(),
-  gt: z.string().optional(),
-  gte: z.string().optional(),
-  contains: z.string().optional(),
-  startsWith: z.string().optional(),
-  endsWith: z.string().optional(),
-  not: z.union([ z.string(),z.lazy(() => NestedStringNullableFilterSchema) ]).optional().nullable(),
-}).strict();
-
 export const NestedEnumEnumPatentTypeNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumEnumPatentTypeNullableWithAggregatesFilter> = z.object({
   equals: z.lazy(() => EnumPatentTypeSchema).optional().nullable(),
   in: z.lazy(() => EnumPatentTypeSchema).array().optional().nullable(),
@@ -4984,23 +5018,6 @@ export const NestedEnumEnumPatentTypeNullableWithAggregatesFilterSchema: z.ZodTy
   _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
   _min: z.lazy(() => NestedEnumEnumPatentTypeNullableFilterSchema).optional(),
   _max: z.lazy(() => NestedEnumEnumPatentTypeNullableFilterSchema).optional()
-}).strict();
-
-export const NestedStringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedStringNullableWithAggregatesFilter> = z.object({
-  equals: z.string().optional().nullable(),
-  in: z.string().array().optional().nullable(),
-  notIn: z.string().array().optional().nullable(),
-  lt: z.string().optional(),
-  lte: z.string().optional(),
-  gt: z.string().optional(),
-  gte: z.string().optional(),
-  contains: z.string().optional(),
-  startsWith: z.string().optional(),
-  endsWith: z.string().optional(),
-  not: z.union([ z.string(),z.lazy(() => NestedStringNullableWithAggregatesFilterSchema) ]).optional().nullable(),
-  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
-  _min: z.lazy(() => NestedStringNullableFilterSchema).optional(),
-  _max: z.lazy(() => NestedStringNullableFilterSchema).optional()
 }).strict();
 
 export const AgencyContactPersonCreateWithoutAgencyInputSchema: z.ZodType<Prisma.AgencyContactPersonCreateWithoutAgencyInput> = z.object({
@@ -5094,12 +5111,14 @@ export const AgencyPatentScalarWhereInputSchema: z.ZodType<Prisma.AgencyPatentSc
 
 export const AgencyCreateWithoutContactsInputSchema: z.ZodType<Prisma.AgencyCreateWithoutContactsInput> = z.object({
   Name: z.string(),
+  Description: z.string().optional().nullable(),
   patents: z.lazy(() => AgencyPatentCreateNestedManyWithoutAgencyInputSchema).optional()
 }).strict();
 
 export const AgencyUncheckedCreateWithoutContactsInputSchema: z.ZodType<Prisma.AgencyUncheckedCreateWithoutContactsInput> = z.object({
   AgencyID: z.number().int().optional(),
   Name: z.string(),
+  Description: z.string().optional().nullable(),
   patents: z.lazy(() => AgencyPatentUncheckedCreateNestedManyWithoutAgencyInputSchema).optional()
 }).strict();
 
@@ -5164,12 +5183,14 @@ export const AgencyUpdateToOneWithWhereWithoutContactsInputSchema: z.ZodType<Pri
 
 export const AgencyUpdateWithoutContactsInputSchema: z.ZodType<Prisma.AgencyUpdateWithoutContactsInput> = z.object({
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   patents: z.lazy(() => AgencyPatentUpdateManyWithoutAgencyNestedInputSchema).optional()
 }).strict();
 
 export const AgencyUncheckedUpdateWithoutContactsInputSchema: z.ZodType<Prisma.AgencyUncheckedUpdateWithoutContactsInput> = z.object({
   AgencyID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   patents: z.lazy(() => AgencyPatentUncheckedUpdateManyWithoutAgencyNestedInputSchema).optional()
 }).strict();
 
@@ -5269,12 +5290,14 @@ export const PatentCreateOrConnectWithoutAgenciesInputSchema: z.ZodType<Prisma.P
 
 export const AgencyCreateWithoutPatentsInputSchema: z.ZodType<Prisma.AgencyCreateWithoutPatentsInput> = z.object({
   Name: z.string(),
+  Description: z.string().optional().nullable(),
   contacts: z.lazy(() => AgencyContactPersonCreateNestedManyWithoutAgencyInputSchema).optional()
 }).strict();
 
 export const AgencyUncheckedCreateWithoutPatentsInputSchema: z.ZodType<Prisma.AgencyUncheckedCreateWithoutPatentsInput> = z.object({
   AgencyID: z.number().int().optional(),
   Name: z.string(),
+  Description: z.string().optional().nullable(),
   contacts: z.lazy(() => AgencyContactPersonUncheckedCreateNestedManyWithoutAgencyInputSchema).optional()
 }).strict();
 
@@ -5340,12 +5363,14 @@ export const AgencyUpdateToOneWithWhereWithoutPatentsInputSchema: z.ZodType<Pris
 
 export const AgencyUpdateWithoutPatentsInputSchema: z.ZodType<Prisma.AgencyUpdateWithoutPatentsInput> = z.object({
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   contacts: z.lazy(() => AgencyContactPersonUpdateManyWithoutAgencyNestedInputSchema).optional()
 }).strict();
 
 export const AgencyUncheckedUpdateWithoutPatentsInputSchema: z.ZodType<Prisma.AgencyUncheckedUpdateWithoutPatentsInput> = z.object({
   AgencyID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   contacts: z.lazy(() => AgencyContactPersonUncheckedUpdateManyWithoutAgencyNestedInputSchema).optional()
 }).strict();
 

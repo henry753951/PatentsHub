@@ -1,15 +1,14 @@
 <template>
    <div class="p-6 h-full">
       <div v-if="agencyID">
-         <h2 class="text-xl font-bold mb-4">
-            聯絡人管理
-         </h2>
-         <Button
-            class="mb-4"
-            @click="openAddContactModal"
-         >
-            <PlusIcon class="mr-2 h-4 w-4" /> 新增聯絡人
-         </Button>
+         <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold">
+               聯絡人管理
+            </h2>
+            <Button @click="openAddContactModal">
+               <PlusIcon class="mr-2 h-4 w-4" /> 新增聯絡人
+            </Button>
+         </div>
 
          <!-- 錯誤或成功訊息 -->
          <div
@@ -35,14 +34,14 @@
             :options="{ scrollbars: { autoHide: 'leave' } }"
             class="h-full min-h-0"
          >
-            <table class="w-full border-collapse">
+            <table class="w-full border-collapse rounded-lg bg-gray-100 dark:bg-zinc-900">
                <thead>
-                  <tr class="bg-gray-100">
+                  <tr class="bg-gray-100 dark:bg-zinc-900">
                      <th class="p-2 text-left">
                         姓名
                      </th>
                      <th class="p-2 text-left">
-                        電子郵件
+                        電話
                      </th>
                      <th class="p-2 text-left">
                         操作
@@ -53,36 +52,42 @@
                   <tr
                      v-for="contact in contacts"
                      :key="contact.ContactPersonID"
-                     class="border-b"
+                     class="border-b bg-white dark:bg-zinc-800"
                   >
                      <td class="p-2">
                         {{ contact.contactInfo?.Name || "未提供" }}
                      </td>
                      <td class="p-2">
-                        {{ contact.contactInfo?.Email || "未提供" }}
+                        {{ contact.contactInfo?.PhoneNumber || "未提供" }}
                      </td>
                      <td class="p-2">
-                        <Button
-                           variant="outline"
-                           size="sm"
-                           @click="openEditContactModal(contact)"
-                        >
-                           編輯
-                        </Button>
-                        <Button
-                           variant="destructive"
-                           size="sm"
-                           class="ml-2"
-                           @click="deleteContact(contact.ContactPersonID)"
-                        >
-                           刪除
-                        </Button>
+                        <DropdownMenu>
+                           <DropdownMenuTrigger as-child>
+                              <Button
+                                 variant="ghost"
+                                 size="sm"
+                              >
+                                 <MoreHorizontalIcon class="h-4 w-4" />
+                              </Button>
+                           </DropdownMenuTrigger>
+                           <DropdownMenuContent>
+                              <DropdownMenuItem @click="openEditContactModal(contact)">
+                                 編輯
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                 class="text-red-600"
+                                 @click="deleteContact(contact.ContactPersonID)"
+                              >
+                                 刪除
+                              </DropdownMenuItem>
+                           </DropdownMenuContent>
+                        </DropdownMenu>
                      </td>
                   </tr>
                   <tr v-if="contacts.length === 0">
                      <td
                         colspan="3"
-                        class="p-2 text-center text-gray-500"
+                        class="p-2 text-center text-gray-500 bg-white dark:bg-zinc-800"
                      >
                         尚無聯絡人
                      </td>
@@ -102,7 +107,13 @@
 
 <script setup lang="ts">
 import { Button } from "~/components/ui/button";
-import { PlusIcon } from "lucide-vue-next";
+import {
+   DropdownMenu,
+   DropdownMenuTrigger,
+   DropdownMenuContent,
+   DropdownMenuItem,
+} from "~/components/ui/dropdown-menu";
+import { PlusIcon, MoreHorizontalIcon } from "lucide-vue-next";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 import { storeToRefs } from "pinia";
 import { useAgenciesStore } from "~/stores/agencies";
@@ -134,9 +145,8 @@ const schemas = {
 const fields = {
    agencyContact: {
       name: { label: "姓名" },
-      email: { label: "電子郵件" },
+      phoneNumber: { label: "電話" },
       officeNumber: { label: "辦公室電話" },
-      phoneNumber: { label: "手機號碼" },
       position: { label: "職位" },
       note: { label: "備註" },
    } as Config<z.infer<typeof schemas.agencyContact>>,
@@ -154,7 +164,6 @@ watch(
    (newAgencyID) => {
       successMessage.value = null; // 切換事務所時清除訊息
       if (newAgencyID && !agencies.value.some((a) => a.AgencyID === newAgencyID)) {
-      // 如果切換到的 agencyID 不存在，觸發刷新
          agenciesStore.refresh().catch((err) => {
             console.error("刷新聯絡人數據失敗:", err);
          });
@@ -170,6 +179,8 @@ const openAddContactModal = () => {
       schemas.agencyContact,
       addContact,
       fields.agencyContact,
+      undefined,
+      undefined,
    );
 };
 
@@ -181,11 +192,12 @@ const openEditContactModal = (contact: typeof contacts.value[number]) => {
       schemas.agencyContact,
       (data) => editContact(contact.ContactPersonID, data),
       fields.agencyContact,
+      undefined,
       {
          name: contact.contactInfo?.Name || "",
          email: contact.contactInfo?.Email || "",
-         officeNumber: contact.contactInfo?.OfficeNumber || "",
          phoneNumber: contact.contactInfo?.PhoneNumber || "",
+         officeNumber: contact.contactInfo?.OfficeNumber || "",
          position: contact.contactInfo?.Position || "",
          note: contact.contactInfo?.Note || "",
       },
@@ -245,4 +257,10 @@ const deleteContact = async (contactPersonID: number) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+/* 調整表格頭部和按鈕對齊 */
+th,
+td {
+  vertical-align: middle;
+}
+</style>

@@ -10,6 +10,7 @@ export default router({
       .input(
          z.object({
             name: z.string().min(1, "事務所名稱不可為空"),
+            description: z.string().optional(), // 新增 description
          }),
       )
       .mutation(async ({ input }) => {
@@ -17,6 +18,7 @@ export default router({
             const newAgency = await prisma.agency.create({
                data: {
                   Name: input.name,
+                  Description: input.description, // 新增 Description
                },
                include: {
                   contacts: {
@@ -29,7 +31,8 @@ export default router({
                },
             });
             return newAgency;
-         } catch (error) {
+         }
+         catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                if (error.code === "P2002") {
                   throw new Error("事務所名稱已存在");
@@ -82,6 +85,7 @@ export default router({
          z.object({
             agencyID: z.number(),
             name: z.string().min(1, "事務所名稱不可為空").optional(),
+            description: z.string().optional(), // 新增 description
          }),
       )
       .mutation(async ({ input }) => {
@@ -90,6 +94,7 @@ export default router({
                where: { AgencyID: input.agencyID },
                data: {
                   Name: input.name,
+                  Description: input.description, // 新增 Description
                },
                include: {
                   contacts: {
@@ -102,7 +107,8 @@ export default router({
                },
             });
             return updatedAgency;
-         } catch (error) {
+         }
+         catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                if (error.code === "P2002") {
                   throw new Error("事務所名稱已存在");
@@ -124,10 +130,11 @@ export default router({
                where: { AgencyID: input.agencyID },
             });
             return { success: true };
-         } catch (error) {
+         }
+         catch (error) {
             if (
-               error instanceof Prisma.PrismaClientKnownRequestError &&
-               error.code === "P2025"
+               error instanceof Prisma.PrismaClientKnownRequestError
+               && error.code === "P2025"
             ) {
                throw new Error("事務所不存在");
             }
@@ -135,6 +142,7 @@ export default router({
          }
       }),
 
+   // === AgencyContactPerson CRUD ===
    // === AgencyContactPerson CRUD ===
 
    // Create AgencyContactPerson (創建聯絡人並關聯 ContactInfo)
@@ -178,7 +186,8 @@ export default router({
                },
             });
             return newContact;
-         } catch (error) {
+         }
+         catch (error) {
             throw new Error("無法創建聯絡人：");
          }
       }),
@@ -268,10 +277,11 @@ export default router({
                },
             });
             return updatedContact;
-         } catch (error) {
+         }
+         catch (error) {
             if (
-               error instanceof Prisma.PrismaClientKnownRequestError &&
-               error.code === "P2025"
+               error instanceof Prisma.PrismaClientKnownRequestError
+               && error.code === "P2025"
             ) {
                throw new Error("聯絡人不存在");
             }
@@ -301,10 +311,11 @@ export default router({
             // await prisma.contactInfo.delete({ where: { ContactInfoID: contact.ContactInfoID } });
 
             return { success: true };
-         } catch (error) {
+         }
+         catch (error) {
             if (
-               error instanceof Prisma.PrismaClientKnownRequestError &&
-               error.code === "P2025"
+               error instanceof Prisma.PrismaClientKnownRequestError
+               && error.code === "P2025"
             ) {
                throw new Error("聯絡人不存在");
             }
@@ -339,7 +350,8 @@ export default router({
                   patent: true,
                },
             });
-         } catch (error) {
+         }
+         catch (error) {
             throw new Error("無法分配專利：");
          }
       }),
@@ -356,7 +368,8 @@ export default router({
                   },
                },
             });
-         } catch (error) {
+         }
+         catch (error) {
             throw new Error("無法移除專利關聯：");
          }
       }),

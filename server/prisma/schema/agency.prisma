@@ -1,6 +1,7 @@
 model Agency {
   AgencyID Int                   @id @default(autoincrement())
   Name     String
+  Description String?               // 新增備註欄位，可選（允許 null）
   contacts AgencyContactPerson[]
   patents  AgencyPatent[]
 }

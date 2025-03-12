@@ -16,7 +16,8 @@ export const useAgenciesStore = defineStore("agenciesStore", {
                const data = await $trpc.data.agency.getAgencies.query();
                initialState.agencies = data;
                initialState.isInitialized = true;
-            } catch (error) {
+            }
+            catch (error) {
                console.error("Failed to initialize agencies:", error);
                initialState.error = (error as Error).message || "初始化失敗";
             }
@@ -34,40 +35,55 @@ export const useAgenciesStore = defineStore("agenciesStore", {
             this.error = null;
             this.agencies = await $trpc.data.agency.getAgencies.query();
             return this.agencies;
-         } catch (error) {
+         }
+         catch (error) {
             this.error = (error as Error).message || "刷新失敗";
             throw error;
-         } finally {
+         }
+         finally {
             this.isLoading = false;
          }
       },
 
-      async insert(agencyName: string) {
+      async insert(agencyName: string, description?: string) {
+         // 添加 description
          const { $trpc } = useNuxtApp();
          try {
             this.isLoading = true;
             this.error = null;
-            await $trpc.data.agency.createAgency.mutate({ name: agencyName });
+            await $trpc.data.agency.createAgency.mutate({
+               name: agencyName,
+               description,
+            });
             await this.refresh(); // 刷新以保持數據一致
-         } catch (error) {
+         }
+         catch (error) {
             this.error = (error as Error).message || "新增失敗";
             throw error;
-         } finally {
+         }
+         finally {
             this.isLoading = false;
          }
       },
 
-      async update(agencyID: number, name: string) {
+      async update(agencyID: number, name: string, description?: string) {
+         // 添加 description
          const { $trpc } = useNuxtApp();
          try {
             this.isLoading = true;
             this.error = null;
-            await $trpc.data.agency.updateAgency.mutate({ agencyID, name });
+            await $trpc.data.agency.updateAgency.mutate({
+               agencyID,
+               name,
+               description,
+            });
             await this.refresh();
-         } catch (error) {
+         }
+         catch (error) {
             this.error = (error as Error).message || "更新失敗";
             throw error;
-         } finally {
+         }
+         finally {
             this.isLoading = false;
          }
       },
@@ -79,10 +95,12 @@ export const useAgenciesStore = defineStore("agenciesStore", {
             this.error = null;
             await $trpc.data.agency.deleteAgency.mutate({ agencyID });
             await this.refresh();
-         } catch (error) {
+         }
+         catch (error) {
             this.error = (error as Error).message || "刪除失敗";
             throw error;
-         } finally {
+         }
+         finally {
             this.isLoading = false;
          }
       },
@@ -90,12 +108,12 @@ export const useAgenciesStore = defineStore("agenciesStore", {
       async insertContact(
          agencyID: number,
          contactInfo: {
-            Name: string;
-            Email?: string;
-            OfficeNumber?: string;
-            PhoneNumber?: string;
-            Position?: string;
-            Note?: string;
+            Name: string
+            Email?: string
+            OfficeNumber?: string
+            PhoneNumber?: string
+            Position?: string
+            Note?: string
          },
       ) {
          const { $trpc } = useNuxtApp();
@@ -107,10 +125,12 @@ export const useAgenciesStore = defineStore("agenciesStore", {
                contactInfo,
             });
             await this.refresh();
-         } catch (error) {
+         }
+         catch (error) {
             this.error = (error as Error).message || "新增聯絡人失敗";
             throw error;
-         } finally {
+         }
+         finally {
             this.isLoading = false;
          }
       },
@@ -119,12 +139,12 @@ export const useAgenciesStore = defineStore("agenciesStore", {
          contactPersonID: number,
          agencyID?: number,
          contactInfo?: {
-            Name?: string;
-            Email?: string;
-            OfficeNumber?: string;
-            PhoneNumber?: string;
-            Position?: string;
-            Note?: string;
+            Name?: string
+            Email?: string
+            OfficeNumber?: string
+            PhoneNumber?: string
+            Position?: string
+            Note?: string
          },
       ) {
          const { $trpc } = useNuxtApp();
@@ -137,10 +157,12 @@ export const useAgenciesStore = defineStore("agenciesStore", {
                contactInfo,
             });
             await this.refresh();
-         } catch (error) {
+         }
+         catch (error) {
             this.error = (error as Error).message || "更新聯絡人失敗";
             throw error;
-         } finally {
+         }
+         finally {
             this.isLoading = false;
          }
       },
@@ -154,10 +176,12 @@ export const useAgenciesStore = defineStore("agenciesStore", {
                contactPersonID,
             });
             await this.refresh();
-         } catch (error) {
+         }
+         catch (error) {
             this.error = (error as Error).message || "刪除聯絡人失敗";
             throw error;
-         } finally {
+         }
+         finally {
             this.isLoading = false;
          }
       },
@@ -172,10 +196,12 @@ export const useAgenciesStore = defineStore("agenciesStore", {
                patentID,
             });
             await this.refresh();
-         } catch (error) {
+         }
+         catch (error) {
             this.error = (error as Error).message || "分配聯絡人失敗";
             throw error;
-         } finally {
+         }
+         finally {
             this.isLoading = false;
          }
       },
@@ -190,10 +216,12 @@ export const useAgenciesStore = defineStore("agenciesStore", {
                patentID,
             });
             await this.refresh();
-         } catch (error) {
+         }
+         catch (error) {
             this.error = (error as Error).message || "移除聯絡人失敗";
             throw error;
-         } finally {
+         }
+         finally {
             this.isLoading = false;
          }
       },
