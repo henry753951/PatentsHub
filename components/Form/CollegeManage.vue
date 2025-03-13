@@ -1,231 +1,298 @@
 <template>
    <div class="flex flex-col h-full">
-      <!-- 標題和新增事務所按鈕 -->
+      <!-- 標題和新增學院按鈕 -->
       <div class="flex items-center justify-between pt-6 pb-2 px-6">
          <h1 class="text-2xl font-bold">
-            事務所管理
+            學院管理
          </h1>
-         <Button @click="openAddAgencyModal">
-            <PlusIcon class="mr-2 h-4 w-4" /> 新增事務所
+         <Button
+            @click="
+               openAutoModal(
+                  '新增學院',
+                  '新增學院至清單',
+                  schemas.college,
+                  addCollege,
+                  fields.college,
+               )
+            "
+         >
+            <PlusIcon class="mr-2 h-4 w-4" />
+            新增學院
          </Button>
       </div>
 
-      <!-- 錯誤或成功訊息 -->
-      <div
-         v-if="error || successMessage"
-         class="px-6 mb-4"
-      >
-         <p
-            v-if="error"
-            class="text-red-600"
-         >
-            {{ error }}
-         </p>
-         <p
-            v-if="successMessage"
-            class="text-green-600"
-         >
-            {{ successMessage }}
-         </p>
-      </div>
-
-      <!-- 事務所列表 -->
-      <overlay-scrollbars-component
+      <!-- 學院列表 -->
+      <OverlayScrollbarsComponent
          :options="{ scrollbars: { autoHide: 'leave' } }"
          class="h-full min-h-0 px-6"
       >
-         <ul class="w-full space-y-2 rounded-lg bg-gray-100 dark:bg-zinc-900 p-3">
-            <li
-               v-for="agency in agencies"
-               :key="agency.AgencyID"
-               class="flex items-center justify-between py-2 border-b cursor-pointer rounded-lg shadow-sm p-4"
-               :class="[
-                  selectedAgencyId === agency.AgencyID
-                     ? 'bg-blue-100 border-blue-300 dark:bg-blue-900 dark:border-blue-700'
-                     : 'bg-white dark:bg-zinc-800',
-               ]"
-               @click="selectAgency(agency.AgencyID)"
+         <Accordion
+            collapsible
+            class="w-full"
+            type="single"
+         >
+            <AccordionItem
+               v-for="college in colleges"
+               :key="college.CollegeID"
+               :value="college.CollegeID.toString()"
             >
-               <span class="text-lg font-medium flex-1">
-                  {{ agency.Name }}
-               </span>
-               <DropdownMenu>
-                  <DropdownMenuTrigger as-child>
-                     <Button
-                        variant="ghost"
-                        size="sm"
+               <ContextMenu>
+                  <ContextMenuTrigger as-child>
+                     <AccordionTrigger
+                        class="flex items-center justify-between"
                      >
-                        <MoreHorizontalIcon class="h-4 w-4" />
-                     </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                     <DropdownMenuItem @click="openEditAgencyModal(agency)">
-                        編輯
-                     </DropdownMenuItem>
-                     <DropdownMenuItem
+                        <span class="text-lg font-medium">
+                           {{ college.Name }}
+                        </span>
+                     </AccordionTrigger>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent>
+                     <ContextMenuItem
+                        @click="
+                           openAutoModal(
+                              '新增系所',
+                              '新增系所至清單',
+                              schemas.department,
+                              addDepartment,
+                              fields.department,
+                              { collegeID: college.CollegeID },
+                           )
+                        "
+                     >
+                        新增系所
+                     </ContextMenuItem>
+                     <ContextMenuItem
                         class="text-red-600"
-                        @click="deleteAgency(agency.AgencyID)"
+                        @click="collegesStore.delete(college.CollegeID)"
                      >
-                        刪除事務所
-                     </DropdownMenuItem>
-                  </DropdownMenuContent>
-               </DropdownMenu>
-            </li>
-         </ul>
-      </overlay-scrollbars-component>
+                        刪除學院
+                     </ContextMenuItem>
+                  </ContextMenuContent>
+               </ContextMenu>
+
+               <AccordionContent>
+                  <div
+                     v-if="college.departments?.length"
+                     class="space-y-2 rounded-lg bg-gray-100 dark:bg-zinc-900 p-3"
+                  >
+                     <div
+                        v-for="department in college.departments"
+                        :key="department.DepartmentID"
+                        :class="[
+                           'rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow flex items-center justify-between',
+                           selectable && isSelected(department)
+                              ? 'bg-blue-100 border-blue-300 dark:bg-blue-900 dark:border-blue-700'
+                              : 'bg-white dark:bg-zinc-800',
+                        ]"
+                        @click="
+                           selectable ? selectDepartment(department) : null
+                        "
+                     >
+                        <span class="font-medium">
+                           {{ department.Name }}
+                        </span>
+                        <DropdownMenu>
+                           <DropdownMenuTrigger as-child>
+                              <Button
+                                 variant="ghost"
+                                 size="sm"
+                              >
+                                 <MoreHorizontalIcon class="h-4 w-4" />
+                              </Button>
+                           </DropdownMenuTrigger>
+                           <DropdownMenuContent>
+                              <DropdownMenuItem
+                                 class="text-red-600"
+                                 @click="
+                                    collegesStore.deleteDepartment(
+                                       college.CollegeID,
+                                       department.DepartmentID,
+                                    )
+                                 "
+                              >
+                                 刪除系所
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                 @click="
+                                    openAutoModal(
+                                       '編輯系所',
+                                       '更新系所資料',
+                                       schemas.department,
+                                       updateDepartment,
+                                       fields.department,
+                                       {
+                                          collegeID: department.CollegeID,
+                                          departmentID: department.DepartmentID,
+                                       },
+                                       {
+                                          name: department.Name,
+                                          description:
+                                             department.Description || '',
+                                       },
+                                    )
+                                 "
+                              >
+                                 編輯系所
+                              </DropdownMenuItem>
+                           </DropdownMenuContent>
+                        </DropdownMenu>
+                     </div>
+                  </div>
+                  <div
+                     v-else
+                     class="text-muted-foreground text-sm p-4"
+                  >
+                     尚無系所
+                  </div>
+               </AccordionContent>
+            </AccordionItem>
+         </Accordion>
+      </OverlayScrollbarsComponent>
    </div>
 </template>
 
 <script setup lang="ts">
+import {
+   Accordion,
+   AccordionItem,
+   AccordionTrigger,
+   AccordionContent,
+} from "~/components/ui/accordion";
 import { Button } from "~/components/ui/button";
+import {
+   ContextMenu,
+   ContextMenuTrigger,
+   ContextMenuContent,
+   ContextMenuItem,
+} from "~/components/ui/context-menu";
 import {
    DropdownMenu,
    DropdownMenuTrigger,
    DropdownMenuContent,
    DropdownMenuItem,
 } from "~/components/ui/dropdown-menu";
+import { Checkbox } from "~/components/ui/checkbox";
 import { PlusIcon, MoreHorizontalIcon } from "lucide-vue-next";
-import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
-import { storeToRefs } from "pinia";
-import { useAgenciesStore } from "~/stores/agencies";
-import { useModals } from "~/composables/useModals";
-import { z } from "zod";
 import type { Config } from "~/components/ui/auto-form/interface";
-import { ref, onMounted } from "vue";
+import { z } from "zod";
+import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 
-const agenciesStore = useAgenciesStore();
-const { agencies, isInitialized, isLoading, error } = storeToRefs(agenciesStore);
-const { openAutoModal } = useModals();
-const successMessage = ref<string | null>(null);
-
-// 跟踪當前選中的事務所
-const selectedAgencyId = ref<number | null>(null);
-
-// 定義選擇事務所的事件
-const emit = defineEmits<{
-   (e: "selectAgency", agencyID: number): void
+type Department = RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
+// Props 定義
+const props = defineProps<{
+   selectable?: boolean
+   modelValue?: Department | null // 單選，允許 null
 }>();
 
+const emits = defineEmits<{
+   (e: "update:modelValue", value: Department | null): void
+}>();
+
+// Pinia store
+const collegesStore = useCollegesStore();
+const { colleges } = storeToRefs(collegesStore);
+
+// 管理選中的系所（單選）
+const selectedDepartment = ref<Department | null>(props.modelValue || null);
+
+const { openAutoModal } = useModals();
+
+// 載入初始資料
 onMounted(async () => {
-   if (!isInitialized.value) {
-      try {
-         await agenciesStore.refresh();
-         console.log("Agencies 數據:", agencies.value);
-         if (agencies.value.length > 0 && selectedAgencyId.value === null) {
-            selectedAgencyId.value = agencies.value[0].AgencyID;
-            emit("selectAgency", selectedAgencyId.value);
-         }
-      }
-      catch (err) {
-         console.error("加載數據失敗:", err);
-      }
-   }
+   await collegesStore.refresh();
 });
 
+// 同步 v-model
+watch(
+   () => props.modelValue,
+   (newValue) => {
+      selectedDepartment.value = newValue || null;
+   },
+);
+
+watch(selectedDepartment, (newValue) => {
+   emits("update:modelValue", newValue);
+});
+
+// 檢查系所是否被選中
+const isSelected = (department: Department) => {
+   return selectedDepartment.value?.DepartmentID === department.DepartmentID;
+};
+
+// 選擇系所（單選）
+const selectDepartment = (department: Department) => {
+   if (isSelected(department)) {
+      selectedDepartment.value = null; // 取消選擇
+   }
+   else {
+      selectedDepartment.value = department; // 選擇新系所
+   }
+};
+
 const schemas = {
-   agency: z.object({
-      name: z.string({ required_error: "事務所名稱不可為空" }).nonempty("事務所名稱不可為空"),
+   college: z.object({
+      name: z
+         .string({ required_error: "學院名稱不可為空" })
+         .nonempty("學院名稱不可為空"),
+      description: z.string().optional(),
+   }),
+   department: z.object({
+      name: z
+         .string({ required_error: "系所名稱不可為空" })
+         .nonempty("系所名稱不可為空"),
       description: z.string().optional(),
    }),
 };
 
 const fields = {
-   agency: {
-      name: { label: "事務所名稱" },
-      description: { label: "備註", type: "textarea" },
-   } as Config<z.infer<typeof schemas.agency>>,
+   college: {
+      name: {
+         label: "學院名稱",
+      },
+      description: {
+         label: "學院描述",
+      },
+   } as Config<z.infer<typeof schemas.college>>,
+   department: {
+      name: {
+         label: "系所名稱",
+      },
+      description: {
+         label: "系所描述",
+      },
+   } as Config<z.infer<typeof schemas.department>>,
 };
 
-const openAddAgencyModal = () =>
-   openAutoModal(
-      "新增事務所",
-      "新增事務所至清單",
-      schemas.agency,
-      addAgency,
-      fields.agency,
-      undefined,
-      undefined,
+// 新增學院
+const addCollege = async (
+   data: z.infer<typeof schemas.college>,
+   passthrough: any,
+) => {
+   await collegesStore.insert(data.name, data.description || "");
+};
+
+// 新增系所
+const addDepartment = async (
+   data: z.infer<typeof schemas.department>,
+   passthrough: { collegeID: number },
+) => {
+   await collegesStore.insertWithDepartment(
+      passthrough.collegeID,
+      data.name,
+      data.description || "",
    );
+};
 
-const openEditAgencyModal = (agency: typeof agencies.value[number]) => {
-   const defaultValues = { name: agency.Name, description: agency.Description || "" };
-   console.log("預填資料:", defaultValues);
-   openAutoModal(
-      "編輯事務所",
-      "更新事務所名稱和備註",
-      schemas.agency,
-      (data, passthrough) => editAgency(passthrough.agencyID, data),
-      fields.agency,
-      { agencyID: agency.AgencyID },
-      defaultValues,
+// 更新系所
+const updateDepartment = async (
+   data: z.infer<typeof schemas.department>,
+   passthrough: { collegeID: number, departmentID: number },
+) => {
+   await collegesStore.updateDepartment(
+      passthrough.departmentID,
+      passthrough.collegeID,
+      data.name,
+      data.description || "",
    );
-};
-
-const addAgency = async (data: z.infer<typeof schemas.agency>) => {
-   try {
-      await agenciesStore.insert(data.name, data.description);
-      successMessage.value = "事務所新增成功";
-      setTimeout(() => (successMessage.value = null), 3000);
-   }
-   catch (err) {
-      console.error("新增失敗:", err);
-      error.value = "新增失敗";
-      setTimeout(() => (error.value = null), 3000);
-   }
-};
-
-const editAgency = async (agencyID: number, data: z.infer<typeof schemas.agency>) => {
-   try {
-      await agenciesStore.update(agencyID, data.name, data.description);
-      successMessage.value = "事務所更新成功";
-      setTimeout(() => (successMessage.value = null), 3000);
-   }
-   catch (err) {
-      console.error("更新失敗:", err);
-      error.value = "更新失敗";
-      setTimeout(() => (error.value = null), 3000);
-   }
-};
-
-const deleteAgency = async (agencyID: number) => {
-   try {
-      await agenciesStore.delete(agencyID);
-      successMessage.value = "事務所刪除成功";
-      if (selectedAgencyId.value === agencyID) {
-         selectedAgencyId.value = agencies.value.length > 0 ? agencies.value[0].AgencyID : null;
-         if (selectedAgencyId.value) emit("selectAgency", selectedAgencyId.value);
-      }
-      setTimeout(() => (successMessage.value = null), 3000);
-   }
-   catch (err) {
-      console.error("刪除失敗:", err);
-      error.value = "刪除失敗";
-      setTimeout(() => (error.value = null), 3000);
-   }
-};
-
-const selectAgency = (agencyID: number) => {
-   selectedAgencyId.value = agencyID;
-   emit("selectAgency", agencyID);
 };
 </script>
-
-<style scoped>
-li {
-  padding: 0.5rem 0;
-}
-.flex-1 {
-  padding: 0.5rem;
-}
-
-/* 移除懸浮時的背景色變化 */
-li.flex {
-  transition: none; /* 移除所有懸浮過渡效果 */
-}
-
-/* 確保層次不遮擋 */
-li {
-  position: relative;
-  z-index: 0;
-}
-</style>
