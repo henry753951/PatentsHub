@@ -1,31 +1,20 @@
 <template>
    <div class="flex flex-col h-full">
-      <!-- 標題和新增發明人按鈕 -->
       <div class="flex items-center justify-between pt-6 pb-2 px-6">
          <h1 class="text-2xl font-bold">
             發明人列表
          </h1>
          <Button
             :disabled="!props.department"
-            @click="
-               openAutoModal(
-                  '新增發明人',
-                  '新增發明人至清單',
-                  schemas.inventor,
-                  addInventor,
-                  fields.inventor,
-                  { departmentID: props.department?.DepartmentID },
-               )
-            "
+            @click="openAddModal"
          >
             <PlusIcon class="mr-2 h-4 w-4" />
             新增發明人
          </Button>
       </div>
-      <!-- 發明人列表 -->
       <OverlayScrollbarsComponent
          :options="{ scrollbars: { autoHide: 'leave' } }"
-         class="h-full min-h-0 px-6"
+         class="flex-1 min-h-0 px-6"
       >
          <div
             v-if="status == 'pending'"
@@ -34,7 +23,7 @@
             載入中...
          </div>
          <div
-            v-else-if="inventors"
+            v-else-if="inventors?.length"
             class="space-y-2"
          >
             <div
@@ -42,7 +31,7 @@
                :key="inventor.InventorID"
                class="rounded-lg shadow-sm p-4 bg-white dark:bg-zinc-800 hover:shadow-md transition-shadow flex items-center justify-between"
             >
-               <span class="font-medium">{{ inventor.Name }}</span>
+               <span class="font-medium">{{ inventor.contactInfo?.Name }}</span>
                <DropdownMenu>
                   <DropdownMenuTrigger as-child>
                      <Button
@@ -59,24 +48,7 @@
                      >
                         刪除發明人
                      </DropdownMenuItem>
-                     <DropdownMenuItem
-                        @click="
-                           openAutoModal(
-                              '編輯發明人',
-                              '更新發明人資料',
-                              schemas.inventor,
-                              updateInventor,
-                              fields.inventor,
-                              {
-                                 inventorID: inventor.InventorID,
-                              },
-                              {
-                                 name: inventor.Name,
-                                 email: inventor.contactInfo?.Email || '',
-                              },
-                           )
-                        "
-                     >
+                     <DropdownMenuItem @click="openEditModal(inventor)">
                         編輯發明人
                      </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -90,6 +62,23 @@
             請選擇系所
          </div>
       </OverlayScrollbarsComponent>
+
+      <InventorEditList
+         :is-open="showAddModal"
+         title="新增發明人"
+         description="新增發明人至清單"
+         :initial-data="editData"
+         @submit="handleAddSubmit"
+         @close="showAddModal = false"
+      />
+      <InventorEditList
+         :is-open="showEditModal"
+         title="編輯發明人"
+         description="更新發明人資料"
+         :initial-data="editData"
+         @submit="handleEditSubmit"
+         @close="showEditModal = false"
+      />
    </div>
 </template>
 
@@ -102,107 +91,139 @@ import {
    DropdownMenuItem,
 } from "~/components/ui/dropdown-menu";
 import { PlusIcon, MoreHorizontalIcon } from "lucide-vue-next";
-import type { Config } from "~/components/ui/auto-form/interface";
-import { z } from "zod";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
+import { useInventor } from "~/composables/database/inventor";
+import InventorEditList from "~/components/Form/InventorEditList.vue";
 
-// 型態定義
 type Department =
    RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
 
-// Props 定義
 const props = defineProps<{
    department?: Department
 }>();
 
-// Modal 管理
-const { openAutoModal } = useModals();
-
-// 發明人資料
 const {
    data: inventors,
-   fillter,
-   crud,
+   filter,
    status,
-   forceRefresh,
-} = useDatabase().useInventor();
+   crud,
+} = useInventor({
+   DepartmentID: props.department?.DepartmentID,
+});
+
+// watch(
+//    () => props.department,
+//    (department) => {
+//       filter.value = { DepartmentID: department?.DepartmentID };
+//    },
+//    { immediate: true },
+// );
 
 watch(
    () => props.department,
-   async (department) => {
-      fillter.value = { DepartmentID: department?.DepartmentID ?? undefined };
+   (department) => {
+      if (department) {
+         filter.value = { DepartmentID: department.DepartmentID };
+      }
+      else {
+         filter.value = {};
+      }
    },
+   { immediate: true, deep: true },
 );
 
-// Schema 定義
-const schemas = {
-   inventor: z.object({
-      name: z.string().nonempty("發明人姓名不可為空"),
-      email: z.string().optional(),
-   }),
+const showAddModal = ref(false);
+const showEditModal = ref(false);
+const editData = ref<{
+   name: string
+   email?: string
+   role: string
+   departmentID: number
+   collegeID: number
+}>();
+const editInventorID = ref<number>();
+
+const openAddModal = () => {
+   if (!props.department) return;
+   editData.value = {
+      name: "",
+      email: "",
+      role: "教授",
+      departmentID: props.department.DepartmentID,
+      collegeID: props.department.CollegeID,
+   };
+   showAddModal.value = true;
 };
 
-const fields = computed(() => ({
-   inventor: {
-      name: { label: "發明人姓名" },
-      email: { label: "電子信箱" },
-   } as Config<z.infer<typeof schemas.inventor>>,
-}));
-
-const addInventor = async (
-   data: z.infer<typeof schemas.inventor>,
-   passthrough: { departmentID: number },
+const openEditModal = (
+   inventor: RouterOutput["data"]["inventor"]["getInventors"][0],
 ) => {
-   if (!passthrough.departmentID) {
-      throw new Error("系所 ID 未提供");
-   }
+   editData.value = {
+      name: inventor.contactInfo?.Name || "",
+      email: inventor.contactInfo?.Email || "",
+      role: inventor.contactInfo?.Role || "教授",
+      departmentID: inventor.department.DepartmentID,
+      collegeID: inventor.department.CollegeID,
+   };
+   editInventorID.value = inventor.InventorID;
+   showEditModal.value = true;
+};
+
+const handleAddSubmit = async (data: {
+   name: string
+   email?: string
+   departmentID: number
+   role: string
+}) => {
+   const departmentID = data.departmentID || props.department?.DepartmentID;
+   if (!departmentID) throw new Error("系所 ID 未提供");
    await crud.createInventor({
-      Name: data.name,
+      department: {
+         connect: { DepartmentID: departmentID },
+      },
       contactInfo: {
          create: {
+            Name: data.name,
             Email: data.email,
-         },
-      },
-      department: {
-         connect: {
-            DepartmentID: passthrough.departmentID,
+            Role: data.role,
          },
       },
    });
-   await forceRefresh();
+   showAddModal.value = false;
 };
 
-const updateInventor = async (
-   data: z.infer<typeof schemas.inventor>,
-   passthrough: { inventorID: number, departmentID: number },
-) => {
-   if (!passthrough.inventorID) {
-      throw new Error("發明人 ID 未提供");
-   }
+const handleEditSubmit = async (data: {
+   name: string
+   email?: string
+   departmentID: number
+   role: string
+}) => {
+   if (!editInventorID.value) return;
    await crud.updateInventor({
-      where: { InventorID: passthrough.inventorID },
+      where: { InventorID: editInventorID.value },
       data: {
-         Name: data.name,
          contactInfo: {
             upsert: {
                create: {
+                  Name: data.name,
                   Email: data.email,
+                  Role: data.role,
                },
                update: {
+                  Name: data.name,
                   Email: data.email,
+                  Role: data.role,
                },
             },
          },
+         department: { connect: { DepartmentID: data.departmentID } },
       },
    });
-   await forceRefresh();
+   showEditModal.value = false;
 };
 
 const deleteInventor = async (inventorID: number) => {
-   await crud.deleteInventor({
-      where: { InventorID: inventorID },
-   });
-   await forceRefresh();
+   await crud.deleteInventor({ where: { InventorID: inventorID } });
 };
 </script>
 

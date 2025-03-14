@@ -3,41 +3,23 @@
 // ========================
 model Patent {
   PatentID     Int                        @id @default(autoincrement())
+  DepartmentID Int
+  // 專利資料
   Year         String
-  InternalID   String                     @unique
   DraftTitle   String                     @default("")
   Title        String                     @default("")
   TitleEnglish String                     @default("")
-  DepartmentID Int
-  CollegeID    Int
-  agencies     AgencyPatent[]
+  CountryID    Int?
+  country      Country?                   @relation(fields: [CountryID], references: [CountryID])
   department   Department                 @relation(fields: [DepartmentID], references: [DepartmentID])
-  college      College                    @relation(fields: [CollegeID], references: [CollegeID])
-  patentContacts AgencyPatentContact[]    // 專利與聯絡人的關聯
-  application  PatentApplicationData?
-  funding      PatentFunding[]
+  PatentType   EnumPatentType?
   inventors    PatentInventor[]
+  application  PatentApplicationData?
+  funding      PatentFunding?
   status       PatentStatus?
   technical    PatentTechnicalAttributes?
-
-  @@index([InternalID, Year])
-}
-
-// ========================
-
-// ========================
-// 專利維護資訊
-// ========================
-
-model PatentStatus {
-  PatentID                     Int       @id @default(autoincrement())
-  ExpiryDate                   DateTime?
-  Status                       String
-  TechnicalCommitteeReviewDate DateTime?
-  MaintenanceYear              Int?
-  MaintenanceStartDate         DateTime?
-  MaintenanceEndDate           DateTime?
-  patent                       Patent    @relation(fields: [PatentID], references: [PatentID])
+  internal     PatentInternal?
+  external     PatentExternal?
 }
 
 // ========================
@@ -54,17 +36,15 @@ enum EnumPatentType {
 }
 
 model PatentApplicationData {
-  PatentID          Int            @id @default(autoincrement())
-  CountryID         Int?
-  PatentType        EnumPatentType?
+  PatentID          Int       @id @default(autoincrement())
   // 申請後的資料
-  PatentNumber      String? // 專利號碼
   ApplicationNumber String? // 申請案號
   FilingDate        DateTime? // 申請日
-  PublicationDate   DateTime? // 公開日
+  // Strike
+  RDResultNumber    String? // 研究成果編號
+  NSCNumber         String? // 國科會編號
 
-  country Country? @relation(fields: [CountryID], references: [CountryID])
-  patent  Patent  @relation(fields: [PatentID], references: [PatentID])
+  patent Patent @relation(fields: [PatentID], references: [PatentID])
 }
 
 // ========================
@@ -84,6 +64,54 @@ model TechnicalKeyword {
   KeywordID                 Int                         @id @default(autoincrement())
   Keyword                   String                      @unique
   patentTechnicalAttributes PatentTechnicalAttributes[]
+}
+
+// ========================
+
+// ========================
+// 專利校內資訊
+// ========================
+
+model PatentInternal {
+  PatentID              Int                         @id
+  InternalID            String                      @unique // 校內編號
+  InitialReviewDate     DateTime?
+  InitialReviewNumber   String?
+  InitialReviewAgencies PatentInitiatorAgencyUnit[] // 初評事務所
+  TakerAgencies         PatentTakerAgencyUnit[] // 承辦事務所
+  Patent                Patent                      @relation(fields: [PatentID], references: [PatentID])
+}
+
+// ========================
+
+// ========================
+// 專利對外資訊
+// ========================
+model PatentExternal {
+  PatentID Int @id
+
+  PatentNumber    String? // 專利號碼
+  PublicationDate DateTime? // 公開日
+  StartDate       DateTime? // 開始日
+  EndDate         DateTime? // 結束日
+  IPCNumber       String? // IPC號碼
+  PatentScope     String? // 專利範圍
+  patent          Patent    @relation(fields: [PatentID], references: [PatentID])
+}
+
+// ========================
+// 專利維護資訊
+// ========================
+
+model PatentStatus {
+  PatentID                     Int       @id @default(autoincrement())
+  ExpiryDate                   DateTime?
+  Status                       String
+  TechnicalCommitteeReviewDate DateTime?
+  MaintenanceYear              Int?
+  MaintenanceStartDate         DateTime?
+  MaintenanceEndDate           DateTime?
+  patent                       Patent    @relation(fields: [PatentID], references: [PatentID])
 }
 
 // ========================

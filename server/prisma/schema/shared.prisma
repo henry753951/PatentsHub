@@ -3,7 +3,6 @@ model College {
   Name        String       @unique
   Description String?
   departments Department[]
-  patents     Patent[]
 }
 
 model Department {
@@ -17,20 +16,21 @@ model Department {
 }
 
 model Country {
-  CountryID    Int                     @id @default(autoincrement())
-  CountryName  String                  @unique
-  ISOCode      String                  @unique
-  applications PatentApplicationData[]
+  CountryID   Int      @id @default(autoincrement())
+  CountryName String   @unique
+  ISOCode     String   @unique
+  patents     Patent[]
 }
 
 model ContactInfo {
-  ContactInfoID Int                  @id @default(autoincrement())
-  Name          String?
+  ContactInfoID Int     @id @default(autoincrement())
+  Name          String
   Email         String?
   OfficeNumber  String?
   PhoneNumber   String?
-  Position      String?
+  Role          String?
   Note          String?
-  agencyContact AgencyContactPerson? @relation("AgencyContact")
-  inventor      Inventor?            @relation("InventorContact")
+
+  AgencyUnitPerson AgencyUnitPerson[]
+  Inventor         Inventor[]
 }

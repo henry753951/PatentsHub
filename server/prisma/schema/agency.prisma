@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 model Agency {
   AgencyID Int                   @id @default(autoincrement())
   Name     String
@@ -20,10 +21,28 @@ model AgencyPatent {
   FileCode String
   patent   Patent                @relation(fields: [PatentID], references: [PatentID])
   agency   Agency                @relation(fields: [AgencyID], references: [AgencyID])
-
-  @@id([PatentID, AgencyID])
+=======
+model AgencyUnit {
+  AgencyUnitID         Int                         @id @default(autoincrement())
+  Name                 String
+  Description          String?
+  Persons              AgencyUnitPerson[]
+  InitialReviewPatents PatentInitiatorAgencyUnit[]
+  TakerPatents         PatentTakerAgencyUnit[]
 }
 
+model PatentTakerAgencyUnit {
+  PatentID       Int
+  AgencyUnitID   Int
+  FileCode       String
+  agencyUnit     AgencyUnit     @relation(fields: [AgencyUnitID], references: [AgencyUnitID])
+  patentInternal PatentInternal @relation(fields: [PatentID], references: [PatentID])
+>>>>>>> 2f4ccd3b060b7594139744d8677f32ee533bc39e
+
+  @@id([PatentID, AgencyUnitID])
+}
+
+<<<<<<< HEAD
 model AgencyPatentContact {
   ContactPersonID Int
   PatentID        Int
@@ -32,3 +51,22 @@ model AgencyPatentContact {
 
   @@id([ContactPersonID, PatentID])
 }
+=======
+model PatentInitiatorAgencyUnit {
+  PatentID       Int
+  AgencyUnitID   Int
+  agencyUnit     AgencyUnit     @relation(fields: [AgencyUnitID], references: [AgencyUnitID])
+  patentInternal PatentInternal @relation(fields: [PatentID], references: [PatentID])
+
+  @@id([PatentID, AgencyUnitID])
+}
+
+model AgencyUnitPerson {
+  AgencyUnitID  Int
+  ContactInfoID Int         @unique
+  agencyUnit    AgencyUnit  @relation(fields: [AgencyUnitID], references: [AgencyUnitID])
+  contactInfo   ContactInfo @relation(fields: [ContactInfoID], references: [ContactInfoID])
+
+  @@id([AgencyUnitID, ContactInfoID])
+}
+>>>>>>> 2f4ccd3b060b7594139744d8677f32ee533bc39e
