@@ -10,24 +10,22 @@ export default router({
       .input(
          z.object({
             name: z.string().min(1, "事務所名稱不可為空"),
-            description: z.string().optional(), // 新增 description
+            description: z.string().optional(),
          }),
       )
       .mutation(async ({ input }) => {
          try {
-            const newAgency = await prisma.agency.create({
+            const newAgency = await prisma.agencyUnit.create({
                data: {
                   Name: input.name,
-                  Description: input.description, // 新增 Description
+                  Description: input.description,
                },
                include: {
-                  contacts: {
+                  Persons: {
                      include: {
                         contactInfo: true,
-                        patentContacts: { include: { patent: true } },
                      },
                   },
-                  patents: true,
                },
             });
             return newAgency;
@@ -44,33 +42,33 @@ export default router({
 
    // Read Agencies (查詢所有事務所)
    getAgencies: procedure.query(async () => {
-      return await prisma.agency.findMany({
+      return await prisma.agencyUnit.findMany({
          include: {
-            contacts: {
+            Persons: {
                include: {
                   contactInfo: true,
-                  patentContacts: { include: { patent: true } },
                },
             },
-            patents: true,
+            InitialReviewPatents: true,
+            TakerPatents: true,
          },
       });
    }),
 
    // Read Agency by ID (查詢單個事務所)
    getAgencyById: procedure
-      .input(z.object({ agencyID: z.number() }))
+      .input(z.object({ agencyUnitID: z.number() }))
       .query(async ({ input }) => {
-         const agency = await prisma.agency.findUnique({
-            where: { AgencyID: input.agencyID },
+         const agency = await prisma.agencyUnit.findUnique({
+            where: { AgencyUnitID: input.agencyUnitID },
             include: {
-               contacts: {
+               Persons: {
                   include: {
                      contactInfo: true,
-                     patentContacts: { include: { patent: true } },
                   },
                },
-               patents: true,
+               InitialReviewPatents: true,
+               TakerPatents: true,
             },
          });
          if (!agency) {
@@ -83,27 +81,27 @@ export default router({
    updateAgency: procedure
       .input(
          z.object({
-            agencyID: z.number(),
+            AgencyUnitID: z.number(),
             name: z.string().min(1, "事務所名稱不可為空").optional(),
             description: z.string().optional(), // 新增 description
          }),
       )
       .mutation(async ({ input }) => {
          try {
-            const updatedAgency = await prisma.agency.update({
-               where: { AgencyID: input.agencyID },
+            const updatedAgency = await prisma.agencyUnit.update({
+               where: { AgencyUnitID: input.AgencyUnitID },
                data: {
                   Name: input.name,
                   Description: input.description, // 新增 Description
                },
                include: {
-                  contacts: {
+                  Persons: {
                      include: {
                         contactInfo: true,
-                        patentContacts: { include: { patent: true } },
                      },
                   },
-                  patents: true,
+                  InitialReviewPatents: true,
+                  TakerPatents: true,
                },
             });
             return updatedAgency;
@@ -123,11 +121,11 @@ export default router({
 
    // Delete Agency
    deleteAgency: procedure
-      .input(z.object({ agencyID: z.number() }))
+      .input(z.object({ agencyUnitID: z.number() }))
       .mutation(async ({ input }) => {
          try {
-            await prisma.agency.delete({
-               where: { AgencyID: input.agencyID },
+            await prisma.agencyUnit.delete({
+               where: { AgencyUnitID: input.agencyUnitID },
             });
             return { success: true };
          }
@@ -149,13 +147,13 @@ export default router({
    createAgencyContactPerson: procedure
       .input(
          z.object({
-            agencyID: z.number(),
+            agencyUnitID: z.number(),
             contactInfo: z.object({
                Name: z.string().min(1, "姓名不可為空"),
                Email: z.string().email("請輸入有效的電子郵件").optional(),
                OfficeNumber: z.string().optional(),
                PhoneNumber: z.string().optional(),
-               Position: z.string().optional(),
+               Role: z.string().optional(),
                Note: z.string().optional(),
             }),
          }),
@@ -169,20 +167,20 @@ export default router({
                   Email: input.contactInfo.Email,
                   OfficeNumber: input.contactInfo.OfficeNumber,
                   PhoneNumber: input.contactInfo.PhoneNumber,
-                  Position: input.contactInfo.Position,
+                  Role: input.contactInfo.Role,
                   Note: input.contactInfo.Note,
                },
             });
 
             // 使用 ContactInfoID 創建 AgencyContactPerson
-            const newContact = await prisma.agencyContactPerson.create({
+            const newContact = await prisma.agencyUnitPerson.create({
                data: {
-                  AgencyID: input.agencyID,
+                  AgencyUnitID: input.agencyUnitID,
                   ContactInfoID: newContactInfo.ContactInfoID,
                },
                include: {
                   contactInfo: true,
-                  patentContacts: { include: { patent: true } },
+                  agencyUnit: true,
                },
             });
             return newContact;
@@ -194,26 +192,29 @@ export default router({
 
    // Read AgencyContactPersons (查詢某事務所的所有聯絡人)
    getAgencyContactPersons: procedure
-      .input(z.object({ agencyID: z.number() }))
+      .input(z.object({ agencyUnitID: z.number() }))
       .query(async ({ input }) => {
-         return await prisma.agencyContactPerson.findMany({
-            where: { AgencyID: input.agencyID },
+         return await prisma.agencyUnitPerson.findMany({
+            where: { AgencyUnitID: input.agencyUnitID },
             include: {
                contactInfo: true,
-               patentContacts: { include: { patent: true } },
+               agencyUnit: true,
             },
          });
       }),
 
    // Read AgencyContactPerson by ID (查詢單個聯絡人)
    getAgencyContactPersonById: procedure
-      .input(z.object({ contactPersonID: z.number() }))
+      .input(z.object({ agencyUnitID: z.number(), contactInfoID: z.number() }))
       .query(async ({ input }) => {
-         const contact = await prisma.agencyContactPerson.findUnique({
-            where: { ContactPersonID: input.contactPersonID },
+         const contact = await prisma.agencyUnitPerson.findUnique({
+            where: {
+               AgencyUnitID: input.agencyUnitID,
+               ContactInfoID: input.contactInfoID,
+            },
             include: {
                contactInfo: true,
-               patentContacts: { include: { patent: true } },
+               agencyUnit: true,
             },
          });
          if (!contact) {
@@ -227,14 +228,14 @@ export default router({
       .input(
          z.object({
             contactPersonID: z.number(),
-            agencyID: z.number().optional(), // 可選更新所屬事務所
+            agencyUnitID: z.number(), // 新增 agencyID
             contactInfo: z
                .object({
                   Name: z.string().min(1, "姓名不可為空").optional(),
                   Email: z.string().email("請輸入有效的電子郵件").optional(),
                   OfficeNumber: z.string().optional(),
                   PhoneNumber: z.string().optional(),
-                  Position: z.string().optional(),
+                  Role: z.string().optional(),
                   Note: z.string().optional(),
                })
                .optional(),
@@ -242,41 +243,28 @@ export default router({
       )
       .mutation(async ({ input }) => {
          try {
-            const contact = await prisma.agencyContactPerson.findUnique({
-               where: { ContactPersonID: input.contactPersonID },
+            const contact = await prisma.agencyUnitPerson.findUnique({
+               where: {
+                  ContactInfoID: input.contactPersonID,
+                  AgencyUnitID: input.agencyUnitID,
+               },
                include: { contactInfo: true },
             });
             if (!contact) {
                throw new Error("聯絡人不存在");
             }
 
-            // 如果提供了 contactInfo 更新
-            if (input.contactInfo && contact.ContactInfoID) {
-               await prisma.contactInfo.update({
-                  where: { ContactInfoID: contact.ContactInfoID },
-                  data: {
-                     Name: input.contactInfo.Name,
-                     Email: input.contactInfo.Email,
-                     OfficeNumber: input.contactInfo.OfficeNumber,
-                     PhoneNumber: input.contactInfo.PhoneNumber,
-                     Position: input.contactInfo.Position,
-                     Note: input.contactInfo.Note,
-                  },
-               });
-            }
-
-            // 更新 AgencyContactPerson
-            const updatedContact = await prisma.agencyContactPerson.update({
-               where: { ContactPersonID: input.contactPersonID },
+            return await prisma.contactInfo.update({
+               where: { ContactInfoID: contact.ContactInfoID },
                data: {
-                  AgencyID: input.agencyID, // 如果提供了新的 agencyID
-               },
-               include: {
-                  contactInfo: true,
-                  patentContacts: { include: { patent: true } },
+                  Name: input.contactInfo?.Name ?? undefined,
+                  Email: input.contactInfo?.Email ?? undefined,
+                  OfficeNumber: input.contactInfo?.OfficeNumber ?? undefined,
+                  PhoneNumber: input.contactInfo?.PhoneNumber ?? undefined,
+                  Role: input.contactInfo?.Role ?? undefined,
+                  Note: input.contactInfo?.Note ?? undefined,
                },
             });
-            return updatedContact;
          }
          catch (error) {
             if (
@@ -291,20 +279,31 @@ export default router({
 
    // Delete AgencyContactPerson
    deleteAgencyContactPerson: procedure
-      .input(z.object({ contactPersonID: z.number() }))
+      .input(
+         z.object({
+            agencyUnitID: z.number(),
+            contactInfoID: z.number(),
+         }),
+      )
       .mutation(async ({ input }) => {
          try {
             // 查詢聯絡人以獲取 ContactInfoID
-            const contact = await prisma.agencyContactPerson.findUnique({
-               where: { ContactPersonID: input.contactPersonID },
+            const contact = await prisma.agencyUnitPerson.findUnique({
+               where: {
+                  ContactInfoID: input.contactInfoID,
+                  AgencyUnitID: input.agencyUnitID,
+               },
             });
             if (!contact) {
                throw new Error("聯絡人不存在");
             }
 
             // 刪除 AgencyContactPerson
-            await prisma.agencyContactPerson.delete({
-               where: { ContactPersonID: input.contactPersonID },
+            await prisma.agencyUnitPerson.delete({
+               where: {
+                  AgencyUnitID: input.agencyUnitID,
+                  ContactInfoID: input.contactInfoID,
+               },
             });
 
             // 可選：如果 ContactInfo 不再被其他實體使用，也可以刪除

@@ -1,5 +1,7 @@
 <template>
-   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 container mx-auto p-6 h-full">
+   <div
+      class="grid grid-cols-1 md:grid-cols-2 gap-4 container mx-auto p-6 h-full"
+   >
       <!-- 左側：代理機構管理 -->
       <div
          class="h-full w-full bg-white rounded-lg shadow-md dark:bg-zinc-900 min-h-0 overflow-hidden"

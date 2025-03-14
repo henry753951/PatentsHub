@@ -1,27 +1,3 @@
-<<<<<<< HEAD
-model Agency {
-  AgencyID Int                   @id @default(autoincrement())
-  Name     String
-  Description String?               // 新增備註欄位，可選（允許 null）
-  contacts AgencyContactPerson[]
-  patents  AgencyPatent[]
-}
-
-model AgencyContactPerson {
-  ContactPersonID Int                   @id @default(autoincrement())
-  AgencyID        Int
-  ContactInfoID   Int?                  @unique
-  agency          Agency                @relation(fields: [AgencyID], references: [AgencyID])
-  contactInfo     ContactInfo?          @relation("AgencyContact", fields: [ContactInfoID], references: [ContactInfoID])
-  patentContacts  AgencyPatentContact[] // 聯絡人與專利的關聯
-}
-model AgencyPatent {
-  PatentID Int
-  AgencyID Int
-  FileCode String
-  patent   Patent                @relation(fields: [PatentID], references: [PatentID])
-  agency   Agency                @relation(fields: [AgencyID], references: [AgencyID])
-=======
 model AgencyUnit {
   AgencyUnitID         Int                         @id @default(autoincrement())
   Name                 String
@@ -37,21 +13,10 @@ model PatentTakerAgencyUnit {
   FileCode       String
   agencyUnit     AgencyUnit     @relation(fields: [AgencyUnitID], references: [AgencyUnitID])
   patentInternal PatentInternal @relation(fields: [PatentID], references: [PatentID])
->>>>>>> 2f4ccd3b060b7594139744d8677f32ee533bc39e
 
   @@id([PatentID, AgencyUnitID])
 }
 
-<<<<<<< HEAD
-model AgencyPatentContact {
-  ContactPersonID Int
-  PatentID        Int
-  AgencyContactPerson AgencyContactPerson @relation(fields: [ContactPersonID], references: [ContactPersonID])
-  patent          Patent                 @relation(fields: [PatentID], references: [PatentID])
-
-  @@id([ContactPersonID, PatentID])
-}
-=======
 model PatentInitiatorAgencyUnit {
   PatentID       Int
   AgencyUnitID   Int
@@ -69,4 +34,3 @@ model AgencyUnitPerson {
 
   @@id([AgencyUnitID, ContactInfoID])
 }
->>>>>>> 2f4ccd3b060b7594139744d8677f32ee533bc39e
