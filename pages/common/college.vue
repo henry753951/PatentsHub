@@ -20,17 +20,10 @@
 definePageMeta({
    name: "common-collegeManage",
 });
-
-const collegesStore = useCollegesStore();
-
 const selectedDepartment = ref<Department>();
 
 type Department =
    RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
-
-onMounted(async () => {
-   await collegesStore.refresh();
-});
 </script>
 
 <style scoped></style>

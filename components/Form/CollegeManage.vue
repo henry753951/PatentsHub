@@ -177,15 +177,11 @@ import type { Config } from "~/components/ui/auto-form/interface";
 import { z } from "zod";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 
-type Department = RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
+type Department =
+   RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
 // Props 定義
 const props = defineProps<{
    selectable?: boolean
-   modelValue?: Department | null // 單選，允許 null
-}>();
-
-const emits = defineEmits<{
-   (e: "update:modelValue", value: Department | null): void
 }>();
 
 // Pinia store
@@ -193,25 +189,16 @@ const collegesStore = useCollegesStore();
 const { colleges } = storeToRefs(collegesStore);
 
 // 管理選中的系所（單選）
-const selectedDepartment = ref<Department | null>(props.modelValue || null);
+const selectedDepartment = defineModel({
+   type: Object as PropType<Department | null>,
+   default: null,
+});
 
 const { openAutoModal } = useModals();
 
 // 載入初始資料
 onMounted(async () => {
    await collegesStore.refresh();
-});
-
-// 同步 v-model
-watch(
-   () => props.modelValue,
-   (newValue) => {
-      selectedDepartment.value = newValue || null;
-   },
-);
-
-watch(selectedDepartment, (newValue) => {
-   emits("update:modelValue", newValue);
 });
 
 // 檢查系所是否被選中
@@ -262,6 +249,8 @@ const fields = {
       },
    } as Config<z.infer<typeof schemas.department>>,
 };
+
+// CRUD Modal Methods
 
 // 新增學院
 const addCollege = async (
