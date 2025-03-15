@@ -227,7 +227,7 @@ export default router({
    updateAgencyContactPerson: procedure
       .input(
          z.object({
-            contactPersonID: z.number(),
+            contactInfoID: z.number(),
             agencyUnitID: z.number(), // 新增 agencyID
             contactInfo: z
                .object({
@@ -245,7 +245,7 @@ export default router({
          try {
             const contact = await prisma.agencyUnitPerson.findUnique({
                where: {
-                  ContactInfoID: input.contactPersonID,
+                  ContactInfoID: input.contactInfoID,
                   AgencyUnitID: input.agencyUnitID,
                },
                include: { contactInfo: true },
@@ -319,57 +319,6 @@ export default router({
                throw new Error("聯絡人不存在");
             }
             throw new Error("無法刪除聯絡人：");
-         }
-      }),
-
-   // === AgencyPatentContact Operations (保留原有功能) ===
-
-   assignContactToPatent: procedure
-      .input(z.object({ contactPersonID: z.number(), patentID: z.number() }))
-      .mutation(async ({ input }) => {
-         try {
-            const existing = await prisma.agencyPatentContact.findUnique({
-               where: {
-                  ContactPersonID_PatentID: {
-                     ContactPersonID: input.contactPersonID,
-                     PatentID: input.patentID,
-                  },
-               },
-            });
-            if (existing) {
-               throw new Error("該聯絡人已負責該專利");
-            }
-            return await prisma.agencyPatentContact.create({
-               data: {
-                  ContactPersonID: input.contactPersonID,
-                  PatentID: input.patentID,
-               },
-               include: {
-                  AgencyContactPerson: true,
-                  patent: true,
-               },
-            });
-         }
-         catch (error) {
-            throw new Error("無法分配專利：");
-         }
-      }),
-
-   removeContactFromPatent: procedure
-      .input(z.object({ contactPersonID: z.number(), patentID: z.number() }))
-      .mutation(async ({ input }) => {
-         try {
-            return await prisma.agencyPatentContact.delete({
-               where: {
-                  ContactPersonID_PatentID: {
-                     ContactPersonID: input.contactPersonID,
-                     PatentID: input.patentID,
-                  },
-               },
-            });
-         }
-         catch (error) {
-            throw new Error("無法移除專利關聯：");
          }
       }),
 });

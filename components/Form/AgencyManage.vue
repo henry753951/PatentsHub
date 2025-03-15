@@ -5,28 +5,19 @@
          <h1 class="text-2xl font-bold">
             事務所管理
          </h1>
-         <Button @click="openAddAgencyModal">
+         <Button
+            @click="
+               openAutoModal(
+                  '新增事務所',
+                  '新增事務所至清單',
+                  schemas.agency,
+                  addAgency,
+                  fields.agency,
+               )
+            "
+         >
             <PlusIcon class="mr-2 h-4 w-4" /> 新增事務所
          </Button>
-      </div>
-
-      <!-- 錯誤或成功訊息 -->
-      <div
-         v-if="error || successMessage"
-         class="px-6 mb-4"
-      >
-         <p
-            v-if="error"
-            class="text-red-600"
-         >
-            {{ error }}
-         </p>
-         <p
-            v-if="successMessage"
-            class="text-green-600"
-         >
-            {{ successMessage }}
-         </p>
       </div>
 
       <!-- 事務所列表 -->
@@ -34,17 +25,19 @@
          :options="{ scrollbars: { autoHide: 'leave' } }"
          class="h-full min-h-0 px-6"
       >
-         <ul class="w-full space-y-2 rounded-lg bg-gray-100 dark:bg-zinc-900 p-3">
+         <ul
+            class="w-full space-y-2 rounded-lg bg-gray-100 dark:bg-zinc-900 p-3"
+         >
             <li
                v-for="agency in agencies"
-               :key="agency.AgencyID"
+               :key="agency.AgencyUnitID"
                class="flex items-center justify-between py-2 border-b cursor-pointer rounded-lg shadow-sm p-4"
                :class="[
-                  selectedAgencyId === agency.AgencyID
+                  isSelected(agency)
                      ? 'bg-blue-100 border-blue-300 dark:bg-blue-900 dark:border-blue-700'
                      : 'bg-white dark:bg-zinc-800',
                ]"
-               @click="selectAgency(agency.AgencyID)"
+               @click="selectAgency(agency)"
             >
                <span class="text-lg font-medium flex-1">
                   {{ agency.Name }}
@@ -64,7 +57,7 @@
                      </DropdownMenuItem>
                      <DropdownMenuItem
                         class="text-red-600"
-                        @click="deleteAgency(agency.AgencyID)"
+                        @click="deleteAgency(agency.AgencyUnitID)"
                      >
                         刪除事務所
                      </DropdownMenuItem>
@@ -93,38 +86,45 @@ import { z } from "zod";
 import type { Config } from "~/components/ui/auto-form/interface";
 import { ref, onMounted } from "vue";
 
+type AgencyUnit = RouterOutput["data"]["agency"]["getAgencies"][0];
+
+// Pinia store
 const agenciesStore = useAgenciesStore();
-const { agencies, isInitialized, isLoading, error } = storeToRefs(agenciesStore);
-const { openAutoModal } = useModals();
-const successMessage = ref<string | null>(null);
+const { agencies } = storeToRefs(agenciesStore);
 
-// 跟踪當前選中的事務所
-const selectedAgencyId = ref<number | null>(null);
-
-// 定義選擇事務所的事件
-const emit = defineEmits<{
-   (e: "selectAgency", agencyID: number): void
-}>();
-
-onMounted(async () => {
-   if (!isInitialized.value) {
-      try {
-         await agenciesStore.refresh();
-         console.log("Agencies 數據:", agencies.value);
-         if (agencies.value.length > 0 && selectedAgencyId.value === null) {
-            selectedAgencyId.value = agencies.value[0].AgencyID;
-            emit("selectAgency", selectedAgencyId.value);
-         }
-      }
-      catch (err) {
-         console.error("加載數據失敗:", err);
-      }
-   }
+// 管理選中的系所（單選）
+const selectedAgencyUnit = defineModel({
+   type: Object as PropType<AgencyUnit | null>,
+   default: null,
 });
+
+const { openAutoModal } = useModals();
+
+// 載入初始資料
+onMounted(async () => {
+   await agenciesStore.refresh();
+});
+
+// 檢查事務所是否被選中
+const isSelected = (agency: AgencyUnit) => {
+   return selectedAgencyUnit.value?.AgencyUnitID === agency.AgencyUnitID;
+};
+
+// 選擇事務所
+const selectAgency = (agencyUnit: AgencyUnit) => {
+   if (isSelected(agencyUnit)) {
+      selectedAgencyUnit.value = null; // 取消選擇
+   }
+   else {
+      selectedAgencyUnit.value = agencyUnit; // 選擇
+   }
+};
 
 const schemas = {
    agency: z.object({
-      name: z.string({ required_error: "事務所名稱不可為空" }).nonempty("事務所名稱不可為空"),
+      name: z
+         .string({ required_error: "事務所名稱不可為空" })
+         .nonempty("事務所名稱不可為空"),
       description: z.string().optional(),
    }),
 };
@@ -136,96 +136,56 @@ const fields = {
    } as Config<z.infer<typeof schemas.agency>>,
 };
 
-const openAddAgencyModal = () =>
-   openAutoModal(
-      "新增事務所",
-      "新增事務所至清單",
-      schemas.agency,
-      addAgency,
-      fields.agency,
-      undefined,
-      undefined,
-   );
+// CRUD Modal Methods
 
-const openEditAgencyModal = (agency: typeof agencies.value[number]) => {
-   const defaultValues = { name: agency.Name, description: agency.Description || "" };
-   console.log("預填資料:", defaultValues);
+const openEditAgencyModal = (agency: AgencyUnit) => {
+   const defaultValues = {
+      name: agency.Name,
+      description: agency.Description || "",
+   };
    openAutoModal(
       "編輯事務所",
       "更新事務所名稱和備註",
       schemas.agency,
-      (data, passthrough) => editAgency(passthrough.agencyID, data),
+      (data, passthrough) => editAgency(passthrough.agencyUnitID, data),
       fields.agency,
-      { agencyID: agency.AgencyID },
+      { agencyUnitID: agency.AgencyUnitID },
       defaultValues,
    );
 };
 
 const addAgency = async (data: z.infer<typeof schemas.agency>) => {
-   try {
-      await agenciesStore.insert(data.name, data.description);
-      successMessage.value = "事務所新增成功";
-      setTimeout(() => (successMessage.value = null), 3000);
-   }
-   catch (err) {
-      console.error("新增失敗:", err);
-      error.value = "新增失敗";
-      setTimeout(() => (error.value = null), 3000);
-   }
+   await agenciesStore.insert(data.name, data.description);
 };
 
-const editAgency = async (agencyID: number, data: z.infer<typeof schemas.agency>) => {
-   try {
-      await agenciesStore.update(agencyID, data.name, data.description);
-      successMessage.value = "事務所更新成功";
-      setTimeout(() => (successMessage.value = null), 3000);
-   }
-   catch (err) {
-      console.error("更新失敗:", err);
-      error.value = "更新失敗";
-      setTimeout(() => (error.value = null), 3000);
-   }
+const editAgency = async (
+   agencyUnitID: number,
+   data: z.infer<typeof schemas.agency>,
+) => {
+   await agenciesStore.update(agencyUnitID, data.name, data.description);
 };
 
-const deleteAgency = async (agencyID: number) => {
-   try {
-      await agenciesStore.delete(agencyID);
-      successMessage.value = "事務所刪除成功";
-      if (selectedAgencyId.value === agencyID) {
-         selectedAgencyId.value = agencies.value.length > 0 ? agencies.value[0].AgencyID : null;
-         if (selectedAgencyId.value) emit("selectAgency", selectedAgencyId.value);
-      }
-      setTimeout(() => (successMessage.value = null), 3000);
-   }
-   catch (err) {
-      console.error("刪除失敗:", err);
-      error.value = "刪除失敗";
-      setTimeout(() => (error.value = null), 3000);
-   }
-};
-
-const selectAgency = (agencyID: number) => {
-   selectedAgencyId.value = agencyID;
-   emit("selectAgency", agencyID);
+const deleteAgency = async (agencyUnitID: number) => {
+   await agenciesStore.delete(agencyUnitID);
 };
 </script>
 
 <style scoped>
 li {
-  padding: 0.5rem 0;
+   padding: 0.5rem 0;
 }
 .flex-1 {
-  padding: 0.5rem;
+   padding: 0.5rem;
 }
 
 /* 移除懸浮時的背景色變化 */
 li.flex {
-  transition: none; /* 移除所有懸浮過渡效果 */
+   transition: none; /* 移除所有懸浮過渡效果 */
 }
 
 /* 確保層次不遮擋 */
 li {
-  position: relative;
-  z-index: 0;
+   position: relative;
+   z-index: 0;
 }
 </style>

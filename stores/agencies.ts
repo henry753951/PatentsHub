@@ -5,8 +5,6 @@ export const useAgenciesStore = defineStore("agenciesStore", {
       const initialState = {
          agencies: [] as RouterOutput["data"]["agency"]["getAgencies"],
          isInitialized: false,
-         isLoading: false,
-         error: null as string | null,
       };
 
       if (!initialState.isInitialized) {
@@ -19,7 +17,6 @@ export const useAgenciesStore = defineStore("agenciesStore", {
             }
             catch (error) {
                console.error("Failed to initialize agencies:", error);
-               initialState.error = (error as Error).message || "初始化失敗";
             }
          })();
       }
@@ -30,200 +27,88 @@ export const useAgenciesStore = defineStore("agenciesStore", {
    actions: {
       async refresh() {
          const { $trpc } = useNuxtApp();
-         try {
-            this.isLoading = true;
-            this.error = null;
-            this.agencies = await $trpc.data.agency.getAgencies.query();
-            return this.agencies;
-         }
-         catch (error) {
-            this.error = (error as Error).message || "刷新失敗";
-            throw error;
-         }
-         finally {
-            this.isLoading = false;
-         }
+         this.agencies = await $trpc.data.agency.getAgencies.query();
+         console.log("refresh", this.agencies);
+         return this.agencies;
       },
 
       async insert(agencyName: string, description?: string) {
-         // 添加 description
          const { $trpc } = useNuxtApp();
-         try {
-            this.isLoading = true;
-            this.error = null;
-            await $trpc.data.agency.createAgency.mutate({
-               name: agencyName,
-               description,
-            });
-            await this.refresh(); // 刷新以保持數據一致
-         }
-         catch (error) {
-            this.error = (error as Error).message || "新增失敗";
-            throw error;
-         }
-         finally {
-            this.isLoading = false;
-         }
+
+         await $trpc.data.agency.createAgency.mutate({
+            name: agencyName,
+            description,
+         });
+         await this.refresh(); // 刷新以保持數據一致
       },
 
-      async update(agencyID: number, name: string, description?: string) {
-         // 添加 description
+      async update(agencyUnitID: number, name: string, description?: string) {
          const { $trpc } = useNuxtApp();
-         try {
-            this.isLoading = true;
-            this.error = null;
-            await $trpc.data.agency.updateAgency.mutate({
-               agencyID,
-               name,
-               description,
-            });
-            await this.refresh();
-         }
-         catch (error) {
-            this.error = (error as Error).message || "更新失敗";
-            throw error;
-         }
-         finally {
-            this.isLoading = false;
-         }
+         await $trpc.data.agency.updateAgency.mutate({
+            AgencyUnitID: agencyUnitID,
+            name,
+            description,
+         });
+         await this.refresh();
       },
 
-      async delete(agencyID: number) {
+      async delete(agencyUnitID: number) {
          const { $trpc } = useNuxtApp();
-         try {
-            this.isLoading = true;
-            this.error = null;
-            await $trpc.data.agency.deleteAgency.mutate({ agencyID });
-            await this.refresh();
-         }
-         catch (error) {
-            this.error = (error as Error).message || "刪除失敗";
-            throw error;
-         }
-         finally {
-            this.isLoading = false;
-         }
+
+         await $trpc.data.agency.deleteAgency.mutate({ agencyUnitID });
+         await this.refresh();
       },
 
       async insertContact(
-         agencyID: number,
+         agencyUnitID: number,
          contactInfo: {
             Name: string
             Email?: string
             OfficeNumber?: string
             PhoneNumber?: string
-            Position?: string
+            Role?: string
             Note?: string
          },
       ) {
          const { $trpc } = useNuxtApp();
-         try {
-            this.isLoading = true;
-            this.error = null;
-            await $trpc.data.agency.createAgencyContactPerson.mutate({
-               agencyID,
-               contactInfo,
-            });
-            await this.refresh();
-         }
-         catch (error) {
-            this.error = (error as Error).message || "新增聯絡人失敗";
-            throw error;
-         }
-         finally {
-            this.isLoading = false;
-         }
+         await $trpc.data.agency.createAgencyContactPerson.mutate({
+            agencyUnitID,
+            contactInfo,
+         });
+         console.log("insertContact", agencyUnitID, contactInfo);
+         await this.refresh();
       },
 
       async updateContact(
-         contactPersonID: number,
-         agencyID?: number,
+         contactInfoID: number,
+         agencyUnitID: number,
          contactInfo?: {
             Name?: string
             Email?: string
             OfficeNumber?: string
             PhoneNumber?: string
-            Position?: string
+            Role?: string
             Note?: string
          },
       ) {
          const { $trpc } = useNuxtApp();
-         try {
-            this.isLoading = true;
-            this.error = null;
-            await $trpc.data.agency.updateAgencyContactPerson.mutate({
-               contactPersonID,
-               agencyID,
-               contactInfo,
-            });
-            await this.refresh();
-         }
-         catch (error) {
-            this.error = (error as Error).message || "更新聯絡人失敗";
-            throw error;
-         }
-         finally {
-            this.isLoading = false;
-         }
+
+         await $trpc.data.agency.updateAgencyContactPerson.mutate({
+            contactInfoID,
+            agencyUnitID,
+            contactInfo,
+         });
+         await this.refresh();
       },
 
-      async deleteContact(contactPersonID: number) {
+      async deleteContact(agencyUnitID: number, contactInfoID: number) {
          const { $trpc } = useNuxtApp();
-         try {
-            this.isLoading = true;
-            this.error = null;
-            await $trpc.data.agency.deleteAgencyContactPerson.mutate({
-               contactPersonID,
-            });
-            await this.refresh();
-         }
-         catch (error) {
-            this.error = (error as Error).message || "刪除聯絡人失敗";
-            throw error;
-         }
-         finally {
-            this.isLoading = false;
-         }
-      },
 
-      async assignContactToPatent(contactPersonID: number, patentID: number) {
-         const { $trpc } = useNuxtApp();
-         try {
-            this.isLoading = true;
-            this.error = null;
-            await $trpc.data.agency.assignContactToPatent.mutate({
-               contactPersonID,
-               patentID,
-            });
-            await this.refresh();
-         }
-         catch (error) {
-            this.error = (error as Error).message || "分配聯絡人失敗";
-            throw error;
-         }
-         finally {
-            this.isLoading = false;
-         }
-      },
-
-      async removeContactFromPatent(contactPersonID: number, patentID: number) {
-         const { $trpc } = useNuxtApp();
-         try {
-            this.isLoading = true;
-            this.error = null;
-            await $trpc.data.agency.removeContactFromPatent.mutate({
-               contactPersonID,
-               patentID,
-            });
-            await this.refresh();
-         }
-         catch (error) {
-            this.error = (error as Error).message || "移除聯絡人失敗";
-            throw error;
-         }
-         finally {
-            this.isLoading = false;
-         }
+         await $trpc.data.agency.deleteAgencyContactPerson.mutate({
+            agencyUnitID,
+            contactInfoID,
+         });
+         await this.refresh();
       },
    },
 });
