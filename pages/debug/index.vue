@@ -54,11 +54,6 @@
          </div>
       </div>
       <div class="grid grid-cols-1 gap-4">
-         <BlockPatentRow
-            name="hi"
-            :expiry-date="'2025/01/30'"
-            author="me"
-         />
          <BlockPatentInventorRow
             class="h-[88px]"
             name="XXX"

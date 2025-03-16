@@ -5,21 +5,26 @@ export const useAppStore = defineStore("appStore", {
       return {
          logs: [],
       } as {
-         logs: ILog[];
+         logs: ILog[]
       };
    },
    actions: {
-      insertLog(log: ILog) {
+      async insertLog(log: ILog) {
          log.id = this.logs.length;
          this.logs.push(log);
          if (log.type === "error") {
-            toast(`Log ID: ${log.id}`, {
-               description: `Type: ${log.type}, Message: ${log.message}`,
-               action: {
-                 label: "Undo",
-                 onClick: () => console.log("Undo"),
-               },
-            });
+            setTimeout(() => {
+               toast.error("發生意外錯誤", {
+                  description: `Message: ${log.message}`,
+                  action: {
+                     label: "查看",
+                     onClick: async () =>
+                        await navigateTo({
+                           name: "debug-logs",
+                        }),
+                  },
+               });
+            }, 0);
          }
       },
    },

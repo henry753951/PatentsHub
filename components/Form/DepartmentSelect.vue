@@ -113,13 +113,10 @@ watch(
    () => belongsInDb.value,
    (value) => {
       if (!value) return;
-      if (value.DepartmentID !== belongs.value?.departmentID) {
-         console.log("update", value);
-         belongs.value = {
-            collegeID: value.CollegeID,
-            departmentID: value.DepartmentID,
-         };
-      }
+      belongs.value = {
+         collegeID: value.CollegeID,
+         departmentID: value.DepartmentID,
+      };
    },
    {
       deep: true,
@@ -131,10 +128,15 @@ const { colleges } = storeToRefs(collegesStore);
 
 onMounted(async () => {
    await collegesStore.refresh();
+   if (belongsInDb.value) {
+      belongs.value = {
+         collegeID: belongsInDb.value.CollegeID,
+         departmentID: belongsInDb.value.DepartmentID,
+      };
+   }
 });
 
 const currentCollegeAndDepartment = computed(() => {
-   console.log(colleges.value);
    const college = colleges.value.find(
       (college) =>
          belongs.value && college.CollegeID === belongs.value.collegeID,
@@ -165,7 +167,6 @@ const updateBelongsInDbModel = () => {
       DepartmentID: currentCollegeAndDepartment.value.department.DepartmentID,
       CollegeID: currentCollegeAndDepartment.value.college.CollegeID,
    };
-   consola.info("updateBelongsInDbModel", belongsInDb.value);
 };
 </script>
 

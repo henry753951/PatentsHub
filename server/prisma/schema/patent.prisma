@@ -5,7 +5,7 @@ model Patent {
   PatentID     Int                        @id @default(autoincrement())
   DepartmentID Int
   // 專利資料
-  Year         String
+  Year         Int
   DraftTitle   String                     @default("")
   Title        String                     @default("")
   TitleEnglish String                     @default("")
@@ -44,7 +44,7 @@ model PatentApplicationData {
   RDResultNumber    String? // 研究成果編號
   NSCNumber         String? // 國科會編號
 
-  patent Patent @relation(fields: [PatentID], references: [PatentID])
+  patent Patent @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
 }
 
 // ========================
@@ -57,7 +57,7 @@ model PatentTechnicalAttributes {
   PatentID      Int                @id
   MaturityLevel String?
   keywords      TechnicalKeyword[]
-  patent        Patent             @relation(fields: [PatentID], references: [PatentID])
+  patent        Patent             @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model TechnicalKeyword {
@@ -79,7 +79,7 @@ model PatentInternal {
   InitialReviewNumber   String?
   InitialReviewAgencies PatentInitiatorAgencyUnit[] // 初評事務所
   TakerAgencies         PatentTakerAgencyUnit[] // 承辦事務所
-  Patent                Patent                      @relation(fields: [PatentID], references: [PatentID])
+  Patent                Patent                      @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
 }
 
 // ========================
@@ -96,7 +96,7 @@ model PatentExternal {
   EndDate         DateTime? // 結束日
   IPCNumber       String? // IPC號碼
   PatentScope     String? // 專利範圍
-  patent          Patent    @relation(fields: [PatentID], references: [PatentID])
+  patent          Patent    @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
 }
 
 // ========================
@@ -111,7 +111,7 @@ model PatentStatus {
   MaintenanceYear              Int?
   MaintenanceStartDate         DateTime?
   MaintenanceEndDate           DateTime?
-  patent                       Patent    @relation(fields: [PatentID], references: [PatentID])
+  patent                       Patent    @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
 }
 
 // ========================

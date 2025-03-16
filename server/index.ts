@@ -21,7 +21,7 @@ const dbPath = isProduction
 export const prisma
    = global.prisma
      ?? new PrismaClient({
-        log: isProduction ? ["error"] : ["query", "info", "error", "warn"],
+        log: isProduction ? ["error"] : ["error", "warn"],
         datasources: {
            db: {
               url: dbPath,

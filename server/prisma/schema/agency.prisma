@@ -12,7 +12,7 @@ model PatentTakerAgencyUnit {
   AgencyUnitID   Int
   FileCode       String
   agencyUnit     AgencyUnit     @relation(fields: [AgencyUnitID], references: [AgencyUnitID])
-  patentInternal PatentInternal @relation(fields: [PatentID], references: [PatentID])
+  patentInternal PatentInternal @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([PatentID, AgencyUnitID])
 }
@@ -21,7 +21,7 @@ model PatentInitiatorAgencyUnit {
   PatentID       Int
   AgencyUnitID   Int
   agencyUnit     AgencyUnit     @relation(fields: [AgencyUnitID], references: [AgencyUnitID])
-  patentInternal PatentInternal @relation(fields: [PatentID], references: [PatentID])
+  patentInternal PatentInternal @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([PatentID, AgencyUnitID])
 }

@@ -7,7 +7,7 @@ const PatentCreate = z.object({
       })
       .min(1, "專利編號不得為空")
       .default(""),
-   year: z.string().default((new Date().getFullYear() - 1911).toString()),
+   year: z.number().default((new Date().getFullYear() - 1911)),
    draftTitle: z
       .string({
          required_error: "專利編號不得為空",

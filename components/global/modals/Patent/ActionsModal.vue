@@ -64,7 +64,7 @@ const props = defineProps<{
       PatentId: number
       title: string
    }
-   refreshCallback?: () => void
+   deleteCallback?: () => void
 }>();
 
 const actionItems = ref([
@@ -80,8 +80,8 @@ const actionItems = ref([
                   props: {
                      comfirmText: "移除",
                      comfirmCallback: async () => {
-                        await removePatent(props.patent.PatentId);
-                        props.refreshCallback?.();
+                        isOpen.value = false;
+                        props.deleteCallback?.();
                      },
                   },
                });
@@ -90,10 +90,6 @@ const actionItems = ref([
       ],
    },
 ]);
-
-const removePatent = async (patentId: number) => {
-   // await api.patent.remove(patentId);
-};
 </script>
 
 <style scoped></style>

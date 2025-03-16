@@ -92,7 +92,6 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { PlusIcon, MoreHorizontalIcon } from "lucide-vue-next";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
-import { useInventor } from "~/composables/database/inventor";
 import InventorEditList from "~/components/Form/InventorEditList.vue";
 
 type Department =
@@ -107,7 +106,7 @@ const {
    filter,
    status,
    crud,
-} = useInventor({
+} = useDatabaseInventor({
    DepartmentID: props.department?.DepartmentID,
 });
 

@@ -26,7 +26,7 @@ model FundingUnitData {
 model PatentFunding {
   PatentID          Int               @id
   fundingPlanPlanID Int
-  patent            Patent            @relation(fields: [PatentID], references: [PatentID])
+  patent            Patent            @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
   plan              FundingPlan       @relation(fields: [fundingPlanPlanID], references: [PlanID])
   fundingUnitsDatas FundingUnitData[]
 }

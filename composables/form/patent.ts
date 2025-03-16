@@ -23,9 +23,7 @@ export const patent = {
          CustomZodType.PatentInventor,
       );
       const submitForm = async (values: z.infer<typeof schemas>) => {
-         const json = JSON.stringify(values, null, 2);
-         const object = JSON.parse(json) as z.infer<typeof schemas>;
-         await $trpc.data.patent.createPatent.mutate(object);
+         await $trpc.data.patent.createPatent.mutate(values);
       };
       // ===========================
       const {

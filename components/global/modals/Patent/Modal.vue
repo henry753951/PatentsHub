@@ -1,8 +1,11 @@
 <template>
    <div>
-      <Dialog v-model:open="isOpen">
+      <Dialog
+         v-model:open="isOpen"
+      >
          <DialogContent
             class="w-[90%] h-[90%] max-w-none flex flex-col p-0 overflow-hidden"
+            @interact-outside.prevent
          >
             <DialogHeader class="hidden">
                <DialogTitle>專利資訊</DialogTitle>
@@ -11,7 +14,7 @@
             <OverlayScrollbarsComponent
                :options="{ scrollbars: { autoHide: 'leave' } }"
             >
-               <BlockPatentView :patent-i-d="props.patentId" />
+               <BlockPatentView :patent-id="props.patentId" />
             </OverlayScrollbarsComponent>
          </DialogContent>
       </Dialog>
@@ -36,6 +39,10 @@ const isOpen = defineModel("open", {
 const props = defineProps<{
    patentId: number
 }>();
+
+onMounted(() => {
+
+});
 </script>
 
 <style scoped></style>

@@ -1,7 +1,7 @@
 import type { z } from "zod";
 import type { RouterOutput, dbZ } from "~/server";
 
-export const useInventor = (
+export const useDatabaseInventor = (
    defaultFilter: z.infer<typeof dbZ.InventorWhereInputSchema> = {
    },
 ) => {

@@ -59,7 +59,7 @@
             <div class="flex items-center gap-1">
                <NuxtImg
                   v-if="patent.country"
-                  :src="`https://flagcdn.com/w160/${country.code.toLowerCase()}.png`"
+                  :src="`https://flagcdn.com/w160/${patent.country.ISOCode.toLowerCase()}.png`"
                   class="h-3 rounded"
                />
                <div
@@ -73,7 +73,7 @@
                   />
                </div>
                <span class="text-gray-700 dark:text-gray-200 text-xs">
-                  {{ patentNumber ?? "未輸入" }}
+                  <!-- {{ patentNumber ?? "未輸入" }} -->
                </span>
                <span
                   class="bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-100 px-2 py-0.5 text-xs rounded"

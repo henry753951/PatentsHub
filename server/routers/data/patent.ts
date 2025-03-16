@@ -5,9 +5,19 @@ import { dbZ } from "~/server";
 
 export default router({
    getLastInternalID: procedure
-      .input(z.object({}).nullish())
+      .input(
+         z
+            .object({
+               year: z.number(),
+            })
+            .default({ year: new Date().getFullYear() - 1911 }),
+      )
       .query(async ({ input }) => {
+         const offset = 4;
          const lastPatent = await prisma.patent.findFirst({
+            where: {
+               Year: input.year,
+            },
             orderBy: {
                internal: {
                   InternalID: "desc",
@@ -17,11 +27,12 @@ export default router({
                internal: true,
             },
          });
-         const year = new Date().getFullYear() - 1911;
-         return (
-            lastPatent?.internal?.InternalID
-            ?? `${year}${(1).toString().padStart(4, "0")}`
-         );
+         console.log(lastPatent);
+         if (!(lastPatent && lastPatent.internal)) {
+            return `${input.year}${(1).toString().padStart(offset, "0")}`;
+         }
+         const nextInteralId = `${input.year}${(parseInt(lastPatent.internal.InternalID.slice(-offset)) + 1).toString().padStart(offset, "0")}`;
+         return nextInteralId;
       }),
    createPatent: procedure
       .input(CustomZodType.PatentCreate.merge(CustomZodType.PatentInventor))

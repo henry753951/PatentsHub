@@ -1,7 +1,7 @@
 import type { z } from "zod";
 import type { RouterOutput, dbZ } from "~/server";
 
-export const usePatents = (
+export const useDatabasePatents = (
    defaultFillter: z.infer<typeof dbZ.PatentWhereInputSchema> = {},
 ) => {
    const { $trpc } = useNuxtApp();
@@ -13,8 +13,9 @@ export const usePatents = (
    >(
       "patents",
       async () => {
-         console.log("fillter.value", fillter.value);
-         return await getPatents(fillter.value);
+         const data = await getPatents(fillter.value);
+         consola.info("Fetching patents with fillter", fillter.value, data);
+         return data;
       },
       {
          watch: [fillter],
@@ -34,9 +35,6 @@ export const usePatents = (
    // Update
 
    // Delete
-   const deletePatent = async (PatentID: number) => {
-      return await $trpc.data.patent.deletePatent.mutate({ PatentID });
-   };
 
    return {
       data,
@@ -45,7 +43,6 @@ export const usePatents = (
       forceRefresh: refresh,
       crud: {
          get: getPatents,
-         delete: deletePatent,
       },
    };
 };
