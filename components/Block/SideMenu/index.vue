@@ -1,24 +1,22 @@
+div
 <template>
    <div class="h-full flex flex-col items-center outter">
-      <OverlayScrollbarsComponent
-         :options="{ scrollbars: { autoHide: 'leave' } }"
-         class="px-2 py-2"
-      >
-         <div class="flex flex-col gap-4 items-center">
-            <BlockSideMenuToggle />
-            <BlockSideMenuNavs :items="navItems" />
-            <BlockSideMenuDivider />
-            <BlockSideMenuNavsItem
-               icon="basil:add-outline"
-               title="更多"
-            />
-            <BlockSideMenuNavsItem
-               icon="basil:explore-outline"
-               title="Debug"
-               @click="() => navigateTo({ name: 'debug' })"
-            />
-         </div>
-      </OverlayScrollbarsComponent>
+      <div class="flex flex-col gap-4 items-center px-1.5">
+         <BlockSideMenuToggle />
+         <BlockSideMenuNavs :items="navItems" />
+         <BlockSideMenuDivider />
+         <BlockSideMenuNavsItem
+            icon="basil:add-outline"
+            title="更多"
+         >
+            <BlockSideMenuNavs :items="moreNavItems" />
+         </BlockSideMenuNavsItem>
+         <BlockSideMenuNavsItem
+            icon="basil:explore-outline"
+            title="Debug"
+            @click="() => navigateTo({ name: 'debug' })"
+         />
+      </div>
 
       <BlockSideMenuActions
          class="mt-auto"
@@ -28,8 +26,6 @@
 </template>
 
 <script lang="ts" setup>
-import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
-
 const navItems = [
    {
       title: "首頁",
@@ -47,14 +43,7 @@ const navItems = [
       },
       to: { name: "patents-view" },
    },
-   {
-      title: "國家",
-      icon: {
-         normal: "solar:flag-linear",
-         active: "solar:flag-bold-duotone",
-      },
-      to: { name: "country-view" },
-   },
+
    {
       title: "搜尋",
       icon: {
@@ -70,6 +59,33 @@ const navItems = [
          active: "basil:pin-solid",
       },
       to: { name: "pins" },
+   },
+] as INavItem[];
+
+const moreNavItems = [
+   {
+      title: "國家管理",
+      icon: {
+         normal: "solar:flag-linear",
+         active: "solar:flag-bold-duotone",
+      },
+      to: { name: "common-countryManage" },
+   },
+   {
+      title: "學院管理",
+      icon: {
+         normal: "material-symbols-light:school-outline-rounded",
+         active: "material-symbols-light:school-rounded",
+      },
+      to: { name: "common-collegeManage" },
+   },
+   {
+      title: "事務所管理",
+      icon: {
+         normal: "ph:building-office",
+         active: "ph:building-office-fill",
+      },
+      to: { name: "common-agencyManage" },
    },
 ] as INavItem[];
 

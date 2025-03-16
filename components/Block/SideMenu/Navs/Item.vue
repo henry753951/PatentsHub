@@ -1,20 +1,35 @@
 <template>
-   <div class="group flex flex-col items-center gap-0.5 cursor-pointer w-full">
+   <div class="relative w-full group/main">
       <div
-         class="flex items-center justify-center px-2 py-0.5 w-full rounded-full"
-         :class="iconClasses"
+         class="group flex flex-col items-center gap-0.5 cursor-pointer w-full"
       >
-         <Icon
-            :class="isActive ? 'opacity-100' : 'opacity-80'"
-            :name="iconName"
-            size="1.4rem"
-         />
+         <div
+            class="flex items-center justify-center px-2 py-0.5 w-full rounded-full"
+            :class="iconClasses"
+         >
+            <Icon
+               :class="isActive ? 'opacity-100' : 'opacity-80'"
+               :name="iconName"
+               size="1.4rem"
+            />
+         </div>
+         <div
+            class="whitespace-nowrap text-xs"
+            :class="isActive ? 'opacity-100' : 'opacity-60'"
+         >
+            {{ title }}
+         </div>
       </div>
       <div
-         class="whitespace-nowrap text-xs"
-         :class="isActive ? 'opacity-100' : 'opacity-60'"
+         v-if="$slots.default"
+         class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-[calc(80%)] z-[10] transition-all duration-200 ps-3"
+         :class="['group-hover/main:opacity-100 opacity-0','group-hover/main:translate-x-[calc(100%)]']"
       >
-         {{ title }}
+         <div
+            class="p-2 rounded-lg bg-white dark:bg-zinc-800 shadow-lg flex flex-col gap-2"
+         >
+            <slot name="default" />
+         </div>
       </div>
    </div>
 </template>

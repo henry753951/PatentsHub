@@ -2,7 +2,7 @@
    <component
       :is="modalName"
       v-model:open="isOpen"
-      :props="props"
+      v-bind="props"
    />
 </template>
 

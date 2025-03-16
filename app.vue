@@ -2,10 +2,14 @@
    <NuxtLayout>
       <NuxtPage />
    </NuxtLayout>
+   <ClientOnly>
+      <Toaster />
+   </ClientOnly>
 </template>
 
 <script lang="ts" setup>
 import "overlayscrollbars/overlayscrollbars.css";
+import { Toaster } from "@/components/ui/sonner";
 </script>
 
 <style>

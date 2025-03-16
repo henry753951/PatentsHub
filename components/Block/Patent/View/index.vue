@@ -26,14 +26,41 @@
                class="flex gap-4"
             >
                <div class="text-gray-800 dark:text-gray-200 z-[6]">
-                  <div
-                     class="font-extrabold transition-all duration-300"
-                     :class="{
-                        'text-3xl': state?.arrivedState.top,
-                        'text-xl': !state?.arrivedState.top,
-                     }"
-                  >
-                     {{ title.native }}
+                  <div class="flex items-center gap-4">
+                     <div
+                        class="font-extrabold transition-all duration-300 whitespace-nowrap text-ellipsis overflow-hidden max-w-[70%]"
+                        :class="{
+                           'text-3xl': state?.arrivedState.top,
+                           'text-xl': !state?.arrivedState.top,
+                        }"
+                     >
+                        {{ title.native }}
+                     </div>
+                     <TooltipProvider>
+                        <Tooltip>
+                           <TooltipTrigger as-child>
+                              <Button
+                                 variant="ghost"
+                                 class="hover:bg-white dark:hover:bg-zinc-700"
+                                 @click="
+                                    open('PatentActionsModal', {
+                                       props: {
+                                          patent: {
+                                             PatentId: patent.PatentID,
+                                             title: title.native,
+                                          },
+                                       },
+                                    })
+                                 "
+                              >
+                                 <Icon name="ic:round-more-horiz" />
+                              </Button>
+                           </TooltipTrigger>
+                           <TooltipContent side="right">
+                              <p>更多選項</p>
+                           </TooltipContent>
+                        </Tooltip>
+                     </TooltipProvider>
                   </div>
                   <div
                      class="font-thin duration-300 transition-all"
@@ -135,11 +162,13 @@ import TabList from "primevue/tablist";
 import Tab from "primevue/tab";
 import TabPanels from "primevue/tabpanels";
 import TabPanel from "primevue/tabpanel";
+import { Button } from "@/components/ui/button";
 import type { z } from "zod";
 const porps = defineProps<{
    patentID: number
 }>();
 
+const { open } = useModals();
 const state = useClosestScrollState("viewRef");
 const title = computed(() => {
    if (!patent.value) return { english: "", native: "" };

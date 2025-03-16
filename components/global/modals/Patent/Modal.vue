@@ -1,7 +1,9 @@
 <template>
    <div>
       <Dialog v-model:open="isOpen">
-         <DialogContent class="w-[90%] h-[90%] max-w-none flex flex-col p-0 overflow-hidden">
+         <DialogContent
+            class="w-[90%] h-[90%] max-w-none flex flex-col p-0 overflow-hidden"
+         >
             <DialogHeader class="hidden">
                <DialogTitle>專利資訊</DialogTitle>
                <DialogDescription></DialogDescription>
@@ -31,12 +33,9 @@ const isOpen = defineModel("open", {
    default: false,
 });
 
-const { props } = defineProps<{
-   props: {
-      patentId: number
-   }
+const props = defineProps<{
+   patentId: number
 }>();
-
 </script>
 
 <style scoped></style>

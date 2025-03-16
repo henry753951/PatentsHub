@@ -49,16 +49,14 @@ const isOpen = defineModel("open", {
    default: false,
 });
 
-const { props } = defineProps<{
-   props: {
-      title: string
-      description: string
-      schema: T
-      fieldConfig?: Config<z.infer<T>>
-      callback: (data: z.infer<T>, passthrough?: any) => void
-      passthrough?: any
-      defaultValues?: z.infer<T>
-   }
+const props = defineProps<{
+   title: string
+   description: string
+   schema: T
+   fieldConfig?: Config<z.infer<T>>
+   callback: (data: z.infer<T>, passthrough?: any) => void
+   passthrough?: any
+   defaultValues?: z.infer<T>
 }>();
 
 const form = useForm({

@@ -1,4 +1,4 @@
-import type { RouteLocationAsRelativeGeneric } from "vue-router";
+import type { RouteLocationAsRelativeTyped } from "vue-router";
 
 declare global {
    interface INavItem {
@@ -10,7 +10,7 @@ declare global {
         }
       title: string
       tooltip?: string
-      to?: RouteLocationAsRelativeGeneric
+      to?: RouteLocationAsRelativeTyped
       action?: () => void
    }
    interface INavAction {
@@ -22,6 +22,14 @@ declare global {
    interface IFormStep {
       title: string
       description?: string
+   }
+
+   interface ILog {
+      id?: number
+      timestamp: Date
+      type: "info" | "warning" | "error"
+      message: string
+      object?: any
    }
 }
 

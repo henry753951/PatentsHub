@@ -8,37 +8,44 @@ export const usePatents = (
    // [State]
    const fillter
       = ref<z.infer<typeof dbZ.PatentWhereInputSchema>>(defaultFillter);
-   // const { data, refresh, status } = useAsyncData<
-   //    RouterOutput["data"]["inventor"]["getInventors"]
-   // >(
-   //    "inventor",
-   //    async () => {
-   //       // 若預設不全選，則不顯示任何資料 (看需求)
-   //       console.log(getInventors({ where: fillter.value }));
-   //       if (Object.keys(fillter.value).length === 0) return [];
-   //       return await getInventors({ where: fillter.value });
-   //    },
-   //    {
-   //       watch: [fillter],
-   //    },
-   // );
+   const { data, refresh, status } = useAsyncData<
+      RouterOutput["data"]["patent"]["getPatents"]
+   >(
+      "patents",
+      async () => {
+         console.log("fillter.value", fillter.value);
+         return await getPatents(fillter.value);
+      },
+      {
+         watch: [fillter],
+         lazy: true,
+      },
+   );
 
    // [CRUD]
    // Create
 
    // Read
-
+   const getPatents = async (
+      where: z.infer<typeof dbZ.PatentWhereInputSchema>,
+   ) => {
+      return await $trpc.data.patent.getPatents.query(where);
+   };
    // Update
 
    // Delete
+   const deletePatent = async (PatentID: number) => {
+      return await $trpc.data.patent.deletePatent.mutate({ PatentID });
+   };
 
    return {
-      // data,
-      // fillter,
-      // status,
-      // forceRefresh: refresh,
+      data,
+      fillter,
+      status,
+      forceRefresh: refresh,
       crud: {
-
+         get: getPatents,
+         delete: deletePatent,
       },
    };
 };

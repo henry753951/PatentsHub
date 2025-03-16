@@ -124,6 +124,66 @@ export default router({
             },
          });
       }),
+   getPatents: procedure
+      .input(dbZ.PatentWhereInputSchema)
+      .query(async ({ input }) => {
+         return await prisma.patent.findMany({
+            where: input,
+            include: {
+               country: true,
+               department: {
+                  include: {
+                     college: true,
+                  },
+               },
+               internal: {
+                  include: {
+                     InitialReviewAgencies: {
+                        include: {
+                           agencyUnit: true,
+                        },
+                     },
+                     TakerAgencies: {
+                        include: {
+                           agencyUnit: true,
+                        },
+                     },
+                  },
+               },
+               external: true,
+               technical: {
+                  include: {
+                     keywords: true,
+                  },
+               },
+               application: true,
+               funding: {
+                  include: {
+                     plan: true,
+                     fundingUnitsDatas: {
+                        include: {
+                           fundingUnit: true,
+                        },
+                     },
+                  },
+               },
+               inventors: {
+                  include: {
+                     inventor: {
+                        include: {
+                           contactInfo: true,
+                           department: {
+                              include: {
+                                 college: true,
+                              },
+                           },
+                        },
+                     },
+                  },
+               },
+            },
+         });
+      }),
    updatePatent: procedure
       .input(
          z.object({
@@ -137,6 +197,13 @@ export default router({
                PatentID: input.patentID,
             },
             data: input.data,
+         });
+      }),
+   deletePatent: procedure
+      .input(dbZ.PatentWhereUniqueInputSchema)
+      .mutation(async ({ input }) => {
+         return await prisma.patent.delete({
+            where: input,
          });
       }),
 });

@@ -3,8 +3,8 @@ import type { RouterOutput, dbZ } from "~/server";
 
 export const usePatent = async (
    defaultFillter = undefined as
-   | z.infer<typeof dbZ.PatentWhereUniqueInputSchema>
-   | undefined,
+      | z.infer<typeof dbZ.PatentWhereUniqueInputSchema>
+      | undefined,
 ) => {
    const { $trpc } = useNuxtApp();
    // [State]
@@ -25,7 +25,6 @@ export const usePatent = async (
       },
       {
          watch: [fillter],
-         lazy: true,
       },
    );
 
@@ -44,13 +43,13 @@ export const usePatent = async (
                   internal: {
                      upsert: newData.internal
                         ? {
-                           create: {
-                              InternalID: newData.internal.InternalID,
-                           },
-                           update: {
-                              InternalID: newData.internal.InternalID,
-                           },
-                        }
+                             create: {
+                                InternalID: newData.internal.InternalID,
+                             },
+                             update: {
+                                InternalID: newData.internal.InternalID,
+                             },
+                          }
                         : undefined,
                   },
                   external: {},
@@ -75,10 +74,10 @@ export const usePatent = async (
 
    // Read
    const getPatent = async (args: {
-      where: z.infer<typeof dbZ.PatentWhereUniqueInputSchema>
+      where: z.infer<typeof dbZ.PatentWhereUniqueInputSchema>;
    }) => {
       console.log(args.where, "args.where");
-      return await $trpc.data.patent.getPatent.query(serialize(args.where));
+      return await $trpc.data.patent.getPatent.query(args.where   );
    };
 
    // Update

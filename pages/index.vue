@@ -1,21 +1,14 @@
 <template>
    <div class="container mx-auto">
-      <Button
-         @click="
-            open('PatentModal', {
-               props: {
-                  patentId: 1,
-               },
-            })
-         "
-      >
-         Open Sheet
-      </Button>
       <div class="grid grid-cols-1 gap-4">
          <BlockPatentRow
-            v-for="i in 10"
-            :key="i"
+            v-for="patent in data"
+            :key="patent.PatentID"
+            :patent="patent"
             class="rounded-lg"
+            @click="
+               open('PatentModal', { props: { patentID: patent.PatentID } })
+            "
          />
       </div>
    </div>
@@ -23,10 +16,11 @@
 
 <script lang="ts" setup>
 const { open } = useModals();
-
 definePageMeta({
    name: "home",
 });
+
+const { data, forceRefresh } = useDatabase().usePatents();
 </script>
 
 <style scoped></style>

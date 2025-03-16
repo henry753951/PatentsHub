@@ -64,10 +64,6 @@ const isOpen = defineModel("open", {
    default: false,
 });
 
-const { props } = defineProps<{
-   props: Record<string, any>
-}>();
-
 const patentCreateFormRef = useTemplateRef<
    ComponentExposed<typeof FormPatentCreate>
 >("patentCreateFormRef");

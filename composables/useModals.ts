@@ -19,9 +19,9 @@ export const useModals = () => {
     * @param options - 傳遞的屬性和可選的 ID
     * @returns 模態框的唯一標識 ID
     */
-   const open = (
-      modalName: ModalName,
-      options?: { id?: string, props?: Record<string, any> },
+   const open = <T extends ModalName>(
+      modalName: T,
+      options?: { id?: string, props?: ModalsPropsTypeMap[T] },
    ) => {
       const id = options?.id || "temp-" + Math.random().toString(36).slice(2);
       const existingModal = options?.id
