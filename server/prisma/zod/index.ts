@@ -46,6 +46,8 @@ export const PatentExternalScalarFieldEnumSchema = z.enum(['PatentID','PatentNum
 
 export const PatentStatusScalarFieldEnumSchema = z.enum(['PatentID','ExpiryDate','Status','TechnicalCommitteeReviewDate','MaintenanceYear','MaintenanceStartDate','MaintenanceEndDate']);
 
+export const PatentRecordScalarFieldEnumSchema = z.enum(['id','PatentID','Record','Date']);
+
 export const CollegeScalarFieldEnumSchema = z.enum(['CollegeID','Name','Description']);
 
 export const DepartmentScalarFieldEnumSchema = z.enum(['DepartmentID','Name','CollegeID','Description']);
@@ -282,6 +284,19 @@ export const PatentStatusSchema = z.object({
 })
 
 export type PatentStatus = z.infer<typeof PatentStatusSchema>
+
+/////////////////////////////////////////
+// PATENT RECORD SCHEMA
+/////////////////////////////////////////
+
+export const PatentRecordSchema = z.object({
+  id: z.number().int(),
+  PatentID: z.number().int(),
+  Record: z.string().nullable(),
+  Date: z.coerce.date().nullable(),
+})
+
+export type PatentRecord = z.infer<typeof PatentRecordSchema>
 
 /////////////////////////////////////////
 // COLLEGE SCHEMA
@@ -616,6 +631,7 @@ export const PatentIncludeSchema: z.ZodType<Prisma.PatentInclude> = z.object({
   technical: z.union([z.boolean(),z.lazy(() => PatentTechnicalAttributesArgsSchema)]).optional(),
   internal: z.union([z.boolean(),z.lazy(() => PatentInternalArgsSchema)]).optional(),
   external: z.union([z.boolean(),z.lazy(() => PatentExternalArgsSchema)]).optional(),
+  PatentRecord: z.union([z.boolean(),z.lazy(() => PatentRecordFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => PatentCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -630,6 +646,7 @@ export const PatentCountOutputTypeArgsSchema: z.ZodType<Prisma.PatentCountOutput
 
 export const PatentCountOutputTypeSelectSchema: z.ZodType<Prisma.PatentCountOutputTypeSelect> = z.object({
   inventors: z.boolean().optional(),
+  PatentRecord: z.boolean().optional(),
 }).strict();
 
 export const PatentSelectSchema: z.ZodType<Prisma.PatentSelect> = z.object({
@@ -650,6 +667,7 @@ export const PatentSelectSchema: z.ZodType<Prisma.PatentSelect> = z.object({
   technical: z.union([z.boolean(),z.lazy(() => PatentTechnicalAttributesArgsSchema)]).optional(),
   internal: z.union([z.boolean(),z.lazy(() => PatentInternalArgsSchema)]).optional(),
   external: z.union([z.boolean(),z.lazy(() => PatentExternalArgsSchema)]).optional(),
+  PatentRecord: z.union([z.boolean(),z.lazy(() => PatentRecordFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => PatentCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -810,6 +828,26 @@ export const PatentStatusSelectSchema: z.ZodType<Prisma.PatentStatusSelect> = z.
   MaintenanceYear: z.boolean().optional(),
   MaintenanceStartDate: z.boolean().optional(),
   MaintenanceEndDate: z.boolean().optional(),
+  patent: z.union([z.boolean(),z.lazy(() => PatentArgsSchema)]).optional(),
+}).strict()
+
+// PATENT RECORD
+//------------------------------------------------------
+
+export const PatentRecordIncludeSchema: z.ZodType<Prisma.PatentRecordInclude> = z.object({
+  patent: z.union([z.boolean(),z.lazy(() => PatentArgsSchema)]).optional(),
+}).strict()
+
+export const PatentRecordArgsSchema: z.ZodType<Prisma.PatentRecordDefaultArgs> = z.object({
+  select: z.lazy(() => PatentRecordSelectSchema).optional(),
+  include: z.lazy(() => PatentRecordIncludeSchema).optional(),
+}).strict();
+
+export const PatentRecordSelectSchema: z.ZodType<Prisma.PatentRecordSelect> = z.object({
+  id: z.boolean().optional(),
+  PatentID: z.boolean().optional(),
+  Record: z.boolean().optional(),
+  Date: z.boolean().optional(),
   patent: z.union([z.boolean(),z.lazy(() => PatentArgsSchema)]).optional(),
 }).strict()
 
@@ -1519,6 +1557,7 @@ export const PatentWhereInputSchema: z.ZodType<Prisma.PatentWhereInput> = z.obje
   technical: z.union([ z.lazy(() => PatentTechnicalAttributesNullableScalarRelationFilterSchema),z.lazy(() => PatentTechnicalAttributesWhereInputSchema) ]).optional().nullable(),
   internal: z.union([ z.lazy(() => PatentInternalNullableScalarRelationFilterSchema),z.lazy(() => PatentInternalWhereInputSchema) ]).optional().nullable(),
   external: z.union([ z.lazy(() => PatentExternalNullableScalarRelationFilterSchema),z.lazy(() => PatentExternalWhereInputSchema) ]).optional().nullable(),
+  PatentRecord: z.lazy(() => PatentRecordListRelationFilterSchema).optional()
 }).strict();
 
 export const PatentOrderByWithRelationInputSchema: z.ZodType<Prisma.PatentOrderByWithRelationInput> = z.object({
@@ -1538,7 +1577,8 @@ export const PatentOrderByWithRelationInputSchema: z.ZodType<Prisma.PatentOrderB
   status: z.lazy(() => PatentStatusOrderByWithRelationInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesOrderByWithRelationInputSchema).optional(),
   internal: z.lazy(() => PatentInternalOrderByWithRelationInputSchema).optional(),
-  external: z.lazy(() => PatentExternalOrderByWithRelationInputSchema).optional()
+  external: z.lazy(() => PatentExternalOrderByWithRelationInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const PatentWhereUniqueInputSchema: z.ZodType<Prisma.PatentWhereUniqueInput> = z.object({
@@ -1565,6 +1605,7 @@ export const PatentWhereUniqueInputSchema: z.ZodType<Prisma.PatentWhereUniqueInp
   technical: z.union([ z.lazy(() => PatentTechnicalAttributesNullableScalarRelationFilterSchema),z.lazy(() => PatentTechnicalAttributesWhereInputSchema) ]).optional().nullable(),
   internal: z.union([ z.lazy(() => PatentInternalNullableScalarRelationFilterSchema),z.lazy(() => PatentInternalWhereInputSchema) ]).optional().nullable(),
   external: z.union([ z.lazy(() => PatentExternalNullableScalarRelationFilterSchema),z.lazy(() => PatentExternalWhereInputSchema) ]).optional().nullable(),
+  PatentRecord: z.lazy(() => PatentRecordListRelationFilterSchema).optional()
 }).strict());
 
 export const PatentOrderByWithAggregationInputSchema: z.ZodType<Prisma.PatentOrderByWithAggregationInput> = z.object({
@@ -1967,6 +2008,61 @@ export const PatentStatusScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.
   MaintenanceYear: z.union([ z.lazy(() => IntNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
   MaintenanceStartDate: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
   MaintenanceEndDate: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
+}).strict();
+
+export const PatentRecordWhereInputSchema: z.ZodType<Prisma.PatentRecordWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => PatentRecordWhereInputSchema),z.lazy(() => PatentRecordWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PatentRecordWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PatentRecordWhereInputSchema),z.lazy(() => PatentRecordWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  Record: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  Date: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
+}).strict();
+
+export const PatentRecordOrderByWithRelationInputSchema: z.ZodType<Prisma.PatentRecordOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  PatentID: z.lazy(() => SortOrderSchema).optional(),
+  Record: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  Date: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  patent: z.lazy(() => PatentOrderByWithRelationInputSchema).optional()
+}).strict();
+
+export const PatentRecordWhereUniqueInputSchema: z.ZodType<Prisma.PatentRecordWhereUniqueInput> = z.object({
+  id: z.number().int()
+})
+.and(z.object({
+  id: z.number().int().optional(),
+  AND: z.union([ z.lazy(() => PatentRecordWhereInputSchema),z.lazy(() => PatentRecordWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PatentRecordWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PatentRecordWhereInputSchema),z.lazy(() => PatentRecordWhereInputSchema).array() ]).optional(),
+  PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  Record: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  Date: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
+}).strict());
+
+export const PatentRecordOrderByWithAggregationInputSchema: z.ZodType<Prisma.PatentRecordOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  PatentID: z.lazy(() => SortOrderSchema).optional(),
+  Record: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  Date: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  _count: z.lazy(() => PatentRecordCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => PatentRecordAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => PatentRecordMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => PatentRecordMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => PatentRecordSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const PatentRecordScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.PatentRecordScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => PatentRecordScalarWhereWithAggregatesInputSchema),z.lazy(() => PatentRecordScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PatentRecordScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PatentRecordScalarWhereWithAggregatesInputSchema),z.lazy(() => PatentRecordScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  PatentID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  Record: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  Date: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
 }).strict();
 
 export const CollegeWhereInputSchema: z.ZodType<Prisma.CollegeWhereInput> = z.object({
@@ -2675,7 +2771,8 @@ export const PatentCreateInputSchema: z.ZodType<Prisma.PatentCreateInput> = z.ob
   status: z.lazy(() => PatentStatusCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedCreateInputSchema: z.ZodType<Prisma.PatentUncheckedCreateInput> = z.object({
@@ -2693,7 +2790,8 @@ export const PatentUncheckedCreateInputSchema: z.ZodType<Prisma.PatentUncheckedC
   status: z.lazy(() => PatentStatusUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentUpdateInputSchema: z.ZodType<Prisma.PatentUpdateInput> = z.object({
@@ -2710,7 +2808,8 @@ export const PatentUpdateInputSchema: z.ZodType<Prisma.PatentUpdateInput> = z.ob
   status: z.lazy(() => PatentStatusUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedUpdateInputSchema: z.ZodType<Prisma.PatentUncheckedUpdateInput> = z.object({
@@ -2728,7 +2827,8 @@ export const PatentUncheckedUpdateInputSchema: z.ZodType<Prisma.PatentUncheckedU
   status: z.lazy(() => PatentStatusUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentCreateManyInputSchema: z.ZodType<Prisma.PatentCreateManyInput> = z.object({
@@ -3082,6 +3182,51 @@ export const PatentStatusUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Patent
   MaintenanceYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   MaintenanceStartDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   MaintenanceEndDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const PatentRecordCreateInputSchema: z.ZodType<Prisma.PatentRecordCreateInput> = z.object({
+  Record: z.string().optional().nullable(),
+  Date: z.coerce.date().optional().nullable(),
+  patent: z.lazy(() => PatentCreateNestedOneWithoutPatentRecordInputSchema)
+}).strict();
+
+export const PatentRecordUncheckedCreateInputSchema: z.ZodType<Prisma.PatentRecordUncheckedCreateInput> = z.object({
+  id: z.number().int().optional(),
+  PatentID: z.number().int(),
+  Record: z.string().optional().nullable(),
+  Date: z.coerce.date().optional().nullable()
+}).strict();
+
+export const PatentRecordUpdateInputSchema: z.ZodType<Prisma.PatentRecordUpdateInput> = z.object({
+  Record: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  patent: z.lazy(() => PatentUpdateOneRequiredWithoutPatentRecordNestedInputSchema).optional()
+}).strict();
+
+export const PatentRecordUncheckedUpdateInputSchema: z.ZodType<Prisma.PatentRecordUncheckedUpdateInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Record: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const PatentRecordCreateManyInputSchema: z.ZodType<Prisma.PatentRecordCreateManyInput> = z.object({
+  id: z.number().int().optional(),
+  PatentID: z.number().int(),
+  Record: z.string().optional().nullable(),
+  Date: z.coerce.date().optional().nullable()
+}).strict();
+
+export const PatentRecordUpdateManyMutationInputSchema: z.ZodType<Prisma.PatentRecordUpdateManyMutationInput> = z.object({
+  Record: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const PatentRecordUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PatentRecordUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Record: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const CollegeCreateInputSchema: z.ZodType<Prisma.CollegeCreateInput> = z.object({
@@ -3934,6 +4079,16 @@ export const PatentExternalNullableScalarRelationFilterSchema: z.ZodType<Prisma.
   isNot: z.lazy(() => PatentExternalWhereInputSchema).optional().nullable()
 }).strict();
 
+export const PatentRecordListRelationFilterSchema: z.ZodType<Prisma.PatentRecordListRelationFilter> = z.object({
+  every: z.lazy(() => PatentRecordWhereInputSchema).optional(),
+  some: z.lazy(() => PatentRecordWhereInputSchema).optional(),
+  none: z.lazy(() => PatentRecordWhereInputSchema).optional()
+}).strict();
+
+export const PatentRecordOrderByRelationAggregateInputSchema: z.ZodType<Prisma.PatentRecordOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
 export const PatentCountOrderByAggregateInputSchema: z.ZodType<Prisma.PatentCountOrderByAggregateInput> = z.object({
   PatentID: z.lazy(() => SortOrderSchema).optional(),
   DepartmentID: z.lazy(() => SortOrderSchema).optional(),
@@ -4217,6 +4372,37 @@ export const PatentStatusMinOrderByAggregateInputSchema: z.ZodType<Prisma.Patent
 export const PatentStatusSumOrderByAggregateInputSchema: z.ZodType<Prisma.PatentStatusSumOrderByAggregateInput> = z.object({
   PatentID: z.lazy(() => SortOrderSchema).optional(),
   MaintenanceYear: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PatentRecordCountOrderByAggregateInputSchema: z.ZodType<Prisma.PatentRecordCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  PatentID: z.lazy(() => SortOrderSchema).optional(),
+  Record: z.lazy(() => SortOrderSchema).optional(),
+  Date: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PatentRecordAvgOrderByAggregateInputSchema: z.ZodType<Prisma.PatentRecordAvgOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  PatentID: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PatentRecordMaxOrderByAggregateInputSchema: z.ZodType<Prisma.PatentRecordMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  PatentID: z.lazy(() => SortOrderSchema).optional(),
+  Record: z.lazy(() => SortOrderSchema).optional(),
+  Date: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PatentRecordMinOrderByAggregateInputSchema: z.ZodType<Prisma.PatentRecordMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  PatentID: z.lazy(() => SortOrderSchema).optional(),
+  Record: z.lazy(() => SortOrderSchema).optional(),
+  Date: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PatentRecordSumOrderByAggregateInputSchema: z.ZodType<Prisma.PatentRecordSumOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  PatentID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const DepartmentListRelationFilterSchema: z.ZodType<Prisma.DepartmentListRelationFilter> = z.object({
@@ -4966,6 +5152,13 @@ export const PatentExternalCreateNestedOneWithoutPatentInputSchema: z.ZodType<Pr
   connect: z.lazy(() => PatentExternalWhereUniqueInputSchema).optional()
 }).strict();
 
+export const PatentRecordCreateNestedManyWithoutPatentInputSchema: z.ZodType<Prisma.PatentRecordCreateNestedManyWithoutPatentInput> = z.object({
+  create: z.union([ z.lazy(() => PatentRecordCreateWithoutPatentInputSchema),z.lazy(() => PatentRecordCreateWithoutPatentInputSchema).array(),z.lazy(() => PatentRecordUncheckedCreateWithoutPatentInputSchema),z.lazy(() => PatentRecordUncheckedCreateWithoutPatentInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentRecordCreateOrConnectWithoutPatentInputSchema),z.lazy(() => PatentRecordCreateOrConnectWithoutPatentInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentRecordCreateManyPatentInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => PatentRecordWhereUniqueInputSchema),z.lazy(() => PatentRecordWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
 export const PatentInventorUncheckedCreateNestedManyWithoutPatentInputSchema: z.ZodType<Prisma.PatentInventorUncheckedCreateNestedManyWithoutPatentInput> = z.object({
   create: z.union([ z.lazy(() => PatentInventorCreateWithoutPatentInputSchema),z.lazy(() => PatentInventorCreateWithoutPatentInputSchema).array(),z.lazy(() => PatentInventorUncheckedCreateWithoutPatentInputSchema),z.lazy(() => PatentInventorUncheckedCreateWithoutPatentInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => PatentInventorCreateOrConnectWithoutPatentInputSchema),z.lazy(() => PatentInventorCreateOrConnectWithoutPatentInputSchema).array() ]).optional(),
@@ -5007,6 +5200,13 @@ export const PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema: z.Z
   create: z.union([ z.lazy(() => PatentExternalCreateWithoutPatentInputSchema),z.lazy(() => PatentExternalUncheckedCreateWithoutPatentInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => PatentExternalCreateOrConnectWithoutPatentInputSchema).optional(),
   connect: z.lazy(() => PatentExternalWhereUniqueInputSchema).optional()
+}).strict();
+
+export const PatentRecordUncheckedCreateNestedManyWithoutPatentInputSchema: z.ZodType<Prisma.PatentRecordUncheckedCreateNestedManyWithoutPatentInput> = z.object({
+  create: z.union([ z.lazy(() => PatentRecordCreateWithoutPatentInputSchema),z.lazy(() => PatentRecordCreateWithoutPatentInputSchema).array(),z.lazy(() => PatentRecordUncheckedCreateWithoutPatentInputSchema),z.lazy(() => PatentRecordUncheckedCreateWithoutPatentInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentRecordCreateOrConnectWithoutPatentInputSchema),z.lazy(() => PatentRecordCreateOrConnectWithoutPatentInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentRecordCreateManyPatentInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => PatentRecordWhereUniqueInputSchema),z.lazy(() => PatentRecordWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const NullableEnumEnumPatentTypeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableEnumEnumPatentTypeFieldUpdateOperationsInput> = z.object({
@@ -5105,6 +5305,20 @@ export const PatentExternalUpdateOneWithoutPatentNestedInputSchema: z.ZodType<Pr
   update: z.union([ z.lazy(() => PatentExternalUpdateToOneWithWhereWithoutPatentInputSchema),z.lazy(() => PatentExternalUpdateWithoutPatentInputSchema),z.lazy(() => PatentExternalUncheckedUpdateWithoutPatentInputSchema) ]).optional(),
 }).strict();
 
+export const PatentRecordUpdateManyWithoutPatentNestedInputSchema: z.ZodType<Prisma.PatentRecordUpdateManyWithoutPatentNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PatentRecordCreateWithoutPatentInputSchema),z.lazy(() => PatentRecordCreateWithoutPatentInputSchema).array(),z.lazy(() => PatentRecordUncheckedCreateWithoutPatentInputSchema),z.lazy(() => PatentRecordUncheckedCreateWithoutPatentInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentRecordCreateOrConnectWithoutPatentInputSchema),z.lazy(() => PatentRecordCreateOrConnectWithoutPatentInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => PatentRecordUpsertWithWhereUniqueWithoutPatentInputSchema),z.lazy(() => PatentRecordUpsertWithWhereUniqueWithoutPatentInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentRecordCreateManyPatentInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => PatentRecordWhereUniqueInputSchema),z.lazy(() => PatentRecordWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => PatentRecordWhereUniqueInputSchema),z.lazy(() => PatentRecordWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => PatentRecordWhereUniqueInputSchema),z.lazy(() => PatentRecordWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => PatentRecordWhereUniqueInputSchema),z.lazy(() => PatentRecordWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => PatentRecordUpdateWithWhereUniqueWithoutPatentInputSchema),z.lazy(() => PatentRecordUpdateWithWhereUniqueWithoutPatentInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => PatentRecordUpdateManyWithWhereWithoutPatentInputSchema),z.lazy(() => PatentRecordUpdateManyWithWhereWithoutPatentInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => PatentRecordScalarWhereInputSchema),z.lazy(() => PatentRecordScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
 export const PatentInventorUncheckedUpdateManyWithoutPatentNestedInputSchema: z.ZodType<Prisma.PatentInventorUncheckedUpdateManyWithoutPatentNestedInput> = z.object({
   create: z.union([ z.lazy(() => PatentInventorCreateWithoutPatentInputSchema),z.lazy(() => PatentInventorCreateWithoutPatentInputSchema).array(),z.lazy(() => PatentInventorUncheckedCreateWithoutPatentInputSchema),z.lazy(() => PatentInventorUncheckedCreateWithoutPatentInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => PatentInventorCreateOrConnectWithoutPatentInputSchema),z.lazy(() => PatentInventorCreateOrConnectWithoutPatentInputSchema).array() ]).optional(),
@@ -5177,6 +5391,20 @@ export const PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema: z.Z
   delete: z.union([ z.boolean(),z.lazy(() => PatentExternalWhereInputSchema) ]).optional(),
   connect: z.lazy(() => PatentExternalWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => PatentExternalUpdateToOneWithWhereWithoutPatentInputSchema),z.lazy(() => PatentExternalUpdateWithoutPatentInputSchema),z.lazy(() => PatentExternalUncheckedUpdateWithoutPatentInputSchema) ]).optional(),
+}).strict();
+
+export const PatentRecordUncheckedUpdateManyWithoutPatentNestedInputSchema: z.ZodType<Prisma.PatentRecordUncheckedUpdateManyWithoutPatentNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PatentRecordCreateWithoutPatentInputSchema),z.lazy(() => PatentRecordCreateWithoutPatentInputSchema).array(),z.lazy(() => PatentRecordUncheckedCreateWithoutPatentInputSchema),z.lazy(() => PatentRecordUncheckedCreateWithoutPatentInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentRecordCreateOrConnectWithoutPatentInputSchema),z.lazy(() => PatentRecordCreateOrConnectWithoutPatentInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => PatentRecordUpsertWithWhereUniqueWithoutPatentInputSchema),z.lazy(() => PatentRecordUpsertWithWhereUniqueWithoutPatentInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentRecordCreateManyPatentInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => PatentRecordWhereUniqueInputSchema),z.lazy(() => PatentRecordWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => PatentRecordWhereUniqueInputSchema),z.lazy(() => PatentRecordWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => PatentRecordWhereUniqueInputSchema),z.lazy(() => PatentRecordWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => PatentRecordWhereUniqueInputSchema),z.lazy(() => PatentRecordWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => PatentRecordUpdateWithWhereUniqueWithoutPatentInputSchema),z.lazy(() => PatentRecordUpdateWithWhereUniqueWithoutPatentInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => PatentRecordUpdateManyWithWhereWithoutPatentInputSchema),z.lazy(() => PatentRecordUpdateManyWithWhereWithoutPatentInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => PatentRecordScalarWhereInputSchema),z.lazy(() => PatentRecordScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const PatentCreateNestedOneWithoutApplicationInputSchema: z.ZodType<Prisma.PatentCreateNestedOneWithoutApplicationInput> = z.object({
@@ -5411,6 +5639,20 @@ export const PatentUpdateOneRequiredWithoutStatusNestedInputSchema: z.ZodType<Pr
   upsert: z.lazy(() => PatentUpsertWithoutStatusInputSchema).optional(),
   connect: z.lazy(() => PatentWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => PatentUpdateToOneWithWhereWithoutStatusInputSchema),z.lazy(() => PatentUpdateWithoutStatusInputSchema),z.lazy(() => PatentUncheckedUpdateWithoutStatusInputSchema) ]).optional(),
+}).strict();
+
+export const PatentCreateNestedOneWithoutPatentRecordInputSchema: z.ZodType<Prisma.PatentCreateNestedOneWithoutPatentRecordInput> = z.object({
+  create: z.union([ z.lazy(() => PatentCreateWithoutPatentRecordInputSchema),z.lazy(() => PatentUncheckedCreateWithoutPatentRecordInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => PatentCreateOrConnectWithoutPatentRecordInputSchema).optional(),
+  connect: z.lazy(() => PatentWhereUniqueInputSchema).optional()
+}).strict();
+
+export const PatentUpdateOneRequiredWithoutPatentRecordNestedInputSchema: z.ZodType<Prisma.PatentUpdateOneRequiredWithoutPatentRecordNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PatentCreateWithoutPatentRecordInputSchema),z.lazy(() => PatentUncheckedCreateWithoutPatentRecordInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => PatentCreateOrConnectWithoutPatentRecordInputSchema).optional(),
+  upsert: z.lazy(() => PatentUpsertWithoutPatentRecordInputSchema).optional(),
+  connect: z.lazy(() => PatentWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => PatentUpdateToOneWithWhereWithoutPatentRecordInputSchema),z.lazy(() => PatentUpdateWithoutPatentRecordInputSchema),z.lazy(() => PatentUncheckedUpdateWithoutPatentRecordInputSchema) ]).optional(),
 }).strict();
 
 export const DepartmentCreateNestedManyWithoutCollegeInputSchema: z.ZodType<Prisma.DepartmentCreateNestedManyWithoutCollegeInput> = z.object({
@@ -6498,7 +6740,8 @@ export const PatentCreateWithoutFundingInputSchema: z.ZodType<Prisma.PatentCreat
   status: z.lazy(() => PatentStatusCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedCreateWithoutFundingInputSchema: z.ZodType<Prisma.PatentUncheckedCreateWithoutFundingInput> = z.object({
@@ -6515,7 +6758,8 @@ export const PatentUncheckedCreateWithoutFundingInputSchema: z.ZodType<Prisma.Pa
   status: z.lazy(() => PatentStatusUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentCreateOrConnectWithoutFundingInputSchema: z.ZodType<Prisma.PatentCreateOrConnectWithoutFundingInput> = z.object({
@@ -6586,7 +6830,8 @@ export const PatentUpdateWithoutFundingInputSchema: z.ZodType<Prisma.PatentUpdat
   status: z.lazy(() => PatentStatusUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedUpdateWithoutFundingInputSchema: z.ZodType<Prisma.PatentUncheckedUpdateWithoutFundingInput> = z.object({
@@ -6603,7 +6848,8 @@ export const PatentUncheckedUpdateWithoutFundingInputSchema: z.ZodType<Prisma.Pa
   status: z.lazy(() => PatentStatusUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const FundingPlanUpsertWithoutFundingsInputSchema: z.ZodType<Prisma.FundingPlanUpsertWithoutFundingsInput> = z.object({
@@ -6808,7 +7054,8 @@ export const PatentCreateWithoutInventorsInputSchema: z.ZodType<Prisma.PatentCre
   status: z.lazy(() => PatentStatusCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedCreateWithoutInventorsInputSchema: z.ZodType<Prisma.PatentUncheckedCreateWithoutInventorsInput> = z.object({
@@ -6825,7 +7072,8 @@ export const PatentUncheckedCreateWithoutInventorsInputSchema: z.ZodType<Prisma.
   status: z.lazy(() => PatentStatusUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentCreateOrConnectWithoutInventorsInputSchema: z.ZodType<Prisma.PatentCreateOrConnectWithoutInventorsInput> = z.object({
@@ -6873,7 +7121,8 @@ export const PatentUpdateWithoutInventorsInputSchema: z.ZodType<Prisma.PatentUpd
   status: z.lazy(() => PatentStatusUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedUpdateWithoutInventorsInputSchema: z.ZodType<Prisma.PatentUncheckedUpdateWithoutInventorsInput> = z.object({
@@ -6890,7 +7139,8 @@ export const PatentUncheckedUpdateWithoutInventorsInputSchema: z.ZodType<Prisma.
   status: z.lazy(() => PatentStatusUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const InventorUpsertWithoutPatentsInputSchema: z.ZodType<Prisma.InventorUpsertWithoutPatentsInput> = z.object({
@@ -7086,6 +7336,26 @@ export const PatentExternalUncheckedCreateWithoutPatentInputSchema: z.ZodType<Pr
 export const PatentExternalCreateOrConnectWithoutPatentInputSchema: z.ZodType<Prisma.PatentExternalCreateOrConnectWithoutPatentInput> = z.object({
   where: z.lazy(() => PatentExternalWhereUniqueInputSchema),
   create: z.union([ z.lazy(() => PatentExternalCreateWithoutPatentInputSchema),z.lazy(() => PatentExternalUncheckedCreateWithoutPatentInputSchema) ]),
+}).strict();
+
+export const PatentRecordCreateWithoutPatentInputSchema: z.ZodType<Prisma.PatentRecordCreateWithoutPatentInput> = z.object({
+  Record: z.string().optional().nullable(),
+  Date: z.coerce.date().optional().nullable()
+}).strict();
+
+export const PatentRecordUncheckedCreateWithoutPatentInputSchema: z.ZodType<Prisma.PatentRecordUncheckedCreateWithoutPatentInput> = z.object({
+  id: z.number().int().optional(),
+  Record: z.string().optional().nullable(),
+  Date: z.coerce.date().optional().nullable()
+}).strict();
+
+export const PatentRecordCreateOrConnectWithoutPatentInputSchema: z.ZodType<Prisma.PatentRecordCreateOrConnectWithoutPatentInput> = z.object({
+  where: z.lazy(() => PatentRecordWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => PatentRecordCreateWithoutPatentInputSchema),z.lazy(() => PatentRecordUncheckedCreateWithoutPatentInputSchema) ]),
+}).strict();
+
+export const PatentRecordCreateManyPatentInputEnvelopeSchema: z.ZodType<Prisma.PatentRecordCreateManyPatentInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => PatentRecordCreateManyPatentInputSchema),z.lazy(() => PatentRecordCreateManyPatentInputSchema).array() ]),
 }).strict();
 
 export const CountryUpsertWithoutPatentsInputSchema: z.ZodType<Prisma.CountryUpsertWithoutPatentsInput> = z.object({
@@ -7304,6 +7574,32 @@ export const PatentExternalUncheckedUpdateWithoutPatentInputSchema: z.ZodType<Pr
   PatentScope: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
+export const PatentRecordUpsertWithWhereUniqueWithoutPatentInputSchema: z.ZodType<Prisma.PatentRecordUpsertWithWhereUniqueWithoutPatentInput> = z.object({
+  where: z.lazy(() => PatentRecordWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => PatentRecordUpdateWithoutPatentInputSchema),z.lazy(() => PatentRecordUncheckedUpdateWithoutPatentInputSchema) ]),
+  create: z.union([ z.lazy(() => PatentRecordCreateWithoutPatentInputSchema),z.lazy(() => PatentRecordUncheckedCreateWithoutPatentInputSchema) ]),
+}).strict();
+
+export const PatentRecordUpdateWithWhereUniqueWithoutPatentInputSchema: z.ZodType<Prisma.PatentRecordUpdateWithWhereUniqueWithoutPatentInput> = z.object({
+  where: z.lazy(() => PatentRecordWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => PatentRecordUpdateWithoutPatentInputSchema),z.lazy(() => PatentRecordUncheckedUpdateWithoutPatentInputSchema) ]),
+}).strict();
+
+export const PatentRecordUpdateManyWithWhereWithoutPatentInputSchema: z.ZodType<Prisma.PatentRecordUpdateManyWithWhereWithoutPatentInput> = z.object({
+  where: z.lazy(() => PatentRecordScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => PatentRecordUpdateManyMutationInputSchema),z.lazy(() => PatentRecordUncheckedUpdateManyWithoutPatentInputSchema) ]),
+}).strict();
+
+export const PatentRecordScalarWhereInputSchema: z.ZodType<Prisma.PatentRecordScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => PatentRecordScalarWhereInputSchema),z.lazy(() => PatentRecordScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PatentRecordScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PatentRecordScalarWhereInputSchema),z.lazy(() => PatentRecordScalarWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  Record: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  Date: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+}).strict();
+
 export const PatentCreateWithoutApplicationInputSchema: z.ZodType<Prisma.PatentCreateWithoutApplicationInput> = z.object({
   Year: z.string(),
   DraftTitle: z.string().optional(),
@@ -7317,7 +7613,8 @@ export const PatentCreateWithoutApplicationInputSchema: z.ZodType<Prisma.PatentC
   status: z.lazy(() => PatentStatusCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedCreateWithoutApplicationInputSchema: z.ZodType<Prisma.PatentUncheckedCreateWithoutApplicationInput> = z.object({
@@ -7334,7 +7631,8 @@ export const PatentUncheckedCreateWithoutApplicationInputSchema: z.ZodType<Prism
   status: z.lazy(() => PatentStatusUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentCreateOrConnectWithoutApplicationInputSchema: z.ZodType<Prisma.PatentCreateOrConnectWithoutApplicationInput> = z.object({
@@ -7366,7 +7664,8 @@ export const PatentUpdateWithoutApplicationInputSchema: z.ZodType<Prisma.PatentU
   status: z.lazy(() => PatentStatusUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedUpdateWithoutApplicationInputSchema: z.ZodType<Prisma.PatentUncheckedUpdateWithoutApplicationInput> = z.object({
@@ -7383,7 +7682,8 @@ export const PatentUncheckedUpdateWithoutApplicationInputSchema: z.ZodType<Prism
   status: z.lazy(() => PatentStatusUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const TechnicalKeywordCreateWithoutPatentTechnicalAttributesInputSchema: z.ZodType<Prisma.TechnicalKeywordCreateWithoutPatentTechnicalAttributesInput> = z.object({
@@ -7413,7 +7713,8 @@ export const PatentCreateWithoutTechnicalInputSchema: z.ZodType<Prisma.PatentCre
   funding: z.lazy(() => PatentFundingCreateNestedOneWithoutPatentInputSchema).optional(),
   status: z.lazy(() => PatentStatusCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedCreateWithoutTechnicalInputSchema: z.ZodType<Prisma.PatentUncheckedCreateWithoutTechnicalInput> = z.object({
@@ -7430,7 +7731,8 @@ export const PatentUncheckedCreateWithoutTechnicalInputSchema: z.ZodType<Prisma.
   funding: z.lazy(() => PatentFundingUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   status: z.lazy(() => PatentStatusUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentCreateOrConnectWithoutTechnicalInputSchema: z.ZodType<Prisma.PatentCreateOrConnectWithoutTechnicalInput> = z.object({
@@ -7486,7 +7788,8 @@ export const PatentUpdateWithoutTechnicalInputSchema: z.ZodType<Prisma.PatentUpd
   funding: z.lazy(() => PatentFundingUpdateOneWithoutPatentNestedInputSchema).optional(),
   status: z.lazy(() => PatentStatusUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedUpdateWithoutTechnicalInputSchema: z.ZodType<Prisma.PatentUncheckedUpdateWithoutTechnicalInput> = z.object({
@@ -7503,7 +7806,8 @@ export const PatentUncheckedUpdateWithoutTechnicalInputSchema: z.ZodType<Prisma.
   funding: z.lazy(() => PatentFundingUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   status: z.lazy(() => PatentStatusUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentTechnicalAttributesCreateWithoutKeywordsInputSchema: z.ZodType<Prisma.PatentTechnicalAttributesCreateWithoutKeywordsInput> = z.object({
@@ -7594,7 +7898,8 @@ export const PatentCreateWithoutInternalInputSchema: z.ZodType<Prisma.PatentCrea
   funding: z.lazy(() => PatentFundingCreateNestedOneWithoutPatentInputSchema).optional(),
   status: z.lazy(() => PatentStatusCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedCreateWithoutInternalInputSchema: z.ZodType<Prisma.PatentUncheckedCreateWithoutInternalInput> = z.object({
@@ -7611,7 +7916,8 @@ export const PatentUncheckedCreateWithoutInternalInputSchema: z.ZodType<Prisma.P
   funding: z.lazy(() => PatentFundingUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   status: z.lazy(() => PatentStatusUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentCreateOrConnectWithoutInternalInputSchema: z.ZodType<Prisma.PatentCreateOrConnectWithoutInternalInput> = z.object({
@@ -7675,7 +7981,8 @@ export const PatentUpdateWithoutInternalInputSchema: z.ZodType<Prisma.PatentUpda
   funding: z.lazy(() => PatentFundingUpdateOneWithoutPatentNestedInputSchema).optional(),
   status: z.lazy(() => PatentStatusUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedUpdateWithoutInternalInputSchema: z.ZodType<Prisma.PatentUncheckedUpdateWithoutInternalInput> = z.object({
@@ -7692,7 +7999,8 @@ export const PatentUncheckedUpdateWithoutInternalInputSchema: z.ZodType<Prisma.P
   funding: z.lazy(() => PatentFundingUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   status: z.lazy(() => PatentStatusUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentCreateWithoutExternalInputSchema: z.ZodType<Prisma.PatentCreateWithoutExternalInput> = z.object({
@@ -7708,7 +8016,8 @@ export const PatentCreateWithoutExternalInputSchema: z.ZodType<Prisma.PatentCrea
   funding: z.lazy(() => PatentFundingCreateNestedOneWithoutPatentInputSchema).optional(),
   status: z.lazy(() => PatentStatusCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesCreateNestedOneWithoutPatentInputSchema).optional(),
-  internal: z.lazy(() => PatentInternalCreateNestedOneWithoutPatentInputSchema).optional()
+  internal: z.lazy(() => PatentInternalCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedCreateWithoutExternalInputSchema: z.ZodType<Prisma.PatentUncheckedCreateWithoutExternalInput> = z.object({
@@ -7725,7 +8034,8 @@ export const PatentUncheckedCreateWithoutExternalInputSchema: z.ZodType<Prisma.P
   funding: z.lazy(() => PatentFundingUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   status: z.lazy(() => PatentStatusUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
-  internal: z.lazy(() => PatentInternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional()
+  internal: z.lazy(() => PatentInternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentCreateOrConnectWithoutExternalInputSchema: z.ZodType<Prisma.PatentCreateOrConnectWithoutExternalInput> = z.object({
@@ -7757,7 +8067,8 @@ export const PatentUpdateWithoutExternalInputSchema: z.ZodType<Prisma.PatentUpda
   funding: z.lazy(() => PatentFundingUpdateOneWithoutPatentNestedInputSchema).optional(),
   status: z.lazy(() => PatentStatusUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUpdateOneWithoutPatentNestedInputSchema).optional(),
-  internal: z.lazy(() => PatentInternalUpdateOneWithoutPatentNestedInputSchema).optional()
+  internal: z.lazy(() => PatentInternalUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedUpdateWithoutExternalInputSchema: z.ZodType<Prisma.PatentUncheckedUpdateWithoutExternalInput> = z.object({
@@ -7774,7 +8085,8 @@ export const PatentUncheckedUpdateWithoutExternalInputSchema: z.ZodType<Prisma.P
   funding: z.lazy(() => PatentFundingUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   status: z.lazy(() => PatentStatusUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
-  internal: z.lazy(() => PatentInternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional()
+  internal: z.lazy(() => PatentInternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentCreateWithoutStatusInputSchema: z.ZodType<Prisma.PatentCreateWithoutStatusInput> = z.object({
@@ -7790,7 +8102,8 @@ export const PatentCreateWithoutStatusInputSchema: z.ZodType<Prisma.PatentCreate
   funding: z.lazy(() => PatentFundingCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedCreateWithoutStatusInputSchema: z.ZodType<Prisma.PatentUncheckedCreateWithoutStatusInput> = z.object({
@@ -7807,7 +8120,8 @@ export const PatentUncheckedCreateWithoutStatusInputSchema: z.ZodType<Prisma.Pat
   funding: z.lazy(() => PatentFundingUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentCreateOrConnectWithoutStatusInputSchema: z.ZodType<Prisma.PatentCreateOrConnectWithoutStatusInput> = z.object({
@@ -7839,7 +8153,8 @@ export const PatentUpdateWithoutStatusInputSchema: z.ZodType<Prisma.PatentUpdate
   funding: z.lazy(() => PatentFundingUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedUpdateWithoutStatusInputSchema: z.ZodType<Prisma.PatentUncheckedUpdateWithoutStatusInput> = z.object({
@@ -7854,6 +8169,93 @@ export const PatentUncheckedUpdateWithoutStatusInputSchema: z.ZodType<Prisma.Pat
   inventors: z.lazy(() => PatentInventorUncheckedUpdateManyWithoutPatentNestedInputSchema).optional(),
   application: z.lazy(() => PatentApplicationDataUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   funding: z.lazy(() => PatentFundingUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  technical: z.lazy(() => PatentTechnicalAttributesUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  internal: z.lazy(() => PatentInternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedUpdateManyWithoutPatentNestedInputSchema).optional()
+}).strict();
+
+export const PatentCreateWithoutPatentRecordInputSchema: z.ZodType<Prisma.PatentCreateWithoutPatentRecordInput> = z.object({
+  Year: z.string(),
+  DraftTitle: z.string().optional(),
+  Title: z.string().optional(),
+  TitleEnglish: z.string().optional(),
+  PatentType: z.lazy(() => EnumPatentTypeSchema).optional().nullable(),
+  country: z.lazy(() => CountryCreateNestedOneWithoutPatentsInputSchema).optional(),
+  department: z.lazy(() => DepartmentCreateNestedOneWithoutPatentsInputSchema),
+  inventors: z.lazy(() => PatentInventorCreateNestedManyWithoutPatentInputSchema).optional(),
+  application: z.lazy(() => PatentApplicationDataCreateNestedOneWithoutPatentInputSchema).optional(),
+  funding: z.lazy(() => PatentFundingCreateNestedOneWithoutPatentInputSchema).optional(),
+  status: z.lazy(() => PatentStatusCreateNestedOneWithoutPatentInputSchema).optional(),
+  technical: z.lazy(() => PatentTechnicalAttributesCreateNestedOneWithoutPatentInputSchema).optional(),
+  internal: z.lazy(() => PatentInternalCreateNestedOneWithoutPatentInputSchema).optional(),
+  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional()
+}).strict();
+
+export const PatentUncheckedCreateWithoutPatentRecordInputSchema: z.ZodType<Prisma.PatentUncheckedCreateWithoutPatentRecordInput> = z.object({
+  PatentID: z.number().int().optional(),
+  DepartmentID: z.number().int(),
+  Year: z.string(),
+  DraftTitle: z.string().optional(),
+  Title: z.string().optional(),
+  TitleEnglish: z.string().optional(),
+  CountryID: z.number().int().optional().nullable(),
+  PatentType: z.lazy(() => EnumPatentTypeSchema).optional().nullable(),
+  inventors: z.lazy(() => PatentInventorUncheckedCreateNestedManyWithoutPatentInputSchema).optional(),
+  application: z.lazy(() => PatentApplicationDataUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  funding: z.lazy(() => PatentFundingUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  status: z.lazy(() => PatentStatusUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  technical: z.lazy(() => PatentTechnicalAttributesUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  internal: z.lazy(() => PatentInternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional()
+}).strict();
+
+export const PatentCreateOrConnectWithoutPatentRecordInputSchema: z.ZodType<Prisma.PatentCreateOrConnectWithoutPatentRecordInput> = z.object({
+  where: z.lazy(() => PatentWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => PatentCreateWithoutPatentRecordInputSchema),z.lazy(() => PatentUncheckedCreateWithoutPatentRecordInputSchema) ]),
+}).strict();
+
+export const PatentUpsertWithoutPatentRecordInputSchema: z.ZodType<Prisma.PatentUpsertWithoutPatentRecordInput> = z.object({
+  update: z.union([ z.lazy(() => PatentUpdateWithoutPatentRecordInputSchema),z.lazy(() => PatentUncheckedUpdateWithoutPatentRecordInputSchema) ]),
+  create: z.union([ z.lazy(() => PatentCreateWithoutPatentRecordInputSchema),z.lazy(() => PatentUncheckedCreateWithoutPatentRecordInputSchema) ]),
+  where: z.lazy(() => PatentWhereInputSchema).optional()
+}).strict();
+
+export const PatentUpdateToOneWithWhereWithoutPatentRecordInputSchema: z.ZodType<Prisma.PatentUpdateToOneWithWhereWithoutPatentRecordInput> = z.object({
+  where: z.lazy(() => PatentWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => PatentUpdateWithoutPatentRecordInputSchema),z.lazy(() => PatentUncheckedUpdateWithoutPatentRecordInputSchema) ]),
+}).strict();
+
+export const PatentUpdateWithoutPatentRecordInputSchema: z.ZodType<Prisma.PatentUpdateWithoutPatentRecordInput> = z.object({
+  Year: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  DraftTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  TitleEnglish: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  PatentType: z.union([ z.lazy(() => EnumPatentTypeSchema),z.lazy(() => NullableEnumEnumPatentTypeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  country: z.lazy(() => CountryUpdateOneWithoutPatentsNestedInputSchema).optional(),
+  department: z.lazy(() => DepartmentUpdateOneRequiredWithoutPatentsNestedInputSchema).optional(),
+  inventors: z.lazy(() => PatentInventorUpdateManyWithoutPatentNestedInputSchema).optional(),
+  application: z.lazy(() => PatentApplicationDataUpdateOneWithoutPatentNestedInputSchema).optional(),
+  funding: z.lazy(() => PatentFundingUpdateOneWithoutPatentNestedInputSchema).optional(),
+  status: z.lazy(() => PatentStatusUpdateOneWithoutPatentNestedInputSchema).optional(),
+  technical: z.lazy(() => PatentTechnicalAttributesUpdateOneWithoutPatentNestedInputSchema).optional(),
+  internal: z.lazy(() => PatentInternalUpdateOneWithoutPatentNestedInputSchema).optional(),
+  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional()
+}).strict();
+
+export const PatentUncheckedUpdateWithoutPatentRecordInputSchema: z.ZodType<Prisma.PatentUncheckedUpdateWithoutPatentRecordInput> = z.object({
+  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  DepartmentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Year: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  DraftTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  TitleEnglish: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  CountryID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  PatentType: z.union([ z.lazy(() => EnumPatentTypeSchema),z.lazy(() => NullableEnumEnumPatentTypeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  inventors: z.lazy(() => PatentInventorUncheckedUpdateManyWithoutPatentNestedInputSchema).optional(),
+  application: z.lazy(() => PatentApplicationDataUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  funding: z.lazy(() => PatentFundingUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  status: z.lazy(() => PatentStatusUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional()
@@ -7958,7 +8360,8 @@ export const PatentCreateWithoutDepartmentInputSchema: z.ZodType<Prisma.PatentCr
   status: z.lazy(() => PatentStatusCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedCreateWithoutDepartmentInputSchema: z.ZodType<Prisma.PatentUncheckedCreateWithoutDepartmentInput> = z.object({
@@ -7975,7 +8378,8 @@ export const PatentUncheckedCreateWithoutDepartmentInputSchema: z.ZodType<Prisma
   status: z.lazy(() => PatentStatusUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentCreateOrConnectWithoutDepartmentInputSchema: z.ZodType<Prisma.PatentCreateOrConnectWithoutDepartmentInput> = z.object({
@@ -8077,7 +8481,8 @@ export const PatentCreateWithoutCountryInputSchema: z.ZodType<Prisma.PatentCreat
   status: z.lazy(() => PatentStatusCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedCreateWithoutCountryInputSchema: z.ZodType<Prisma.PatentUncheckedCreateWithoutCountryInput> = z.object({
@@ -8094,7 +8499,8 @@ export const PatentUncheckedCreateWithoutCountryInputSchema: z.ZodType<Prisma.Pa
   status: z.lazy(() => PatentStatusUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedCreateNestedOneWithoutPatentInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedCreateNestedManyWithoutPatentInputSchema).optional()
 }).strict();
 
 export const PatentCreateOrConnectWithoutCountryInputSchema: z.ZodType<Prisma.PatentCreateOrConnectWithoutCountryInput> = z.object({
@@ -8347,6 +8753,12 @@ export const PatentInventorCreateManyPatentInputSchema: z.ZodType<Prisma.PatentI
   Contribution: z.number().optional().nullable()
 }).strict();
 
+export const PatentRecordCreateManyPatentInputSchema: z.ZodType<Prisma.PatentRecordCreateManyPatentInput> = z.object({
+  id: z.number().int().optional(),
+  Record: z.string().optional().nullable(),
+  Date: z.coerce.date().optional().nullable()
+}).strict();
+
 export const PatentInventorUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentInventorUpdateWithoutPatentInput> = z.object({
   Main: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   Contribution: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -8363,6 +8775,23 @@ export const PatentInventorUncheckedUpdateManyWithoutPatentInputSchema: z.ZodTyp
   InventorID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Main: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   Contribution: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const PatentRecordUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentRecordUpdateWithoutPatentInput> = z.object({
+  Record: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const PatentRecordUncheckedUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentRecordUncheckedUpdateWithoutPatentInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Record: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const PatentRecordUncheckedUpdateManyWithoutPatentInputSchema: z.ZodType<Prisma.PatentRecordUncheckedUpdateManyWithoutPatentInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Record: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const TechnicalKeywordUpdateWithoutPatentTechnicalAttributesInputSchema: z.ZodType<Prisma.TechnicalKeywordUpdateWithoutPatentTechnicalAttributesInput> = z.object({
@@ -8501,7 +8930,8 @@ export const PatentUpdateWithoutDepartmentInputSchema: z.ZodType<Prisma.PatentUp
   status: z.lazy(() => PatentStatusUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedUpdateWithoutDepartmentInputSchema: z.ZodType<Prisma.PatentUncheckedUpdateWithoutDepartmentInput> = z.object({
@@ -8518,7 +8948,8 @@ export const PatentUncheckedUpdateWithoutDepartmentInputSchema: z.ZodType<Prisma
   status: z.lazy(() => PatentStatusUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedUpdateManyWithoutDepartmentInputSchema: z.ZodType<Prisma.PatentUncheckedUpdateManyWithoutDepartmentInput> = z.object({
@@ -8554,7 +8985,8 @@ export const PatentUpdateWithoutCountryInputSchema: z.ZodType<Prisma.PatentUpdat
   status: z.lazy(() => PatentStatusUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedUpdateWithoutCountryInputSchema: z.ZodType<Prisma.PatentUncheckedUpdateWithoutCountryInput> = z.object({
@@ -8571,7 +9003,8 @@ export const PatentUncheckedUpdateWithoutCountryInputSchema: z.ZodType<Prisma.Pa
   status: z.lazy(() => PatentStatusUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   technical: z.lazy(() => PatentTechnicalAttributesUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
   internal: z.lazy(() => PatentInternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
-  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional()
+  external: z.lazy(() => PatentExternalUncheckedUpdateOneWithoutPatentNestedInputSchema).optional(),
+  PatentRecord: z.lazy(() => PatentRecordUncheckedUpdateManyWithoutPatentNestedInputSchema).optional()
 }).strict();
 
 export const PatentUncheckedUpdateManyWithoutCountryInputSchema: z.ZodType<Prisma.PatentUncheckedUpdateManyWithoutCountryInput> = z.object({
@@ -9677,6 +10110,68 @@ export const PatentStatusFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.PatentSta
   select: PatentStatusSelectSchema.optional(),
   include: PatentStatusIncludeSchema.optional(),
   where: PatentStatusWhereUniqueInputSchema,
+}).strict() ;
+
+export const PatentRecordFindFirstArgsSchema: z.ZodType<Prisma.PatentRecordFindFirstArgs> = z.object({
+  select: PatentRecordSelectSchema.optional(),
+  include: PatentRecordIncludeSchema.optional(),
+  where: PatentRecordWhereInputSchema.optional(),
+  orderBy: z.union([ PatentRecordOrderByWithRelationInputSchema.array(),PatentRecordOrderByWithRelationInputSchema ]).optional(),
+  cursor: PatentRecordWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ PatentRecordScalarFieldEnumSchema,PatentRecordScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const PatentRecordFindFirstOrThrowArgsSchema: z.ZodType<Prisma.PatentRecordFindFirstOrThrowArgs> = z.object({
+  select: PatentRecordSelectSchema.optional(),
+  include: PatentRecordIncludeSchema.optional(),
+  where: PatentRecordWhereInputSchema.optional(),
+  orderBy: z.union([ PatentRecordOrderByWithRelationInputSchema.array(),PatentRecordOrderByWithRelationInputSchema ]).optional(),
+  cursor: PatentRecordWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ PatentRecordScalarFieldEnumSchema,PatentRecordScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const PatentRecordFindManyArgsSchema: z.ZodType<Prisma.PatentRecordFindManyArgs> = z.object({
+  select: PatentRecordSelectSchema.optional(),
+  include: PatentRecordIncludeSchema.optional(),
+  where: PatentRecordWhereInputSchema.optional(),
+  orderBy: z.union([ PatentRecordOrderByWithRelationInputSchema.array(),PatentRecordOrderByWithRelationInputSchema ]).optional(),
+  cursor: PatentRecordWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ PatentRecordScalarFieldEnumSchema,PatentRecordScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const PatentRecordAggregateArgsSchema: z.ZodType<Prisma.PatentRecordAggregateArgs> = z.object({
+  where: PatentRecordWhereInputSchema.optional(),
+  orderBy: z.union([ PatentRecordOrderByWithRelationInputSchema.array(),PatentRecordOrderByWithRelationInputSchema ]).optional(),
+  cursor: PatentRecordWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const PatentRecordGroupByArgsSchema: z.ZodType<Prisma.PatentRecordGroupByArgs> = z.object({
+  where: PatentRecordWhereInputSchema.optional(),
+  orderBy: z.union([ PatentRecordOrderByWithAggregationInputSchema.array(),PatentRecordOrderByWithAggregationInputSchema ]).optional(),
+  by: PatentRecordScalarFieldEnumSchema.array(),
+  having: PatentRecordScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const PatentRecordFindUniqueArgsSchema: z.ZodType<Prisma.PatentRecordFindUniqueArgs> = z.object({
+  select: PatentRecordSelectSchema.optional(),
+  include: PatentRecordIncludeSchema.optional(),
+  where: PatentRecordWhereUniqueInputSchema,
+}).strict() ;
+
+export const PatentRecordFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.PatentRecordFindUniqueOrThrowArgs> = z.object({
+  select: PatentRecordSelectSchema.optional(),
+  include: PatentRecordIncludeSchema.optional(),
+  where: PatentRecordWhereUniqueInputSchema,
 }).strict() ;
 
 export const CollegeFindFirstArgsSchema: z.ZodType<Prisma.CollegeFindFirstArgs> = z.object({
@@ -10808,6 +11303,58 @@ export const PatentStatusUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentS
 
 export const PatentStatusDeleteManyArgsSchema: z.ZodType<Prisma.PatentStatusDeleteManyArgs> = z.object({
   where: PatentStatusWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const PatentRecordCreateArgsSchema: z.ZodType<Prisma.PatentRecordCreateArgs> = z.object({
+  select: PatentRecordSelectSchema.optional(),
+  include: PatentRecordIncludeSchema.optional(),
+  data: z.union([ PatentRecordCreateInputSchema,PatentRecordUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const PatentRecordUpsertArgsSchema: z.ZodType<Prisma.PatentRecordUpsertArgs> = z.object({
+  select: PatentRecordSelectSchema.optional(),
+  include: PatentRecordIncludeSchema.optional(),
+  where: PatentRecordWhereUniqueInputSchema,
+  create: z.union([ PatentRecordCreateInputSchema,PatentRecordUncheckedCreateInputSchema ]),
+  update: z.union([ PatentRecordUpdateInputSchema,PatentRecordUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const PatentRecordCreateManyArgsSchema: z.ZodType<Prisma.PatentRecordCreateManyArgs> = z.object({
+  data: z.union([ PatentRecordCreateManyInputSchema,PatentRecordCreateManyInputSchema.array() ]),
+}).strict() ;
+
+export const PatentRecordCreateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentRecordCreateManyAndReturnArgs> = z.object({
+  data: z.union([ PatentRecordCreateManyInputSchema,PatentRecordCreateManyInputSchema.array() ]),
+}).strict() ;
+
+export const PatentRecordDeleteArgsSchema: z.ZodType<Prisma.PatentRecordDeleteArgs> = z.object({
+  select: PatentRecordSelectSchema.optional(),
+  include: PatentRecordIncludeSchema.optional(),
+  where: PatentRecordWhereUniqueInputSchema,
+}).strict() ;
+
+export const PatentRecordUpdateArgsSchema: z.ZodType<Prisma.PatentRecordUpdateArgs> = z.object({
+  select: PatentRecordSelectSchema.optional(),
+  include: PatentRecordIncludeSchema.optional(),
+  data: z.union([ PatentRecordUpdateInputSchema,PatentRecordUncheckedUpdateInputSchema ]),
+  where: PatentRecordWhereUniqueInputSchema,
+}).strict() ;
+
+export const PatentRecordUpdateManyArgsSchema: z.ZodType<Prisma.PatentRecordUpdateManyArgs> = z.object({
+  data: z.union([ PatentRecordUpdateManyMutationInputSchema,PatentRecordUncheckedUpdateManyInputSchema ]),
+  where: PatentRecordWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const PatentRecordUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentRecordUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ PatentRecordUpdateManyMutationInputSchema,PatentRecordUncheckedUpdateManyInputSchema ]),
+  where: PatentRecordWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const PatentRecordDeleteManyArgsSchema: z.ZodType<Prisma.PatentRecordDeleteManyArgs> = z.object({
+  where: PatentRecordWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;
 

@@ -70,6 +70,7 @@ export default router({
          return await prisma.patent.findUnique({
             where: input,
             include: {
+               PatentRecord: true,
                country: true,
                department: {
                   include: {

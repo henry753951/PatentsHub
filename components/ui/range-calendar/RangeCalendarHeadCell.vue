@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { cn } from '@/lib/utils'
-import { CalendarGrid, type CalendarGridProps, useForwardProps } from 'reka-ui'
+import { RangeCalendarHeadCell, type RangeCalendarHeadCellProps, useForwardProps } from 'reka-ui'
 import { computed, type HTMLAttributes } from 'vue'
 
-const props = defineProps<CalendarGridProps & { class?: HTMLAttributes['class'] }>()
+const props = defineProps<RangeCalendarHeadCellProps & { class?: HTMLAttributes['class'] }>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props
@@ -15,10 +15,10 @@ const forwardedProps = useForwardProps(delegatedProps)
 </script>
 
 <template>
-  <CalendarGrid
-    :class="cn('w-full border-collapse space-y-1', props.class)"
+  <RangeCalendarHeadCell
+    :class="cn('w-8 rounded-md text-[0.8rem] font-normal text-muted-foreground', props.class)"
     v-bind="forwardedProps"
   >
     <slot />
-  </CalendarGrid>
+  </RangeCalendarHeadCell>
 </template>

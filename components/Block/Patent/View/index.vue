@@ -60,12 +60,12 @@
                   >
                      {{
                         patent.PatentType
-                           ? {
+                           ? ({
                               DESIGN: "設計",
                               UTILITY_MODEL: "實用新型",
                               INVENTION: "發明",
                               PLANT: "植物",
-                           }[patent.PatentType]
+                           } as Record<string, string>)[patent.PatentType]
                            : ""
                      }}
                   </CustomStatusBlock>
@@ -123,6 +123,9 @@
                <TabPanel value="basic">
                   <BlockPatentViewBasic v-model="patent" />
                </TabPanel>
+               <TabPanel value="record">
+                  <BlockPatentViewRecord v-model="patent" />
+               </TabPanel>
             </TabPanels>
          </Tabs>
       </div>
@@ -163,6 +166,17 @@ const patent = ref<RouterOutput["data"]["patent"]["getPatent"]>({
       ISOCode: "TW",
       CountryName: "中華民國", // 專利國家
    },
+   PatentRecord: [{
+      id: 1,
+      PatentID: 2,
+      Record: "即將初審",
+      Date: "2016-12-11", // 公告/獲證日期（105.12.11）
+   }, {
+      id: 2,
+      PatentID: 2,
+      Record: "初審成功",
+      Date: "2016-12-11",
+   }],
    inventors: [
       {
          InventorID: 1,
