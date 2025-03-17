@@ -3,6 +3,7 @@
       v-model="country"
       :options="countries"
       option-label="CountryName"
+      size="small"
    />
 </template>
 

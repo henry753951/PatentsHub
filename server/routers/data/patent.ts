@@ -4,6 +4,7 @@ import { CustomZodType } from "~/zod.dto";
 import { dbZ } from "~/server";
 
 export default router({
+   // [Other]
    getLastInternalID: procedure
       .input(
          z
@@ -27,13 +28,44 @@ export default router({
                internal: true,
             },
          });
-         console.log(lastPatent);
          if (!(lastPatent && lastPatent.internal)) {
             return `${input.year}${(1).toString().padStart(offset, "0")}`;
          }
          const nextInteralId = `${input.year}${(parseInt(lastPatent.internal.InternalID.slice(-offset)) + 1).toString().padStart(offset, "0")}`;
          return nextInteralId;
       }),
+   getKeywords: procedure.input(z.object({})).query(async () => {
+      return await prisma.technicalKeyword.findMany({
+         select: {
+            KeywordID: true,
+            Keyword: true,
+            _count: {
+               select: {
+                  patentTechnicalAttributes: true,
+               },
+            },
+         },
+      });
+   }),
+   createKeyword: procedure
+      .input(z.object({ keyword: z.string() }))
+      .mutation(async ({ input }) => {
+         return await prisma.technicalKeyword.create({
+            data: {
+               Keyword: input.keyword,
+            },
+         });
+      }),
+   deleteKeyword: procedure
+      .input(z.object({ keywordID: z.number() }))
+      .mutation(async ({ input }) => {
+         return await prisma.technicalKeyword.delete({
+            where: {
+               KeywordID: input.keywordID,
+            },
+         });
+      }),
+   // [Patent]
    createPatent: procedure
       .input(CustomZodType.PatentCreate.merge(CustomZodType.PatentInventor))
       .mutation(async ({ input }) => {

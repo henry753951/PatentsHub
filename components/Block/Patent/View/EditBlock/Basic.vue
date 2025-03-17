@@ -5,34 +5,37 @@
    >
       <div class="col-span-3">
          <CustomContentBlock
+            v-if="
+               technicalData.data.value && technicalData.data.value.technical
+            "
             title="技術資訊"
             tclass="sticky top-[87px]"
+            :save-button="!technicalData.isSynced.value"
+            @save="technicalData.save"
          >
             <CustomContentBlockRow
-               v-if="patent.technical"
                title="技術關鍵字"
+               :is-synced="
+                  JSON.stringify(
+                     technicalData.data.value?.technical?.keywords,
+                  ) ===
+                     JSON.stringify(
+                        technicalData.refData.value?.technical?.keywords,
+                     )
+               "
             >
-               <TagsInput
-                  v-model="patent.technical.keywords"
-                  class="min-h-10"
-               >
-                  <TagsInputItem
-                     v-for="item in patent.technical.keywords"
-                     :key="item.KeywordID"
-                     :value="item"
-                  >
-                     <TagsInputItemText />
-                     <TagsInputItemDelete />
-                  </TagsInputItem>
-                  <TagsInputInput placeholder="關鍵字..." />
-               </TagsInput>
+               <FormTechnicalKeywordsInput
+                  v-model="technicalData.data.value.technical.keywords"
+               />
             </CustomContentBlockRow>
             <CustomContentBlockRow
-               v-if="patent.technical"
+               v-model="technicalData.data.value.technical.MaturityLevel"
                title="技術成熟度 RTL"
-            >
-               {{ patent.technical.MaturityLevel }}
-            </CustomContentBlockRow>
+               :is-synced="
+                  technicalData.data.value?.technical?.MaturityLevel ===
+                     technicalData.refData.value?.technical?.MaturityLevel
+               "
+            />
          </CustomContentBlock>
          <CustomContentBlock
             title="資助資訊"
@@ -137,6 +140,10 @@
                   <FormCountrySelect
                      v-model="basicData.data.value.country"
                      class="w-full"
+                     :invalid="
+                        basicData.data.value.country?.CountryID !==
+                           basicData.refData.value?.country?.CountryID
+                     "
                   />
                </CustomContentBlockRow>
                <CustomContentBlockRow
@@ -146,6 +153,10 @@
                   <FormPatentTypeSelect
                      v-model="basicData.data.value.PatentType"
                      class="w-full"
+                     :invalid="
+                        basicData.data.value.PatentType !==
+                           basicData.refData.value?.PatentType
+                     "
                   />
                </CustomContentBlockRow>
             </div>
@@ -215,6 +226,7 @@ const patent = defineModel({
    required: true,
 });
 const { crud } = useDatabasePatent(patent.value?.PatentID);
+// 基本資訊
 const basicData = useSyncData(patent, async (newData) => {
    if (!newData) return;
    await crud.updatePatent({
@@ -237,6 +249,29 @@ const basicData = useSyncData(patent, async (newData) => {
             },
          }
          : undefined,
+   });
+});
+// 技術資訊
+const technicalData = useSyncData(patent, async (newData) => {
+   if (!newData) return;
+   await crud.updatePatent({
+      technical: {
+         update: {
+            data: newData.technical
+               ? {
+                  MaturityLevel: newData.technical.MaturityLevel,
+                  keywords: {
+                     connectOrCreate: newData.technical.keywords.map(
+                        (keyword) => ({
+                           where: { KeywordID: keyword.KeywordID },
+                           create: { Keyword: keyword.Keyword },
+                        }),
+                     ),
+                  },
+               }
+               : undefined,
+         },
+      },
    });
 });
 </script>

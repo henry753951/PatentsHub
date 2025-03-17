@@ -3,6 +3,8 @@
       v-model="patentType"
       :options="patentTypes"
       option-label="label"
+      option-value="value"
+      size="small"
    />
 </template>
 

@@ -23,16 +23,19 @@
                   'justify-between items-center': !state?.arrivedState.top,
                   'flex-col': state?.arrivedState.top,
                }"
-               class="flex gap-4"
+               class="flex gap-4 overflow-hidden w-full"
             >
-               <div class="text-gray-800 dark:text-gray-200 z-[6]">
-                  <div class="flex items-center gap-4">
+               <div
+                  class="text-gray-800 dark:text-gray-200 z-[6] min-w-0 overflow-hidden flex-grow max-w-[70%]"
+               >
+                  <div class="flex items-center gap-4 w-full">
                      <div
-                        class="font-extrabold transition-all duration-300 whitespace-nowrap text-ellipsis overflow-hidden max-w-[70%]"
+                        class="font-extrabold transition-all duration-300 whitespace-nowrap text-ellipsis overflow-hidden"
                         :class="{
                            'text-3xl': state?.arrivedState.top,
                            'text-xl': !state?.arrivedState.top,
                         }"
+                        :title="title.native"
                      >
                         {{ title.native }}
                      </div>
@@ -66,7 +69,7 @@
                      </TooltipProvider>
                   </div>
                   <div
-                     class="font-thin duration-300 transition-all"
+                     class="font-thin duration-300 transition-all whitespace-nowrap text-ellipsis overflow-hidden"
                      :class="{
                         'text-xs': !state?.arrivedState.top,
                      }"
@@ -75,8 +78,8 @@
                   </div>
                </div>
                <div
-                  class="flex justify-between gap-4 transition-all duration-500"
-                  :class="{ 'scale-75': !state?.arrivedState.top }"
+                  class="flex-none flex justify-between gap-4 transition-all duration-500 whitespace-nowrap"
+                  :class="{ 'scale-75  w-fit': !state?.arrivedState.top }"
                >
                   <CustomStatusBlock
                      title="年度"
@@ -92,7 +95,7 @@
                         patent.PatentType
                            ? {
                               DESIGN: "設計",
-                              UTILITY_MODEL: "實用新型",
+                              UTILITY_MODEL: "新型",
                               INVENTION: "發明",
                               PLANT: "植物",
                            }[patent.PatentType]
@@ -158,7 +161,7 @@
       </div>
    </div>
    <div
-      v-else-if="status !=='pending'"
+      v-else-if="status !== 'pending'"
       class="container mx-auto py-[10rem]"
    >
       <div class="flex items-center justify-center h-full">
@@ -193,10 +196,18 @@ const title = computed(() => {
    if (!patent.value) return { english: "", native: "" };
    return {
       english: patent.value.TitleEnglish,
-      native: patent.value.Title || patent.value.DraftTitle || patent.value.TitleEnglish,
+      native:
+         patent.value.Title
+         || patent.value.DraftTitle
+         || patent.value.TitleEnglish,
    };
 });
-const { data: patent, forceRefresh, crud, status } = await useDatabasePatent(porps.patentId);
+const {
+   data: patent,
+   forceRefresh,
+   crud,
+   status,
+} = await useDatabasePatent(porps.patentId);
 
 // const patent = ref<RouterOutput["data"]["patent"]["getPatent"]>({
 //    PatentID: 2, // 假設新的專利ID為2

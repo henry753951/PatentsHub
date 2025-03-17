@@ -3,7 +3,13 @@
       v-auto-animate
       class="w-full flex flex-col"
    >
-      <p class="text-sm text-gray-500 mb-1 w-full">
+      <p
+         class="text-sm  mb-1 w-full"
+         :class="{
+            'text-red-500 dark:text-red-400': !isSynced,
+            'text-gray-500 dark:text-gray-400': isSynced,
+         }"
+      >
          {{ title }}
       </p>
       <div
@@ -68,11 +74,11 @@ const { title = undefined, isSynced = true } = defineProps({
 });
 const isFocus = ref(false);
 const str = defineModel({
-   type: String,
+   type: String as PropType<string | null>,
    required: false,
 });
 const number = defineModel("number", {
-   type: Number,
+   type: Number as PropType<number | null>,
    required: false,
 });
 
