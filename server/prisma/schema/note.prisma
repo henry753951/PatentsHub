@@ -1,0 +1,9 @@
+model Note {
+  NoteID Int      @id @default(autoincrement())
+  Key    String   @unique
+  Title  String
+  Body   String
+  Date   DateTime @default(now())
+
+  @@index([Key], name: "KeyIndex")
+}

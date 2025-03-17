@@ -5,6 +5,87 @@
    >
       <div class="col-span-3">
          <CustomContentBlock
+            v-if="internalData.data.value && internalData.data.value.internal"
+            :note-key="`${patent.PatentID}:internal`"
+            title="校內資訊"
+            tclass="sticky top-[87px]"
+            :save-button="!internalData.isSynced.value"
+            @save="internalData.save"
+         >
+            <CustomContentBlockRow
+               v-model="internalData.data.value.internal.InternalID"
+               title="校內編號"
+               :is-synced="
+                  internalData.data.value?.internal?.InternalID ===
+                     internalData.refData.value?.internal?.InternalID
+               "
+            />
+            <CustomContentBlockRow title="技推委員會審理日期與第幾次">
+            </CustomContentBlockRow>
+            <CustomContentBlockRow title="初評事務所">
+            </CustomContentBlockRow>
+            <CustomContentBlockRow title="承辦事務所">
+            </CustomContentBlockRow>
+         </CustomContentBlock>
+         <CustomContentBlock
+            v-if="patent.application"
+            title="申請資訊"
+            tclass="sticky top-[87px]"
+         >
+            <div class="grid grid-cols-2 gap-4">
+               <CustomContentBlockRow title="申請日期">
+                  {{ patent.application.FilingDate }}
+               </CustomContentBlockRow>
+               <CustomContentBlockRow title="申請案號">
+                  {{ patent.application.ApplicationNumber }}
+               </CustomContentBlockRow>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+               <CustomContentBlockRow title="研發成果編號">
+                  <s>{{ patent.application.RDResultNumber }}</s>
+               </CustomContentBlockRow>
+               <CustomContentBlockRow title="國科會編號">
+                  <s>{{ patent.application.NSCNumber }}</s>
+               </CustomContentBlockRow>
+            </div>
+         </CustomContentBlock>
+         <CustomContentBlock
+            title="資助資訊"
+            tclass="sticky top-[87px]"
+         >
+            <CustomContentBlockRow title="資助單位">
+               <div
+                  v-for="funding in patent.funding?.fundingUnitsDatas"
+                  :key="funding.FundingUnitID"
+               >
+                  {{ funding.fundingUnit.Name }}
+                  {{ funding.ProjectCode }}
+               </div>
+            </CustomContentBlockRow>
+         </CustomContentBlock>
+         <CustomContentBlock
+            v-if="patent.external"
+            title="證書資訊"
+            tclass="sticky top-[87px]"
+         >
+            <CustomContentBlockRow title="專利號碼">
+               {{ patent.external.PatentNumber }}
+            </CustomContentBlockRow>
+            <CustomContentBlockRow title="專利權期間">
+               {{ patent.external.StartDate }} ~
+               {{ patent.external.EndDate }}
+            </CustomContentBlockRow>
+            <CustomContentBlockRow title="公告獲證日期">
+               {{ patent.external.PublicationDate }}
+            </CustomContentBlockRow>
+            <CustomContentBlockRow title="國際專利分類號IPC">
+               {{ patent.external.IPCNumber }}
+            </CustomContentBlockRow>
+            <CustomContentBlockRow title="專利範圍">
+               {{ patent.external.PatentScope }}
+            </CustomContentBlockRow>
+         </CustomContentBlock>
+         <CustomContentBlock
             v-if="
                technicalData.data.value && technicalData.data.value.technical
             "
@@ -37,89 +118,11 @@
                "
             />
          </CustomContentBlock>
-         <CustomContentBlock
-            title="資助資訊"
-            tclass="sticky top-[87px]"
-         >
-            <CustomContentBlockRow title="資助單位">
-               <div
-                  v-for="funding in patent.funding?.fundingUnitsDatas"
-                  :key="funding.FundingUnitID"
-               >
-                  {{ funding.fundingUnit.Name }}
-                  {{ funding.ProjectCode }}
-               </div>
-            </CustomContentBlockRow>
-         </CustomContentBlock>
-         <CustomContentBlock
-            v-if="patent.internal"
-            title="校內資訊"
-            tclass="sticky top-[87px]"
-         >
-            <CustomContentBlockRow title="校內編號">
-               {{ patent.internal.InternalID }}
-            </CustomContentBlockRow>
-            <CustomContentBlockRow title="技推委員會審理日期與第幾次">
-               {{ patent.internal.InitialReviewDate }} /
-               {{ patent.internal.InitialReviewNumber }}
-            </CustomContentBlockRow>
-            <CustomContentBlockRow title="初評事務所">
-               <div
-                  v-for="agency in patent.internal.InitialReviewAgencies"
-                  :key="agency.AgencyUnitID"
-               >
-                  {{ agency.agencyUnit.Name }}
-               </div>
-            </CustomContentBlockRow>
-         </CustomContentBlock>
-         <CustomContentBlock
-            v-if="patent.application"
-            title="申請資訊"
-            tclass="sticky top-[87px]"
-         >
-            <div class="grid grid-cols-2 gap-4">
-               <CustomContentBlockRow title="申請日期">
-                  {{ patent.application.FilingDate }}
-               </CustomContentBlockRow>
-               <CustomContentBlockRow title="申請案號">
-                  {{ patent.application.ApplicationNumber }}
-               </CustomContentBlockRow>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-               <CustomContentBlockRow title="研發成果編號">
-                  <s>{{ patent.application.RDResultNumber }}</s>
-               </CustomContentBlockRow>
-               <CustomContentBlockRow title="國科會編號">
-                  <s>{{ patent.application.NSCNumber }}</s>
-               </CustomContentBlockRow>
-            </div>
-         </CustomContentBlock>
-         <CustomContentBlock
-            v-if="patent.external"
-            title="證書資訊"
-            tclass="sticky top-[87px]"
-         >
-            <CustomContentBlockRow title="專利號碼">
-               {{ patent.external.PatentNumber }}
-            </CustomContentBlockRow>
-            <CustomContentBlockRow title="專利權期間">
-               {{ patent.external.StartDate }} ~
-               {{ patent.external.EndDate }}
-            </CustomContentBlockRow>
-            <CustomContentBlockRow title="公告獲證日期">
-               {{ patent.external.PublicationDate }}
-            </CustomContentBlockRow>
-            <CustomContentBlockRow title="國際專利分類號IPC">
-               {{ patent.external.IPCNumber }}
-            </CustomContentBlockRow>
-            <CustomContentBlockRow title="專利範圍">
-               {{ patent.external.PatentScope }}
-            </CustomContentBlockRow>
-         </CustomContentBlock>
       </div>
       <div class="col-span-2 self-start sticky top-[87px]">
          <CustomContentBlock
             v-if="basicData.data.value"
+            :note-key="`${patent.PatentID}:basic`"
             title="基本資訊"
             :save-button="!basicData.isSynced.value"
             @save="basicData.save"
@@ -135,6 +138,10 @@
                />
                <CustomContentBlockRow
                   title="國家"
+                  :is-synced="
+                     basicData.data.value.country?.CountryID ===
+                        basicData.refData.value?.country?.CountryID
+                  "
                   class="col-span-2"
                >
                   <FormCountrySelect
@@ -148,6 +155,10 @@
                </CustomContentBlockRow>
                <CustomContentBlockRow
                   title="專利類別"
+                  :is-synced="
+                     basicData.data.value.PatentType ===
+                        basicData.refData.value?.PatentType
+                  "
                   class="col-span-2"
                >
                   <FormPatentTypeSelect
@@ -251,6 +262,12 @@ const basicData = useSyncData(patent, async (newData) => {
          : undefined,
    });
 });
+// 校內資訊
+const internalData = useSyncData(patent, async (newData) => {
+   if (!newData) return;
+   await crud.updatePatent({});
+});
+
 // 技術資訊
 const technicalData = useSyncData(patent, async (newData) => {
    if (!newData) return;

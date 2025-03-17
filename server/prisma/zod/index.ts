@@ -32,6 +32,8 @@ export const InventorScalarFieldEnumSchema = z.enum(['InventorID','DepartmentID'
 
 export const PatentInventorScalarFieldEnumSchema = z.enum(['PatentID','InventorID','Main','Contribution']);
 
+export const NoteScalarFieldEnumSchema = z.enum(['NoteID','Key','Title','Body','Date']);
+
 export const PatentScalarFieldEnumSchema = z.enum(['PatentID','DepartmentID','Year','DraftTitle','Title','TitleEnglish','CountryID','PatentType']);
 
 export const PatentApplicationDataScalarFieldEnumSchema = z.enum(['PatentID','ApplicationNumber','FilingDate','RDResultNumber','NSCNumber']);
@@ -184,6 +186,20 @@ export const PatentInventorSchema = z.object({
 })
 
 export type PatentInventor = z.infer<typeof PatentInventorSchema>
+
+/////////////////////////////////////////
+// NOTE SCHEMA
+/////////////////////////////////////////
+
+export const NoteSchema = z.object({
+  NoteID: z.number().int(),
+  Key: z.string(),
+  Title: z.string(),
+  Body: z.string(),
+  Date: z.coerce.date(),
+})
+
+export type Note = z.infer<typeof NoteSchema>
 
 /////////////////////////////////////////
 // PATENT SCHEMA
@@ -601,6 +617,17 @@ export const PatentInventorSelectSchema: z.ZodType<Prisma.PatentInventorSelect> 
   Contribution: z.boolean().optional(),
   patent: z.union([z.boolean(),z.lazy(() => PatentArgsSchema)]).optional(),
   inventor: z.union([z.boolean(),z.lazy(() => InventorArgsSchema)]).optional(),
+}).strict()
+
+// NOTE
+//------------------------------------------------------
+
+export const NoteSelectSchema: z.ZodType<Prisma.NoteSelect> = z.object({
+  NoteID: z.boolean().optional(),
+  Key: z.boolean().optional(),
+  Title: z.boolean().optional(),
+  Body: z.boolean().optional(),
+  Date: z.boolean().optional(),
 }).strict()
 
 // PATENT
@@ -1496,6 +1523,72 @@ export const PatentInventorScalarWhereWithAggregatesInputSchema: z.ZodType<Prism
   InventorID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   Main: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
   Contribution: z.union([ z.lazy(() => FloatNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
+}).strict();
+
+export const NoteWhereInputSchema: z.ZodType<Prisma.NoteWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => NoteWhereInputSchema),z.lazy(() => NoteWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => NoteWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => NoteWhereInputSchema),z.lazy(() => NoteWhereInputSchema).array() ]).optional(),
+  NoteID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  Key: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Body: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Date: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+}).strict();
+
+export const NoteOrderByWithRelationInputSchema: z.ZodType<Prisma.NoteOrderByWithRelationInput> = z.object({
+  NoteID: z.lazy(() => SortOrderSchema).optional(),
+  Key: z.lazy(() => SortOrderSchema).optional(),
+  Title: z.lazy(() => SortOrderSchema).optional(),
+  Body: z.lazy(() => SortOrderSchema).optional(),
+  Date: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const NoteWhereUniqueInputSchema: z.ZodType<Prisma.NoteWhereUniqueInput> = z.union([
+  z.object({
+    NoteID: z.number().int(),
+    Key: z.string()
+  }),
+  z.object({
+    NoteID: z.number().int(),
+  }),
+  z.object({
+    Key: z.string(),
+  }),
+])
+.and(z.object({
+  NoteID: z.number().int().optional(),
+  Key: z.string().optional(),
+  AND: z.union([ z.lazy(() => NoteWhereInputSchema),z.lazy(() => NoteWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => NoteWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => NoteWhereInputSchema),z.lazy(() => NoteWhereInputSchema).array() ]).optional(),
+  Title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Body: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Date: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+}).strict());
+
+export const NoteOrderByWithAggregationInputSchema: z.ZodType<Prisma.NoteOrderByWithAggregationInput> = z.object({
+  NoteID: z.lazy(() => SortOrderSchema).optional(),
+  Key: z.lazy(() => SortOrderSchema).optional(),
+  Title: z.lazy(() => SortOrderSchema).optional(),
+  Body: z.lazy(() => SortOrderSchema).optional(),
+  Date: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => NoteCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => NoteAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => NoteMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => NoteMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => NoteSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const NoteScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.NoteScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => NoteScalarWhereWithAggregatesInputSchema),z.lazy(() => NoteScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => NoteScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => NoteScalarWhereWithAggregatesInputSchema),z.lazy(() => NoteScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  NoteID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  Key: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  Title: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  Body: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  Date: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
 
 export const PatentWhereInputSchema: z.ZodType<Prisma.PatentWhereInput> = z.object({
@@ -2659,6 +2752,59 @@ export const PatentInventorUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Pate
   InventorID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Main: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   Contribution: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const NoteCreateInputSchema: z.ZodType<Prisma.NoteCreateInput> = z.object({
+  Key: z.string(),
+  Title: z.string(),
+  Body: z.string(),
+  Date: z.coerce.date().optional()
+}).strict();
+
+export const NoteUncheckedCreateInputSchema: z.ZodType<Prisma.NoteUncheckedCreateInput> = z.object({
+  NoteID: z.number().int().optional(),
+  Key: z.string(),
+  Title: z.string(),
+  Body: z.string(),
+  Date: z.coerce.date().optional()
+}).strict();
+
+export const NoteUpdateInputSchema: z.ZodType<Prisma.NoteUpdateInput> = z.object({
+  Key: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Body: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const NoteUncheckedUpdateInputSchema: z.ZodType<Prisma.NoteUncheckedUpdateInput> = z.object({
+  NoteID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Key: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Body: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const NoteCreateManyInputSchema: z.ZodType<Prisma.NoteCreateManyInput> = z.object({
+  NoteID: z.number().int().optional(),
+  Key: z.string(),
+  Title: z.string(),
+  Body: z.string(),
+  Date: z.coerce.date().optional()
+}).strict();
+
+export const NoteUpdateManyMutationInputSchema: z.ZodType<Prisma.NoteUpdateManyMutationInput> = z.object({
+  Key: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Body: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const NoteUncheckedUpdateManyInputSchema: z.ZodType<Prisma.NoteUncheckedUpdateManyInput> = z.object({
+  NoteID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Key: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Body: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentCreateInputSchema: z.ZodType<Prisma.PatentCreateInput> = z.object({
@@ -3897,6 +4043,63 @@ export const FloatNullableWithAggregatesFilterSchema: z.ZodType<Prisma.FloatNull
   _max: z.lazy(() => NestedFloatNullableFilterSchema).optional()
 }).strict();
 
+export const DateTimeFilterSchema: z.ZodType<Prisma.DateTimeFilter> = z.object({
+  equals: z.coerce.date().optional(),
+  in: z.coerce.date().array().optional(),
+  notIn: z.coerce.date().array().optional(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeFilterSchema) ]).optional(),
+}).strict();
+
+export const NoteCountOrderByAggregateInputSchema: z.ZodType<Prisma.NoteCountOrderByAggregateInput> = z.object({
+  NoteID: z.lazy(() => SortOrderSchema).optional(),
+  Key: z.lazy(() => SortOrderSchema).optional(),
+  Title: z.lazy(() => SortOrderSchema).optional(),
+  Body: z.lazy(() => SortOrderSchema).optional(),
+  Date: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const NoteAvgOrderByAggregateInputSchema: z.ZodType<Prisma.NoteAvgOrderByAggregateInput> = z.object({
+  NoteID: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const NoteMaxOrderByAggregateInputSchema: z.ZodType<Prisma.NoteMaxOrderByAggregateInput> = z.object({
+  NoteID: z.lazy(() => SortOrderSchema).optional(),
+  Key: z.lazy(() => SortOrderSchema).optional(),
+  Title: z.lazy(() => SortOrderSchema).optional(),
+  Body: z.lazy(() => SortOrderSchema).optional(),
+  Date: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const NoteMinOrderByAggregateInputSchema: z.ZodType<Prisma.NoteMinOrderByAggregateInput> = z.object({
+  NoteID: z.lazy(() => SortOrderSchema).optional(),
+  Key: z.lazy(() => SortOrderSchema).optional(),
+  Title: z.lazy(() => SortOrderSchema).optional(),
+  Body: z.lazy(() => SortOrderSchema).optional(),
+  Date: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const NoteSumOrderByAggregateInputSchema: z.ZodType<Prisma.NoteSumOrderByAggregateInput> = z.object({
+  NoteID: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const DateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.DateTimeWithAggregatesFilter> = z.object({
+  equals: z.coerce.date().optional(),
+  in: z.coerce.date().array().optional(),
+  notIn: z.coerce.date().array().optional(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedDateTimeFilterSchema).optional(),
+  _max: z.lazy(() => NestedDateTimeFilterSchema).optional()
+}).strict();
+
 export const EnumEnumPatentTypeNullableFilterSchema: z.ZodType<Prisma.EnumEnumPatentTypeNullableFilter> = z.object({
   equals: z.lazy(() => EnumPatentTypeSchema).optional().nullable(),
   in: z.lazy(() => EnumPatentTypeSchema).array().optional().nullable(),
@@ -4913,6 +5116,10 @@ export const InventorUpdateOneRequiredWithoutPatentsNestedInputSchema: z.ZodType
   update: z.union([ z.lazy(() => InventorUpdateToOneWithWhereWithoutPatentsInputSchema),z.lazy(() => InventorUpdateWithoutPatentsInputSchema),z.lazy(() => InventorUncheckedUpdateWithoutPatentsInputSchema) ]).optional(),
 }).strict();
 
+export const DateTimeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.DateTimeFieldUpdateOperationsInput> = z.object({
+  set: z.coerce.date().optional()
+}).strict();
+
 export const CountryCreateNestedOneWithoutPatentsInputSchema: z.ZodType<Prisma.CountryCreateNestedOneWithoutPatentsInput> = z.object({
   create: z.union([ z.lazy(() => CountryCreateWithoutPatentsInputSchema),z.lazy(() => CountryUncheckedCreateWithoutPatentsInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => CountryCreateOrConnectWithoutPatentsInputSchema).optional(),
@@ -5862,6 +6069,31 @@ export const NestedFloatNullableWithAggregatesFilterSchema: z.ZodType<Prisma.Nes
   _sum: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
   _min: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
   _max: z.lazy(() => NestedFloatNullableFilterSchema).optional()
+}).strict();
+
+export const NestedDateTimeFilterSchema: z.ZodType<Prisma.NestedDateTimeFilter> = z.object({
+  equals: z.coerce.date().optional(),
+  in: z.coerce.date().array().optional(),
+  notIn: z.coerce.date().array().optional(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedDateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.NestedDateTimeWithAggregatesFilter> = z.object({
+  equals: z.coerce.date().optional(),
+  in: z.coerce.date().array().optional(),
+  notIn: z.coerce.date().array().optional(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedDateTimeFilterSchema).optional(),
+  _max: z.lazy(() => NestedDateTimeFilterSchema).optional()
 }).strict();
 
 export const NestedEnumEnumPatentTypeNullableFilterSchema: z.ZodType<Prisma.NestedEnumEnumPatentTypeNullableFilter> = z.object({
@@ -9247,6 +9479,63 @@ export const PatentInventorFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.PatentI
   where: PatentInventorWhereUniqueInputSchema,
 }).strict() ;
 
+export const NoteFindFirstArgsSchema: z.ZodType<Prisma.NoteFindFirstArgs> = z.object({
+  select: NoteSelectSchema.optional(),
+  where: NoteWhereInputSchema.optional(),
+  orderBy: z.union([ NoteOrderByWithRelationInputSchema.array(),NoteOrderByWithRelationInputSchema ]).optional(),
+  cursor: NoteWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ NoteScalarFieldEnumSchema,NoteScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const NoteFindFirstOrThrowArgsSchema: z.ZodType<Prisma.NoteFindFirstOrThrowArgs> = z.object({
+  select: NoteSelectSchema.optional(),
+  where: NoteWhereInputSchema.optional(),
+  orderBy: z.union([ NoteOrderByWithRelationInputSchema.array(),NoteOrderByWithRelationInputSchema ]).optional(),
+  cursor: NoteWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ NoteScalarFieldEnumSchema,NoteScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const NoteFindManyArgsSchema: z.ZodType<Prisma.NoteFindManyArgs> = z.object({
+  select: NoteSelectSchema.optional(),
+  where: NoteWhereInputSchema.optional(),
+  orderBy: z.union([ NoteOrderByWithRelationInputSchema.array(),NoteOrderByWithRelationInputSchema ]).optional(),
+  cursor: NoteWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ NoteScalarFieldEnumSchema,NoteScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const NoteAggregateArgsSchema: z.ZodType<Prisma.NoteAggregateArgs> = z.object({
+  where: NoteWhereInputSchema.optional(),
+  orderBy: z.union([ NoteOrderByWithRelationInputSchema.array(),NoteOrderByWithRelationInputSchema ]).optional(),
+  cursor: NoteWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const NoteGroupByArgsSchema: z.ZodType<Prisma.NoteGroupByArgs> = z.object({
+  where: NoteWhereInputSchema.optional(),
+  orderBy: z.union([ NoteOrderByWithAggregationInputSchema.array(),NoteOrderByWithAggregationInputSchema ]).optional(),
+  by: NoteScalarFieldEnumSchema.array(),
+  having: NoteScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const NoteFindUniqueArgsSchema: z.ZodType<Prisma.NoteFindUniqueArgs> = z.object({
+  select: NoteSelectSchema.optional(),
+  where: NoteWhereUniqueInputSchema,
+}).strict() ;
+
+export const NoteFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.NoteFindUniqueOrThrowArgs> = z.object({
+  select: NoteSelectSchema.optional(),
+  where: NoteWhereUniqueInputSchema,
+}).strict() ;
+
 export const PatentFindFirstArgsSchema: z.ZodType<Prisma.PatentFindFirstArgs> = z.object({
   select: PatentSelectSchema.optional(),
   include: PatentIncludeSchema.optional(),
@@ -10446,6 +10735,54 @@ export const PatentInventorUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.Paten
 
 export const PatentInventorDeleteManyArgsSchema: z.ZodType<Prisma.PatentInventorDeleteManyArgs> = z.object({
   where: PatentInventorWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const NoteCreateArgsSchema: z.ZodType<Prisma.NoteCreateArgs> = z.object({
+  select: NoteSelectSchema.optional(),
+  data: z.union([ NoteCreateInputSchema,NoteUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const NoteUpsertArgsSchema: z.ZodType<Prisma.NoteUpsertArgs> = z.object({
+  select: NoteSelectSchema.optional(),
+  where: NoteWhereUniqueInputSchema,
+  create: z.union([ NoteCreateInputSchema,NoteUncheckedCreateInputSchema ]),
+  update: z.union([ NoteUpdateInputSchema,NoteUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const NoteCreateManyArgsSchema: z.ZodType<Prisma.NoteCreateManyArgs> = z.object({
+  data: z.union([ NoteCreateManyInputSchema,NoteCreateManyInputSchema.array() ]),
+}).strict() ;
+
+export const NoteCreateManyAndReturnArgsSchema: z.ZodType<Prisma.NoteCreateManyAndReturnArgs> = z.object({
+  data: z.union([ NoteCreateManyInputSchema,NoteCreateManyInputSchema.array() ]),
+}).strict() ;
+
+export const NoteDeleteArgsSchema: z.ZodType<Prisma.NoteDeleteArgs> = z.object({
+  select: NoteSelectSchema.optional(),
+  where: NoteWhereUniqueInputSchema,
+}).strict() ;
+
+export const NoteUpdateArgsSchema: z.ZodType<Prisma.NoteUpdateArgs> = z.object({
+  select: NoteSelectSchema.optional(),
+  data: z.union([ NoteUpdateInputSchema,NoteUncheckedUpdateInputSchema ]),
+  where: NoteWhereUniqueInputSchema,
+}).strict() ;
+
+export const NoteUpdateManyArgsSchema: z.ZodType<Prisma.NoteUpdateManyArgs> = z.object({
+  data: z.union([ NoteUpdateManyMutationInputSchema,NoteUncheckedUpdateManyInputSchema ]),
+  where: NoteWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const NoteUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.NoteUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ NoteUpdateManyMutationInputSchema,NoteUncheckedUpdateManyInputSchema ]),
+  where: NoteWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const NoteDeleteManyArgsSchema: z.ZodType<Prisma.NoteDeleteManyArgs> = z.object({
+  where: NoteWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;
 
