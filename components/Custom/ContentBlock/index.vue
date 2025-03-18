@@ -25,7 +25,7 @@
          </div>
       </div>
       <div
-         class="bg-gray-100 p-4 rounded-md dark:bg-[#1a1a1a] dark:text-gray-200"
+         class="bg-gray-100/60 p-4 rounded-md dark:bg-[#1a1a1a]/70 dark:text-gray-200"
       >
          <div class="grid grid-cols-1 gap-4">
             <slot />

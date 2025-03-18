@@ -20,9 +20,39 @@
                      internalData.refData.value?.internal?.InternalID
                "
             />
-            <CustomContentBlockRow title="技推委員會審理日期與第幾次">
+            <CustomContentBlockRow
+               title="技推資訊"
+               :is-synced="
+                  format(
+                     internalData.data.value.internal.InitialReviewDate!,
+                     'yyyy-MM-dd',
+                  ) ===
+                     format(
+                        internalData.refData.value?.internal
+                           ?.InitialReviewDate!,
+                        'yyyy-MM-dd',
+                     ) &&
+                     internalData.data.value?.internal?.InitialReviewNumber ===
+                     internalData.refData.value?.internal?.InitialReviewNumber
+               "
+            >
+               <FormPatentReviewInfo
+                  v-model:review-date="
+                     internalData.data.value.internal.InitialReviewDate
+                  "
+                  v-model:review-number="
+                     internalData.data.value.internal.InitialReviewNumber
+                  "
+               />
             </CustomContentBlockRow>
             <CustomContentBlockRow title="初評事務所">
+               {{ internalData.data.value.internal.InitialReviewAgencies }}
+               <FormPatentAgencyList
+                  v-model="
+                     internalData.data.value.internal.InitialReviewAgencies
+                  "
+                  :is-taker-agency-unit="false"
+               />
             </CustomContentBlockRow>
             <CustomContentBlockRow title="承辦事務所">
             </CustomContentBlockRow>
@@ -232,46 +262,82 @@
 </template>
 
 <script lang="ts" setup>
+import { format } from "date-fns";
 const patent = defineModel({
    type: Object as PropType<RouterOutput["data"]["patent"]["getPatent"]>,
    required: true,
 });
-const { crud } = useDatabasePatent(patent.value?.PatentID);
+const { crud, refresh } = useDatabasePatent(patent.value?.PatentID);
 // 基本資訊
 const basicData = useSyncData(patent, async (newData) => {
    if (!newData) return;
-   await crud.updatePatent({
-      Year: newData.Year,
-      DraftTitle: newData.DraftTitle,
-      Title: newData.Title,
-      TitleEnglish: newData.TitleEnglish,
-      PatentType: newData.PatentType,
-      country: newData.country
-         ? {
-            connect: {
-               CountryID: newData.country.CountryID,
-            },
-         }
-         : undefined,
-      department: newData.department
-         ? {
-            connect: {
-               DepartmentID: newData.department?.DepartmentID,
-            },
-         }
-         : undefined,
-   });
+   await crud.updatePatent([
+      {
+         Year: newData.Year,
+         DraftTitle: newData.DraftTitle,
+         Title: newData.Title,
+         TitleEnglish: newData.TitleEnglish,
+         PatentType: newData.PatentType,
+         country: newData.country
+            ? {
+               connect: {
+                  CountryID: newData.country.CountryID,
+               },
+            }
+            : undefined,
+         department: newData.department
+            ? {
+               connect: {
+                  DepartmentID: newData.department?.DepartmentID,
+               },
+            }
+            : undefined,
+      },
+   ]);
+   await refresh();
 });
 // 校內資訊
 const internalData = useSyncData(patent, async (newData) => {
    if (!newData) return;
-   await crud.updatePatent({});
+   await crud.updatePatent([
+      {
+         internal: {
+            update: {
+               data: {
+                  InitialReviewDate: newData.internal?.InitialReviewDate,
+                  InitialReviewNumber: newData.internal?.InitialReviewNumber,
+                  InitialReviewAgencies: {
+                     deleteMany: {},
+                  },
+               },
+            },
+         },
+      },
+      {
+         internal: {
+            update: {
+               data: {
+                  InitialReviewAgencies: newData.internal
+                     ? {
+                        create: newData.internal.InitialReviewAgencies.map(
+                           (agency) => ({
+                              AgencyUnitID: agency.AgencyUnitID,
+                           }),
+                        ),
+                     }
+                     : undefined,
+               },
+            },
+         },
+      },
+   ]);
+   await refresh();
 });
 
 // 技術資訊
 const technicalData = useSyncData(patent, async (newData) => {
    if (!newData) return;
-   await crud.updatePatent({
+   await crud.updatePatent([{
       technical: {
          update: {
             data: newData.technical
@@ -289,7 +355,8 @@ const technicalData = useSyncData(patent, async (newData) => {
                : undefined,
          },
       },
-   });
+   }]);
+   await refresh();
 });
 </script>
 

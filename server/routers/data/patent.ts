@@ -2,6 +2,7 @@ import { z } from "zod";
 import { procedure, router } from "../../trpc";
 import { CustomZodType } from "~/zod.dto";
 import { dbZ } from "~/server";
+import type { Prisma } from "@prisma/client";
 
 export default router({
    // [Other]
@@ -111,7 +112,7 @@ export default router({
       .input(dbZ.PatentWhereUniqueInputSchema)
       .query(async ({ input }) => {
          return await prisma.patent.findUnique({
-            where: input,
+            where: input as Prisma.PatentWhereUniqueInput,
             include: {
                country: true,
                department: {
@@ -171,7 +172,7 @@ export default router({
       .input(dbZ.PatentWhereInputSchema)
       .query(async ({ input }) => {
          return await prisma.patent.findMany({
-            where: input,
+            where: input as Prisma.PatentWhereInput,
             include: {
                country: true,
                department: {
@@ -229,24 +230,30 @@ export default router({
       }),
    updatePatent: procedure
       .input(
-         z.object({
-            patentID: z.number(),
-            data: dbZ.PatentUpdateInputSchema,
-         }),
+         z.array(
+            z.object({
+               patentID: z.number(),
+               data: dbZ.PatentUpdateInputSchema,
+            }),
+         ),
       )
       .mutation(async ({ input }) => {
-         return await prisma.patent.update({
-            where: {
-               PatentID: input.patentID,
-            },
-            data: input.data,
-         });
+         await prisma.$transaction(
+            input.map((data) => {
+               return prisma.patent.update({
+                  where: {
+                     PatentID: data.patentID,
+                  },
+                  data: data.data as Prisma.PatentUpdateInput,
+               });
+            }),
+         );
       }),
    deletePatent: procedure
       .input(dbZ.PatentWhereUniqueInputSchema)
       .mutation(async ({ input }) => {
          return await prisma.patent.delete({
-            where: input,
+            where: input as Prisma.PatentWhereUniqueInput,
          });
       }),
 });

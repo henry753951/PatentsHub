@@ -108,7 +108,8 @@ import type { Config } from "~/components/ui/auto-form/interface";
 import { ref, computed, watch } from "vue";
 type AgencyUnit = RouterOutput["data"]["agency"]["getAgencies"][0];
 const props = defineProps<{
-   selectedAgency: AgencyUnit | null
+   selectedAgency?: AgencyUnit | null
+   selectedAgencyUnitId?: number
 }>();
 
 const agenciesStore = useAgenciesStore();
@@ -117,7 +118,7 @@ const { openAutoModal } = useModals();
 
 const currentAgency = computed(() => {
    return agencies.value.find(
-      (a) => a.AgencyUnitID === props.selectedAgency?.AgencyUnitID,
+      (a) => a.AgencyUnitID === props.selectedAgency?.AgencyUnitID || a.AgencyUnitID === props.selectedAgencyUnitId,
    );
 });
 

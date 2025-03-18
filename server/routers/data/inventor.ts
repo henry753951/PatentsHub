@@ -2,13 +2,14 @@ import { z } from "zod";
 import { procedure, router } from "../../trpc";
 import { CustomZodType } from "~/zod.dto";
 import { dbZ } from "~/server";
+import type { Prisma } from "@prisma/client";
 export default router({
    // Create
    createInventor: procedure
       .input(dbZ.InventorCreateInputSchema)
       .mutation(async ({ input }) => {
          return await prisma.inventor.create({
-            data: input,
+            data: input as Prisma.InventorCreateInput,
          });
       }),
 
@@ -17,7 +18,7 @@ export default router({
       .input(dbZ.InventorWhereInputSchema)
       .query(async ({ input }) => {
          return await prisma.inventor.findMany({
-            where: input,
+            where: input as Prisma.InventorWhereInput,
             include: {
                contactInfo: true,
                department: {
@@ -41,7 +42,7 @@ export default router({
          console.log("Received input:", input);
          return await prisma.inventor.update({
             where: input.where,
-            data: input.data,
+            data: input.data as Prisma.InventorUpdateInput,
          });
       }),
 
@@ -54,7 +55,7 @@ export default router({
       )
       .mutation(async ({ input }) => {
          return await prisma.inventor.delete({
-            where: input.where,
+            where: input.where as Prisma.InventorWhereUniqueInput,
          });
       }),
 });

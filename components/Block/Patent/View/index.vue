@@ -1,8 +1,6 @@
 <template>
    <div ref="viewRef">
-      <div
-         v-if="patent"
-      >
+      <div v-if="patent">
          <div
             class="bg-[#f5f5f5] dark:bg-[#1a1a1a] sticky top-0 self-start z-[4] max-h-[230px] min-h-0 transition-all duration-500"
             :class="{
@@ -112,7 +110,9 @@
                         title="專利編號"
                         icon="ic:round-fingerprint"
                      >
-                        {{ patent.external ? patent.external.PatentNumber : "" }}
+                        {{
+                           patent.external ? patent.external.PatentNumber : ""
+                        }}
                      </CustomStatusBlock>
                      <CustomStatusBlock
                         title="專利國家"
@@ -207,7 +207,7 @@ const title = computed(() => {
 
 const {
    data: patent,
-   forceRefresh,
+   refresh,
    crud,
    status,
 } = await useDatabasePatent(porps.patentId);

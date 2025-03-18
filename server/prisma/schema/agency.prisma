@@ -13,15 +13,17 @@ model PatentTakerAgencyUnit {
   FileCode       String
   agencyUnit     AgencyUnit     @relation(fields: [AgencyUnitID], references: [AgencyUnitID])
   patentInternal PatentInternal @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
+  agencyUnitPersonIds Json?           @default("[]")
 
   @@id([PatentID, AgencyUnitID])
 }
 
 model PatentInitiatorAgencyUnit {
-  PatentID       Int
-  AgencyUnitID   Int
-  agencyUnit     AgencyUnit     @relation(fields: [AgencyUnitID], references: [AgencyUnitID])
-  patentInternal PatentInternal @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
+  PatentID            Int
+  AgencyUnitID        Int
+  agencyUnit          AgencyUnit     @relation(fields: [AgencyUnitID], references: [AgencyUnitID])
+  patentInternal      PatentInternal @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
+  agencyUnitPersonIds Json?           @default("[]")
 
   @@id([PatentID, AgencyUnitID])
 }

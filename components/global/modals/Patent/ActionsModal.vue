@@ -89,6 +89,20 @@ const actionItems = ref([
          },
       ],
    },
+   {
+      title: "刷新專利",
+      description: "此動作將重新抓取此專利的資料。",
+      actions: [
+         {
+            title: "刷新",
+            type: "secondary",
+            onClick: () => {
+               refreshNuxtData(["patents", `patent-${props.patent.PatentId}`]);
+               isOpen.value = false;
+            },
+         },
+      ],
+   },
 ]);
 </script>
 

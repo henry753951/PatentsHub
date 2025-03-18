@@ -1,6 +1,6 @@
 import pkg from "./package.json";
 import type { InlineConfig } from "vite";
-import { appPreset } from "./primevue.theme";
+import { appPreset, primevueLocale } from "./primevue.theme";
 
 const viteElectronBuildConfig = (type: "es" | "cjs", ext: string) => {
    return {
@@ -72,6 +72,7 @@ export default defineNuxtConfig({
          prefix: "P",
       },
       options: {
+         locale: primevueLocale,
          theme: {
             preset: appPreset,
             options: {

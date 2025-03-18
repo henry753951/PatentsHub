@@ -4,7 +4,7 @@
    >
       <!-- 左側：代理機構管理 -->
       <div
-         class="h-full w-full bg-white rounded-lg shadow-md dark:bg-zinc-900 min-h-0 overflow-hidden"
+         class="h-full w-full bg-white rounded-lg shadow-md dark:bg-zinc-900 min-h-0 overflow-hidden px-6"
       >
          <FormAgencyManage v-model="selectedAgencyUnit" />
       </div>

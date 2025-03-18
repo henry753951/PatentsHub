@@ -24,7 +24,11 @@
                         <DialogTitle>備註</DialogTitle>
                         <DialogDescription>
                            {{ note ? "編輯備註" : "新增備註" }}
-                           <Badge v-if="note">
+                           <Badge
+                              v-if="note"
+                              severity="secondary"
+                              class="ml-2"
+                           >
                               {{ format(note.Date, "yyyy-MM-dd HH:mm") }}
                            </Badge>
                         </DialogDescription>
@@ -83,6 +87,7 @@
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button/index";
 import { toast } from "vue-sonner";
+import Badge from "primevue/badge";
 const props = defineProps<{
    noteKey: string
 }>();
