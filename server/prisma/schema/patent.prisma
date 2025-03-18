@@ -20,6 +20,7 @@ model Patent {
   technical    PatentTechnicalAttributes?
   internal     PatentInternal?
   external     PatentExternal?
+  patentRecord PatentRecord[]
 }
 
 // ========================
@@ -115,3 +116,12 @@ model PatentStatus {
 }
 
 // ========================
+//專利紀錄
+// ========================
+model PatentRecord {
+  id       Int      @id @default(autoincrement()) // 添加獨立主鍵
+  PatentID Int                               // 外鍵，指向 Patent
+  Record   String?                           // 紀錄
+  Date     DateTime?                         // 日期
+  patent   Patent   @relation(fields: [PatentID], references: [PatentID])
+}

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { cn } from '@/lib/utils'
-import { CalendarHeading, type CalendarHeadingProps, useForwardProps } from 'reka-ui'
+import { RangeCalendarHeading, type RangeCalendarHeadingProps, useForwardProps } from 'reka-ui'
 import { computed, type HTMLAttributes } from 'vue'
 
-const props = defineProps<CalendarHeadingProps & { class?: HTMLAttributes['class'] }>()
+const props = defineProps<RangeCalendarHeadingProps & { class?: HTMLAttributes['class'] }>()
 
 defineSlots<{
   default: (props: { headingValue: string }) => any
@@ -19,7 +19,7 @@ const forwardedProps = useForwardProps(delegatedProps)
 </script>
 
 <template>
-  <CalendarHeading
+  <RangeCalendarHeading
     v-slot="{ headingValue }"
     :class="cn('text-sm font-medium', props.class)"
     v-bind="forwardedProps"
@@ -27,5 +27,5 @@ const forwardedProps = useForwardProps(delegatedProps)
     <slot :heading-value>
       {{ headingValue }}
     </slot>
-  </CalendarHeading>
+  </RangeCalendarHeading>
 </template>

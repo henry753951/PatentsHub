@@ -156,6 +156,9 @@
                   <TabPanel value="basic">
                      <BlockPatentViewTabBasic v-model="patent" />
                   </TabPanel>
+                  <TabPanel value="record">
+                     <BlockPatentViewTabRecord v-model="patent" />
+                  </TabPanel>
                </TabPanels>
             </Tabs>
          </div>

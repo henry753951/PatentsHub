@@ -127,6 +127,7 @@ import { z } from "zod";
 import type { Config } from "~/components/ui/auto-form/interface";
 import { ref, computed, watch } from "vue";
 type AgencyUnit = RouterOutput["data"]["agency"]["getAgencies"][0];
+
 const props = defineProps<{
    selectedAgency?: AgencyUnit | null
    selectedAgencyUnitId?: number
@@ -153,9 +154,7 @@ const selectedAgencyContact = defineModel({
 
 const schemas = {
    agencyContact: z.object({
-      name: z
-         .string({ required_error: "姓名不可為空" })
-         .nonempty("姓名不可為空"),
+      name: z.string({ required_error: "姓名不可為空" }).nonempty("姓名不可為空"),
       email: z.string().email("請輸入有效的電子郵件").optional(),
       officeNumber: z.string().optional(),
       phoneNumber: z.string().optional(),
@@ -246,10 +245,7 @@ const editContact = async (
 
 const deleteContact = async (contactPersonID: number) => {
    if (!currentAgency.value) throw new Error("未選擇事務所");
-   await agenciesStore.deleteContact(
-      currentAgency.value.AgencyUnitID,
-      contactPersonID,
-   );
+   await agenciesStore.deleteContact(currentAgency.value.AgencyUnitID, contactPersonID);
 };
 </script>
 
@@ -257,6 +253,11 @@ const deleteContact = async (contactPersonID: number) => {
 /* 調整表格頭部和按鈕對齊 */
 th,
 td {
-   vertical-align: middle;
+  vertical-align: middle;
+}
+
+/* 確保滾動容器高度 */
+.overlay-scrollbars-host {
+  height: 100% !important;
 }
 </style>

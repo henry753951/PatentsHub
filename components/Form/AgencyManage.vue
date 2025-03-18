@@ -185,20 +185,22 @@ const deleteAgency = async (agencyUnitID: number) => {
 
 <style scoped>
 li {
-   padding: 0.5rem 0;
-}
-.flex-1 {
-   padding: 0.5rem;
+  padding: 0.5rem 0;
 }
 
 /* 移除懸浮時的背景色變化 */
 li.flex {
-   transition: none; /* 移除所有懸浮過渡效果 */
+  transition: none; /* 移除所有懸浮過渡效果 */
 }
 
 /* 確保層次不遮擋 */
 li {
-   position: relative;
-   z-index: 0;
+  position: relative;
+  z-index: 0;
+}
+
+/* 確保滾動容器高度 */
+.overlay-scrollbars-host {
+  height: 100% !important;
 }
 </style>
