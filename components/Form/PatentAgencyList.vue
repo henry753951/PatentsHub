@@ -17,7 +17,7 @@
                   class="px-4 py-3 hover:bg-muted/50 border-b border-gray-100 dark:border-zinc-700"
                >
                   <div class="flex items-center justify-between w-full">
-                     <div class="flex items-center gap-3">
+                     <div class="flex items-center gap-3 w-full group">
                         <Icon
                            name="ic:outline-assignment"
                            class="h-5 w-5 text-muted-foreground"
@@ -25,6 +25,11 @@
                         <span class="font-medium text-foreground">
                            {{ agency.agencyUnit.Name }}
                         </span>
+                        <CustomIconButton
+                           class="ml-auto mr-2 hidden group-hover:block"
+                           name="ic:sharp-remove"
+                           @click.stop="deleteAgencyUnit(agency.AgencyUnitID)"
+                        />
                      </div>
                   </div>
                </AccordionTrigger>
@@ -39,7 +44,7 @@
                         {{ agency.agencyUnit.Description || "無" }}
                      </p>
                      <p
-                        v-if="isTakerAgencyUnitType(agencies[index]) && agencies[index].FileCode"
+                        v-if="isTakerAgencyUnitType(agencies[index])"
                         class="text-sm text-foreground flex items-center gap-1"
                      >
                         <CustomContentBlockRow
@@ -54,19 +59,19 @@
                            聯絡人
                         </h4>
                         <div
-                           class="mt-2 grid gap-3 border border-dashed rounded-md"
+                           class="mt-2 grid gap-1 border border-dashed rounded-md"
                         >
                            <div
-                              v-for="person in agency.agencyUnit.Persons"
+                              v-for="person in agency.agencyUnitPersons"
                               :key="person.ContactInfoID"
-                              class="p-3 bg-muted/50 rounded-md"
+                              class="p-3 bg-muted/50 rounded-md flex items-center justify-between group"
                            >
                               <div class="flex items-center gap-3">
                                  <Icon
-                                    name="ic:outline-person"
+                                    name="ic:round-person"
                                     class="h-4 w-4 text-muted-foreground"
                                  />
-                                 <span class="font-medium text-foreground">
+                                 <span class="text-foreground text-lg">
                                     {{ person.contactInfo.Name }}
                                  </span>
                                  <span
@@ -75,18 +80,49 @@
                                  >
                                     ({{ person.contactInfo.Role }})
                                  </span>
+                                 <div class="hidden group-hover:block">
+                                    <CustomIconButton
+                                       name="ic:sharp-remove"
+                                       @click.stop="
+                                          deleteContactPerson(
+                                             agency.AgencyUnitID,
+                                             person.ContactInfoID,
+                                          )
+                                       "
+                                    />
+                                 </div>
                               </div>
                               <div
-                                 class="mt-2 ml-7 space-y-1 text-sm text-muted-foreground"
+                                 class="space-y-1 text-sm text-muted-foreground"
                               >
-                                 <p v-if="person.contactInfo.Email">
-                                    電子郵件: {{ person.contactInfo.Email }}
+                                 <p
+                                    v-if="person.contactInfo.Email"
+                                    class="flex items-center gap-1"
+                                 >
+                                    <Icon
+                                       name="ic:round-email"
+                                       class="h-4 w-4"
+                                    />
+                                    {{ person.contactInfo.Email }}
                                  </p>
-                                 <p v-if="person.contactInfo.PhoneNumber">
-                                    電話: {{ person.contactInfo.PhoneNumber }}
+                                 <p
+                                    v-if="person.contactInfo.PhoneNumber"
+                                    class="flex items-center gap-1"
+                                 >
+                                    <Icon
+                                       name="ic:round-phone-android"
+                                       class="h-4 w-4"
+                                    />
+                                    {{ person.contactInfo.PhoneNumber }}
                                  </p>
-                                 <p v-if="person.contactInfo.OfficeNumber">
-                                    辦公室電話:
+                                 <p
+                                    v-if="person.contactInfo.OfficeNumber"
+                                    class="flex items-center gap-1"
+                                 >
+                                    <Icon
+                                       name="ic:round-phone"
+                                       class="h-4 w-4"
+                                    />
                                     {{ person.contactInfo.OfficeNumber }}
                                  </p>
                                  <p v-if="person.contactInfo.Note">
@@ -94,9 +130,31 @@
                                  </p>
                               </div>
                            </div>
-                           <div class="flex justify-center items-center py-3 group cursor-pointer">
-                              <span class="group-hover:block hidden"> 新增聯絡人 </span>
-                              <span class="group-hover:hidden"> 無聯絡人 </span>
+                           <div
+                              class="flex justify-center items-center py-3 cursor-pointer"
+                              :class="{
+                                 group: !agency.agencyUnitPersons.length,
+                              }"
+                              @click="
+                                 modals.agencyContactModal(agency.AgencyUnitID)
+                              "
+                           >
+                              <span
+                                 class="group-hover:block"
+                                 :class="{
+                                    hidden: !agency.agencyUnitPersons.length,
+                                 }"
+                              >
+                                 新增或編輯聯絡人
+                              </span>
+                              <span
+                                 class="group-hover:hidden"
+                                 :class="{
+                                    hidden: agency.agencyUnitPersons.length,
+                                 }"
+                              >
+                                 無聯絡人
+                              </span>
                            </div>
                         </div>
                      </div>
@@ -106,25 +164,28 @@
          </Accordion>
       </div>
       <div
-         v-else
-         class="text-center py-8 text-muted-foreground"
+         class="text-center py-1 text-muted-foreground cursor-pointer group flex justify-center"
+         @click="modals.agencyModal()"
       >
-         未找到任何單位
-      </div>
-      <div class="flex justify-end w-full">
-         <Button
-            class="w-full sm:w-auto"
-            variant="outline"
-            @click="
-               open('AgencyModal', { props: { selectedAgencyUnitCallback } })
-            "
+         <div
+            v-if="!agencies.length"
+            class="group-hover:hidden"
+         >
+            未找到任何單位
+         </div>
+         <div
+            class="items-center gap-1"
+            :class="{
+               'group-hover:flex hidden': !agencies.length,
+               'flex': agencies.length,
+            }"
          >
             <Icon
                name="ic:baseline-add"
                class="mr-2 h-4 w-4"
             />
             新增單位
-         </Button>
+         </div>
       </div>
    </div>
 </template>
@@ -138,14 +199,6 @@ import {
    AccordionContent,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import {
-   Dialog,
-   DialogContent,
-   DialogDescription,
-   DialogFooter,
-   DialogHeader,
-   DialogTitle,
-} from "@/components/ui/dialog";
 
 type PatentInitiatorAgencyUnit = NonNullable<
    NonNullable<RouterOutput["data"]["patent"]["getPatent"]>["internal"]
@@ -153,16 +206,18 @@ type PatentInitiatorAgencyUnit = NonNullable<
 type PatentTakerAgencyUnit = NonNullable<
    NonNullable<RouterOutput["data"]["patent"]["getPatent"]>["internal"]
 >["TakerAgencies"][number];
+type Person =
+   RouterOutput["data"]["agency"]["getAgencies"][number]["Persons"][number];
 
 const isTakerAgencyUnitType = (
    unit: PatentInitiatorAgencyUnit | PatentTakerAgencyUnit,
 ): unit is PatentTakerAgencyUnit => {
    return "FileCode" in unit;
 };
+const { open } = useModals();
 
 const agenciesStore = useAgenciesStore();
 const { agencies: agenciesInStore } = storeToRefs(agenciesStore);
-const { open } = useModals();
 
 const props = defineProps<{
    isTakerAgencyUnit: boolean
@@ -190,6 +245,21 @@ const agenciesViewData = computed(() => {
    });
 });
 
+const modals = {
+   agencyModal: () =>
+      open("AgencyModal", { props: { selectedAgencyUnitCallback } }),
+   agencyContactModal: (agencyUnitId: number) =>
+      open("AgencyModal", {
+         props: {
+            selectedAgencyUnitPersonCallback,
+            selectingContact: {
+               enable: true,
+               defaultAgencyUnitId: agencyUnitId,
+            },
+         },
+      }),
+};
+
 const selectedAgencyUnitCallback = (agencyUnit: {
    AgencyUnitID: number
    Name: string
@@ -214,6 +284,35 @@ const selectedAgencyUnitCallback = (agencyUnit: {
       PatentID: -1, // not used
       agencyUnitPersonIds: [], // for update
    });
+};
+
+const selectedAgencyUnitPersonCallback = (person: Person) => {
+   const agency = agencies.value.find(
+      (agency) => agency.AgencyUnitID === person.AgencyUnitID,
+   );
+   if (!agency) return;
+   if ((agency.agencyUnitPersonIds as number[])?.includes(person.ContactInfoID))
+      return;
+   (agency.agencyUnitPersonIds as number[]).push(person.ContactInfoID);
+};
+
+const deleteAgencyUnit = async (agencyUnitID: number) => {
+   agencies.value = agencies.value.filter(
+      (agency) => agency.AgencyUnitID !== agencyUnitID,
+   );
+};
+
+const deleteContactPerson = async (
+   agencyUnitID: number,
+   contactInfoID: number,
+) => {
+   const agency = agencies.value.find(
+      (agency) => agency.AgencyUnitID === agencyUnitID,
+   );
+   if (!agency) return;
+   agency.agencyUnitPersonIds = (agency.agencyUnitPersonIds as number[]).filter(
+      (id) => id !== contactInfoID,
+   );
 };
 </script>
 

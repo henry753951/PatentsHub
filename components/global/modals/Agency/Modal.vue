@@ -25,7 +25,11 @@
                />
                <FormAgencyContactList
                   v-else
-                  :selected-agency-unit-id="selectingContact?.defaultAgencyUnitId"
+                  v-model="selectedAgencyContact"
+                  :selected-agency-unit-id="
+                     selectingContact?.defaultAgencyUnitId
+                  "
+                  can-select
                   no-header
                />
             </div>
@@ -34,7 +38,7 @@
                <Button
                   :disabled="
                      (isAgencySelecting && !selectedAgencyUnit) ||
-                        (!isAgencySelecting && !selectedAgencyUnit)
+                        (!isAgencySelecting && !selectedAgencyContact)
                   "
                   @click="select()"
                >
@@ -63,7 +67,7 @@ const isOpen = defineModel("open", {
 const { side = "right", ...props } = defineProps<{
    side?: "left" | "right"
    selectingContact?: {
-      defaultAgencyUnitId?: number
+      defaultAgencyUnitId?: number | undefined
       enable: boolean
    }
    selectedAgencyUnitCallback?: (agencyUnit: SimplifiedAgencyUnit) => void
@@ -79,15 +83,16 @@ const isAgencySelecting = computed(() => {
 
 // Refs
 const selectedAgencyUnit = ref<AgencyUnit | null>(null);
+const selectedAgencyContact = ref<Person | null>(null);
 
 // Methods
 const select = () => {
-   if (!selectedAgencyUnit.value) return;
-
-   if (props.selectedAgencyUnitPersonCallback) {
-      return;
+   if (!isAgencySelecting.value && props.selectedAgencyUnitPersonCallback && selectedAgencyContact.value) {
+      props.selectedAgencyUnitPersonCallback(
+         selectedAgencyContact.value,
+      );
    }
-   else if (props.selectedAgencyUnitCallback) {
+   else if (props.selectedAgencyUnitCallback && selectedAgencyUnit.value) {
       props.selectedAgencyUnitCallback({
          AgencyUnitID: selectedAgencyUnit.value.AgencyUnitID,
          Name: selectedAgencyUnit.value.Name,

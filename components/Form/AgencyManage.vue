@@ -3,7 +3,7 @@
       <!-- 標題和新增事務所按鈕 -->
       <div
          v-if="!props.noHeader"
-         class="flex items-center justify-between pt-6 pb-2"
+         class="flex items-center justify-between pt-6 pb-2 px-6"
       >
          <h1 class="text-2xl font-bold">
             事務所管理
@@ -11,11 +11,11 @@
       </div>
 
       <!-- 事務所列表 -->
-      <overlay-scrollbars-component
-         :options="{ scrollbars: { autoHide: 'leave' } }"
-         class="h-full min-h-0"
-      >
-         <div class="w-full space-y-2 py-2">
+      <overlay-scrollbars-component>
+         <div
+            class="w-full space-y-2"
+            :class="{ 'px-6 py-4': !props.noHeader }"
+         >
             <div
                v-for="agency in agencies"
                :key="agency.AgencyUnitID"
@@ -54,19 +54,17 @@
             </div>
             <li
                class="flex justify-center cursor-pointer rounded-lg shadow-sm bg-zinc-100 dark:bg-zinc-800 border-zinc-300 border-dashed border"
+               @click="
+                  openAutoModal(
+                     '新增事務所',
+                     '新增事務所至清單',
+                     schemas.agency,
+                     addAgency,
+                     fields.agency,
+                  )
+               "
             >
-               <div
-                  class="font-medium py-3 flex items-center gap-2"
-                  @click="
-                     openAutoModal(
-                        '新增事務所',
-                        '新增事務所至清單',
-                        schemas.agency,
-                        addAgency,
-                        fields.agency,
-                     )
-                  "
-               >
+               <div class="font-medium py-3 flex items-center gap-2">
                   <Icon name="ic:baseline-add" />
                   新增事務所
                </div>

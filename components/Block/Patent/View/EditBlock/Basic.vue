@@ -46,7 +46,6 @@
                />
             </CustomContentBlockRow>
             <CustomContentBlockRow title="初評事務所">
-               {{ internalData.data.value.internal.InitialReviewAgencies }}
                <FormPatentAgencyList
                   v-model="
                      internalData.data.value.internal.InitialReviewAgencies
@@ -55,6 +54,12 @@
                />
             </CustomContentBlockRow>
             <CustomContentBlockRow title="承辦事務所">
+               <FormPatentAgencyList
+                  v-model="
+                     internalData.data.value.internal.TakerAgencies
+                  "
+                  :is-taker-agency-unit="true"
+               />
             </CustomContentBlockRow>
          </CustomContentBlock>
          <CustomContentBlock
@@ -309,6 +314,9 @@ const internalData = useSyncData(patent, async (newData) => {
                   InitialReviewAgencies: {
                      deleteMany: {},
                   },
+                  TakerAgencies: {
+                     deleteMany: {},
+                  },
                },
             },
          },
@@ -321,7 +329,23 @@ const internalData = useSyncData(patent, async (newData) => {
                      ? {
                         create: newData.internal.InitialReviewAgencies.map(
                            (agency) => ({
-                              AgencyUnitID: agency.AgencyUnitID,
+                              agencyUnit: {
+                                 connect: { AgencyUnitID: agency.AgencyUnitID },
+                              },
+                              agencyUnitPersonIds: agency.agencyUnitPersonIds as number[],
+                           }),
+                        ),
+                     }
+                     : undefined,
+                  TakerAgencies: newData.internal
+                     ? {
+                        create: newData.internal.TakerAgencies.map(
+                           (agency) => ({
+                              agencyUnit: {
+                                 connect: { AgencyUnitID: agency.AgencyUnitID },
+                              },
+                              FileCode: agency.FileCode,
+                              agencyUnitPersonIds: agency.agencyUnitPersonIds as number[],
                            }),
                         ),
                      }
