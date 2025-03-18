@@ -151,8 +151,8 @@ onMounted(async () => {
       const records = await $trpc.data.patentRecord.getPatentRecords.query({
          patentID: patent.value.PatentID,
       });
-      if (!patent.value.PatentRecord) {
-         patent.value.PatentRecord = [];
+      if (!patent.value.patentRecord) {
+         patent.value.patentRecord = [];
       }
       events.value = records.map((record) => ({
          id: record.id,
@@ -163,7 +163,7 @@ onMounted(async () => {
          icon: "fluent:slide-record-48-regular",
          color: "#4CAF50",
       }));
-      patent.value.PatentRecord = records;
+      patent.value.patentRecord = records;
       // 測試用，增加更多數據以觸發滾動
       events.value = [
          ...Array(20).fill(null).map((_, i) => ({
@@ -222,12 +222,12 @@ const createOrUpdateRecord = async () => {
          }
 
          // 更新 patent.PatentRecord
-         if (patent.value?.PatentRecord) {
-            const recordIndex = patent.value.PatentRecord.findIndex(
+         if (patent.value?.patentRecord) {
+            const recordIndex = patent.value.patentRecord.findIndex(
                (r) => r.id === editingRecordId.value,
             );
             if (recordIndex !== -1) {
-               patent.value.PatentRecord[recordIndex] = updatedRecord;
+               patent.value.patentRecord[recordIndex] = updatedRecord;
             }
          }
       }
@@ -249,10 +249,10 @@ const createOrUpdateRecord = async () => {
             color: "#4CAF50",
          });
 
-         if (!patent.value.PatentRecord) {
-            patent.value.PatentRecord = [];
+         if (!patent.value.patentRecord) {
+            patent.value.patentRecord = [];
          }
-         patent.value.PatentRecord.push(createdRecord);
+         patent.value.patentRecord.push(createdRecord);
       }
 
       // 清空輸入並重置編輯狀態

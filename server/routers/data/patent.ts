@@ -114,6 +114,7 @@ export default router({
          return await prisma.patent.findUnique({
             where: input as Prisma.PatentWhereUniqueInput,
             include: {
+               patentRecord: true,
                country: true,
                department: {
                   include: {
@@ -174,7 +175,7 @@ export default router({
          return await prisma.patent.findMany({
             where: input as Prisma.PatentWhereInput,
             include: {
-               PatentRecord: true,
+               patentRecord: true,
                country: true,
                department: {
                   include: {

@@ -20,7 +20,7 @@ model Patent {
   technical    PatentTechnicalAttributes?
   internal     PatentInternal?
   external     PatentExternal?
-  PatentRecord PatentRecord[]
+  patentRecord PatentRecord[]
 }
 
 // ========================
