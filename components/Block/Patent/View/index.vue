@@ -137,7 +137,7 @@
             </div>
          </div>
          <div class="container mx-auto z-[-1]">
-            <Tabs value="basic">
+            <Tabs v-model:value="activeTab">
                <TabList>
                   <Tab value="basic">
                      概要
@@ -154,10 +154,16 @@
                </TabList>
                <TabPanels>
                   <TabPanel value="basic">
-                     <BlockPatentViewTabBasic v-model="patent" />
+                     <BlockPatentViewTabBasic
+                        v-if="activeTab === 'basic'"
+                        v-model="patent"
+                     />
                   </TabPanel>
                   <TabPanel value="record">
-                     <BlockPatentViewTabRecord v-model="patent" />
+                     <BlockPatentViewTabRecord
+                        v-if="activeTab === 'record'"
+                        v-model="patent"
+                     />
                   </TabPanel>
                </TabPanels>
             </Tabs>
@@ -207,6 +213,8 @@ const title = computed(() => {
          || patent.value.TitleEnglish,
    };
 });
+
+const activeTab = ref("basic");
 
 const {
    data: patent,
