@@ -17,7 +17,7 @@
             </DialogDescription>
          </DialogHeader>
          <form
-            class="space-y-4"
+            class="space-y-2"
             @submit.prevent="submitForm"
          >
             <div>
@@ -62,31 +62,31 @@
                   class="mt-1 w-full rounded-lg border border-slate-200 dark:border-zinc-600 bg-slate-50 dark:bg-zinc-900 text-slate-800 dark:text-zinc-100"
                   placeholder="請輸入職稱（選填）"
                />
-               <div>
-                  <Label
-                     for="department"
-                     class="text-sm font-medium text-slate-700 dark:text-zinc-300"
-                  >
-                     所屬系所
-                  </Label>
-                  <DepartmentSelect
-                     v-model="formData.belongs"
-                     class="mb-2"
-                  />
-               </div>
-               <DialogFooter>
-                  <Button
-                     type="button"
-                     variant="outline"
-                     @click="closeModal"
-                  >
-                     取消
-                  </Button>
-                  <Button type="submit">
-                     確認
-                  </Button>
-               </DialogFooter>
             </div>
+            <div>
+               <Label
+                  for="department"
+                  class="text-sm font-medium text-slate-700 dark:text-zinc-300"
+               >
+                  所屬系所
+               </Label>
+               <DepartmentSelect
+                  v-model="formData.belongs"
+                  class="mb-2"
+               />
+            </div>
+            <DialogFooter>
+               <Button
+                  type="button"
+                  variant="outline"
+                  @click="closeModal"
+               >
+                  取消
+               </Button>
+               <Button type="submit">
+                  確認
+               </Button>
+            </DialogFooter>
          </form>
       </DialogContent>
    </Dialog>

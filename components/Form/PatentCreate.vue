@@ -30,7 +30,7 @@
                      <FormLabel>年度</FormLabel>
                      <FormControl>
                         <Input
-                           type="text"
+                           type="number"
                            placeholder="113"
                            v-bind="componentField"
                         />

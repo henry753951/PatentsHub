@@ -1,72 +1,40 @@
 import type { z } from "zod";
 import type { RouterOutput, dbZ } from "~/server";
 
-export const usePatent = async (
-   defaultFillter = undefined as
-   | z.infer<typeof dbZ.PatentWhereUniqueInputSchema>
-   | undefined,
+export const useDatabasePatent = (
+   defaultPatentId = undefined as number | undefined,
+   options: {
+      lazy?: boolean
+   } = { lazy: true },
 ) => {
    const { $trpc } = useNuxtApp();
    // [State]
-   const fillter = ref<
-      z.infer<typeof dbZ.PatentWhereUniqueInputSchema> | undefined
-   >(defaultFillter);
-   const { data, refresh, status } = useAsyncData<
+   const fillter = ref(defaultPatentId);
+   const { data, status } = useAsyncData<
       RouterOutput["data"]["patent"]["getPatent"]
    >(
-      "patent-" + JSON.stringify(fillter.value),
+      `patent-${fillter.value}`,
       async () => {
-         console.log(fillter.value, "fillter.value");
          if (fillter.value == undefined) {
-            console.log("fillter.value == undefined");
             return null;
          }
-         return await getPatent({ where: fillter.value });
+         const data = await getPatent({
+            where: {
+               PatentID: fillter.value,
+            },
+         });
+         consola.info("Fetching patent with fillter", fillter.value, data);
+         return data;
       },
       {
          watch: [fillter],
-         lazy: true,
+         lazy: options.lazy,
       },
    );
 
-   watch(
-      () => data.value,
-      async (newData) => {
-         if (newData == null) return;
-         consola.info("Patent data updated", newData);
-         return await $trpc.data.patent.updatePatent.mutate(
-            serialize({
-               data: {
-                  DraftTitle: newData.DraftTitle,
-                  Title: newData.Title,
-                  TitleEnglish: newData.TitleEnglish,
-                  Year: newData.Year,
-                  internal: {
-                     upsert: newData.internal
-                        ? {
-                           create: {
-                              InternalID: newData.internal.InternalID,
-                           },
-                           update: {
-                              InternalID: newData.internal.InternalID,
-                           },
-                        }
-                        : undefined,
-                  },
-                  external: {},
-                  country: {},
-                  department: {},
-                  technical: {},
-                  inventors: {},
-               },
-               patentID: newData.PatentID,
-            }),
-         );
-      },
-      {
-         deep: true,
-      },
-   );
+   const refresh = async () => {
+      await refreshNuxtData(["patents", `patent-${fillter.value}`]);
+   };
 
    // [CRUD]
    // Create
@@ -77,21 +45,38 @@ export const usePatent = async (
    const getPatent = async (args: {
       where: z.infer<typeof dbZ.PatentWhereUniqueInputSchema>
    }) => {
-      console.log(args.where, "args.where");
-      return await $trpc.data.patent.getPatent.query(serialize(args.where));
+      return await $trpc.data.patent.getPatent.query(args.where);
    };
 
    // Update
-
+   const updatePatent = async (
+      updateInputs: z.infer<typeof dbZ.PatentUpdateInputSchema>[],
+   ) => {
+      if (!updateInputs || !fillter.value) return;
+      const data = await $trpc.data.patent.updatePatent.mutate(
+         updateInputs.map((data) => ({
+            patentID: fillter.value!,
+            data,
+         })),
+      );
+      consola.success("Patent data updated", updateInputs, data);
+   };
    // Delete
-
+   const deletePatent = async () => {
+      const data = await $trpc.data.patent.deletePatent.mutate({
+         PatentID: fillter.value,
+      });
+      await refreshNuxtData(["patents", `patent-${fillter.value}`]);
+   };
    return {
       data,
       fillter,
       status,
-      forceRefresh: refresh,
+      refresh,
       crud: {
          getPatent,
+         deletePatent,
+         updatePatent,
       },
    };
 };

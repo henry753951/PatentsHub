@@ -1,13 +1,59 @@
 <template>
-   <div class="p-6 h-full">
-      <!-- 外層容器使用 flex 佈局 -->
-      <div class="flex flex-col h-full">
-         <!-- 標題和新增事務所按鈕 -->
-         <div class="flex items-center justify-between pt-6 pb-2 px-6 mb-4">
-            <h1 class="text-2xl font-bold">
-               事務所管理
-            </h1>
-            <Button
+   <div class="flex flex-col h-full">
+      <!-- 標題和新增事務所按鈕 -->
+      <div
+         v-if="!props.noHeader"
+         class="flex items-center justify-between pt-6 pb-2 px-6"
+      >
+         <h1 class="text-2xl font-bold">
+            事務所管理
+         </h1>
+      </div>
+
+      <!-- 事務所列表 -->
+      <overlay-scrollbars-component>
+         <div
+            class="w-full space-y-2"
+            :class="{ 'px-6 py-4': !props.noHeader }"
+         >
+            <div
+               v-for="agency in agencies"
+               :key="agency.AgencyUnitID"
+               class="flex items-center justify-between border cursor-pointer rounded-lg shadow-sm transition-all py-3 px-2"
+               :class="[
+                  isSelected(agency)
+                     ? 'bg-blue-100 border-blue-300 dark:bg-blue-900 dark:border-blue-700'
+                     : 'bg-white dark:bg-zinc-800 border-zinc-100',
+               ]"
+               @click="selectAgency(agency)"
+            >
+               <span class="text-lg font-medium flex-1">
+                  {{ agency.Name }}
+               </span>
+               <DropdownMenu>
+                  <DropdownMenuTrigger as-child>
+                     <Button
+                        variant="ghost"
+                        size="sm"
+                     >
+                        <MoreHorizontalIcon class="h-4 w-4" />
+                     </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                     <DropdownMenuItem @click="openEditAgencyModal(agency)">
+                        編輯
+                     </DropdownMenuItem>
+                     <DropdownMenuItem
+                        class="text-red-600"
+                        @click="deleteAgency(agency.AgencyUnitID)"
+                     >
+                        刪除事務所
+                     </DropdownMenuItem>
+                  </DropdownMenuContent>
+               </DropdownMenu>
+            </div>
+            <li
+               class="flex justify-center cursor-pointer rounded-lg shadow-sm bg-zinc-100 dark:bg-zinc-800 border-zinc-300 border-dashed border"
                @click="
                   openAutoModal(
                      '新增事務所',
@@ -18,56 +64,13 @@
                   )
                "
             >
-               <PlusIcon class="mr-2 h-4 w-4" /> 新增事務所
-            </Button>
+               <div class="font-medium py-3 flex items-center gap-2">
+                  <Icon name="ic:baseline-add" />
+                  新增事務所
+               </div>
+            </li>
          </div>
-
-         <!-- 事務所列表，啟用滾動 -->
-         <OverlayScrollbarsComponent
-            :options="{ scrollbars: { autoHide: 'leave' } }"
-            class="flex-1 min-h-0 px-6"
-         >
-            <ul
-               class="w-full space-y-2 rounded-lg bg-gray-100 dark:bg-zinc-900 p-3"
-               style="max-height: calc(100vh - 200px);"
-            >
-               <li
-                  v-for="agency in agencies"
-                  :key="agency.AgencyUnitID"
-                  class="flex items-center justify-between py-2 border-b cursor-pointer rounded-lg shadow-sm p-4"
-                  :class="[
-                     isSelected(agency)
-                        ? 'bg-blue-100 border-blue-300 dark:bg-blue-900 dark:border-blue-700'
-                        : 'bg-white dark:bg-zinc-800',
-                  ]"
-                  @click="selectAgency(agency)"
-               >
-                  <span class="text-lg font-medium flex-1">{{ agency.Name }}</span>
-                  <DropdownMenu>
-                     <DropdownMenuTrigger as-child>
-                        <Button
-                           variant="ghost"
-                           size="sm"
-                        >
-                           <MoreHorizontalIcon class="h-4 w-4" />
-                        </Button>
-                     </DropdownMenuTrigger>
-                     <DropdownMenuContent>
-                        <DropdownMenuItem @click="openEditAgencyModal(agency)">
-                           編輯
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                           class="text-red-600"
-                           @click="deleteAgency(agency.AgencyUnitID)"
-                        >
-                           刪除事務所
-                        </DropdownMenuItem>
-                     </DropdownMenuContent>
-                  </DropdownMenu>
-               </li>
-            </ul>
-         </OverlayScrollbarsComponent>
-      </div>
+      </overlay-scrollbars-component>
    </div>
 </template>
 
@@ -93,6 +96,11 @@ type AgencyUnit = RouterOutput["data"]["agency"]["getAgencies"][0];
 // Pinia store
 const agenciesStore = useAgenciesStore();
 const { agencies } = storeToRefs(agenciesStore);
+
+// Props
+const props = defineProps<{
+   noHeader?: boolean
+}>();
 
 // 管理選中的系所（單選）
 const selectedAgencyUnit = defineModel({
@@ -158,6 +166,7 @@ const openEditAgencyModal = (agency: AgencyUnit) => {
 
 const addAgency = async (data: z.infer<typeof schemas.agency>) => {
    await agenciesStore.insert(data.name, data.description);
+   await refreshNuxtData();
 };
 
 const editAgency = async (
@@ -165,10 +174,12 @@ const editAgency = async (
    data: z.infer<typeof schemas.agency>,
 ) => {
    await agenciesStore.update(agencyUnitID, data.name, data.description);
+   await refreshNuxtData();
 };
 
 const deleteAgency = async (agencyUnitID: number) => {
    await agenciesStore.delete(agencyUnitID);
+   await refreshNuxtData();
 };
 </script>
 

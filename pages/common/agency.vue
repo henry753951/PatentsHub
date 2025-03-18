@@ -4,14 +4,14 @@
    >
       <!-- 左側：代理機構管理 -->
       <div
-         class="h-full w-full bg-white rounded-lg shadow-md dark:bg-zinc-900 min-h-0 overflow-hidden"
+         class="h-full w-full bg-white rounded-lg shadow-md dark:bg-zinc-900 min-h-0"
       >
          <FormAgencyManage v-model="selectedAgencyUnit" />
       </div>
 
       <!-- 右側：聯絡人列表或其他內容 -->
       <div
-         class="h-full w-full bg-white rounded-lg shadow-md dark:bg-zinc-900 min-h-0 overflow-hidden"
+         class="h-full w-full bg-white rounded-lg shadow-md dark:bg-zinc-900 min-h-0"
       >
          <FormAgencyContactList
             v-if="selectedAgencyUnit"

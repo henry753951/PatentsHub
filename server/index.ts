@@ -21,13 +21,43 @@ const dbPath = isProduction
 export const prisma
    = global.prisma
      ?? new PrismaClient({
-        log: isProduction ? ["error"] : ["query", "info", "error", "warn"],
+        log: isProduction
+           ? [{ emit: "event", level: "error" }]
+           : [
+              {
+                 emit: "event",
+                 level: "query",
+              },
+              {
+                 emit: "stdout",
+                 level: "error",
+              },
+              {
+                 emit: "stdout",
+                 level: "info",
+              },
+              {
+                 emit: "stdout",
+                 level: "warn",
+              },
+           ],
         datasources: {
            db: {
               url: dbPath,
            },
         },
      });
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+prisma.$on("query", (e: {
+   query: string
+   params: string
+   duration: number
+}) => {
+   console.log("Query:", e.query);
+   console.log("Params:", e.params);
+   console.log("Duration:", e.duration);
+});
 
 export const dbZ = dbZod;
 

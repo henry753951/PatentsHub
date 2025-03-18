@@ -1,44 +1,48 @@
 import type { z } from "zod";
 import type { RouterOutput, dbZ } from "~/server";
 
-export const usePatents = (
+export const useDatabasePatents = (
    defaultFillter: z.infer<typeof dbZ.PatentWhereInputSchema> = {},
 ) => {
    const { $trpc } = useNuxtApp();
    // [State]
    const fillter
       = ref<z.infer<typeof dbZ.PatentWhereInputSchema>>(defaultFillter);
-   // const { data, refresh, status } = useAsyncData<
-   //    RouterOutput["data"]["inventor"]["getInventors"]
-   // >(
-   //    "inventor",
-   //    async () => {
-   //       // 若預設不全選，則不顯示任何資料 (看需求)
-   //       console.log(getInventors({ where: fillter.value }));
-   //       if (Object.keys(fillter.value).length === 0) return [];
-   //       return await getInventors({ where: fillter.value });
-   //    },
-   //    {
-   //       watch: [fillter],
-   //    },
-   // );
+   const { data, refresh, status } = useAsyncData<
+      RouterOutput["data"]["patent"]["getPatents"]
+   >(
+      "patents",
+      async () => {
+         const data = await getPatents(fillter.value);
+         consola.info("Fetching patents with fillter", fillter.value, data);
+         return data;
+      },
+      {
+         watch: [fillter],
+         lazy: true,
+      },
+   );
 
    // [CRUD]
    // Create
 
    // Read
-
+   const getPatents = async (
+      where: z.infer<typeof dbZ.PatentWhereInputSchema>,
+   ) => {
+      return await $trpc.data.patent.getPatents.query(where);
+   };
    // Update
 
    // Delete
 
    return {
-      // data,
-      // fillter,
-      // status,
-      // forceRefresh: refresh,
+      data,
+      fillter,
+      status,
+      forceRefresh: refresh,
       crud: {
-
+         get: getPatents,
       },
    };
 };

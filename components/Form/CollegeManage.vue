@@ -1,7 +1,10 @@
 <template>
    <div class="flex flex-col h-full">
       <!-- 標題和新增學院按鈕 -->
-      <div class="flex items-center justify-between pt-6 pb-2 px-6">
+      <div
+         v-if="!props.noHeader"
+         class="flex items-center justify-between pt-6 pb-2"
+      >
          <h1 class="text-2xl font-bold">
             學院管理
          </h1>
@@ -24,7 +27,7 @@
       <!-- 學院列表 -->
       <OverlayScrollbarsComponent
          :options="{ scrollbars: { autoHide: 'leave' } }"
-         class="h-full min-h-0 px-6"
+         class="h-full min-h-0"
       >
          <Accordion
             collapsible
@@ -182,6 +185,7 @@ type Department =
 // Props 定義
 const props = defineProps<{
    selectable?: boolean
+   noHeader?: boolean
 }>();
 
 // Pinia store

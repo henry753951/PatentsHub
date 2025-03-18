@@ -10,7 +10,7 @@
 
 <script lang="ts" setup>
 definePageMeta({
-   name: "country-view",
+   name: "common-countryManage",
 });
 </script>
 

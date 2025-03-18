@@ -1,21 +1,23 @@
 <template>
-   <div class="container mx-auto">
+   <div class="container mx-auto py-3">
       <Button
          @click="
-            open('PatentModal', {
-               props: {
-                  patentId: 1,
-               },
+            open('PatentCreateModal', {
+               props: {},
             })
          "
       >
-         Open Sheet
+         建立專利
       </Button>
       <div class="grid grid-cols-1 gap-4">
          <BlockPatentRow
-            v-for="i in 10"
-            :key="i"
+            v-for="patent in data"
+            :key="patent.PatentID"
+            :patent="patent"
             class="rounded-lg"
+            @click="
+               open('PatentModal', { props: { patentId: patent.PatentID } })
+            "
          />
       </div>
    </div>
@@ -23,10 +25,11 @@
 
 <script lang="ts" setup>
 const { open } = useModals();
-
 definePageMeta({
    name: "home",
 });
+
+const { data, forceRefresh } = useDatabasePatents();
 </script>
 
 <style scoped></style>

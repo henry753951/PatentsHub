@@ -9,7 +9,7 @@
                發明人
             </span>
             <span class="text-gray-700 dark:text-gray-200 font-bold text-lg">
-               {{ author }}
+               {{ author?.contactInfo.Name ?? "無資料" }}
             </span>
             <div
                v-if="coAuthors.length > 0"
@@ -29,13 +29,13 @@
       <!-- Middle Section: 發明名稱、學院、系所、資助單位 -->
       <div class="flex flex-col items-start flex-1">
          <div class="flex items-center space-x-2">
-            <div
-               class="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100 px-2 py-0.5 text-xs rounded border border-yellow-200 dark:border-yellow-800"
-            >
-               {{ department.college }}
-            </div>
+            <CustomBadgeWithText
+               :text="patent.department.college.Name"
+               size="xs"
+            />
+
             <div class="text-gray-700 dark:text-gray-200 text-sm">
-               {{ department.name }}
+               {{ patent.department.Name }}
             </div>
          </div>
          <span
@@ -58,8 +58,8 @@
          <div class="flex flex-col items-end">
             <div class="flex items-center gap-1">
                <NuxtImg
-                  v-if="country"
-                  :src="`https://flagcdn.com/w160/${country.code.toLowerCase()}.png`"
+                  v-if="patent.country"
+                  :src="`https://flagcdn.com/w160/${patent.country.ISOCode.toLowerCase()}.png`"
                   class="h-3 rounded"
                />
                <div
@@ -73,13 +73,12 @@
                   />
                </div>
                <span class="text-gray-700 dark:text-gray-200 text-xs">
-                  {{ patentNumber ?? "未輸入" }}
+                  <!-- {{ patentNumber ?? "未輸入" }} -->
                </span>
                <span
-                  v-if="type"
                   class="bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-100 px-2 py-0.5 text-xs rounded"
                >
-                  {{ type }}
+                  {{ patentTypeStr }}
                </span>
             </div>
             <div class="flex items-center space-x-2">
@@ -102,12 +101,12 @@
          <div class="flex items-center space-x-2">
             <div class="w-2 h-2 bg-green-500 rounded-full">
             </div>
-            <span class="text-green-600 dark:text-green-400">有效</span>
+            <span class="text-green-600 dark:text-green-400">{{ status }}</span>
             <span
                v-if="expiryDate"
                class="text-red-500 dark:text-red-400 text-sm"
             >
-               {{ countdown }}到期
+               {{ expiryDate }}到期
             </span>
          </div>
       </div>
@@ -115,65 +114,55 @@
 </template>
 
 <script lang="ts" setup>
-import { format } from "date-fns";
-import { useTimeAgo } from "@vueuse/core";
+type Patent = RouterOutput["data"]["patent"]["getPatents"][0];
 
-const currentTime = useNow();
+//    name = "血液分離萃取方法及其裝置", // 發明名稱（必顯示） 👌
+//    country = { name: "台灣", code: "TW" }, // 專利國家（必顯示） 👌
+//    patentNumber = "I723456", // 編號（必顯示）👌
+//    type = "DESIGN", // 專利類型（原始欄位）👌
+//    department = { 👌
+//       name: "化學工程及材料工程學系", // 系所（原始欄位）
+//       college: "工學院", // 學院（原始欄位）
+//    },
+//    author = "鍾宜璇", // 發明人（必顯示） 👌
+//    coAuthors = ["李明哲", "陳雅婷", "王志豪"], // 共同發明人（原始欄位） 👌
 
-// 定義屬性並填入假資料
-const {
-   expiryDate = "2033-02-27", // 到期日（假資料）
-   status = "有效", // 狀態（假資料）
-   name = "血液分離萃取方法及其裝置", // 發明名稱（必顯示）
-   country = { name: "台灣", code: "TW" }, // 專利國家（必顯示）
-   patentNumber = "I723456", // 編號（必顯示）
-   type = "DESIGN", // 專利類型（原始欄位）
-   department = {
-      name: "化學工程及材料工程學系", // 系所（原始欄位）
-      college: "工學院", // 學院（原始欄位）
-   },
-   author = "鍾宜璇", // 發明人（必顯示）
-   coAuthors = ["李明哲", "陳雅婷", "王志豪"], // 共同發明人（原始欄位）
-   maintenancePeriod = "2023/02/28 - 2033/02/27", // 維護期程（必顯示）
-   maintenanceYear = "2023", // 維護年度（必顯示）
-   fundingUnit = "科技部", // 資助單位（必顯示）
-} = defineProps<{
-   expiryDate?: string
-   status?: string
-   name?: string
-   country?: { name: string, code: string }
-   patentNumber?: string
-   type?: string
-   department?: { name: string, college: string }
-   author?: string
-   coAuthors?: string[]
-   maintenancePeriod?: string
-   maintenanceYear?: string
-   fundingUnit?: string
+// FAKED DATA
+const maintenancePeriod = "2023/02/28 - 2033/02/27"; // 維護期程（必顯示）
+const expiryDate = "2033-02-27"; // 到期日（假資料）
+const status = "有效"; // 狀態（假資料）
+const maintenanceYear = "2023"; // 維護年度（必顯示）
+const fundingUnit = "科技部"; // 資助單位（必顯示）
+
+const { patent } = defineProps<{
+   patent: Patent
 }>();
 
-// 到期倒數計時
-const countdown = computed(() => {
-   if (expiryDate) {
-      const time = new Date(expiryDate);
-      const timeAgo = useTimeAgo(time, {
-         messages: {
-            justNow: "剛剛",
-            past: (n: any) => `${n}前`,
-            future: (n: any) => `${n}後`,
-            second: (n) => `${n} 秒`,
-            minute: (n) => `${n} 分鐘`,
-            hour: (n) => `${n} 小時`,
-            day: (n) => `${n} 天`,
-            week: (n) => `${n} 週`,
-            month: (n) => `${n} 個月`,
-            year: (n) => `${n} 年`,
-            invalid: "無效的時間",
-         },
-      });
-      return timeAgo;
-   }
-   return "";
+const name = computed(() => {
+   if (!patent) return "";
+   return patent.Title ?? patent.DraftTitle;
+});
+
+const author = computed(() => {
+   const mainInventor = patent.inventors.find((i) => i.Main)?.inventor;
+   return mainInventor; // 預設值作為後備
+});
+
+const coAuthors = computed(() => {
+   return patent.inventors.filter((i) => !i.Main).map((i) => i.inventor)
+      .length > 0
+      ? patent.inventors.filter((i) => !i.Main).map((i) => i.inventor)
+      : [];
+});
+
+const patentTypeStr = computed(() => {
+   const map = {
+      INVENTION: "發明",
+      UTILITY_MODEL: "新型",
+      DESIGN: "設計",
+      PLANT: "植物",
+   };
+   return patent.PatentType ? map[patent.PatentType] : "未選擇";
 });
 </script>
 

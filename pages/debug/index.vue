@@ -1,5 +1,5 @@
 <template>
-   <div class="p-4 w-full prose dark:prose-invert">
+   <div class="p-4 w-full prose dark:prose-invert space-y-2">
       <div>
          <h2>現有 Modals</h2>
          {{ modals }}
@@ -21,41 +21,50 @@
       </div>
       <div>
          <h2>專利 UI</h2>
-         <Button
-            @click="
-               open('PatentCreateModal', {
-                  id: '123',
-                  props: {},
-               })
-            "
-         >
-            Open Sheet
-         </Button>
-         <Button
-            @click="
-               open('Example2Modal', {
-                  id: '1234',
-               })
-            "
-         >
-            Open Sheet
-         </Button>
-         <BlockPatentRow
-            name="hi"
-            :expiry-date="'2025/01/30'"
-            author="me"
-         />
+         <div class="flex gap-2">
+            <Button
+               @click="
+                  open('PatentCreateModal', {
+                     props: {},
+                  })
+               "
+            >
+               建立專利
+            </Button>
+            <Button
+               @click="
+                  open('PatentModal', {
+                     props: {
+                        patentId: 1,
+                     },
+                  })
+               "
+            >
+               瀏覽專利
+            </Button>
+            <Button
+               @click="
+                  open('Example2Modal', {
+                     id: '1234',
+                  })
+               "
+            >
+               測試 Modal
+            </Button>
+         </div>
       </div>
-      <BlockPatentInventorRow
-         class="h-[88px]"
-         name="XXX"
-         job="XX"
-         :belong="{
-            college: 'college',
-            department: 'department',
-         }"
-      />
-      <BlockPatentInventorEditList />
+      <div class="grid grid-cols-1 gap-4">
+         <BlockPatentInventorRow
+            class="h-[88px]"
+            name="XXX"
+            job="XX"
+            :belong="{
+               college: 'college',
+               department: 'department',
+            }"
+         />
+         <BlockPatentInventorEditList />
+      </div>
    </div>
 </template>
 

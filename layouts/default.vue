@@ -12,11 +12,15 @@
             </OverlayScrollbarsComponent>
          </div>
       </div>
-      <ModalsService />
+      <ClientOnly>
+         <ModalsService />
+         <Toaster position="top-center" />
+      </ClientOnly>
    </div>
 </template>
 
 <script lang="ts" setup>
+import { Toaster } from "@/components/ui/sonner";
 import { ModalsService } from "#components";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 </script>
