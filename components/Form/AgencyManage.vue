@@ -166,7 +166,6 @@ const openEditAgencyModal = (agency: AgencyUnit) => {
 
 const addAgency = async (data: z.infer<typeof schemas.agency>) => {
    await agenciesStore.insert(data.name, data.description);
-   await refreshNuxtData();
 };
 
 const editAgency = async (
@@ -174,12 +173,10 @@ const editAgency = async (
    data: z.infer<typeof schemas.agency>,
 ) => {
    await agenciesStore.update(agencyUnitID, data.name, data.description);
-   await refreshNuxtData();
 };
 
 const deleteAgency = async (agencyUnitID: number) => {
    await agenciesStore.delete(agencyUnitID);
-   await refreshNuxtData();
 };
 </script>
 

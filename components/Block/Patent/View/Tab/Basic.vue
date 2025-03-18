@@ -61,9 +61,7 @@
                :is-synced="isSynced.takerAgencies.value"
             >
                <FormPatentAgencyList
-                  v-model="
-                     internalData.data.value.internal.TakerAgencies
-                  "
+                  v-model="internalData.data.value.internal.TakerAgencies"
                   :is-taker-agency-unit="true"
                />
             </CustomContentBlockRow>
@@ -335,6 +333,7 @@ const internalData = useSyncData(patent, async (newData) => {
          internal: {
             update: {
                data: {
+                  InternalID: newData.internal?.InternalID,
                   InitialReviewDate: newData.internal?.InitialReviewDate,
                   InitialReviewNumber: newData.internal?.InitialReviewNumber,
                   InitialReviewAgencies: {
@@ -356,9 +355,12 @@ const internalData = useSyncData(patent, async (newData) => {
                         create: newData.internal.InitialReviewAgencies.map(
                            (agency) => ({
                               agencyUnit: {
-                                 connect: { AgencyUnitID: agency.AgencyUnitID },
+                                 connect: {
+                                    AgencyUnitID: agency.AgencyUnitID,
+                                 },
                               },
-                              agencyUnitPersonIds: agency.agencyUnitPersonIds as number[],
+                              agencyUnitPersonIds:
+                                   agency.agencyUnitPersonIds as number[],
                            }),
                         ),
                      }
@@ -368,10 +370,13 @@ const internalData = useSyncData(patent, async (newData) => {
                         create: newData.internal.TakerAgencies.map(
                            (agency) => ({
                               agencyUnit: {
-                                 connect: { AgencyUnitID: agency.AgencyUnitID },
+                                 connect: {
+                                    AgencyUnitID: agency.AgencyUnitID,
+                                 },
                               },
                               FileCode: agency.FileCode,
-                              agencyUnitPersonIds: agency.agencyUnitPersonIds as number[],
+                              agencyUnitPersonIds:
+                                   agency.agencyUnitPersonIds as number[],
                            }),
                         ),
                      }
@@ -387,25 +392,40 @@ const internalData = useSyncData(patent, async (newData) => {
 // 技術資訊
 const technicalData = useSyncData(patent, async (newData) => {
    if (!newData) return;
-   await crud.updatePatent([{
-      technical: {
-         update: {
-            data: newData.technical
-               ? {
-                  MaturityLevel: newData.technical.MaturityLevel,
-                  keywords: {
-                     connectOrCreate: newData.technical.keywords.map(
-                        (keyword) => ({
-                           where: { KeywordID: keyword.KeywordID },
-                           create: { Keyword: keyword.Keyword },
-                        }),
-                     ),
-                  },
-               }
-               : undefined,
+   await crud.updatePatent([
+      {
+         technical: {
+            update: {
+               data: newData.technical
+                  ? {
+                     MaturityLevel: newData.technical.MaturityLevel,
+                     keywords: {
+                        set: [],
+                     },
+                  }
+                  : undefined,
+            },
          },
       },
-   }]);
+      {
+         technical: {
+            update: {
+               data: newData.technical
+                  ? {
+                     keywords: {
+                        connectOrCreate: newData.technical.keywords.map(
+                           (keyword) => ({
+                              where: { KeywordID: keyword.KeywordID },
+                              create: { Keyword: keyword.Keyword },
+                           }),
+                        ),
+                     },
+                  }
+                  : undefined,
+            },
+         },
+      },
+   ]);
    await refresh();
 });
 </script>

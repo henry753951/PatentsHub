@@ -35,7 +35,6 @@
                   no-header
                />
             </div>
-            <div>{{ selectedAgencyUnit }}</div>
             <SheetFooter>
                <Button
                   :disabled="

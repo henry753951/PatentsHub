@@ -1,6 +1,6 @@
 <template>
    <TooltipProvider :delay-duration="100">
-      <Tooltip>
+      <Tooltip disable-hoverable-content>
          <TooltipTrigger as-child>
             <div
                class="py-1 px-1 rounded-full flex items-center justify-centercursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-all duration-300 gap-1 select-none cursor-pointer"
