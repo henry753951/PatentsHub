@@ -44,7 +44,7 @@
                         {{ agency.agencyUnit.Description || "無" }}
                      </p>
                      <p
-                        v-if="isTakerAgencyUnitType(agencies[index])"
+                        v-if="isTakerAgencyUnitType(agencies[index]) && props.isTakerAgencyUnit"
                         class="text-sm text-foreground flex items-center gap-1"
                      >
                         <CustomContentBlockRow
