@@ -4,6 +4,8 @@
          <SheetContent
             :side="side"
             class="flex flex-col"
+            @close-auto-focus.prevent
+            @open-auto-focus.prevent
          >
             <SheetHeader>
                <SheetTitle>

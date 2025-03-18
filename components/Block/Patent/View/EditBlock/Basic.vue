@@ -45,7 +45,10 @@
                   "
                />
             </CustomContentBlockRow>
-            <CustomContentBlockRow title="初評事務所">
+            <CustomContentBlockRow
+               title="初評事務所"
+               :is-synced="isSynced.initialReviewAgencies.value"
+            >
                <FormPatentAgencyList
                   v-model="
                      internalData.data.value.internal.InitialReviewAgencies
@@ -53,7 +56,10 @@
                   :is-taker-agency-unit="false"
                />
             </CustomContentBlockRow>
-            <CustomContentBlockRow title="承辦事務所">
+            <CustomContentBlockRow
+               title="承辦事務所"
+               :is-synced="isSynced.takerAgencies.value"
+            >
                <FormPatentAgencyList
                   v-model="
                      internalData.data.value.internal.TakerAgencies
@@ -272,6 +278,26 @@ const patent = defineModel({
    type: Object as PropType<RouterOutput["data"]["patent"]["getPatent"]>,
    required: true,
 });
+
+const isSynced = {
+   initialReviewAgencies: computed(() => {
+      return (
+         JSON.stringify(
+            internalData.data.value?.internal?.InitialReviewAgencies,
+         )
+         === JSON.stringify(
+            internalData.refData.value?.internal?.InitialReviewAgencies,
+         )
+      );
+   }),
+   takerAgencies: computed(() => {
+      return (
+         JSON.stringify(internalData.data.value?.internal?.TakerAgencies)
+         === JSON.stringify(internalData.refData.value?.internal?.TakerAgencies)
+      );
+   }),
+};
+
 const { crud, refresh } = useDatabasePatent(patent.value?.PatentID);
 // 基本資訊
 const basicData = useSyncData(patent, async (newData) => {
