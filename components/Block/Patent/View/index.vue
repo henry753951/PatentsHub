@@ -154,7 +154,7 @@
                </TabList>
                <TabPanels>
                   <TabPanel value="basic">
-                     <BlockPatentViewEditBlockBasic v-model="patent" />
+                     <BlockPatentViewTabBasic v-model="patent" />
                   </TabPanel>
                </TabPanels>
             </Tabs>
