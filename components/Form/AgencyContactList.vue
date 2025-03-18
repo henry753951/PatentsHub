@@ -13,11 +13,9 @@
          <!-- 聯絡人列表 -->
          <OverlayScrollbarsComponent
             :options="{ scrollbars: { autoHide: 'leave' } }"
-            class="h-full min-h-0"
+            class="h-full min-h-0 max-h-[calc(100vh-120px)]"
          >
-            <table
-               class="w-full border-collapse rounded-lg bg-gray-100 dark:bg-zinc-900"
-            >
+            <table class="w-full border-collapse rounded-lg bg-gray-100 dark:bg-zinc-900">
                <thead>
                   <tr class="bg-gray-100 dark:bg-zinc-900">
                      <th class="p-2 text-left">
@@ -54,9 +52,7 @@
                               </Button>
                            </DropdownMenuTrigger>
                            <DropdownMenuContent>
-                              <DropdownMenuItem
-                                 @click="openEditContactModal(contact)"
-                              >
+                              <DropdownMenuItem @click="openEditContactModal(contact)">
                                  編輯
                               </DropdownMenuItem>
                               <DropdownMenuItem
@@ -107,6 +103,7 @@ import { z } from "zod";
 import type { Config } from "~/components/ui/auto-form/interface";
 import { ref, computed, watch } from "vue";
 type AgencyUnit = RouterOutput["data"]["agency"]["getAgencies"][0];
+
 const props = defineProps<{
    selectedAgency: AgencyUnit | null
 }>();
@@ -123,9 +120,7 @@ const currentAgency = computed(() => {
 
 const schemas = {
    agencyContact: z.object({
-      name: z
-         .string({ required_error: "姓名不可為空" })
-         .nonempty("姓名不可為空"),
+      name: z.string({ required_error: "姓名不可為空" }).nonempty("姓名不可為空"),
       email: z.string().email("請輸入有效的電子郵件").optional(),
       officeNumber: z.string().optional(),
       phoneNumber: z.string().optional(),
@@ -205,10 +200,7 @@ const editContact = async (
 
 const deleteContact = async (contactPersonID: number) => {
    if (!currentAgency.value) throw new Error("未選擇事務所");
-   await agenciesStore.deleteContact(
-      currentAgency.value.AgencyUnitID,
-      contactPersonID,
-   );
+   await agenciesStore.deleteContact(currentAgency.value.AgencyUnitID, contactPersonID);
 };
 </script>
 
@@ -216,6 +208,11 @@ const deleteContact = async (contactPersonID: number) => {
 /* 調整表格頭部和按鈕對齊 */
 th,
 td {
-   vertical-align: middle;
+  vertical-align: middle;
+}
+
+/* 確保滾動容器高度 */
+.overlay-scrollbars-host {
+  height: 100% !important;
 }
 </style>
