@@ -15,6 +15,7 @@
       </PopoverTrigger>
       <PopoverContent
          class="max-w-[var(--radix-popper-anchor-width)] rounded-xl min-w-[350px]"
+         @focus-outside.prevent
       >
          <div class="pb-4 font-bold">
             選擇發明人
@@ -54,6 +55,11 @@
 </template>
 
 <script lang="ts" setup>
+import {
+   Popover,
+   PopoverContent,
+   PopoverTrigger,
+} from "@/components/ui/popover";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 
 const { chooseText } = defineProps<{
