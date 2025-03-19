@@ -44,11 +44,8 @@ export const useSyncData = <T>(
    const save = async () => {
       if (options.changeRefData) {
          const newData = JSON.parse(JSON.stringify(data.value));
-         console.log("refData", refData.value);
          updateRefData(refData, newData);
-         console.log("refData", refData.value);
       }
-
       if (onSave) await onSave(data.value);
    };
    const unWatch = watch(

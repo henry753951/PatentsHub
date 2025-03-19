@@ -1,11 +1,18 @@
 import { defineStore } from "pinia";
 import { toast } from "vue-sonner";
+import type { dbZ, z } from "#imports";
 export const useAppStore = defineStore("appStore", {
    state: () => {
       return {
-         logs: [],
-      } as {
-         logs: ILog[]
+         logs: [] as ILog[],
+         note: new Map<
+            string,
+            {
+               Title: string
+               Body: string
+               Date: Date
+            }
+         >(),
       };
    },
    actions: {

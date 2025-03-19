@@ -1,41 +1,29 @@
 <template>
    <div class="flex flex-col h-full">
       <!-- 標題和新增事務所按鈕 -->
-      <div class="flex items-center justify-between pt-6 pb-2 px-6">
+      <div
+         v-if="!props.noHeader"
+         class="flex items-center justify-between pt-6 pb-2 px-6"
+      >
          <h1 class="text-2xl font-bold">
             事務所管理
          </h1>
-         <Button
-            @click="
-               openAutoModal(
-                  '新增事務所',
-                  '新增事務所至清單',
-                  schemas.agency,
-                  addAgency,
-                  fields.agency,
-               )
-            "
-         >
-            <PlusIcon class="mr-2 h-4 w-4" /> 新增事務所
-         </Button>
       </div>
 
       <!-- 事務所列表 -->
-      <overlay-scrollbars-component
-         :options="{ scrollbars: { autoHide: 'leave' } }"
-         class="h-full min-h-0 px-6"
-      >
-         <ul
-            class="w-full space-y-2 rounded-lg bg-gray-100 dark:bg-zinc-900 p-3"
+      <overlay-scrollbars-component>
+         <div
+            class="w-full space-y-2"
+            :class="{ 'px-6 py-4': !props.noHeader }"
          >
-            <li
+            <div
                v-for="agency in agencies"
                :key="agency.AgencyUnitID"
-               class="flex items-center justify-between py-2 border-b cursor-pointer rounded-lg shadow-sm p-4"
+               class="flex items-center justify-between border cursor-pointer rounded-lg shadow-sm transition-all py-3 px-2"
                :class="[
                   isSelected(agency)
                      ? 'bg-blue-100 border-blue-300 dark:bg-blue-900 dark:border-blue-700'
-                     : 'bg-white dark:bg-zinc-800',
+                     : 'bg-white dark:bg-zinc-800 border-zinc-100',
                ]"
                @click="selectAgency(agency)"
             >
@@ -63,8 +51,25 @@
                      </DropdownMenuItem>
                   </DropdownMenuContent>
                </DropdownMenu>
+            </div>
+            <li
+               class="flex justify-center cursor-pointer rounded-lg shadow-sm bg-zinc-100 dark:bg-zinc-800 border-zinc-300 border-dashed border"
+               @click="
+                  openAutoModal(
+                     '新增事務所',
+                     '新增事務所至清單',
+                     schemas.agency,
+                     addAgency,
+                     fields.agency,
+                  )
+               "
+            >
+               <div class="font-medium py-3 flex items-center gap-2">
+                  <Icon name="ic:baseline-add" />
+                  新增事務所
+               </div>
             </li>
-         </ul>
+         </div>
       </overlay-scrollbars-component>
    </div>
 </template>
@@ -91,6 +96,11 @@ type AgencyUnit = RouterOutput["data"]["agency"]["getAgencies"][0];
 // Pinia store
 const agenciesStore = useAgenciesStore();
 const { agencies } = storeToRefs(agenciesStore);
+
+// Props
+const props = defineProps<{
+   noHeader?: boolean
+}>();
 
 // 管理選中的系所（單選）
 const selectedAgencyUnit = defineModel({
@@ -172,20 +182,22 @@ const deleteAgency = async (agencyUnitID: number) => {
 
 <style scoped>
 li {
-   padding: 0.5rem 0;
-}
-.flex-1 {
-   padding: 0.5rem;
+  padding: 0.5rem 0;
 }
 
 /* 移除懸浮時的背景色變化 */
 li.flex {
-   transition: none; /* 移除所有懸浮過渡效果 */
+  transition: none; /* 移除所有懸浮過渡效果 */
 }
 
 /* 確保層次不遮擋 */
 li {
-   position: relative;
-   z-index: 0;
+  position: relative;
+  z-index: 0;
+}
+
+/* 確保滾動容器高度 */
+.overlay-scrollbars-host {
+  height: 100% !important;
 }
 </style>

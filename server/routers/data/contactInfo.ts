@@ -25,15 +25,15 @@ export default router({
                   Email: input.Email,
                   OfficeNumber: input.OfficeNumber,
                   PhoneNumber: input.PhoneNumber,
-                  Position: input.Position,
+                  Role: input.Position,
                   Note: input.Note,
                },
             });
 
             // 再建立聯絡人與事務所的關聯
-            await prisma.agencyContactPerson.create({
+            await prisma.agencyUnitPerson.create({
                data: {
-                  AgencyID: input.agencyID,
+                  AgencyUnitID: input.agencyID,
                   ContactInfoID: contact.ContactInfoID,
                },
             });
@@ -51,7 +51,7 @@ export default router({
             Email: z.string().optional(),
             OfficeNumber: z.string().optional(),
             PhoneNumber: z.string().optional(),
-            Position: z.string().optional(),
+            Role: z.string().optional(),
             Note: z.string().optional(),
          }),
       )
@@ -63,7 +63,7 @@ export default router({
                Email: input.Email,
                OfficeNumber: input.OfficeNumber,
                PhoneNumber: input.PhoneNumber,
-               Position: input.Position,
+               Role: input.Role,
                Note: input.Note,
             },
          });
@@ -74,7 +74,7 @@ export default router({
       .input(z.object({ contactInfoID: z.number() }))
       .mutation(async ({ input }) => {
          return await prisma.$transaction(async (prisma) => {
-            await prisma.agencyContactPerson.deleteMany({
+            await prisma.agencyUnitPerson.deleteMany({
                where: { ContactInfoID: input.contactInfoID },
             });
 

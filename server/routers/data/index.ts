@@ -5,6 +5,8 @@ import college from "./college";
 import inventor from "./inventor";
 import agency from "./agency";
 import contactInfo from "./contactInfo";
+import note from "./note";
+import patentRecord from "./patentRecord";
 export default router({
    country: country,
    patent: patent,
@@ -12,4 +14,6 @@ export default router({
    inventor: inventor,
    agency: agency,
    contactInfo: contactInfo,
+   note: note,
+   patentRecord: patentRecord,
 });

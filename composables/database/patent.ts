@@ -10,7 +10,7 @@ export const useDatabasePatent = (
    const { $trpc } = useNuxtApp();
    // [State]
    const fillter = ref(defaultPatentId);
-   const { data, refresh, status } = useAsyncData<
+   const { data, status } = useAsyncData<
       RouterOutput["data"]["patent"]["getPatent"]
    >(
       `patent-${fillter.value}`,
@@ -31,6 +31,11 @@ export const useDatabasePatent = (
          lazy: options.lazy,
       },
    );
+
+   const refresh = async () => {
+      await refreshNuxtData(["patents", `patent-${fillter.value}`]);
+   };
+
    // [CRUD]
    // Create
 
@@ -40,25 +45,25 @@ export const useDatabasePatent = (
    const getPatent = async (args: {
       where: z.infer<typeof dbZ.PatentWhereUniqueInputSchema>
    }) => {
-      console.log(args.where, "args.where");
       return await $trpc.data.patent.getPatent.query(args.where);
    };
 
    // Update
    const updatePatent = async (
-      updateInput: z.infer<typeof dbZ.PatentUpdateInputSchema>,
+      updateInputs: z.infer<typeof dbZ.PatentUpdateInputSchema>[],
    ) => {
-      if (!updateInput || !fillter.value) return;
-      consola.success("Patent data updated", updateInput);
-      await $trpc.data.patent.updatePatent.mutate({
-         data: updateInput,
-         patentID: fillter.value,
-      });
-      await refreshNuxtData(["patents"]);
+      if (!updateInputs || !fillter.value) return;
+      const data = await $trpc.data.patent.updatePatent.mutate(
+         updateInputs.map((data) => ({
+            patentID: fillter.value!,
+            data,
+         })),
+      );
+      consola.success("Patent data updated", updateInputs, data);
    };
    // Delete
    const deletePatent = async () => {
-      await $trpc.data.patent.deletePatent.mutate({
+      const data = await $trpc.data.patent.deletePatent.mutate({
          PatentID: fillter.value,
       });
       await refreshNuxtData(["patents", `patent-${fillter.value}`]);
@@ -67,7 +72,7 @@ export const useDatabasePatent = (
       data,
       fillter,
       status,
-      forceRefresh: refresh,
+      refresh,
       crud: {
          getPatent,
          deletePatent,

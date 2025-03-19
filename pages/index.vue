@@ -1,5 +1,16 @@
 <template>
    <div class="container mx-auto py-3">
+      <div class="w-fit">
+         <BlockNote
+            note-key="唯一key"
+         />
+         <BlockNote
+            note-key="唯一key"
+         />
+         <BlockNote
+            note-key="6:internal"
+         />
+      </div>
       <Button
          @click="
             open('PatentCreateModal', {

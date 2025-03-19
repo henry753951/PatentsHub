@@ -4,12 +4,16 @@
       class="w-full flex flex-col"
    >
       <p
-         class="text-sm  mb-1 w-full"
+         class="text-sm mb-1 w-full flex items-center gap-2"
          :class="{
             'text-red-500 dark:text-red-400': !isSynced,
             'text-gray-500 dark:text-gray-400': isSynced,
          }"
       >
+         <Icon
+            v-if="icon"
+            :name="icon"
+         />
          {{ title }}
       </p>
       <div
@@ -19,7 +23,7 @@
             'px-2 bg-white dark:bg-zinc-700 w-full': isFocus,
             'cursor-pointer': !isFocus,
          }"
-         class="font-bold hover:w-full hover:bg-white hover:px-2 rounded-lg transition-all duration-300 dark:hover:bg-zinc-700 w-[100%] py-1.5"
+         class="font-bold hover:w-full hover:bg-white hover:px-2 rounded-lg transition-all duration-300 dark:hover:bg-zinc-700 w-[100%] py-1.5 hover:shadow-sm"
          @dblclick="focus()"
       >
          <div
@@ -31,6 +35,12 @@
             }"
          >
             {{ str }} {{ number }}
+            <span
+               v-if="!str && !number"
+               class="text-gray-300 dark:text-gray-500 font-thin text-sm"
+            >
+               {{ placeholder }}
+            </span>
          </div>
          <div
             v-else
@@ -68,9 +78,16 @@ onClickOutside(target, (event) => {
    isFocus.value = false;
 });
 
-const { title = undefined, isSynced = true } = defineProps({
+const {
+   title = undefined,
+   isSynced = true,
+   icon = undefined,
+   placeholder = "點兩下開始編輯",
+} = defineProps({
    title: String,
    isSynced: Boolean,
+   icon: String,
+   placeholder: String,
 });
 const isFocus = ref(false);
 const str = defineModel({

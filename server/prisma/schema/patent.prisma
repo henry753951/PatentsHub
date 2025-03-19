@@ -20,6 +20,7 @@ model Patent {
   technical    PatentTechnicalAttributes?
   internal     PatentInternal?
   external     PatentExternal?
+  patentRecord PatentRecord[]
 }
 
 // ========================
@@ -76,7 +77,7 @@ model PatentInternal {
   PatentID              Int                         @id
   InternalID            String                      @unique // 校內編號
   InitialReviewDate     DateTime?
-  InitialReviewNumber   String?
+  InitialReviewNumber   Int?
   InitialReviewAgencies PatentInitiatorAgencyUnit[] // 初評事務所
   TakerAgencies         PatentTakerAgencyUnit[] // 承辦事務所
   Patent                Patent                      @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
@@ -115,3 +116,12 @@ model PatentStatus {
 }
 
 // ========================
+//專利紀錄
+// ========================
+model PatentRecord {
+  id       Int      @id @default(autoincrement()) // 添加獨立主鍵
+  PatentID Int                               // 外鍵，指向 Patent
+  Record   String?                           // 紀錄
+  Date     DateTime?                         // 日期
+  patent   Patent   @relation(fields: [PatentID], references: [PatentID])
+}

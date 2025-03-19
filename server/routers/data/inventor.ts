@@ -2,6 +2,7 @@ import { z } from "zod";
 import { procedure, router } from "../../trpc";
 import { CustomZodType } from "~/zod.dto";
 import { dbZ } from "~/server";
+import type { Prisma } from "@prisma/client";
 export default router({
    // Create
    createInventor: procedure
@@ -19,7 +20,7 @@ export default router({
       .input(dbZ.InventorWhereInputSchema)
       .query(async ({ input }) => {
          return await prisma.inventor.findMany({
-            where: input,
+            where: input as Prisma.InventorWhereInput,
             include: {
                contactInfo: true,
                department: {
@@ -45,7 +46,7 @@ export default router({
          console.log("ContactInfo", input.data.contactInfo);
          return await prisma.inventor.update({
             where: input.where,
-            data: input.data,
+            data: input.data as Prisma.InventorUpdateInput,
          });
       }),
 
