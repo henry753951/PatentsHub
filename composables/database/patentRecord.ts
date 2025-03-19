@@ -11,7 +11,7 @@ export const useDatabasePatentRecord = (
    // [State]
    const fillter = ref(defaultPatentId);
    const { data, status } = useAsyncData<
-      RouterOutput["data"]["patentRecord"]["getPatentRecords"]
+      RouterOutput["data"]["patentRecords"]["getPatentRecords"]
    >(
       `patent-${fillter.value}:records`,
       async () => {

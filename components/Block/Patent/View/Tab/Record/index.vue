@@ -148,11 +148,11 @@ const editingRecordId = ref<number | null>(null);
 const { $trpc } = useNuxtApp();
 onMounted(async () => {
    if (patent.value?.PatentID) {
-      const records = await $trpc.data.patentRecord.getPatentRecords.query({
+      const records = await $trpc.data.patentRecords.getPatentRecords.query({
          patentID: patent.value.PatentID,
       });
-      if (!patent.value.patentRecord) {
-         patent.value.patentRecord = [];
+      if (!patent.value.patentRecords) {
+         patent.value.patentRecords = [];
       }
       events.value = records.map((record) => ({
          id: record.id,
@@ -163,7 +163,7 @@ onMounted(async () => {
          icon: "fluent:slide-record-48-regular",
          color: "#4CAF50",
       }));
-      patent.value.patentRecord = records;
+      patent.value.patentRecords = records;
       // 測試用，增加更多數據以觸發滾動
       events.value = [
          ...Array(20).fill(null).map((_, i) => ({
@@ -203,7 +203,7 @@ const createOrUpdateRecord = async () => {
    try {
       if (isEditing.value && editingRecordId.value !== null) {
       // 更新模式
-         const updatedRecord = await $trpc.data.patentRecord.updatePatentRecord.mutate({
+         const updatedRecord = await $trpc.data.patentRecords.updatePatentRecord.mutate({
             id: editingRecordId.value,
             record: newRecord.value.record,
             date: newRecord.value.date,
@@ -222,18 +222,18 @@ const createOrUpdateRecord = async () => {
          }
 
          // 更新 patent.PatentRecord
-         if (patent.value?.patentRecord) {
-            const recordIndex = patent.value.patentRecord.findIndex(
+         if (patent.value?.patentRecords) {
+            const recordIndex = patent.value.patentRecords.findIndex(
                (r) => r.id === editingRecordId.value,
             );
             if (recordIndex !== -1) {
-               patent.value.patentRecord[recordIndex] = updatedRecord;
+               patent.value.patentRecords[recordIndex] = updatedRecord;
             }
          }
       }
       else {
       // 創建模式
-         const createdRecord = await $trpc.data.patentRecord.createPatentRecord.mutate({
+         const createdRecord = await $trpc.data.patentRecords.createPatentRecord.mutate({
             patentID: patent.value.PatentID,
             record: newRecord.value.record,
             date: newRecord.value.date,
@@ -249,10 +249,10 @@ const createOrUpdateRecord = async () => {
             color: "#4CAF50",
          });
 
-         if (!patent.value.patentRecord) {
-            patent.value.patentRecord = [];
+         if (!patent.value.patentRecords) {
+            patent.value.patentRecords = [];
          }
-         patent.value.patentRecord.push(createdRecord);
+         patent.value.patentRecords.push(createdRecord);
       }
 
       // 清空輸入並重置編輯狀態

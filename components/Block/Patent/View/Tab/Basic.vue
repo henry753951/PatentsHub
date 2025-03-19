@@ -323,7 +323,6 @@ const basicData = useSyncData(patent, async (newData) => {
             : undefined,
       },
    ]);
-   await refresh();
 });
 // 校內資訊
 const internalData = useSyncData(patent, async (newData) => {
@@ -386,7 +385,6 @@ const internalData = useSyncData(patent, async (newData) => {
          },
       },
    ]);
-   await refresh();
 });
 
 // 技術資訊
@@ -426,7 +424,6 @@ const technicalData = useSyncData(patent, async (newData) => {
          },
       },
    ]);
-   await refresh();
 });
 </script>
 

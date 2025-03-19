@@ -15,7 +15,6 @@
       </PopoverTrigger>
       <PopoverContent
          class="max-w-[var(--radix-popper-anchor-width)] rounded-xl min-w-[350px]"
-         @focus-outside.prevent
       >
          <div class="pb-4 font-bold">
             選擇發明人
