@@ -8,24 +8,17 @@ export default router({
       .input(
          z.object({
             patentID: z.number(), // 專利 ID
-            record: z.string().nullable(), // 紀錄內容
-            date: z.string().datetime().optional(), // 日期
+            record: z.string(),
+            date: z.date(), // 日期
          }),
       )
       .mutation(async ({ input }) => {
          // 檢查 PatentID 是否存在
-         const patentExists = await prisma.patent.findUnique({
-            where: { PatentID: input.patentID },
-         });
-         if (!patentExists) {
-            throw new Error("指定的專利不存在");
-         }
-
          return await prisma.patentRecord.create({
             data: {
                PatentID: input.patentID,
                Record: input.record,
-               Date: input.date ? new Date(input.date) : null,
+               Date: input.date,
             },
          });
       }),
@@ -45,23 +38,16 @@ export default router({
       .input(
          z.object({
             id: z.number(), // 紀錄 ID
-            record: z.string().nullable(),
-            date: z.string().datetime().optional(),
+            record: z.string(),
+            date: z.date(),
          }),
       )
       .mutation(async ({ input }) => {
-         const recordExists = await prisma.patentRecord.findUnique({
-            where: { id: input.id },
-         });
-         if (!recordExists) {
-            throw new Error("紀錄不存在");
-         }
-
          return await prisma.patentRecord.update({
             where: { id: input.id },
             data: {
                Record: input.record,
-               Date: input.date ? new Date(input.date) : null,
+               Date: input.date,
             },
          });
       }),
@@ -70,13 +56,6 @@ export default router({
    deletePatentRecord: procedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
-         const recordExists = await prisma.patentRecord.findUnique({
-            where: { id: input.id },
-         });
-         if (!recordExists) {
-            throw new Error("紀錄不存在");
-         }
-
          return await prisma.patentRecord.delete({
             where: { id: input.id },
          });

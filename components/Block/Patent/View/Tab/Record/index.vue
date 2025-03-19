@@ -2,11 +2,24 @@
    <div class="p-6 h-[calc(100vh-48px)] flex space-x-6">
       <!-- 左邊：時間軸（可滾動，佔比 2/3） -->
       <OverlayScrollbarsComponent
-         :options="{ scrollbars: { autoHide: 'leave'} }"
+         :options="{ scrollbars: { autoHide: 'leave' } }"
          class="flex-1 min-h-0 px-6"
          style="max-height: calc(100vh - 48px - 20px); overflow: auto;"
       >
+         <div
+            v-if="status === 'pending'"
+            class="text-center text-muted-foreground"
+         >
+            載入中...
+         </div>
+         <div
+            v-else-if="status === 'error'"
+            class="text-center text-red-500"
+         >
+            載入失敗，請稍後重試
+         </div>
          <Timeline
+            v-else
             :value="events"
             class="custom-timeline"
          >
@@ -54,7 +67,7 @@
                      <CalendarIcon class="mr-2 h-4 w-4" />
                      {{
                         newRecord.date
-                           ? df.format(new Date(newRecord.date))
+                           ? format(new Date(newRecord.date), "PPP")
                            : "Pick a date"
                      }}
                   </Button>
@@ -64,8 +77,8 @@
                      v-model="calendarDate"
                      initial-focus
                      @update:model-value="
-                        ($event: DateValue | undefined) => {
-                           newRecord.date = $event ? $event.toString() : '';
+                        ($event: Date | undefined) => {
+                           newRecord.date = $event ? $event.toISOString().split('T')[0] : '';
                         }
                      "
                   />
@@ -101,17 +114,12 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-   DateFormatter,
-   type DateValue,
-   getLocalTimeZone,
-   parseDate,
-} from "@internationalized/date";
 import { CalendarIcon } from "lucide-vue-next";
-import { ref, onMounted } from "vue";
+import { ref, computed } from "vue";
 import Timeline from "primevue/timeline";
 import { Textarea } from "@/components/ui/textarea";
-import { useNuxtApp } from "#app";
+import { format } from "date-fns";
+import type { RouterOutput } from "~/server";
 
 // 定義 patent 的類型
 const patent = defineModel({
@@ -119,140 +127,102 @@ const patent = defineModel({
    required: true,
 });
 
-// 時間軸數據（內部狀態）
-const events = ref<
-   Array<{
-      id: number
-      status: string
-      date: string
-      icon: string
-      color: string
-   }>
->([]);
+// 使用 useDatabasePatentRecord
+const { data, status, crud } = useDatabasePatentRecord(patent.value!.PatentID);
 
-// 日期格式化（內部狀態）
-const df = new DateFormatter("en-US", { dateStyle: "long" });
+// 定義 events 項目的類型
+interface TimelineEvent {
+   id: number
+   status: string
+   date: string
+   icon: string
+   color: string
+   rawDate: Date | null
+}
+
+// 時間軸數據（從 useDatabasePatentRecord 的 data 映射）
+const events = computed<TimelineEvent[]>(() => {
+   return data.value!.map((record: RouterOutput["data"]["patentRecord"]["getPatentRecords"][number]) => ({
+      id: record.id,
+      status: record.Record || "無紀錄",
+      date: record.Date
+         ? format(new Date(record.Date), "yyyy/MM/dd")
+         : "未知日期",
+      icon: "fluent:slide-record-48-regular",
+      color: "#4CAF50",
+      rawDate: record.Date, // 儲存原始 Date 物件，用於編輯時設置
+   }));
+});
 
 // 新紀錄的數據（內部狀態）
-const newRecord = ref({
-   record: "",
+const newRecord = ref<{
+   record: string // 不再允許 null
+   date: string
+}>({
+   record: "", // 初始值為空字串，符合後端 API
    date: "",
 });
-const calendarDate = ref<DateValue | undefined>();
+const calendarDate = ref<Date | undefined>();
 
 // 編輯狀態
 const isEditing = ref(false);
 const editingRecordId = ref<number | null>(null);
 
-// 獲取 PatentRecords
-const { $trpc } = useNuxtApp();
-onMounted(async () => {
-   if (patent.value?.PatentID) {
-      const records = await $trpc.data.patentRecord.getPatentRecords.query({
-         patentID: patent.value.PatentID,
-      });
-      if (!patent.value.patentRecord) {
-         patent.value.patentRecord = [];
-      }
-      events.value = records.map((record) => ({
-         id: record.id,
-         status: record.Record || "無紀錄",
-         date: record.Date
-            ? new Date(record.Date).toLocaleDateString("zh-TW")
-            : "未知日期",
-         icon: "fluent:slide-record-48-regular",
-         color: "#4CAF50",
-      }));
-      patent.value.patentRecord = records;
-      // 測試用，增加更多數據以觸發滾動
-      events.value = [
-         ...Array(20).fill(null).map((_, i) => ({
-            id: i + 1,
-            status: `事件 ${i + 1}`,
-            date: `2021/10/${(i + 1).toString().padStart(2, "0")}`,
-            icon: "pi pi-plus",
-            color: "#4CAF50",
-         })),
-      ];
-   }
-});
-
 // 編輯記錄
 const editRecord = (recordId: number) => {
-   const event = events.value.find((e) => e.id === recordId);
+   const event = events.value.find((e: TimelineEvent) => e.id === recordId);
    if (event) {
       isEditing.value = true;
       editingRecordId.value = recordId;
       newRecord.value.record = event.status;
-      newRecord.value.date = event.date;
-      // 將日期轉換為 DateValue 並設置到 calendarDate
-      if (event.date !== "未知日期") {
-         const parsedDate = new Date(event.date);
-         calendarDate.value = parseDate(parsedDate.toISOString().split("T")[0]);
+
+      // 使用原始 Date 物件設置日期
+      if (event.rawDate) {
+         const date = new Date(event.rawDate);
+         if (!isNaN(date.getTime())) { // 檢查日期是否有效
+            newRecord.value.date = date.toISOString().split("T")[0]; // 轉為 YYYY-MM-DD 格式
+            calendarDate.value = date;
+         }
+         else {
+            newRecord.value.date = "";
+            calendarDate.value = undefined;
+         }
+      }
+      else {
+         newRecord.value.date = "";
+         calendarDate.value = undefined;
       }
    }
 };
 
 // 創建或更新記錄
 const createOrUpdateRecord = async () => {
-   if (!patent.value?.PatentID || !newRecord.value.date || !newRecord.value.record) {
+   if (!patent.value!.PatentID || !newRecord.value.date || !newRecord.value.record) {
       alert("請選擇日期並輸入紀錄內容");
       return;
    }
 
    try {
+      const date = new Date(newRecord.value.date); // 直接轉為 Date 物件
+      if (isNaN(date.getTime())) { // 檢查日期是否有效
+         alert("請選擇一個有效的日期");
+         return;
+      }
+
       if (isEditing.value && editingRecordId.value !== null) {
       // 更新模式
-         const updatedRecord = await $trpc.data.patentRecord.updatePatentRecord.mutate({
+         await crud.updateRecord({
             id: editingRecordId.value,
             record: newRecord.value.record,
-            date: newRecord.value.date,
+            date: date,
          });
-
-         // 更新 events
-         const index = events.value.findIndex((e) => e.id === editingRecordId.value);
-         if (index !== -1) {
-            events.value[index] = {
-               ...events.value[index],
-               status: updatedRecord.Record || "無紀錄",
-               date: updatedRecord.Date
-                  ? new Date(updatedRecord.Date).toLocaleDateString("zh-TW")
-                  : "未知日期",
-            };
-         }
-
-         // 更新 patent.PatentRecord
-         if (patent.value?.patentRecord) {
-            const recordIndex = patent.value.patentRecord.findIndex(
-               (r) => r.id === editingRecordId.value,
-            );
-            if (recordIndex !== -1) {
-               patent.value.patentRecord[recordIndex] = updatedRecord;
-            }
-         }
       }
       else {
       // 創建模式
-         const createdRecord = await $trpc.data.patentRecord.createPatentRecord.mutate({
-            patentID: patent.value.PatentID,
+         await crud.createRecord({
             record: newRecord.value.record,
-            date: newRecord.value.date,
+            date: date,
          });
-
-         events.value.push({
-            id: createdRecord.id,
-            status: createdRecord.Record || "無紀錄",
-            date: createdRecord.Date
-               ? new Date(createdRecord.Date).toLocaleDateString("zh-TW")
-               : "未知日期",
-            icon: "pi pi-plus",
-            color: "#4CAF50",
-         });
-
-         if (!patent.value.patentRecord) {
-            patent.value.patentRecord = [];
-         }
-         patent.value.patentRecord.push(createdRecord);
       }
 
       // 清空輸入並重置編輯狀態
@@ -286,5 +256,4 @@ const createOrUpdateRecord = async () => {
 .custom-timeline .p-timeline-event {
   margin-bottom: 2rem; /* 增加節點間距 */
 }
-
 </style>
