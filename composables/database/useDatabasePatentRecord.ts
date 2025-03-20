@@ -4,13 +4,9 @@ import { useNuxtApp, useAsyncData, refreshNuxtData } from "#app";
 import type { RouterInput, RouterOutput } from "~/server";
 
 // 定義選項類型
-type Options = {
-   lazy?: boolean
-};
 
 export const useDatabasePatentRecord = (
    defaultPatentId: number | undefined = undefined,
-   options: Options = { lazy: true },
 ) => {
    const { $trpc } = useNuxtApp();
 
@@ -30,7 +26,7 @@ export const useDatabasePatentRecord = (
       },
       {
          watch: [filter],
-         lazy: options.lazy,
+         lazy: true,
       },
    );
 
