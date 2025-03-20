@@ -38,7 +38,9 @@
       </Timeline>
 
       <!-- 右邊：表單 -->
-      <div class="w-1/3 h-full flex flex-col justify-between gap-3 sticky top-[8rem]">
+      <div
+         class="w-1/3 h-full flex flex-col justify-between gap-3 sticky top-[8rem]"
+      >
          <FloatLabel
             variant="in"
             class="w-full"
@@ -82,10 +84,8 @@
 
 <script lang="ts" setup>
 import { Button } from "@/components/ui/button";
-import { ref, computed } from "vue";
 import Timeline from "primevue/timeline";
-import { Textarea } from "@/components/ui/textarea";
-import { format } from "date-fns";
+import { Textarea } from "@/components/ui/textarea";=
 import type { RouterOutput } from "~/server";
 import DatePicker from "primevue/datepicker";
 import FloatLabel from "primevue/floatlabel";
