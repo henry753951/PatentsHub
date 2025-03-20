@@ -129,6 +129,40 @@ const newRecord = ref<{
 const isEditing = ref(false);
 const editingRecordId = ref<number | null>(null);
 
+// 獲取 PatentRecords
+const { $trpc } = useNuxtApp();
+onMounted(async () => {
+   if (patent.value?.PatentID) {
+      const records = await $trpc.data.patentRecord.getPatentRecords.query({
+         patentID: patent.value.PatentID,
+      });
+      if (!patent.value.patentRecord) {
+         patent.value.patentRecord = [];
+      }
+      events.value = records.map((record) => ({
+         id: record.id,
+         status: record.Record || "無紀錄",
+         date: record.Date
+            ? new Date(record.Date).toLocaleDateString("zh-TW")
+            : "未知日期",
+         icon: "fluent:slide-record-48-regular",
+         color: "#4CAF50",
+      }));
+      patent.value.patentRecord = records;
+      // 測試用，增加更多數據以觸發滾動
+      events.value = [
+         ...Array(20).fill(null).map((_, i) => ({
+            id: i + 1,
+            status: `事件 ${i + 1}`,
+            date: `2021/10/${(i + 1).toString().padStart(2, "0")}`,
+            icon: "pi pi-plus",
+            color: "#4CAF50",
+         })),
+      ];
+   }
+});
+
+// 編輯記錄
 const editRecord = (recordId: number) => {
    const event = events.value.find((e: TimelineEvent) => e.id === recordId);
    if (event) {

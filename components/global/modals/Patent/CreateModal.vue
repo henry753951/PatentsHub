@@ -25,12 +25,13 @@
                   >
                      <FormPatentCreate
                         ref="patentCreateFormRef"
+                        @submit-success="isOpen = false"
                      />
                   </OverlayScrollbarsComponent>
                   <div class="flex justify-end gap-2">
                      <Button
                         v-if="patentCreateFormRef"
-                        @click="patentCreateFormRef!.patentCreation.nextStep"
+                        @click="nextStep"
                      >
                         {{
                            patentCreateFormRef.patentCreation.currentStep
@@ -67,6 +68,10 @@ const isOpen = defineModel("open", {
 const patentCreateFormRef = useTemplateRef<
    ComponentExposed<typeof FormPatentCreate>
 >("patentCreateFormRef");
+
+const nextStep = () => {
+   patentCreateFormRef.value!.patentCreation.nextStep();
+};
 </script>
 
 <style scoped></style>

@@ -36,7 +36,9 @@ export const useDatabasePatent = (
       await refreshNuxtData(["patents", `patent-${fillter.value}`]);
    };
 
+   // ==================================================
    // [CRUD]
+   // ==================================================
    // Create
 
    // Read many
@@ -59,24 +61,36 @@ export const useDatabasePatent = (
             data,
          })),
       );
-      consola.success("Patent data updated", updateInputs, data);
+      await refresh();
    };
    // Delete
    const deletePatent = async () => {
       const data = await $trpc.data.patent.deletePatent.mutate({
          PatentID: fillter.value,
       });
-      await refreshNuxtData(["patents", `patent-${fillter.value}`]);
+      await refresh();
+   };
+
+   // =================================================
+   const crud = {
+      getPatent,
+      deletePatent,
+      updatePatent,
    };
    return {
       data,
+      patentStatus: usePatentStatus({
+         data,
+         refreshCallback: refresh,
+      }),
+      patentMaintainances: usePatentMaintenances({
+         data,
+         refreshCallback: refresh,
+      }),
+      // patentRecords : usePatentRecords({data, refreshCallback: refresh}),
       fillter,
       status,
       refresh,
-      crud: {
-         getPatent,
-         deletePatent,
-         updatePatent,
-      },
+      crud,
    };
 };

@@ -1,24 +1,9 @@
 <template>
    <div class="flex gap-4">
-      <FloatLabel
-         variant="in"
-         class="w-full"
-      >
-         <DatePicker
-            v-model="reviewDateFormatted"
-            show-icon
-            fluid
-            date-format="yy/mm/dd"
-            icon-display="input"
-            show-button-bar
-            size="small"
-            input-id="review-date_input"
-         >
-            <template #weekheaderlabel>
-            </template>
-         </DatePicker>
-         <label for="review-date_input">技推委員會審理日期</label>
-      </FloatLabel>
+      <FormDatePicker
+         v-model="reviewDate"
+         label="技推委員會日期"
+      />
       <FloatLabel
          variant="in"
          class="w-full"
@@ -39,23 +24,15 @@
 </template>
 
 <script lang="ts" setup>
-import DatePicker from "primevue/datepicker";
 import InputNumber from "primevue/inputnumber";
 import FloatLabel from "primevue/floatlabel";
 const reviewDate = defineModel("reviewDate", {
-   type: String as PropType<string | Date | null>,
+   type: Object as PropType<string | Date | null>,
    required: true,
 });
 const reviewNumber = defineModel("reviewNumber", {
    type: Number as PropType<number | null>,
-   required: true,
-});
-
-const reviewDateFormatted = computed({
-   get: () => reviewDate.value ? new Date(reviewDate.value) : null,
-   set: (value: Date) => {
-      reviewDate.value = value.toISOString();
-   },
+   required: false,
 });
 </script>
 

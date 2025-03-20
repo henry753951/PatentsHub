@@ -67,30 +67,45 @@
             </CustomContentBlockRow>
          </CustomContentBlock>
          <CustomContentBlock
-            v-if="patent.application"
+            v-if="applicationData.data.value && applicationData.data.value.application"
             title="申請資訊"
             tclass="sticky top-[87px]"
+            :note-key="`${patent.PatentID}:application`"
+            :save-button="!applicationData.isSynced.value"
+            @save="applicationData.save"
          >
             <div class="grid grid-cols-2 gap-4">
-               <CustomContentBlockRow title="申請日期">
-                  {{ patent.application.FilingDate }}
+               <CustomContentBlockRow
+                  title="申請日期"
+                  :is-synced="JSON.stringify(applicationData.data.value?.application?.FilingDate) === JSON.stringify(applicationData.refData.value?.application?.FilingDate)"
+               >
+                  <FormDatePicker
+                     v-model="applicationData.data.value.application.FilingDate"
+                  />
                </CustomContentBlockRow>
-               <CustomContentBlockRow title="申請案號">
-                  {{ patent.application.ApplicationNumber }}
-               </CustomContentBlockRow>
+               <CustomContentBlockRow
+                  v-model="applicationData.data.value.application.ApplicationNumber"
+                  title="申請案號"
+                  :is-synced="applicationData.data.value?.application?.ApplicationNumber === applicationData.refData.value?.application?.ApplicationNumber"
+               />
             </div>
             <div class="grid grid-cols-2 gap-4">
-               <CustomContentBlockRow title="研發成果編號">
-                  <s>{{ patent.application.RDResultNumber }}</s>
-               </CustomContentBlockRow>
-               <CustomContentBlockRow title="國科會編號">
-                  <s>{{ patent.application.NSCNumber }}</s>
-               </CustomContentBlockRow>
+               <CustomContentBlockRow
+                  v-model="applicationData.data.value.application.RDResultNumber"
+                  title="研發成果編號"
+                  :is-synced="applicationData.data.value?.application?.RDResultNumber === applicationData.refData.value?.application?.RDResultNumber"
+               />
+               <CustomContentBlockRow
+                  v-model="applicationData.data.value.application.NSCNumber"
+                  title="國科會編號"
+                  :is-synced="applicationData.data.value?.application?.NSCNumber === applicationData.refData.value?.application?.NSCNumber"
+               />
             </div>
          </CustomContentBlock>
          <CustomContentBlock
             title="資助資訊"
             tclass="sticky top-[87px]"
+            :note-key="`${patent.PatentID}:funding`"
          >
             <CustomContentBlockRow title="資助單位">
                <div
@@ -103,26 +118,46 @@
             </CustomContentBlockRow>
          </CustomContentBlock>
          <CustomContentBlock
-            v-if="patent.external"
+            v-if="externalData.data.value && externalData.data.value.external"
             title="證書資訊"
             tclass="sticky top-[87px]"
+            :note-key="`${patent.PatentID}:external`"
+            :save-button="!externalData.isSynced.value"
+            @save="externalData.save"
          >
-            <CustomContentBlockRow title="專利號碼">
-               {{ patent.external.PatentNumber }}
-            </CustomContentBlockRow>
+            <div class="flex gap-4">
+               <CustomContentBlockRow
+                  v-model="externalData.data.value.external.PatentNumber"
+                  title="專利號碼"
+               />
+               <CustomContentBlockRow title="公告獲證日期">
+                  <FormDatePicker
+                     v-model="externalData.data.value.external.PublicationDate"
+                  />
+               </CustomContentBlockRow>
+            </div>
             <CustomContentBlockRow title="專利權期間">
-               {{ patent.external.StartDate }} ~
-               {{ patent.external.EndDate }}
+               <div class="grid grid-cols-2 gap-4">
+                  <CustomContentBlockRow title="起始日期">
+                     <FormDatePicker
+                        v-model="externalData.data.value.external.StartDate"
+                     />
+                  </CustomContentBlockRow>
+                  <CustomContentBlockRow title="結束日期">
+                     <FormDatePicker
+                        v-model="externalData.data.value.external.EndDate"
+                     />
+                  </CustomContentBlockRow>
+               </div>
             </CustomContentBlockRow>
-            <CustomContentBlockRow title="公告獲證日期">
-               {{ patent.external.PublicationDate }}
-            </CustomContentBlockRow>
-            <CustomContentBlockRow title="國際專利分類號IPC">
-               {{ patent.external.IPCNumber }}
-            </CustomContentBlockRow>
-            <CustomContentBlockRow title="專利範圍">
-               {{ patent.external.PatentScope }}
-            </CustomContentBlockRow>
+            <CustomContentBlockRow
+               v-model="externalData.data.value.external.IPCNumber"
+               title="國際專利分類號IPC"
+            />
+            <CustomContentBlockRow
+               v-model="externalData.data.value.external.PatentScope"
+               title="專利範圍"
+            />
          </CustomContentBlock>
          <CustomContentBlock
             v-if="
@@ -241,18 +276,6 @@
                   />
                </div>
             </CustomContentBlockRow>
-            <CustomContentBlockRow
-               v-if="patent.application"
-               title="專利國家"
-            >
-               {{ patent.country?.CountryName }}
-            </CustomContentBlockRow>
-            <CustomContentBlockRow
-               v-if="patent.application"
-               title="專利類別"
-            >
-               {{ patent.PatentType }}
-            </CustomContentBlockRow>
          </CustomContentBlock>
          <CustomContentBlock title="發明人">
             <BlockPatentInventorRow
@@ -323,7 +346,6 @@ const basicData = useSyncData(patent, async (newData) => {
             : undefined,
       },
    ]);
-   await refresh();
 });
 // 校內資訊
 const internalData = useSyncData(patent, async (newData) => {
@@ -386,7 +408,6 @@ const internalData = useSyncData(patent, async (newData) => {
          },
       },
    ]);
-   await refresh();
 });
 
 // 技術資訊
@@ -426,7 +447,50 @@ const technicalData = useSyncData(patent, async (newData) => {
          },
       },
    ]);
-   await refresh();
+});
+
+// 證書資訊
+const externalData = useSyncData(patent, async (newData) => {
+   if (!newData) return;
+   await crud.updatePatent([
+      {
+         external: {
+            update: {
+               data: newData.external
+                  ? {
+                     PatentNumber: newData.external.PatentNumber,
+                     StartDate: newData.external.StartDate,
+                     EndDate: newData.external.EndDate,
+                     PublicationDate: newData.external.PublicationDate,
+                     IPCNumber: newData.external.IPCNumber,
+                     PatentScope: newData.external.PatentScope,
+                  }
+                  : undefined,
+            },
+         },
+      },
+   ]);
+});
+
+// 申請資訊
+const applicationData = useSyncData(patent, async (newData) => {
+   if (!newData) return;
+   await crud.updatePatent([
+      {
+         application: {
+            update: {
+               data: newData.application
+                  ? {
+                     FilingDate: newData.application.FilingDate,
+                     ApplicationNumber: newData.application.ApplicationNumber,
+                     RDResultNumber: newData.application.RDResultNumber,
+                     NSCNumber: newData.application.NSCNumber,
+                  }
+                  : undefined,
+            },
+         },
+      },
+   ]);
 });
 </script>
 

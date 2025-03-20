@@ -94,6 +94,9 @@ export default router({
                      InternalID: input.internalID,
                   },
                },
+               external: {
+                  create: {},
+               },
                inventors: {
                   create: input.inventors.map((inventor) => ({
                      Main: inventor.isMain,
@@ -105,6 +108,9 @@ export default router({
                      },
                   })),
                },
+               application:{
+                  create: {}
+               }
             },
          });
       }),
@@ -114,7 +120,9 @@ export default router({
          return await prisma.patent.findUnique({
             where: input as Prisma.PatentWhereUniqueInput,
             include: {
-               patentRecord: true,
+               manualStatus: true,
+               maintenances: true,
+               patentRecords: true,
                country: true,
                department: {
                   include: {
@@ -175,7 +183,7 @@ export default router({
          return await prisma.patent.findMany({
             where: input as Prisma.PatentWhereInput,
             include: {
-               patentRecord: true,
+               patentRecords: true,
                country: true,
                department: {
                   include: {
