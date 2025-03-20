@@ -161,6 +161,8 @@ import {
    TagsInputItemText,
 } from "@/components/ui/tags-input";
 import { TabsInput } from "~/components/ui/tabs";
+import { FormField, FormItem } from "@/components/ui/form";
+
 interface Inventor {
    id: number
    name: string
@@ -170,8 +172,12 @@ interface Inventor {
       department: string
    }
 }
+const { open } = useModals();
 const { $trpc } = useNuxtApp();
-const patentCreation = useFormData().patent.useCreation();
+const patentCreation = useFormData().patent.useCreation((patentId) => {
+   emits("submit-success");
+   open("PatentModal", { props: { patentId: patentId } });
+});
 
 const form = {
    insideInventors: ref<
@@ -204,6 +210,10 @@ watch(
 defineExpose({
    patentCreation,
 });
+
+const emits = defineEmits<{
+   (e: "submit-success"): void
+}>();
 </script>
 
 <style scoped>

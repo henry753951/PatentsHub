@@ -1,6 +1,9 @@
 <template>
-   <div ref="viewRef">
-      <div v-if="patent">
+   <div>
+      <div
+         v-if="patent"
+         ref="viewRef"
+      >
          <div
             class="bg-[#f5f5f5] dark:bg-[#1a1a1a] sticky top-0 self-start z-[4] max-h-[230px] min-h-0 transition-all duration-500"
             :class="{
@@ -133,7 +136,10 @@
                   'opacity-100 top-0': state?.arrivedState.top,
                }"
             >
-               <CustomStateProgress class="flex-1" />
+               <BlockPatentStateProgress
+                  class="flex-1"
+                  :status-service="patentStatus"
+               />
             </div>
          </div>
          <div class="container mx-auto z-[-1]">
@@ -163,6 +169,7 @@
                      <BlockPatentViewTabRecord
                         v-if="activeTab === 'record'"
                         v-model="patent"
+                        :patent-records-service="patentRecords"
                      />
                   </TabPanel>
                </TabPanels>
@@ -170,7 +177,7 @@
          </div>
       </div>
       <div
-         v-else-if="status !== 'pending'"
+         v-if="status !== 'pending' && !patent"
          class="container mx-auto py-[10rem]"
       >
          <div class="flex items-center justify-center h-full">
@@ -182,7 +189,6 @@
             <span class="text-zinc-500 text-[3rem] font-bold ml-5">
                專利不存在
             </span>
-            {{ patent }}
          </div>
       </div>
    </div>
@@ -218,10 +224,12 @@ const activeTab = ref("basic");
 
 const {
    data: patent,
+   patentStatus,
+   patentRecords,
    refresh,
    crud,
    status,
-} = await useDatabasePatent(porps.patentId);
+} = useDatabasePatent(porps.patentId);
 
 // const patent = ref<RouterOutput["data"]["patent"]["getPatent"]>({
 //    PatentID: 2, // 假設新的專利ID為2

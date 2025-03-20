@@ -2,25 +2,27 @@
 // 專利
 // ========================
 model Patent {
-  PatentID     Int                        @id @default(autoincrement())
-  DepartmentID Int
+  PatentID      Int                        @id @default(autoincrement())
+  DepartmentID  Int
   // 專利資料
-  Year         Int
-  DraftTitle   String                     @default("")
-  Title        String                     @default("")
-  TitleEnglish String                     @default("")
-  CountryID    Int?
-  country      Country?                   @relation(fields: [CountryID], references: [CountryID])
-  department   Department                 @relation(fields: [DepartmentID], references: [DepartmentID])
-  PatentType   EnumPatentType?
-  inventors    PatentInventor[]
-  application  PatentApplicationData?
-  funding      PatentFunding?
-  status       PatentStatus?
-  technical    PatentTechnicalAttributes?
-  internal     PatentInternal?
-  external     PatentExternal?
-  patentRecord PatentRecord[]
+  Year          Int
+  DraftTitle    String                     @default("")
+  Title         String                     @default("")
+  TitleEnglish  String                     @default("")
+  CountryID     Int?
+  PatentType    EnumPatentType?
+  country       Country?                   @relation(fields: [CountryID], references: [CountryID])
+  department    Department                 @relation(fields: [DepartmentID], references: [DepartmentID])
+  inventors     PatentInventor[]
+  application   PatentApplicationData?
+  funding       PatentFunding?
+  manualStatus  PatentManualStatus[]
+  maintenances  PatentMaintenance[]
+  technical     PatentTechnicalAttributes?
+  internal      PatentInternal?
+  external      PatentExternal?
+  patentRecords PatentRecord[]
+  createdAt     DateTime                   @default(now())
 }
 
 // ========================
@@ -103,25 +105,34 @@ model PatentExternal {
 // ========================
 // 專利維護資訊
 // ========================
-
-model PatentStatus {
-  PatentID                     Int       @id @default(autoincrement())
-  ExpiryDate                   DateTime?
-  Status                       String
-  TechnicalCommitteeReviewDate DateTime?
-  MaintenanceYear              Int?
-  MaintenanceStartDate         DateTime?
-  MaintenanceEndDate           DateTime?
-  patent                       Patent    @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
+model PatentManualStatus {
+  ManualStatusID Int       @id @default(autoincrement())
+  PatentID       Int
+  Reason         String
+  Date           DateTime?
+  Active         Boolean
+  patent         Patent    @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
 }
 
 // ========================
-//專利紀錄
+// 專利維護
+// ========================
+model PatentMaintenance {
+  MaintenanceID   Int      @id @default(autoincrement())
+  PatentID        Int
+  MaintenanceDate DateTime
+  ExpireDate      DateTime
+
+  patent Patent @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
+}
+
+// ========================
+// 專利紀錄
 // ========================
 model PatentRecord {
-  id       Int      @id @default(autoincrement()) // 添加獨立主鍵
-  PatentID Int                               // 外鍵，指向 Patent
-  Record   String?                           // 紀錄
-  Date     DateTime?                         // 日期
-  patent   Patent   @relation(fields: [PatentID], references: [PatentID])
+  id       Int       @id @default(autoincrement()) // 添加獨立主鍵
+  PatentID Int // 外鍵，指向 Patent
+  Record   String? // 紀錄
+  Date     DateTime? // 日期
+  patent   Patent    @relation(fields: [PatentID], references: [PatentID])
 }

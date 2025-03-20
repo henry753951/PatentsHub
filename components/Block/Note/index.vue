@@ -85,7 +85,7 @@
 
 <script lang="ts" setup>
 import { format } from "date-fns";
-import { Button } from "@/components/ui/button/index";
+import { Button } from "@/components/ui/button";
 import { toast } from "vue-sonner";
 import Badge from "primevue/badge";
 const props = defineProps<{

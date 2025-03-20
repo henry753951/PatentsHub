@@ -2,7 +2,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import type { z } from "zod";
 import { CustomZodType } from "~/zod.dto";
 export const patent = {
-   useCreation: () => {
+   useCreation: (onCreate?: (patentID: number) => void) => {
       const { $trpc } = useNuxtApp();
       // ========= 修改這裡 =========
       // 多步骤表单 ZOD 格式
@@ -23,7 +23,9 @@ export const patent = {
          CustomZodType.PatentInventor,
       );
       const submitForm = async (values: z.infer<typeof schemas>) => {
-         await $trpc.data.patent.createPatent.mutate(values);
+         const data = await $trpc.data.patent.createPatent.mutate(values);
+         await refreshNuxtData(["patents"]);
+         if (onCreate) onCreate(data.PatentID);
       };
       // ===========================
       const {
@@ -51,11 +53,14 @@ export const patent = {
          let keys = [] as (keyof z.infer<typeof schemas>)[];
          for (let i: number = 0; i <= currentStep.value; i++) {
             console.log(steps[i].schema.shape);
-            keys = keys.concat(Object.keys(steps[i].schema.shape) as (keyof z.infer<typeof schemas>)[]);
+            keys = keys.concat(
+               Object.keys(steps[i].schema.shape) as (keyof z.infer<
+                  typeof schemas
+               >)[],
+            );
          }
          for (const key of keys) {
             const { valid } = await validateField(key);
-            console.log(key, valid);
             if (!valid) isValidate = false;
          }
          if (currentStep.value === steps.length - 1 && isValidate) {
