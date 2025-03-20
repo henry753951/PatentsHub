@@ -136,7 +136,10 @@ const showEditModal = ref(false);
 const editData = ref<{
    name: string
    email?: string
+   officeNumber?: string
+   phoneNumber?: string
    role: string
+   note?: string
    departmentID: number
    collegeID: number
 }>();
@@ -147,7 +150,10 @@ const openAddModal = () => {
    editData.value = {
       name: "",
       email: "",
-      role: "教授",
+      officeNumber: "",
+      phoneNumber: "",
+      role: "",
+      note: "",
       departmentID: props.department.DepartmentID,
       collegeID: props.department.CollegeID,
    };
@@ -160,7 +166,10 @@ const openEditModal = (
    editData.value = {
       name: inventor.contactInfo?.Name || "",
       email: inventor.contactInfo?.Email || "",
-      role: inventor.contactInfo?.Role || "教授",
+      officeNumber: inventor.contactInfo?.OfficeNumber || "",
+      phoneNumber: inventor.contactInfo?.PhoneNumber || "",
+      role: inventor.contactInfo?.Role || "",
+      note: inventor.contactInfo?.Note || "",
       departmentID: inventor.department.DepartmentID,
       collegeID: inventor.department.CollegeID,
    };
@@ -171,8 +180,11 @@ const openEditModal = (
 const handleAddSubmit = async (data: {
    name: string
    email?: string
-   departmentID: number
+   officeNumber?: string
+   phoneNumber?: string
    role: string
+   departmentID: number
+   note?: string
 }) => {
    const departmentID = data.departmentID || props.department?.DepartmentID;
    if (!departmentID) throw new Error("系所 ID 未提供");
@@ -184,18 +196,25 @@ const handleAddSubmit = async (data: {
          create: {
             Name: data.name,
             Email: data.email,
+            OfficeNumber: data.officeNumber,
+            PhoneNumber: data.phoneNumber,
             Role: data.role,
+            Note: data.note,
          },
       },
    });
    showAddModal.value = false;
+   console.log("submit", data);
 };
 
 const handleEditSubmit = async (data: {
+   departmentID: number
    name: string
    email?: string
-   departmentID: number
+   officeNumber?: string
+   phoneNumber?: string
    role: string
+   note?: string
 }) => {
    if (!editInventorID.value) return;
    await crud.updateInventor({
@@ -206,12 +225,18 @@ const handleEditSubmit = async (data: {
                create: {
                   Name: data.name,
                   Email: data.email,
+                  OfficeNumber: data.officeNumber,
+                  PhoneNumber: data.phoneNumber,
                   Role: data.role,
+                  Note: data.note,
                },
                update: {
                   Name: data.name,
                   Email: data.email,
+                  OfficeNumber: data.officeNumber,
+                  PhoneNumber: data.phoneNumber,
                   Role: data.role,
+                  Note: data.note,
                },
             },
          },

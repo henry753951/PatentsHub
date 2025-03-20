@@ -49,6 +49,7 @@ export const useDatabaseInventor = (
       data: z.infer<typeof dbZ.InventorUpdateInputSchema>
    }) => {
       await $trpc.data.inventor.updateInventor.mutate(
+
          serialize({ where: args.where, data: args.data }),
       );
       await refresh();
