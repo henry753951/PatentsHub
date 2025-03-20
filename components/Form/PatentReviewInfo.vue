@@ -43,18 +43,22 @@ import DatePicker from "primevue/datepicker";
 import InputNumber from "primevue/inputnumber";
 import FloatLabel from "primevue/floatlabel";
 const reviewDate = defineModel("reviewDate", {
-   type: String as PropType<string | Date | null>,
+   type: Object as PropType<string | Date | null>,
    required: true,
 });
 const reviewNumber = defineModel("reviewNumber", {
    type: Number as PropType<number | null>,
-   required: true,
+   required: false,
 });
 
 const reviewDateFormatted = computed({
    get: () => reviewDate.value ? new Date(reviewDate.value) : null,
-   set: (value: Date | null) => {
-      reviewDate.value = value ? value.toISOString() : null;
+   set: (value: Date | String| null) => {
+      if (typeof value === "string") {
+         reviewDate.value = new Date(value);
+      } else if(value instanceof Date) {
+         reviewDate.value = value;
+      }
    },
 });
 </script>

@@ -95,7 +95,8 @@ export const usePatentStatus = (patentService: {
 
       // Sort date 優先 > date null 按照 'SIGNED' > 'REVIEWED' > 'CERTIFIED' > 'EXPIRED' > 'MANUAL'
       statusArray.sort((a, b) => {
-         if (a.date && b.date) return a.date.getTime() - b.date.getTime();
+         if (a.date instanceof Date && b.date instanceof Date)
+            if (a.date && b.date) return a.date.getTime() - b.date.getTime();
          if (a.date && !b.date) return -1;
          if (!a.date && b.date) return 1;
          if (a.status === "SIGNED") return -1;
