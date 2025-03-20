@@ -4,7 +4,7 @@ export const useClosestScrollState = (
    viewRef: Readonly<ShallowRef<HTMLDivElement | null>>,
 ) => {
    const state = ref<UseScrollReturn | null>(null);
-   onMounted(() => {
+   const unwatch = watch(viewRef, () => {
       const scrollContainer = viewRef.value?.closest(
          "[data-overlayscrollbars-contents]",
       );
@@ -13,6 +13,10 @@ export const useClosestScrollState = (
          return;
       }
       state.value = useScroll(scrollContainer as HTMLElement);
+   });
+
+   onUnmounted(() => {
+      unwatch();
    });
    return state;
 };

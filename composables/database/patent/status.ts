@@ -4,15 +4,15 @@ export const usePatentStatus = (patentService: {
    data: Ref<RouterOutput["data"]["patent"]["getPatent"]>
    refreshCallback?: () => Promise<void>
 }) => {
-   const now = useNow();
+   const now = useNow({ interval: 10000 });
    const { $trpc } = useNuxtApp();
    const { data: patent, refreshCallback } = patentService;
 
    const DbMaintenances = computed(() => {
       return patent.value?.maintenances ?? [];
    });
-   const DbStatus = computed(() => {
-      return patent.value?.status ?? [];
+   const DbManualStatus = computed(() => {
+      return patent.value?.manualStatus ?? [];
    });
 
    // ==================================================
@@ -24,62 +24,72 @@ export const usePatentStatus = (patentService: {
          string,
          { Reason: string | null, Date: Date | null }
       >();
-      DbStatus.value.forEach((s) => {
-         activeMap.set(s.Status, { Reason: s.Reason, Date: s.Date });
-      });
 
       const createStatus = (
-         status:
-           | "SIGNED"
-           | "REVIEWED"
-           | "CERTIFIED"
-           | "EXPIRED"
-           | "MANUAL_STOPED",
-         defaultReason: string,
+         status: "SIGNED" | "REVIEWED" | "CERTIFIED" | "EXPIRED" | "MANUAL",
+         reason?: string,
+         date?: Date,
+         active?: boolean,
       ) => {
-         const statusItem = activeMap.get(status);
-         return {
+         const data = {
             status,
-            active: !!statusItem,
-            reason: statusItem?.Reason ?? defaultReason,
-            date: statusItem?.Date ?? null,
+            active: false,
+            reason: "",
+            date: null as Date | null,
          };
+         if (!patent.value) return data;
+         if (status === "SIGNED") {
+            data.date = patent.value?.createdAt;
+            data.active = active ?? true;
+            data.reason = "教師登錄";
+         }
+         else if (status === "REVIEWED") {
+            data.date = patent.value.internal?.InitialReviewDate ?? null;
+            data.active
+               = active ?? patent.value.internal?.InitialReviewDate !== null;
+            data.reason = reason ?? (data.active ? "已初評" : "初評");
+         }
+         else if (status === "CERTIFIED") {
+            data.date = patent.value.external?.StartDate ?? null; // 不確定是 公告日 還是 開始日
+            data.active = active ?? patent.value.external?.StartDate !== null;
+            data.reason = reason ?? (data.active ? "已獲證" : "獲證");
+         }
+         else if (status === "EXPIRED") {
+            const latestMaintenance = DbMaintenances.value.reduce(
+               (latest, current) => {
+                  return current.ExpireDate > latest.ExpireDate
+                     ? current
+                     : latest;
+               },
+               DbMaintenances.value[0],
+            );
+
+            const isExpired
+               = latestMaintenance && now.value > latestMaintenance.ExpireDate;
+            data.active = isExpired;
+            data.date = latestMaintenance.ExpireDate;
+            data.reason = reason ?? (isExpired ? "已過期" : "到期");
+         }
+         else if (status === "MANUAL") {
+            data.active = active ?? false;
+            data.reason = reason ?? "";
+            data.date = date ?? null;
+         }
+
+         return data;
       };
 
-      const statusArray = [
-         createStatus("SIGNED", "教師登錄"),
-         createStatus(
-            "REVIEWED",
-            activeMap.has("REVIEWED") ? "已初評" : "初評",
-         ),
-         createStatus(
-            "CERTIFIED",
-            activeMap.has("CERTIFIED") ? "已獲證" : "獲證",
-         ),
-      ];
+      // TODO
+      // const statusArray = [
+      //    createStatus("SIGNED"),
+      //    createStatus("REVIEWED"),
+      //    createStatus("CERTIFIED"),
+      // ];
 
-      if (activeMap.has("CERTIFIED")) {
-         const latestMaintenance = DbMaintenances.value.reduce(
-            (latest, current) => {
-               return current.ExpireDate > latest.ExpireDate ? current : latest;
-            },
-            DbMaintenances.value[0],
-         );
-
-         const isExpired
-            = latestMaintenance && now.value > latestMaintenance.ExpireDate;
-         statusArray.push({
-            status: "EXPIRED",
-            active: isExpired,
-            reason: isExpired ? "過期" : "未過期",
-            date: latestMaintenance?.ExpireDate ?? null,
-         });
-      }
-
-      if (activeMap.has("MANUAL_STOPED")) {
-         statusArray.push(createStatus("MANUAL_STOPED", "手動停止"));
-      }
-
+      // Sort:
+      // date: null -> date: Date
+      // null : "SIGNED" > "REVIEWED" > "CERTIFIED" > "EXPIRED"
+      const statusArray = [];
       return statusArray;
    });
 
@@ -87,58 +97,8 @@ export const usePatentStatus = (patentService: {
    // [Actions]
    // ==================================================
 
-   const manualStop = async (active: boolean, reason: string, date?: Date) => {
-      if (!patent.value) return;
-      if (active) {
-         await $trpc.data.patent.updatePatent.mutate([
-            {
-               data: {
-                  status: {
-                     upsert: {
-                        create: {
-                           Status: "MANUAL_STOPED",
-                           Reason: reason,
-                           Date: date ?? now.value,
-                        },
-                        update: {
-                           Reason: reason,
-                           Date: date ?? now.value,
-                        },
-                        where: {
-                           PatentID_Status: {
-                              Status: "MANUAL_STOPED",
-                              PatentID: patent.value.PatentID,
-                           },
-                        },
-                     },
-                  },
-               },
-               patentID: patent.value.PatentID,
-            },
-         ]);
-      }
-      else {
-         await $trpc.data.patent.updatePatent.mutate([
-            {
-               data: {
-                  status: {
-                     delete: {
-                        PatentID_Status: {
-                           PatentID: patent.value.PatentID,
-                           Status: "MANUAL_STOPED",
-                        },
-                     },
-                  },
-               },
-               patentID: patent.value.PatentID,
-            },
-         ]);
-      }
-      if (refreshCallback) await refreshCallback();
-   };
-
    return {
       status,
-      actions: [manualStop],
+      actions: [],
    };
 };

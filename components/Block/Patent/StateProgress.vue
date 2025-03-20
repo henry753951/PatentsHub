@@ -22,87 +22,83 @@
       >
          <TooltipProvider
             v-for="(item, index) in stateProgress"
-            :key="item.title"
+            :key="item.status"
             :delay-duration="100"
             :disabled="!tooltipEnable"
          >
             <Tooltip>
                <TooltipTrigger
-
                   class="status-block flex flex-col items-start gap-2"
-                  :style="{
-                     width: item.width,
-                  }"
                   :class="{
                      success: item.type === 'success',
                      none: item.type === 'none',
                      warning: item.type === 'warning',
-                     'flex-1':
-                        index === stateProgress.length - 1 && !item.width,
+                     'flex-1': index === stateProgress.length - 1 && isStopped,
+                     'w-[30%] max-w-[8rem]': item.status === 'EXPIRED' || item.status === 'CERTIFIED',
                   }"
                >
-                  <span class="font-bold text-sm">{{ item.title }}</span>
+                  <span class="font-bold text-sm mr-4">{{ item.title }}</span>
                </TooltipTrigger>
 
                <TooltipContent v-if="item.date">
-                  <p>{{ item.date }}</p>
+                  <p>{{ format(item.date, "yyyy-MM-dd") }}</p>
+                  <CustomTimeAgo :time="item.date" />
                </TooltipContent>
             </Tooltip>
          </TooltipProvider>
+         <div
+            v-if="!isStopped"
+            class="status-block flex-1 none"
+         />
       </div>
    </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from "vue";
+import { format } from "date-fns";
+import type { usePatentStatus } from "@/composables/database/patent/status";
 import {
    Tooltip,
    TooltipContent,
    TooltipProvider,
    TooltipTrigger,
 } from "@/components/ui/tooltip";
+
 const tooltipEnable = ref(false);
-const stateProgress = ref([
-   {
-      title: "登錄",
-      date: "2023-01-04",
-      type: "success",
-   },
-   {
-      title: "初評",
-      date: "2023-01-04",
-      type: "success",
-   },
-   {
-      title: "已獲證",
-      date: "2023-01-04",
-      width: "30%",
-      type: "success",
-      current: true,
-   },
-   {
-      title: "到期",
-      date: "2023-01-06",
-      type: "none",
-   },
-   {
-      type: "none",
-   },
-]);
+
+const { statusService } = defineProps<{
+   statusService: ReturnType<typeof usePatentStatus>
+}>();
+
+const stateProgress = computed(() => {
+   return statusService.status.value.map((s) => ({
+      status: s.status,
+      date: s.date,
+      type: s.active
+         ? s.status === "EXPIRED"
+            ? "warning"
+            : "success"
+         : "none",
+      title: s.reason || s.status,
+      active: s.active,
+   }));
+});
+
+const isStopped = computed(() => {
+   return statusService.status.value.some(
+      (s) =>
+         s.active && (s.status === "MANUAL_STOPED" || s.status === "EXPIRED"),
+   );
+});
 
 const currentState = computed(() => {
-   const current = stateProgress.value.find((item) => item.current);
-   if (!current) return null;
-   return {
-      title: current.title,
-      date: current.date,
-      type: current.type,
-   };
+   return stateProgress.value.find((item) => item.active) || null;
 });
 </script>
 
 <style scoped>
 .status-block > span {
-   margin-right: 1.9rem;
    font-size: 0.9rem;
 }
 

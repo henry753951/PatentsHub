@@ -5,7 +5,7 @@ export const useDatabasePatent = (
    defaultPatentId = undefined as number | undefined,
    options: {
       lazy?: boolean
-   } = { lazy: false },
+   } = { lazy: true },
 ) => {
    const { $trpc } = useNuxtApp();
    // [State]

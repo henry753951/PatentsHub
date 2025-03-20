@@ -16,12 +16,13 @@ model Patent {
   inventors     PatentInventor[]
   application   PatentApplicationData?
   funding       PatentFunding?
-  status        PatentStatus[]
+  manualStatus  PatentManualStatus[]
   maintenances  PatentMaintenance[]
   technical     PatentTechnicalAttributes?
   internal      PatentInternal?
   external      PatentExternal?
   patentRecords PatentRecord[]
+  createdAt     DateTime                   @default(now())
 }
 
 // ========================
@@ -104,21 +105,13 @@ model PatentExternal {
 // ========================
 // 專利維護資訊
 // ========================
-model PatentStatus {
-  PatentID Int
-  Status   EnumPatentStatus
-  Reason   String?
-  Date     DateTime?
-  patent   Patent           @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
-
-  @@id([PatentID, Status])
-}
-
-enum EnumPatentStatus {
-  SIGNED // 簽署
-  REVIEWED // 審查
-  CERTIFIED // 證明
-  MANUAL_STOPED
+model PatentManualStatus {
+  ManualStatusID Int       @id @default(autoincrement())
+  PatentID       Int
+  Reason         String
+  Date           DateTime?
+  Active         Boolean
+  patent         Patent    @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
 }
 
 // ========================
