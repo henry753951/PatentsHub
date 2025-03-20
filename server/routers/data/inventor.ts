@@ -8,8 +8,10 @@ export default router({
    createInventor: procedure
       .input(dbZ.InventorCreateInputSchema)
       .mutation(async ({ input }) => {
-         return await prisma.inventor.create({
-            data: input as Prisma.InventorCreateInput,
+         return await prisma.$transaction(async (prisma) => {
+            return await prisma.inventor.create({
+               data: input,
+            });
          });
       }),
 
@@ -40,6 +42,8 @@ export default router({
       )
       .mutation(async ({ input }) => {
          console.log("Received input:", input);
+         console.log("Department", input.data.department);
+         console.log("ContactInfo", input.data.contactInfo);
          return await prisma.inventor.update({
             where: input.where,
             data: input.data as Prisma.InventorUpdateInput,
@@ -54,8 +58,24 @@ export default router({
          }),
       )
       .mutation(async ({ input }) => {
-         return await prisma.inventor.delete({
-            where: input.where as Prisma.InventorWhereUniqueInput,
+         return await prisma.$transaction(async (prisma) => {
+            // 先查詢 Inventor，拿到 ContactInfoID
+            const inventor = await prisma.inventor.findUnique({
+               where: { InventorID: input.where.InventorID },
+               select: { ContactInfoID: true },
+            });
+
+            if (!inventor || !inventor.ContactInfoID) {
+               throw new Error("Inventor 或 ContactInfoID 不存在");
+            }
+            // 刪除 Inventor
+            await prisma.inventor.delete({
+               where: { InventorID: input.where.InventorID },
+            });
+            // 刪除 ContactInfo
+            await prisma.contactInfo.delete({
+               where: { ContactInfoID: inventor.ContactInfoID },
+            });
          });
       }),
 });
