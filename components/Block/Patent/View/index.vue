@@ -172,6 +172,13 @@
                         :patent-records-service="patentRecords"
                      />
                   </TabPanel>
+                  <TabPanel value="maintenance">
+                     <BlockPatentViewTabMaintenance
+                        v-if="activeTab === 'maintenance'"
+                        v-model="patent"
+                        :patent-maintainances-service="patentMaintainances"
+                     />
+                  </tabpanel>
                </TabPanels>
             </Tabs>
          </div>
@@ -226,6 +233,7 @@ const {
    data: patent,
    patentStatus,
    patentRecords,
+   patentMaintainances,
    refresh,
    crud,
    status,
