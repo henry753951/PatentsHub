@@ -85,7 +85,7 @@
 <script lang="ts" setup>
 import { Button } from "@/components/ui/button";
 import Timeline from "primevue/timeline";
-import { Textarea } from "@/components/ui/textarea";=
+import { Textarea } from "@/components/ui/textarea";
 import type { RouterOutput } from "~/server";
 import DatePicker from "primevue/datepicker";
 import FloatLabel from "primevue/floatlabel";
