@@ -86,10 +86,9 @@ const stateProgress = computed(() => {
 });
 
 const isStopped = computed(() => {
-   return statusService.status.value.some(
-      (s) =>
-         s.active && (s.status === "MANUAL_STOPED" || s.status === "EXPIRED"),
-   );
+   const isExpired = stateProgress.value.some((item) => item.status === "EXPIRED" && item.active);
+   const isLastManual = stateProgress.value[stateProgress.value.length - 1].status === "MANUAL" && stateProgress.value[stateProgress.value.length - 1].active;
+   return isExpired || isLastManual;
 });
 
 const currentState = computed(() => {

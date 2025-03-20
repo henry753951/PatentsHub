@@ -53,8 +53,8 @@ const reviewNumber = defineModel("reviewNumber", {
 
 const reviewDateFormatted = computed({
    get: () => reviewDate.value ? new Date(reviewDate.value) : null,
-   set: (value: Date) => {
-      reviewDate.value = value.toISOString();
+   set: (value: Date | null) => {
+      reviewDate.value = value ? value.toISOString() : null;
    },
 });
 </script>

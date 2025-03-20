@@ -20,15 +20,10 @@ export const usePatentStatus = (patentService: {
    // ==================================================
 
    const status = computed(() => {
-      const activeMap = new Map<
-         string,
-         { Reason: string | null, Date: Date | null }
-      >();
-
       const createStatus = (
          status: "SIGNED" | "REVIEWED" | "CERTIFIED" | "EXPIRED" | "MANUAL",
          reason?: string,
-         date?: Date,
+         date?: Date | null,
          active?: boolean,
       ) => {
          const data = {
@@ -51,23 +46,21 @@ export const usePatentStatus = (patentService: {
          }
          else if (status === "CERTIFIED") {
             data.date = patent.value.external?.StartDate ?? null; // 不確定是 公告日 還是 開始日
-            data.active = active ?? patent.value.external?.StartDate !== null;
+            data.active = active ?? data.date !== null;
             data.reason = reason ?? (data.active ? "已獲證" : "獲證");
          }
          else if (status === "EXPIRED") {
-            const latestMaintenance = DbMaintenances.value.reduce(
-               (latest, current) => {
-                  return current.ExpireDate > latest.ExpireDate
-                     ? current
-                     : latest;
-               },
-               DbMaintenances.value[0],
+            const sortedMaintenances = DbMaintenances.value.sort(
+               (a, b) => a.ExpireDate.getTime() - b.ExpireDate.getTime(),
             );
+            const latestMaintenance = sortedMaintenances.length
+               ? sortedMaintenances[sortedMaintenances.length - 1]
+               : null;
 
             const isExpired
-               = latestMaintenance && now.value > latestMaintenance.ExpireDate;
+               = latestMaintenance ? now.value > latestMaintenance.ExpireDate : false;
             data.active = isExpired;
-            data.date = latestMaintenance.ExpireDate;
+            data.date = latestMaintenance?.ExpireDate ?? null;
             data.reason = reason ?? (isExpired ? "已過期" : "到期");
          }
          else if (status === "MANUAL") {
@@ -79,17 +72,43 @@ export const usePatentStatus = (patentService: {
          return data;
       };
 
-      // TODO
-      // const statusArray = [
-      //    createStatus("SIGNED"),
-      //    createStatus("REVIEWED"),
-      //    createStatus("CERTIFIED"),
-      // ];
+      // Status Array
+      const statusArray = [
+         createStatus("SIGNED"),
+         createStatus("REVIEWED"),
+         createStatus("CERTIFIED"),
+      ];
 
-      // Sort:
-      // date: null -> date: Date
-      // null : "SIGNED" > "REVIEWED" > "CERTIFIED" > "EXPIRED"
-      const statusArray = [];
+      // Expired Status
+      if (statusArray[2].active) statusArray.push(createStatus("EXPIRED"));
+
+      // Manual Status
+      DbManualStatus.value.forEach((manualStatus) => {
+         statusArray.push(
+            createStatus(
+               "MANUAL",
+               manualStatus.Reason,
+               manualStatus.Date ?? null,
+            ),
+         );
+      });
+
+      // Sort date 優先 > date null 按照 'SIGNED' > 'REVIEWED' > 'CERTIFIED' > 'EXPIRED' > 'MANUAL'
+      statusArray.sort((a, b) => {
+         if (a.date && b.date) return a.date.getTime() - b.date.getTime();
+         if (a.date && !b.date) return -1;
+         if (!a.date && b.date) return 1;
+         if (a.status === "SIGNED") return -1;
+         if (b.status === "SIGNED") return 1;
+         if (a.status === "REVIEWED") return -1;
+         if (b.status === "REVIEWED") return 1;
+         if (a.status === "CERTIFIED") return -1;
+         if (b.status === "CERTIFIED") return 1;
+         if (a.status === "EXPIRED") return -1;
+         if (b.status === "EXPIRED") return 1;
+         return 0;
+      });
+
       return statusArray;
    });
 
