@@ -87,10 +87,12 @@ export const useDatabasePatent = (
          data,
          refreshCallback: refresh,
       }),
-      // patentRecords : usePatentRecords({data, refreshCallback: refresh}),
+      patentRecords: usePatentRecords({ data, refreshCallback: refresh }),
       fillter,
       status,
       refresh,
       crud,
    };
 };
+
+export type UseDatabasePatent = ReturnType<typeof useDatabasePatent>;

@@ -169,6 +169,7 @@
                      <BlockPatentViewTabRecord
                         v-if="activeTab === 'record'"
                         v-model="patent"
+                        :patent-records-service="patentRecords"
                      />
                   </TabPanel>
                </TabPanels>
@@ -224,6 +225,7 @@ const activeTab = ref("basic");
 const {
    data: patent,
    patentStatus,
+   patentRecords,
    refresh,
    crud,
    status,

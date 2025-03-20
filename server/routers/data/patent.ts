@@ -108,9 +108,9 @@ export default router({
                      },
                   })),
                },
-               application:{
-                  create: {}
-               }
+               application: {
+                  create: {},
+               },
             },
          });
       }),
