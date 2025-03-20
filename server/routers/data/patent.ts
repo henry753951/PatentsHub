@@ -94,6 +94,9 @@ export default router({
                      InternalID: input.internalID,
                   },
                },
+               external: {
+                  create: {},
+               },
                inventors: {
                   create: input.inventors.map((inventor) => ({
                      Main: inventor.isMain,
@@ -105,6 +108,9 @@ export default router({
                      },
                   })),
                },
+               application:{
+                  create: {}
+               }
             },
          });
       }),
