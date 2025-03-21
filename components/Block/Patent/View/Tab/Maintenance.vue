@@ -102,7 +102,7 @@
                      class="relative pl-10 transition-all"
                   >
                      <div
-                        class="absolute left-5 top-1 h-3 w-3 rounded-full border border-primary"
+                        class="absolute left-[24.6px] top-1 h-3 w-3 rounded-full border border-primary"
                         :class="{
                            'bg-primary':
                               new Date(maintenance.MaintenanceDate) <=
@@ -117,7 +117,9 @@
                         class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 group"
                      >
                         <div>
-                           <h4 class="text-base font-semibold">
+                           <h4
+                              class="text-base font-semibold flex items-center"
+                           >
                               第 {{ index + 1 }} 次維護
                               <Badge
                                  :variant="
@@ -221,7 +223,8 @@
       >
          <DialogContent
             class="sm:max-w-md"
-            @pointer-down-outside.prevent=""
+            @pointer-down-outside.prevent
+            @open-auto-focus.prevent
          >
             <DialogHeader>
                <DialogTitle>
@@ -238,10 +241,12 @@
                <FormDatePicker
                   v-model="form.maintenanceDate"
                   label="維護日期"
+                  :min-date="maintenanceStatus?.latestMaintenanceDate"
                />
                <FormDatePicker
                   v-model="form.expireDate"
                   label="到期日期"
+                  :min-date="minExpireDate"
                />
                <DialogFooter>
                   <Button
@@ -270,13 +275,6 @@ import {
    DialogHeader,
    DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import {
-   Popover,
-   PopoverContent,
-   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
 import {
    PlusIcon,
@@ -305,15 +303,29 @@ const {
 
 // Form state
 const showAddDialog = ref(false);
-const editMaintenanceData = ref(null);
+const editMaintenanceData = ref<{
+   MaintenanceID: number
+   MaintenanceDate: string | number | Date
+   ExpireDate: string | number | Date
+} | null>(null);
+
 const form = ref({
-   maintenanceDate: null as Date | null,
+   maintenanceDate: new Date() as Date,
    expireDate: null as Date | null,
 });
 
 // Computed properties
 const isSubmitDisabled = computed(() => {
    return !form.value.maintenanceDate || !form.value.expireDate;
+});
+const minExpireDate = computed(() => {
+   if (
+      form.value.maintenanceDate
+      && maintenanceStatus.value?.nextMaintenanceDate
+      && form.value.maintenanceDate > maintenanceStatus.value.nextMaintenanceDate
+   )
+      return form.value.maintenanceDate;
+   return maintenanceStatus.value?.nextMaintenanceDate;
 });
 
 // Methods
@@ -326,18 +338,24 @@ const formatDate = (date: string | number | Date) => {
    });
 };
 
-const getRemainingDays = (date) => {
+const getRemainingDays = (date: string | number | Date) => {
    const today = new Date();
    const targetDate = new Date(date);
    const diffTime = targetDate.getTime() - today.getTime();
    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
-const isExpired = (date) => {
+const isExpired = (date: string | number | Date) => {
    return new Date(date) < new Date();
 };
 
-const getMaintenanceStatus = (maintenance) => {
+const getMaintenanceStatus = (
+   maintenance: {
+      ExpireDate: string | number | Date
+      MaintenanceDate: string | number | Date
+   } | null,
+) => {
+   if (!maintenance) return "";
    if (isExpired(maintenance.ExpireDate)) {
       return "已過期";
    }
@@ -349,13 +367,17 @@ const getMaintenanceStatus = (maintenance) => {
    }
 };
 
-const editMaintenanceRecord = (maintenance) => {
+const editMaintenanceRecord = (maintenance: {
+   MaintenanceID: number
+   MaintenanceDate: string | number | Date
+   ExpireDate: string | number | Date
+}) => {
    editMaintenanceData.value = maintenance;
    form.value.maintenanceDate = new Date(maintenance.MaintenanceDate);
    form.value.expireDate = new Date(maintenance.ExpireDate);
 };
 
-const deleteMaintenanceRecord = async (maintenanceId) => {
+const deleteMaintenanceRecord = async (maintenanceId: number) => {
    if (confirm("確定要刪除此維護記錄？")) {
       await deleteMaintenance(maintenanceId);
    }
@@ -365,7 +387,7 @@ const closeDialog = () => {
    showAddDialog.value = false;
    editMaintenanceData.value = null;
    form.value = {
-      maintenanceDate: null,
+      maintenanceDate: new Date(),
       expireDate: null,
    };
 };

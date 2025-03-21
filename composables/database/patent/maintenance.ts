@@ -99,12 +99,14 @@ export const usePatentMaintenances = (patentService: {
       const latestMaintenance
          = sortedMaintenances.value[sortedMaintenances.value.length - 1];
       const maintenanceStartDate = earliestMaintenance.MaintenanceDate;
+      const latestMaintenanceDate = latestMaintenance.MaintenanceDate;
       const nextMaintenanceDate = latestMaintenance.ExpireDate;
       const maintenanceYears
          = now.value.getFullYear() - maintenanceStartDate.getFullYear();
 
       return {
          maintenanceStartDate,
+         latestMaintenanceDate,
          nextMaintenanceDate,
          maintenanceYears,
          nextMaintenanceLabel:

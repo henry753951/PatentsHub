@@ -3,26 +3,27 @@
       <div
          v-if="patent"
          ref="viewRef"
+         class="pt-[220px] transition-all duration-500 pb-[150px]"
       >
          <div
-            class="bg-[#f5f5f5] dark:bg-[#1a1a1a] sticky top-0 self-start z-[4] max-h-[230px] min-h-0 transition-all duration-500"
+            class="bg-[#f5f5f5] dark:bg-[#1a1a1a] fixed top-0 self-start z-[4] max-h-[230px] min-h-0 transition-all duration-500 w-full"
             :class="{
-               'py-8': state?.arrivedState.top,
-               'py-4': !state?.arrivedState.top,
-               'shadow-sm': !state?.arrivedState.top,
-               'max-h-[88px]': !state?.arrivedState.top,
+               'py-8': isTop,
+               'py-4': !isTop,
+               'shadow-sm': !isTop,
+               'max-h-[88px]': !isTop,
             }"
          >
             <div
                class="container mx-auto"
                :class="{
-                  'mb-8': state?.arrivedState.top,
+                  'mb-8': isTop,
                }"
             >
                <div
                   :class="{
-                     'justify-between items-center': !state?.arrivedState.top,
-                     'flex-col': state?.arrivedState.top,
+                     'justify-between items-center': !isTop,
+                     'flex-col': isTop,
                   }"
                   class="flex gap-4 overflow-hidden w-full"
                >
@@ -33,8 +34,8 @@
                         <div
                            class="font-extrabold transition-all duration-300 whitespace-nowrap text-ellipsis overflow-hidden"
                            :class="{
-                              'text-3xl': state?.arrivedState.top,
-                              'text-xl': !state?.arrivedState.top,
+                              'text-3xl': isTop,
+                              'text-xl': !isTop,
                            }"
                            :title="title.native"
                         >
@@ -72,7 +73,7 @@
                      <div
                         class="font-thin duration-300 transition-all whitespace-nowrap text-ellipsis overflow-hidden"
                         :class="{
-                           'text-xs': !state?.arrivedState.top,
+                           'text-xs': !isTop,
                         }"
                      >
                         {{ title.english }}
@@ -80,7 +81,8 @@
                   </div>
                   <div
                      class="flex-none flex justify-between gap-4 transition-all duration-500 whitespace-nowrap"
-                     :class="{ 'scale-75  w-fit': !state?.arrivedState.top }"
+                     :class="{ 'scale-75  w-fit': !isTop }"
+                     style="view-transition-name: status-block"
                   >
                      <CustomStatusBlock
                         title="年度"
@@ -178,7 +180,7 @@
                         v-model="patent"
                         :patent-maintainances-service="patentMaintainances"
                      />
-                  </tabpanel>
+                  </TabPanel>
                </TabPanels>
             </Tabs>
          </div>
@@ -216,6 +218,10 @@ const porps = defineProps<{
 const { open } = useModals();
 const viewRef = useTemplateRef<HTMLDivElement>("viewRef");
 const state = useClosestScrollState(viewRef);
+const isTop = computed(() => {
+   if (!state.value) return false;
+   return state.value.arrivedState.top;
+});
 const title = computed(() => {
    if (!patent.value) return { english: "", native: "" };
    return {
