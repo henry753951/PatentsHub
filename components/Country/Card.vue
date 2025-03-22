@@ -16,7 +16,10 @@ const capitalizeFirstLetter = (string: string) => {
 
 <template>
    <div
-      :class="{ 'border-2 border-red-500': props.isSelected }"
+      :class="{
+         'border-2 border-red-500': props.isSelected,
+         'border-2 border-transparent': !props.isSelected,
+      }"
       class="relative px-6 pt-12 pb-6 bg-gray-50 dark:bg-zinc-800 rounded-xl"
    >
       <CountryFlag
@@ -34,14 +37,16 @@ const capitalizeFirstLetter = (string: string) => {
             <div
                class="mb-0.5 h-1.5 rounded bg-neutral-200 bg-opacity-80"
             ></div>
-            <p class="text-xs text-left text-stone-500 text-opacity-80 dark:text-white">
+            <p
+               class="text-xs text-left text-stone-500 text-opacity-80 dark:text-white"
+            >
                {{ props.caseCount }}個案件
             </p>
          </div>
          <div class="flex justify-between items-center">
             <div class="flex gap-4">
                <button
-                  class="flex gap-1.5 items-center text-xs cursor-pointer text-stone-500 "
+                  class="flex gap-1.5 items-center text-xs cursor-pointer text-stone-500"
                   @click="$emit('edit')"
                >
                   <Icon
