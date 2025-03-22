@@ -277,7 +277,11 @@
                </div>
             </CustomContentBlockRow>
          </CustomContentBlock>
-         <CustomContentBlock title="發明人">
+         <CustomContentBlock
+            title="發明人"
+            save-button
+            @save="inventorData.save"
+         >
             <BlockPatentInventorRow
                v-for="inventor in patent.inventors"
                :key="inventor.InventorID"
@@ -287,6 +291,11 @@
                   department: inventor.inventor.department.Name,
                }"
                :job="inventor.inventor.contactInfo?.Role ?? ''"
+               :contribution="inventor.Contribution"
+               :max="100"
+               :contribution-input="true"
+               :show-avatar="false"
+               :compact="true"
             />
          </CustomContentBlock>
       </div>
@@ -492,6 +501,26 @@ const applicationData = useSyncData(patent, async (newData) => {
       },
    ]);
 });
+
+// 發明人資訊
+const inventorData = useSyncData(patent, async (newData) => {
+   if (!newData?.inventors) return;
+
+   for (const inventor of newData.inventors) {
+      await $trpc.data.patentInventor.update.mutate({
+         where: {
+            PatentID_InventorID: {
+               PatentID: newData.PatentID,
+               InventorID: inventor.InventorID,
+            },
+         },
+         data: {
+            Contribution: inventor.Contribution,
+         },
+      });
+   }
+});
+
 </script>
 
 <style scoped></style>

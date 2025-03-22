@@ -10,7 +10,7 @@ export default router({
       .mutation(async ({ input }) => {
          return await prisma.$transaction(async (prisma) => {
             return await prisma.inventor.create({
-               data: input,
+               data: input as Prisma.InventorCreateInput,
             });
          });
       }),

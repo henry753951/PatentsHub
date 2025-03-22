@@ -7,7 +7,9 @@
          class="w-full max-w-lg rounded-xl bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 h-fit"
       >
          <DialogHeader>
-            <DialogTitle class="text-xl font-bold text-slate-800 dark:text-zinc-100">
+            <DialogTitle
+               class="text-xl font-bold text-slate-800 dark:text-zinc-100"
+            >
                {{ props.title }}
             </DialogTitle>
             <DialogDescription class="text-slate-600 dark:text-zinc-400">
@@ -16,82 +18,96 @@
          </DialogHeader>
          <OverlayScrollbarsComponent
             :options="{ scrollbars: { autoHide: 'leave' } }"
-            class="max-h-96 overflow-auto px-4"
+            class="max-h-96 overflow-auto px-4 py-4"
          >
             <form
                class="space-y-2"
                @submit.prevent="submitForm"
             >
                <div>
-                  <Label
-                     for="name"
-                     class="text-sm font-medium text-slate-700 dark:text-zinc-300"
-                  >
-                     發明人姓名
-                  </Label>
+                  <div class="flex justify-between items-center">
+                     <Label
+                        for="name"
+                        class="text-sm font-bold text-slate-700 dark:text-zinc-300"
+                     >
+                        <div v-if="!formData.name.trim() && showValidation">
+                           <span class="text-red-500">發明人姓名 *</span>
+                        </div>
+                        <div v-else>
+                           <span>發明人姓名</span>
+                           <span class="text-red-500"> *</span>
+                        </div>
+
+                     </Label>
+                     <p
+                        v-if="!formData.name.trim() && showValidation"
+                        class="text-red-500 text-sm"
+                     >
+                        姓名不可為空
+                     </p>
+                  </div>
+
+                  <!-- Input 輸入框 -->
                   <Input
                      id="name"
+                     ref="nameInputRef"
                      v-model="formData.name"
-                     required
-                     placeholder="請輸入姓名"
+                     @blur="showValidation = true"
                   />
                </div>
+
                <div>
                   <Label
                      for="email"
-                     class="text-sm font-medium text-slate-700 dark:text-zinc-300"
+                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
                   >
                      電子信箱
                   </Label>
                   <Input
                      id="email"
                      v-model="formData.email"
-                     placeholder="請輸入 Email"
                   />
                </div>
                <div>
                   <Label
                      for="officeNumber"
-                     class="text-sm font-medium text-slate-700 dark:text-zinc-300"
+                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
                   >
                      辦公室電話
                   </Label>
                   <Input
                      id="officeNumber"
                      v-model="formData.officeNumber"
-                     placeholder="請輸入辦公室電話"
                   />
                </div>
                <div>
                   <Label
                      for="phoneNumber"
-                     class="text-sm font-medium text-slate-700 dark:text-zinc-300"
+                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
                   >
                      手機號碼
                   </Label>
                   <Input
                      id="phoneNumber"
                      v-model="formData.phoneNumber"
-                     placeholder="請輸入手機號碼"
                   />
                </div>
                <div>
                   <Label
                      for="role"
-                     class="text-sm font-medium text-slate-700 dark:text-zinc-300"
+                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
                   >
                      職位
                   </Label>
                   <Input
                      id="role"
                      v-model="formData.role"
-                     placeholder="請輸入職位"
                   />
                </div>
                <div>
                   <Label
                      for="belongs"
-                     class="text-sm font-medium text-slate-700 dark:text-zinc-300"
+                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
                   >
                      所屬系所
                   </Label>
@@ -103,14 +119,13 @@
                <div>
                   <Label
                      for="note"
-                     class="text-sm font-medium text-slate-700 dark:text-zinc-300"
+                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
                   >
                      備註
                   </Label>
                   <Input
                      id="note"
                      v-model="formData.note"
-                     placeholder="請輸入備註"
                   />
                </div>
             </form>
@@ -123,7 +138,10 @@
             >
                取消
             </Button>
-            <Button type="submit">
+            <Button
+               type="submit"
+               @click="submitForm"
+            >
                確認
             </Button>
          </DialogFooter>
@@ -164,6 +182,20 @@ const props = defineProps<{
 
 const emit = defineEmits(["submit", "close"]);
 
+const showValidation = ref(false);
+const nameInputRef = ref<InstanceType<typeof Input> | null>(null);
+
+// 監聽 Dialog 是否打開，然後自動對焦
+watch(
+   () => props.isOpen,
+   async (isOpen) => {
+      if (isOpen) {
+         showValidation.value = false;
+         await nextTick();
+         nameInputRef.value?.$el?.focus();
+      }
+   },
+);
 const formData = ref({
    name: "",
    email: "",
@@ -198,6 +230,9 @@ watch(
 );
 
 const submitForm = () => {
+   if (!formData.value.name) {
+      return;
+   }
    emit("submit", {
       name: formData.value.name,
       email: formData.value.email,
