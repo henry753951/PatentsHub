@@ -29,7 +29,8 @@ definePageMeta({
    name: "patents-view",
 });
 
-const { data, forceRefresh } = useDatabasePatents();
+const { data, forceRefresh, fillter } = useDatabasePatents();
+
 </script>
 
 <style scoped></style>
