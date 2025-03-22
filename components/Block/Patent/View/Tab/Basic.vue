@@ -279,23 +279,12 @@
          </CustomContentBlock>
          <CustomContentBlock
             title="發明人"
-            save-button
+            note-key="`${patent.PatentID}:inventors`"
+            :save-button="!inventorData.isSynced.value"
             @save="inventorData.save"
          >
-            <BlockPatentInventorRow
-               v-for="inventor in patent.inventors"
-               :key="inventor.InventorID"
-               :name="inventor.inventor.contactInfo?.Name ?? ''"
-               :belong="{
-                  college: inventor.inventor.department.college.Name,
-                  department: inventor.inventor.department.Name,
-               }"
-               :job="inventor.inventor.contactInfo?.Role ?? ''"
-               :contribution="inventor.Contribution"
-               :max="100"
-               :contribution-input="true"
-               :show-avatar="false"
-               :compact="true"
+            <BlockPatentInventorLiteEditList
+               v-model="inventorData.data.value.inventors"
             />
          </CustomContentBlock>
       </div>
@@ -504,21 +493,25 @@ const applicationData = useSyncData(patent, async (newData) => {
 
 // 發明人資訊
 const inventorData = useSyncData(patent, async (newData) => {
-   if (!newData?.inventors) return;
+   if (!newData || !Array.isArray(newData.inventors)) return;
 
-   for (const inventor of newData.inventors) {
-      await $trpc.data.patentInventor.update.mutate({
-         where: {
-            PatentID_InventorID: {
-               PatentID: newData.PatentID,
-               InventorID: inventor.InventorID,
-            },
+   await crud.updatePatent([
+      {
+         inventors: {
+            deleteMany: {}, // 先清空專利所有發明人關聯
          },
-         data: {
-            Contribution: inventor.Contribution,
+      },
+      {
+         inventors: {
+            create: newData.inventors.map((i) => ({
+
+               InventorID: i.InventorID,
+               Contribution: i.Contribution,
+               Main: i.Main,
+            })),
          },
-      });
-   }
+      },
+   ]);
 });
 
 </script>
