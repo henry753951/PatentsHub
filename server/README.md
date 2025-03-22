@@ -118,7 +118,7 @@ pnpm prisma generate
 我用了一個可以從 Prisma schema 自動生成 ZOD Schema，可以幫助取得資料庫的 Insert/Select/Update 等等的資料格式。
 
 ```bash
-pnpm prisma generate zod
+pnpm prisma migrate
 ```
 
 ## 使用 Zod Schema
