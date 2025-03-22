@@ -76,7 +76,7 @@
                   class="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/40 dark:to-pink-950/30"
                >
                   <h3 class="text-sm font-medium text-muted-foreground mb-1">
-                     維護年期
+                     維護年度計
                   </h3>
                   <p class="text-lg font-semibold">
                      {{ maintenanceStatus.maintenanceYears }} 年
@@ -241,12 +241,12 @@
                <FormDatePicker
                   v-model="form.maintenanceDate"
                   label="維護日期"
-                  :min-date="maintenanceStatus?.latestMaintenanceDate"
+                  :min-date="editMaintenanceData ? undefined : maintenanceStatus?.latestMaintenanceDate"
                />
                <FormDatePicker
                   v-model="form.expireDate"
                   label="到期日期"
-                  :min-date="minExpireDate"
+                  :min-date="editMaintenanceData ? undefined : minExpireDate"
                />
                <DialogFooter>
                   <Button
@@ -319,9 +319,10 @@ const isSubmitDisabled = computed(() => {
    return !form.value.maintenanceDate || !form.value.expireDate;
 });
 const minExpireDate = computed(() => {
+   if (!maintenanceStatus.value?.nextMaintenanceDate)
+      return form.value.maintenanceDate;
    if (
       form.value.maintenanceDate
-      && maintenanceStatus.value?.nextMaintenanceDate
       && form.value.maintenanceDate > maintenanceStatus.value.nextMaintenanceDate
    )
       return form.value.maintenanceDate;

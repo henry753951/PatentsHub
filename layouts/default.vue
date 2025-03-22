@@ -4,12 +4,11 @@
       <div class="flex flex-1 min-h-0">
          <BlockSideMenu class="bg-white dark:bg-zinc-900" />
          <div class="inner-page w-full h-full">
-            <OverlayScrollbarsComponent
-               :options="{ scrollbars: { autoHide: 'leave' } }"
+            <ScrollArea
                class="h-full w-full"
             >
                <slot />
-            </OverlayScrollbarsComponent>
+            </ScrollArea>
          </div>
       </div>
       <ClientOnly>
@@ -22,7 +21,7 @@
 <script lang="ts" setup>
 import { Toaster } from "@/components/ui/sonner";
 import { ModalsService } from "#components";
-import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
+import { ScrollArea } from "@/components/ui/scroll-area";
 </script>
 
 <style scoped>

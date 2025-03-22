@@ -1,12 +1,13 @@
 import { router } from "../../trpc";
+import note from "./note";
 import country from "./country";
 import patent from "./patent";
 import college from "./college";
 import inventor from "./inventor";
 import agency from "./agency";
 import contactInfo from "./contactInfo";
-import note from "./note";
 import patentRecord from "./patentRecord";
+import patentStatus from "./patentStatus";
 export default router({
    country: country,
    patent: patent,
@@ -15,5 +16,6 @@ export default router({
    agency: agency,
    contactInfo: contactInfo,
    note: note,
+   patentStatus: patentStatus,
    patentRecord: patentRecord,
 });

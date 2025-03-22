@@ -3,10 +3,10 @@
       <div
          v-if="patent"
          ref="viewRef"
-         class="pt-[220px] transition-all duration-500 pb-[150px]"
+         class="pt-[200px] transition-all duration-500 pb-[230px]"
       >
          <div
-            class="bg-[#f5f5f5] dark:bg-[#1a1a1a] fixed top-0 self-start z-[4] max-h-[230px] min-h-0 transition-all duration-500 w-full"
+            class="bg-[#f5f5f5] dark:bg-[#1a1a1a] fixed top-0 self-start z-[4] max-h-[230px] min-h-0 transition-all duration-500 w-full overflow-hidden"
             :class="{
                'py-8': isTop,
                'py-4': !isTop,
@@ -217,7 +217,7 @@ const porps = defineProps<{
 
 const { open } = useModals();
 const viewRef = useTemplateRef<HTMLDivElement>("viewRef");
-const state = useClosestScrollState(viewRef);
+const { state } = useClosestScrollState(viewRef);
 const isTop = computed(() => {
    if (!state.value) return false;
    return state.value.arrivedState.top;

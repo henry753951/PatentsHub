@@ -18,5 +18,5 @@ export const useClosestScrollState = (
    onUnmounted(() => {
       unwatch();
    });
-   return state;
+   return { state };
 };

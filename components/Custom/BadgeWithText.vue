@@ -2,10 +2,11 @@
    <span
       class="badge"
       :class="{
-         'text-xs': props.size === 'xs',
-         'text-sm': props.size === 'sm',
-         'text-lg': props.size === 'lg',
-         'text-xl': props.size === 'xl',
+         'text-[0.6rem] px-1 py-[1px]': props.size === 'xs',
+         'text-sm px-1 py-0.5': props.size === 'sm',
+         'text-lg px-1.5 py-1': props.size === 'lg',
+         'text-xl px-1.5 py-1': props.size === 'xl',
+         'text-base px-1.5 py-1': props.size === 'md' || !props.size,
       }"
       :style="badgeVars"
    >
@@ -73,7 +74,6 @@ const badgeVars = computed(() => ({
    );
    border-width: 1px;
    border-style: solid;
-   padding: 0.17rem 0.4rem;
    border-radius: 0.25rem;
    display: inline-block;
 }

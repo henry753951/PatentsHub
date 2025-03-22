@@ -4,7 +4,7 @@ export const usePatentStatus = (patentService: {
    data: Ref<RouterOutput["data"]["patent"]["getPatent"]>
    refreshCallback?: () => Promise<void>
 }) => {
-   const now = useNow({ interval: 10000 });
+   const now = useNow({ interval: 10 * 1000 });
    const { $trpc } = useNuxtApp();
    const { data: patent, refreshCallback } = patentService;
 
