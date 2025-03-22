@@ -104,27 +104,30 @@ const isSelected = (country: Country) => {
 const toggleCountrySelection = (country: Country) => {
    if (isSelected(country)) {
       selectedCountries.value.delete(country);
-   } else {
+   }
+   else {
       selectedCountries.value.add(country);
    }
 };
 </script>
 
 <template>
-   <div class="px-8 py-2.5 min-h-screen bg-gray-100">
+   <div class="px-8 py-2.5 min-h-screen">
       <div class="flex px-8 py-2.5 mt-2 mb-6 max-sm:px-4 max-sm:py-2.5">
          <div class="flex flex-col">
-            <h1 class="flex text-2xl font-bold mb-8 bg-gray-300 rounded-lg justify-center">國家管理</h1>
+            <h1 class="flex text-2xl font-bold mb-8 dark:text-white dark:bg-none rounded-lg">
+               國家管理
+            </h1>
             <div
-               class="flex gap-4 px-2.5 py-0 bg-white rounded-xl max-sm:px-2 max-sm:py-0 dark:bg-black dark:border-2 dark:border-white"
+               class="flex gap-4 px-2.5 py-0 bg-white rounded-xl max-sm:px-2 max-sm:py-0 dark:bg-white dark:border-2 dark:border-white"
             >
                <button
-                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
                   v-tooltip.top="'新增國家'"
+                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
                >
                   <Icon
                      name="uil:create-dashboard"
-                     class="w-6 h-6 text-black dark:text-white"
+                     class="w-6 h-6 text-black dark:text-black"
                      @click="
                         openAutoModal(
                            '新增國家',
@@ -137,8 +140,8 @@ const toggleCountrySelection = (country: Country) => {
                   />
                </button>
                <button
-                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
                   v-tooltip.top="'點選國家可以大量刪除'"
+                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
                   @click="
                      openAutoModal(
                         '確認刪除',
@@ -151,17 +154,17 @@ const toggleCountrySelection = (country: Country) => {
                >
                   <Icon
                      name="mdi:delete-sweep-outline"
-                     class="w-6 h-6 text-black dark:text-white"
+                     class="w-6 h-6 text-black dark:text-black"
                   />
                </button>
                <button
-                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
                   v-tooltip.top="'清空所有國家ㄑ'"
+                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
                   @click="deleteAllCountries"
                >
                   <Icon
                      name="icon-park-outline:clear"
-                     class="w-6 h-6 text-black dark:text-white"
+                     class="w-6 h-6 text-black dark:text-black"
                   />
                </button>
             </div>
@@ -176,7 +179,7 @@ const toggleCountrySelection = (country: Country) => {
             :key="country.CountryID"
             :title="country.CountryName"
             :iso-code="country.ISOCode"
-            case-count="95"
+            :case-count="95"
             :is-selected="isSelected(country)"
             @click="toggleCountrySelection(country)"
             @edit="editCountryByCard(country)"

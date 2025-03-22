@@ -23,24 +23,26 @@ export const prisma
      ?? new PrismaClient({
         log: isProduction
            ? [{ emit: "event", level: "error" }]
-           : [
-              {
-                 emit: "event",
-                 level: "query",
-              },
-              {
-                 emit: "stdout",
-                 level: "error",
-              },
-              {
-                 emit: "stdout",
-                 level: "info",
-              },
-              {
-                 emit: "stdout",
-                 level: "warn",
-              },
-           ],
+           : process.env.PRISMA_LOG
+              ? [
+                 {
+                    emit: "event",
+                    level: "query",
+                 },
+                 {
+                    emit: "stdout",
+                    level: "error",
+                 },
+                 {
+                    emit: "stdout",
+                    level: "info",
+                 },
+                 {
+                    emit: "stdout",
+                    level: "warn",
+                 },
+              ]
+              : undefined,
         datasources: {
            db: {
               url: dbPath,

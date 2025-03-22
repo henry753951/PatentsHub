@@ -22,8 +22,8 @@
       </div>
       <div
          v-if="$slots.default"
-         class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-[calc(80%)] z-[10] transition-all duration-200 ps-3"
-         :class="['group-hover/main:opacity-100 opacity-0','group-hover/main:translate-x-[calc(100%)]']"
+         class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-[calc(80%)] z-[10] transition-all duration-200 ps-3 pointer-events-none"
+         :class="['group-hover/main:opacity-100 opacity-0','group-hover/main:translate-x-[calc(100%)]','group-hover/main:pointer-events-auto']"
       >
          <div
             class="p-2 rounded-lg bg-white dark:bg-zinc-800 shadow-lg flex flex-col gap-2"

@@ -4,7 +4,7 @@ export const usePatentMaintenances = (patentService: {
    data: Ref<RouterOutput["data"]["patent"]["getPatent"]>
    refreshCallback?: () => Promise<void>
 }) => {
-   const now = useNow();
+   const now = useNow({ interval: 10 * 1000 });
    const { $trpc } = useNuxtApp();
    const { data: patent, refreshCallback } = patentService;
    const DbMaintenances = computed(() => {
@@ -99,12 +99,16 @@ export const usePatentMaintenances = (patentService: {
       const latestMaintenance
          = sortedMaintenances.value[sortedMaintenances.value.length - 1];
       const maintenanceStartDate = earliestMaintenance.MaintenanceDate;
+      const latestMaintenanceDate = latestMaintenance.MaintenanceDate;
       const nextMaintenanceDate = latestMaintenance.ExpireDate;
-      const maintenanceYears
-         = now.value.getFullYear() - maintenanceStartDate.getFullYear();
+      const _maintenanceSeconds = Math.floor(
+         nextMaintenanceDate.getTime() - maintenanceStartDate.getTime(),
+      );
+      const maintenanceYears = Math.floor(_maintenanceSeconds / 1000 / 60 / 60 / 24 / 365 * 10) / 10;
 
       return {
          maintenanceStartDate,
+         latestMaintenanceDate,
          nextMaintenanceDate,
          maintenanceYears,
          nextMaintenanceLabel:

@@ -3,7 +3,7 @@
       <Tooltip disable-hoverable-content>
          <TooltipTrigger as-child>
             <div
-               class="py-1 px-1 rounded-full flex items-center justify-centercursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-all duration-300 gap-1 select-none cursor-pointer"
+               class="py-1 px-1 rounded-full flex items-center justify-centercursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-all duration-300 gap-1 select-none cursor-pointer w-fit"
                :class="{
                   'dark:text-zinc-200 text-gray-700': note,
                   'dark:text-zinc-500 text-zinc-400': !note,

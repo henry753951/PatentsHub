@@ -1,158 +1,256 @@
 <template>
    <div
-      class="flex items-center justify-between w-full px-4 py-4 bg-white dark:bg-zinc-900"
+      class="relative overflow-hidden rounded-lg backdrop-blur-sm bg-white/80 dark:bg-zinc-900/90 shadow-md border border-gray-100 dark:border-zinc-800 transition-all duration-300 hover:shadow-lg group cursor-pointer patent-row"
+      :data-patent-id="patent.PatentID"
    >
-      <!-- Left Section: 發明人 -->
-      <div class="flex items-center space-x-3 px-4">
-         <div class="flex flex-col items-center">
-            <span class="text-xs font-light text-gray-500 dark:text-gray-400">
-               發明人
-            </span>
-            <span class="text-gray-700 dark:text-gray-200 font-bold text-lg">
-               {{ author?.contactInfo.Name ?? "無資料" }}
-            </span>
-            <div
-               v-if="coAuthors.length > 0"
-               class="text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-zinc-700 px-1 py-[1px] rounded flex items-center space-x-1"
-            >
-               <Icon
-                  name="ic:baseline-people-alt"
-                  size="16"
-               />
-               <div class="text-xs">
-                  +{{ coAuthors.length }}
-               </div>
-            </div>
-         </div>
-      </div>
+      <!-- 狀態色條（移至右側） -->
+      <div
+         class="absolute top-0 bottom-0 right-0 w-1 h-full"
+         :class="{
+            'bg-green-500': status === '有效',
+            'bg-amber-500': status === '即將到期',
+            'bg-red-500': status === '已到期',
+            'bg-gray-500': status === '未生效',
+         }"
+      ></div>
 
-      <!-- Middle Section: 發明名稱、學院、系所、資助單位 -->
-      <div class="flex flex-col items-start flex-1">
-         <div class="flex items-center space-x-2">
-            <CustomBadgeWithText
-               :text="patent.department.college.Name"
-               size="xs"
-            />
-
-            <div class="text-gray-700 dark:text-gray-200 text-sm">
-               {{ patent.department.Name }}
-            </div>
-         </div>
-         <span
-            class="text-gray-700 dark:text-gray-200 mt-1 line-clamp-1 font-medium text-lg"
+      <div class="relative flex items-center w-full px-4 py-3">
+         <!-- 左側：發明人 -->
+         <div
+            class="flex items-center space-x-3 pr-4 border-r border-gray-100 dark:border-zinc-800"
          >
-            {{ name }}
-         </span>
-         <div class="flex items-center space-x-2 mt-1">
-            <span class="text-gray-600 dark:text-gray-300 text-xs">
-               資助單位:
-            </span>
-            <span class="text-gray-700 dark:text-gray-200 text-xs">
-               {{ fundingUnit }}
-            </span>
-         </div>
-      </div>
-
-      <!-- Right Section: 編號、專利國家、專利類型、維護期程、維護年度、狀態 -->
-      <div class="flex items-center space-x-4">
-         <div class="flex flex-col items-end">
-            <div class="flex items-center gap-1">
-               <NuxtImg
-                  v-if="patent.country"
-                  :src="`https://flagcdn.com/w160/${patent.country.ISOCode.toLowerCase()}.png`"
-                  class="h-3 rounded"
-               />
+            <div class="flex flex-col items-center">
+               <span class="text-xs font-light text-gray-500 dark:text-gray-400">發明人</span>
+               <span class="text-gray-700 dark:text-gray-200 font-bold">
+                  {{ author?.contactInfo.Name ?? "無資料" }}
+               </span>
                <div
-                  v-else
-                  class="h-3 w-4 rounded bg-gray-300 dark:bg-gray-700 flex items-center justify-center"
+                  v-if="coAuthors.length > 0"
+                  class="text-gray-500 dark:text-gray-400 bg-gray-100/80 dark:bg-zinc-700/80 backdrop-blur-sm px-1.5 py-0.5 mt-1 rounded-full flex items-center space-x-1"
                >
                   <Icon
-                     name="ic:baseline-flag"
-                     size="8"
-                     class="text-gray-500 dark:text-gray-400"
+                     name="ic:baseline-people-alt"
+                     size="12"
                   />
+                  <div class="text-xs">
+                     +{{ coAuthors.length }}
+                  </div>
                </div>
-               <span class="text-gray-700 dark:text-gray-200 text-xs">
-                  <!-- {{ patentNumber ?? "未輸入" }} -->
-               </span>
-               <span
-                  class="bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-100 px-2 py-0.5 text-xs rounded"
-               >
-                  {{ patentTypeStr }}
-               </span>
-            </div>
-            <div class="flex items-center space-x-2">
-               <span class="text-gray-600 dark:text-gray-300 text-xs">
-                  維護期程
-               </span>
-               <span class="text-gray-700 dark:text-gray-200 text-xs">
-                  {{ maintenancePeriod }}
-               </span>
-            </div>
-            <div class="flex items-center space-x-2">
-               <span class="text-gray-600 dark:text-gray-300 text-xs">
-                  維護年度
-               </span>
-               <span class="text-gray-700 dark:text-gray-200 text-xs">
-                  {{ maintenanceYear }}
-               </span>
             </div>
          </div>
-         <div class="flex items-center space-x-2">
-            <div class="w-2 h-2 bg-green-500 rounded-full">
+
+         <!-- 中間：發明名稱、學院、系所、資助單位 -->
+         <div class="flex flex-col px-4 flex-1 min-w-0">
+            <div class="flex items-center space-x-2">
+               <CustomBadgeWithText
+                  :text="patent.department.college.Name"
+                  size="xs"
+               />
+               <div class="text-gray-600 dark:text-gray-300 text-xs truncate">
+                  {{ patent.department.Name }}
+               </div>
             </div>
-            <span class="text-green-600 dark:text-green-400">{{ status }}</span>
+
             <span
-               v-if="expiryDate"
-               class="text-red-500 dark:text-red-400 text-sm"
+               class="text-gray-800 dark:text-gray-100 mt-1 line-clamp-1 font-medium"
             >
-               {{ expiryDate }}到期
+               {{ name }}
             </span>
+
+            <div class="flex items-center space-x-2 mt-1">
+               <span class="text-gray-500 dark:text-gray-400 text-xs">資助單位:</span>
+               <span class="text-gray-700 dark:text-gray-200 text-xs">{{
+                  fundingUnit
+               }}</span>
+            </div>
+         </div>
+
+         <!-- 右側：專利資訊 -->
+         <div
+            class="flex items-center space-x-6 pl-4 border-l border-gray-100 dark:border-zinc-800"
+         >
+            <!-- 國家與專利編號 -->
+            <div class="flex flex-col items-start">
+               <div class="flex items-center gap-1 mb-1">
+                  <NuxtImg
+                     v-if="patent.country"
+                     :src="`https://flagcdn.com/w160/${patent.country.ISOCode.toLowerCase()}.png`"
+                     class="h-3 w-5 rounded shadow-sm"
+                     :alt="patent.country.CountryName"
+                  />
+                  <div
+                     v-else
+                     class="h-3 w-5 rounded bg-gray-200 dark:bg-zinc-700 flex items-center justify-center"
+                  >
+                     <Icon
+                        name="ic:baseline-flag"
+                        size="8"
+                        class="text-gray-500 dark:text-gray-400"
+                     />
+                  </div>
+                  <span class="text-gray-700 dark:text-gray-200 text-xs">
+                     {{ patent.external?.PatentNumber || "無專利號碼" }}
+                  </span>
+                  <span
+                     class="bg-amber-50/80 dark:bg-amber-900/30 backdrop-blur-sm text-amber-700 dark:text-amber-300 px-1.5 py-0.5 text-xs rounded-sm"
+                  >
+                     {{ patentTypeStr }}
+                  </span>
+               </div>
+
+               <div class="flex items-center space-x-2">
+                  <span class="text-gray-500 dark:text-gray-400 text-xs">維護期程</span>
+                  <span class="text-gray-700 dark:text-gray-200 text-xs">{{
+                     maintenancePeriod
+                  }}</span>
+               </div>
+
+               <div class="flex items-center space-x-2 mt-0.5">
+                  <span class="text-gray-500 dark:text-gray-400 text-xs">維護年度</span>
+                  <span class="text-gray-700 dark:text-gray-200 text-xs">{{
+                     maintenanceYear
+                  }}</span>
+               </div>
+            </div>
+
+            <!-- 狀態指示器 -->
+            <div class="flex flex-col items-end">
+               <div class="flex items-center space-x-2">
+                  <div
+                     class="w-2 h-2 rounded-full"
+                     :class="{
+                        'bg-green-500': status === '有效',
+                        'bg-amber-500': status === '即將到期',
+                        'bg-red-500': status === '已到期',
+                        'bg-gray-500': status === '未生效',
+                     }"
+                  ></div>
+                  <span
+                     class="text-sm font-medium"
+                     :class="{
+                        'text-green-600 dark:text-green-400': status === '有效',
+                        'text-amber-600 dark:text-amber-400':
+                           status === '即將到期',
+                        'text-red-600 dark:text-red-400': status === '已到期',
+                        'text-gray-600 dark:text-gray-400': status === '未生效',
+                     }"
+                  >{{ status }}</span>
+               </div>
+
+               <span
+                  v-if="expiryDate"
+                  class="text-red-500 dark:text-red-400 text-xs mt-1"
+               >
+                  {{ expiryDate }} 到期
+               </span>
+            </div>
          </div>
       </div>
    </div>
 </template>
 
 <script lang="ts" setup>
+import { computed } from "vue";
+import { useNow } from "@vueuse/core";
+import { differenceInDays } from "date-fns";
 type Patent = RouterOutput["data"]["patent"]["getPatents"][0];
 
-//    name = "血液分離萃取方法及其裝置", // 發明名稱（必顯示） 👌
-//    country = { name: "台灣", code: "TW" }, // 專利國家（必顯示） 👌
-//    patentNumber = "I723456", // 編號（必顯示）👌
-//    type = "DESIGN", // 專利類型（原始欄位）👌
-//    department = { 👌
-//       name: "化學工程及材料工程學系", // 系所（原始欄位）
-//       college: "工學院", // 學院（原始欄位）
-//    },
-//    author = "鍾宜璇", // 發明人（必顯示） 👌
-//    coAuthors = ["李明哲", "陳雅婷", "王志豪"], // 共同發明人（原始欄位） 👌
-
-// FAKED DATA
-const maintenancePeriod = "2023/02/28 - 2033/02/27"; // 維護期程（必顯示）
-const expiryDate = "2033-02-27"; // 到期日（假資料）
-const status = "有效"; // 狀態（假資料）
-const maintenanceYear = "2023"; // 維護年度（必顯示）
-const fundingUnit = "科技部"; // 資助單位（必顯示）
-
-const { patent } = defineProps<{
+const props = defineProps<{
    patent: Patent
 }>();
 
+const now = useNow({ interval: 10 * 1000 });
+
+const latestMaintenance = computed(() => {
+   const maintenances = [...props.patent.maintenances].sort((a, b) => {
+      return (
+         new Date(b.MaintenanceDate).getTime()
+           - new Date(a.MaintenanceDate).getTime()
+      );
+   });
+   if (maintenances.length === 0) {
+      return null;
+   }
+   return maintenances[0];
+});
+// 維護期程
+const maintenancePeriod = computed(() => {
+   if (!latestMaintenance.value) {
+      return null;
+   }
+   const start = new Date(
+      latestMaintenance.value.MaintenanceDate,
+   ).toLocaleDateString("zh-TW", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+   });
+   const end = new Date(latestMaintenance.value.ExpireDate).toLocaleDateString(
+      "zh-TW",
+      {
+         year: "numeric",
+         month: "2-digit",
+         day: "2-digit",
+      },
+   );
+   return `${start} - ${end}`;
+});
+
+// 到期日
+const expiryDate = computed(() => {
+   if (!latestMaintenance.value) {
+      return null;
+   }
+   return new Date(latestMaintenance.value.ExpireDate)
+      .toISOString()
+      .split("T")[0];
+});
+
+// 維護年度
+const maintenanceYear = computed(() => {
+   if (!latestMaintenance.value) {
+      return null;
+   }
+   return new Date(latestMaintenance.value.MaintenanceDate)
+      .getFullYear()
+      .toString();
+});
+
+// 資助單位
+const fundingUnit = computed(() => {
+   return "國科會";
+});
+
+// 狀態
+const status = computed(() => {
+   if (!latestMaintenance.value) {
+      return "未生效";
+   }
+   const expireDate = new Date(latestMaintenance.value.ExpireDate);
+   if (now.value > expireDate) {
+      return "已到期";
+   }
+   if (differenceInDays(expireDate, now.value) <= 30) {
+      return "即將到期";
+   }
+   return "有效";
+});
+
+// 其他既有 computed 屬性保持不變
 const name = computed(() => {
-   if (!patent) return "";
-   return patent.Title ?? patent.DraftTitle;
+   if (!props.patent) return "";
+   if (props.patent.Title) return props.patent.Title;
+   else if (props.patent.DraftTitle) return props.patent.DraftTitle;
+   else return "無名稱";
 });
 
 const author = computed(() => {
-   const mainInventor = patent.inventors.find((i) => i.Main)?.inventor;
-   return mainInventor; // 預設值作為後備
+   const mainInventor = props.patent.inventors.find((i) => i.Main)?.inventor;
+   return mainInventor;
 });
 
 const coAuthors = computed(() => {
-   return patent.inventors.filter((i) => !i.Main).map((i) => i.inventor)
-      .length > 0
-      ? patent.inventors.filter((i) => !i.Main).map((i) => i.inventor)
-      : [];
+   return props.patent.inventors.filter((i) => !i.Main).map((i) => i.inventor);
 });
 
 const patentTypeStr = computed(() => {
@@ -162,10 +260,6 @@ const patentTypeStr = computed(() => {
       DESIGN: "設計",
       PLANT: "植物",
    };
-   return patent.PatentType ? map[patent.PatentType] : "未選擇";
+   return props.patent.PatentType ? map[props.patent.PatentType] : "未選擇";
 });
 </script>
-
-<style scoped>
-/* 保留原始樣式 */
-</style>

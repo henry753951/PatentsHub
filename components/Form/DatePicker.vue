@@ -12,6 +12,8 @@
          show-button-bar
          size="small"
          input-id="date_input"
+         :min-date="minDate"
+         :max-date="maxDate"
       >
          <template #weekheaderlabel>
          </template>
@@ -29,6 +31,8 @@
       icon-display="input"
       show-button-bar
       size="small"
+      :min-date="minDate"
+      :max-date="maxDate"
    >
       <template #weekheaderlabel>
       </template>
@@ -45,6 +49,16 @@ const date = defineModel({
 const props = defineProps({
    label: {
       type: String,
+      required: false,
+      default: undefined,
+   },
+   minDate: {
+      type: Date,
+      required: false,
+      default: undefined,
+   },
+   maxDate: {
+      type: Date,
       required: false,
       default: undefined,
    },

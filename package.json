@@ -46,6 +46,7 @@
       "overlayscrollbars": "^2.10.1",
       "overlayscrollbars-vue": "^0.5.9",
       "pinia": "^3.0.1",
+      "pinia-plugin-persistedstate": "^4.2.0",
       "primeicons": "^7.0.0",
       "primevue": "^4.3.2",
       "prisma": "^6.5.0",

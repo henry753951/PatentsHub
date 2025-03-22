@@ -183,7 +183,8 @@ export default router({
          return await prisma.patent.findMany({
             where: input as Prisma.PatentWhereInput,
             include: {
-               patentRecords: true,
+               maintenances: true,
+               manualStatus: true,
                country: true,
                department: {
                   include: {

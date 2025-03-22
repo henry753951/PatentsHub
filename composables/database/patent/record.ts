@@ -29,18 +29,24 @@ export const usePatentRecords = (patentService: {
    // [Computed]
    // ==================================================
    const events = computed<TimelineEvent[]>(() => {
-      return (
-         patent.value?.patentRecords.map((record) => ({
-            id: record.id,
-            status: record.Record || "無紀錄",
-            date: record.Date
-               ? format(new Date(record.Date), "yyyy/MM/dd")
-               : "未知日期",
-            icon: "fluent:slide-record-48-regular",
-            color: "#4CAF50",
-            rawDate: record.Date,
-         })) ?? []
-      );
+      const mappedEvents
+      = patent.value?.patentRecords.map((record) => ({
+         id: record.id,
+         status: record.Record || "無紀錄",
+         date: record.Date
+            ? format(new Date(record.Date), "yyyy/MM/dd")
+            : "未知日期",
+         icon: "fluent:slide-record-48-regular",
+         color: "#4CAF50",
+         rawDate: record.Date,
+      })) ?? [];
+
+      // 按日期排序
+      return mappedEvents.sort((a, b) => {
+         if (!a.rawDate) return 1; // null 值放在最後
+         if (!b.rawDate) return -1; // null 值放在最後
+         return new Date(a.rawDate).getTime() - new Date(b.rawDate).getTime();
+      });
    });
 
    // ==================================================
