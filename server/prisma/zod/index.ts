@@ -49,27 +49,6 @@ export const InputJsonValueSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() 
 
 export type InputJsonValueType = z.infer<typeof InputJsonValueSchema>;
 
-// DECIMAL
-//------------------------------------------------------
-
-export const DecimalJsLikeSchema: z.ZodType<Prisma.DecimalJsLike> = z.object({
-  d: z.array(z.number()),
-  e: z.number(),
-  s: z.number(),
-  toFixed: z.function(z.tuple([]), z.string()),
-})
-
-export const DECIMAL_STRING_REGEX = /^(?:-?Infinity|NaN|-?(?:0[bB][01]+(?:\.[01]+)?(?:[pP][-+]?\d+)?|0[oO][0-7]+(?:\.[0-7]+)?(?:[pP][-+]?\d+)?|0[xX][\da-fA-F]+(?:\.[\da-fA-F]+)?(?:[pP][-+]?\d+)?|(?:\d+|\d*\.\d+)(?:[eE][-+]?\d+)?))$/;
-
-export const isValidDecimalInput =
-  (v?: null | string | number | Prisma.DecimalJsLike): v is string | number | Prisma.DecimalJsLike => {
-    if (v === undefined || v === null) return false;
-    return (
-      (typeof v === 'object' && 'd' in v && 'e' in v && 's' in v && 'toFixed' in v) ||
-      (typeof v === 'string' && DECIMAL_STRING_REGEX.test(v)) ||
-      typeof v === 'number'
-    )
-  };
 
 /////////////////////////////////////////
 // ENUMS
@@ -97,13 +76,13 @@ export const PatentFundingScalarFieldEnumSchema = z.enum(['PatentID','FundingPla
 
 export const PatentFundingUnitScalarFieldEnumSchema = z.enum(['ProjectCode','FundingUnitID','PatentID']);
 
-export const PatentFundingRecordScalarFieldEnumSchema = z.enum(['FundingRecordID','Amount','Date','PatentFundingPatentID','ExportID']);
+export const PatentFundingRecordScalarFieldEnumSchema = z.enum(['FundingRecordID','Name','Description','Amount','Date','PatentFundingPatentID','ExportID']);
 
 export const PatentFundingExportScalarFieldEnumSchema = z.enum(['ExportID','ExportDate','PatentID']);
 
 export const PatentFundingExportContributionScalarFieldEnumSchema = z.enum(['ContributionID','ExportID','FundingUnitID','Amount']);
 
-export const PatentFundingExportInternalAllocationScalarFieldEnumSchema = z.enum(['InternalContributionID','Amount','PlaneTargetID','ExportID']);
+export const PatentFundingExportInternalAllocationScalarFieldEnumSchema = z.enum(['InternalContributionID','Amount','PlanTargetID','ExportID']);
 
 export const InventorScalarFieldEnumSchema = z.enum(['InventorID','DepartmentID','ContactInfoID']);
 
@@ -123,7 +102,7 @@ export const PatentInternalScalarFieldEnumSchema = z.enum(['PatentID','InternalI
 
 export const PatentExternalScalarFieldEnumSchema = z.enum(['PatentID','PatentNumber','PublicationDate','StartDate','EndDate','IPCNumber','PatentScope']);
 
-export const PatentManualStatusScalarFieldEnumSchema = z.enum(['ManualStatusID','PatentID','Reason','Date','Active']);
+export const PatentManualStatusScalarFieldEnumSchema = z.enum(['ManualStatusID','PatentID','Reason','Date','Active','OnTop']);
 
 export const PatentMaintenanceScalarFieldEnumSchema = z.enum(['MaintenanceID','PatentID','MaintenanceDate','ExpireDate']);
 
@@ -233,7 +212,7 @@ export type FundingPlan = z.infer<typeof FundingPlanSchema>
 
 export const FundingPlanAllocationSchema = z.object({
   FundingPlanAllocationID: z.number().int(),
-  Percentage: z.instanceof(Prisma.Decimal, { message: "Field 'Percentage' must be a Decimal. Location: ['Models', 'FundingPlanAllocation']"}),
+  Percentage: z.number().int(),
   TargetID: z.number().int(),
   FundingPlanID: z.number().int(),
 })
@@ -257,7 +236,7 @@ export type FundingPlanTarget = z.infer<typeof FundingPlanTargetSchema>
 
 export const PatentFundingSchema = z.object({
   PatentID: z.number().int(),
-  FundingPlanPlanID: z.number().int(),
+  FundingPlanPlanID: z.number().int().nullish(),
 })
 
 export type PatentFunding = z.infer<typeof PatentFundingSchema>
@@ -280,7 +259,9 @@ export type PatentFundingUnit = z.infer<typeof PatentFundingUnitSchema>
 
 export const PatentFundingRecordSchema = z.object({
   FundingRecordID: z.number().int(),
-  Amount: z.number(),
+  Name: z.string(),
+  Description: z.string().nullish(),
+  Amount: z.number().int(),
   Date: z.coerce.date(),
   PatentFundingPatentID: z.number().int(),
   ExportID: z.number().int().nullish(),
@@ -308,7 +289,7 @@ export const PatentFundingExportContributionSchema = z.object({
   ContributionID: z.number().int(),
   ExportID: z.number().int(),
   FundingUnitID: z.number().int().nullish(),
-  Amount: z.number(),
+  Amount: z.number().int(),
 })
 
 export type PatentFundingExportContribution = z.infer<typeof PatentFundingExportContributionSchema>
@@ -319,8 +300,8 @@ export type PatentFundingExportContribution = z.infer<typeof PatentFundingExport
 
 export const PatentFundingExportInternalAllocationSchema = z.object({
   InternalContributionID: z.number().int(),
-  Amount: z.instanceof(Prisma.Decimal, { message: "Field 'Amount' must be a Decimal. Location: ['Models', 'PatentFundingExportInternalAllocation']"}),
-  PlaneTargetID: z.number().int(),
+  Amount: z.number().int(),
+  PlanTargetID: z.number().int(),
   ExportID: z.number().int(),
 })
 
@@ -346,7 +327,7 @@ export const PatentInventorSchema = z.object({
   PatentID: z.number().int(),
   InventorID: z.number().int(),
   Main: z.boolean(),
-  Contribution: z.number().nullish(),
+  Contribution: z.number(),
 })
 
 export type PatentInventor = z.infer<typeof PatentInventorSchema>
@@ -459,6 +440,7 @@ export const PatentManualStatusSchema = z.object({
   Reason: z.string(),
   Date: z.coerce.date().nullish(),
   Active: z.boolean(),
+  OnTop: z.boolean(),
 })
 
 export type PatentManualStatus = z.infer<typeof PatentManualStatusSchema>
@@ -686,7 +668,7 @@ export const FundingUnitSelectSchema: z.ZodType<Prisma.FundingUnitSelect> = z.ob
 
 export const FundingPlanIncludeSchema: z.ZodType<Prisma.FundingPlanInclude> = z.object({
   fundings: z.union([z.boolean(),z.lazy(() => PatentFundingFindManyArgsSchema)]).optional(),
-  plannAllocations: z.union([z.boolean(),z.lazy(() => FundingPlanAllocationFindManyArgsSchema)]).optional(),
+  planAllocations: z.union([z.boolean(),z.lazy(() => FundingPlanAllocationFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => FundingPlanCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -701,7 +683,7 @@ export const FundingPlanCountOutputTypeArgsSchema: z.ZodType<Prisma.FundingPlanC
 
 export const FundingPlanCountOutputTypeSelectSchema: z.ZodType<Prisma.FundingPlanCountOutputTypeSelect> = z.object({
   fundings: z.boolean().optional(),
-  plannAllocations: z.boolean().optional(),
+  planAllocations: z.boolean().optional(),
 }).strict();
 
 export const FundingPlanSelectSchema: z.ZodType<Prisma.FundingPlanSelect> = z.object({
@@ -709,7 +691,7 @@ export const FundingPlanSelectSchema: z.ZodType<Prisma.FundingPlanSelect> = z.ob
   PlanType: z.boolean().optional(),
   Name: z.boolean().optional(),
   fundings: z.union([z.boolean(),z.lazy(() => PatentFundingFindManyArgsSchema)]).optional(),
-  plannAllocations: z.union([z.boolean(),z.lazy(() => FundingPlanAllocationFindManyArgsSchema)]).optional(),
+  planAllocations: z.union([z.boolean(),z.lazy(() => FundingPlanAllocationFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => FundingPlanCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -862,6 +844,8 @@ export const PatentFundingRecordCountOutputTypeSelectSchema: z.ZodType<Prisma.Pa
 
 export const PatentFundingRecordSelectSchema: z.ZodType<Prisma.PatentFundingRecordSelect> = z.object({
   FundingRecordID: z.boolean().optional(),
+  Name: z.boolean().optional(),
+  Description: z.boolean().optional(),
   Amount: z.boolean().optional(),
   Date: z.boolean().optional(),
   PatentFundingPatentID: z.boolean().optional(),
@@ -935,7 +919,7 @@ export const PatentFundingExportContributionSelectSchema: z.ZodType<Prisma.Paten
 //------------------------------------------------------
 
 export const PatentFundingExportInternalAllocationIncludeSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationInclude> = z.object({
-  planeTarget: z.union([z.boolean(),z.lazy(() => FundingPlanTargetArgsSchema)]).optional(),
+  planTarget: z.union([z.boolean(),z.lazy(() => FundingPlanTargetArgsSchema)]).optional(),
   export: z.union([z.boolean(),z.lazy(() => PatentFundingExportArgsSchema)]).optional(),
 }).strict()
 
@@ -947,9 +931,9 @@ export const PatentFundingExportInternalAllocationArgsSchema: z.ZodType<Prisma.P
 export const PatentFundingExportInternalAllocationSelectSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationSelect> = z.object({
   InternalContributionID: z.boolean().optional(),
   Amount: z.boolean().optional(),
-  PlaneTargetID: z.boolean().optional(),
+  PlanTargetID: z.boolean().optional(),
   ExportID: z.boolean().optional(),
-  planeTarget: z.union([z.boolean(),z.lazy(() => FundingPlanTargetArgsSchema)]).optional(),
+  planTarget: z.union([z.boolean(),z.lazy(() => FundingPlanTargetArgsSchema)]).optional(),
   export: z.union([z.boolean(),z.lazy(() => PatentFundingExportArgsSchema)]).optional(),
 }).strict()
 
@@ -1233,6 +1217,7 @@ export const PatentManualStatusSelectSchema: z.ZodType<Prisma.PatentManualStatus
   Reason: z.boolean().optional(),
   Date: z.boolean().optional(),
   Active: z.boolean().optional(),
+  OnTop: z.boolean().optional(),
   patent: z.union([z.boolean(),z.lazy(() => PatentArgsSchema)]).optional(),
 }).strict()
 
@@ -1704,7 +1689,7 @@ export const FundingPlanWhereInputSchema: z.ZodType<Prisma.FundingPlanWhereInput
   PlanType: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   fundings: z.lazy(() => PatentFundingListRelationFilterSchema).optional(),
-  plannAllocations: z.lazy(() => FundingPlanAllocationListRelationFilterSchema).optional()
+  planAllocations: z.lazy(() => FundingPlanAllocationListRelationFilterSchema).optional()
 }).strict();
 
 export const FundingPlanOrderByWithRelationInputSchema: z.ZodType<Prisma.FundingPlanOrderByWithRelationInput> = z.object({
@@ -1712,7 +1697,7 @@ export const FundingPlanOrderByWithRelationInputSchema: z.ZodType<Prisma.Funding
   PlanType: z.lazy(() => SortOrderSchema).optional(),
   Name: z.lazy(() => SortOrderSchema).optional(),
   fundings: z.lazy(() => PatentFundingOrderByRelationAggregateInputSchema).optional(),
-  plannAllocations: z.lazy(() => FundingPlanAllocationOrderByRelationAggregateInputSchema).optional()
+  planAllocations: z.lazy(() => FundingPlanAllocationOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const FundingPlanWhereUniqueInputSchema: z.ZodType<Prisma.FundingPlanWhereUniqueInput> = z.object({
@@ -1726,7 +1711,7 @@ export const FundingPlanWhereUniqueInputSchema: z.ZodType<Prisma.FundingPlanWher
   PlanType: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   fundings: z.lazy(() => PatentFundingListRelationFilterSchema).optional(),
-  plannAllocations: z.lazy(() => FundingPlanAllocationListRelationFilterSchema).optional()
+  planAllocations: z.lazy(() => FundingPlanAllocationListRelationFilterSchema).optional()
 }).strict());
 
 export const FundingPlanOrderByWithAggregationInputSchema: z.ZodType<Prisma.FundingPlanOrderByWithAggregationInput> = z.object({
@@ -1754,7 +1739,7 @@ export const FundingPlanAllocationWhereInputSchema: z.ZodType<Prisma.FundingPlan
   OR: z.lazy(() => FundingPlanAllocationWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => FundingPlanAllocationWhereInputSchema),z.lazy(() => FundingPlanAllocationWhereInputSchema).array() ]).optional(),
   FundingPlanAllocationID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  Percentage: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  Percentage: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   TargetID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   FundingPlanID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   target: z.union([ z.lazy(() => FundingPlanTargetScalarRelationFilterSchema),z.lazy(() => FundingPlanTargetWhereInputSchema) ]).optional(),
@@ -1780,7 +1765,7 @@ export const FundingPlanAllocationWhereUniqueInputSchema: z.ZodType<Prisma.Fundi
   AND: z.union([ z.lazy(() => FundingPlanAllocationWhereInputSchema),z.lazy(() => FundingPlanAllocationWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => FundingPlanAllocationWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => FundingPlanAllocationWhereInputSchema),z.lazy(() => FundingPlanAllocationWhereInputSchema).array() ]).optional(),
-  Percentage: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  Percentage: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   TargetID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   FundingPlanID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   target: z.union([ z.lazy(() => FundingPlanTargetScalarRelationFilterSchema),z.lazy(() => FundingPlanTargetWhereInputSchema) ]).optional(),
@@ -1805,7 +1790,7 @@ export const FundingPlanAllocationScalarWhereWithAggregatesInputSchema: z.ZodTyp
   OR: z.lazy(() => FundingPlanAllocationScalarWhereWithAggregatesInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => FundingPlanAllocationScalarWhereWithAggregatesInputSchema),z.lazy(() => FundingPlanAllocationScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   FundingPlanAllocationID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  Percentage: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  Percentage: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   TargetID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   FundingPlanID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
 }).strict();
@@ -1863,9 +1848,9 @@ export const PatentFundingWhereInputSchema: z.ZodType<Prisma.PatentFundingWhereI
   OR: z.lazy(() => PatentFundingWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PatentFundingWhereInputSchema),z.lazy(() => PatentFundingWhereInputSchema).array() ]).optional(),
   PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  FundingPlanPlanID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  FundingPlanPlanID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
   patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
-  plan: z.union([ z.lazy(() => FundingPlanScalarRelationFilterSchema),z.lazy(() => FundingPlanWhereInputSchema) ]).optional(),
+  plan: z.union([ z.lazy(() => FundingPlanNullableScalarRelationFilterSchema),z.lazy(() => FundingPlanWhereInputSchema) ]).optional().nullable(),
   fundingRecords: z.lazy(() => PatentFundingRecordListRelationFilterSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitListRelationFilterSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportListRelationFilterSchema).optional()
@@ -1873,7 +1858,7 @@ export const PatentFundingWhereInputSchema: z.ZodType<Prisma.PatentFundingWhereI
 
 export const PatentFundingOrderByWithRelationInputSchema: z.ZodType<Prisma.PatentFundingOrderByWithRelationInput> = z.object({
   PatentID: z.lazy(() => SortOrderSchema).optional(),
-  FundingPlanPlanID: z.lazy(() => SortOrderSchema).optional(),
+  FundingPlanPlanID: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   patent: z.lazy(() => PatentOrderByWithRelationInputSchema).optional(),
   plan: z.lazy(() => FundingPlanOrderByWithRelationInputSchema).optional(),
   fundingRecords: z.lazy(() => PatentFundingRecordOrderByRelationAggregateInputSchema).optional(),
@@ -1889,9 +1874,9 @@ export const PatentFundingWhereUniqueInputSchema: z.ZodType<Prisma.PatentFunding
   AND: z.union([ z.lazy(() => PatentFundingWhereInputSchema),z.lazy(() => PatentFundingWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => PatentFundingWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PatentFundingWhereInputSchema),z.lazy(() => PatentFundingWhereInputSchema).array() ]).optional(),
-  FundingPlanPlanID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  FundingPlanPlanID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number().int() ]).optional().nullable(),
   patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
-  plan: z.union([ z.lazy(() => FundingPlanScalarRelationFilterSchema),z.lazy(() => FundingPlanWhereInputSchema) ]).optional(),
+  plan: z.union([ z.lazy(() => FundingPlanNullableScalarRelationFilterSchema),z.lazy(() => FundingPlanWhereInputSchema) ]).optional().nullable(),
   fundingRecords: z.lazy(() => PatentFundingRecordListRelationFilterSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitListRelationFilterSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportListRelationFilterSchema).optional()
@@ -1899,7 +1884,7 @@ export const PatentFundingWhereUniqueInputSchema: z.ZodType<Prisma.PatentFunding
 
 export const PatentFundingOrderByWithAggregationInputSchema: z.ZodType<Prisma.PatentFundingOrderByWithAggregationInput> = z.object({
   PatentID: z.lazy(() => SortOrderSchema).optional(),
-  FundingPlanPlanID: z.lazy(() => SortOrderSchema).optional(),
+  FundingPlanPlanID: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   _count: z.lazy(() => PatentFundingCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => PatentFundingAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => PatentFundingMaxOrderByAggregateInputSchema).optional(),
@@ -1912,7 +1897,7 @@ export const PatentFundingScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma
   OR: z.lazy(() => PatentFundingScalarWhereWithAggregatesInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PatentFundingScalarWhereWithAggregatesInputSchema),z.lazy(() => PatentFundingScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   PatentID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  FundingPlanPlanID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  FundingPlanPlanID: z.union([ z.lazy(() => IntNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
 }).strict();
 
 export const PatentFundingUnitWhereInputSchema: z.ZodType<Prisma.PatentFundingUnitWhereInput> = z.object({
@@ -1974,7 +1959,9 @@ export const PatentFundingRecordWhereInputSchema: z.ZodType<Prisma.PatentFunding
   OR: z.lazy(() => PatentFundingRecordWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PatentFundingRecordWhereInputSchema),z.lazy(() => PatentFundingRecordWhereInputSchema).array() ]).optional(),
   FundingRecordID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  Amount: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  Amount: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   Date: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   PatentFundingPatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   ExportID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
@@ -1985,6 +1972,8 @@ export const PatentFundingRecordWhereInputSchema: z.ZodType<Prisma.PatentFunding
 
 export const PatentFundingRecordOrderByWithRelationInputSchema: z.ZodType<Prisma.PatentFundingRecordOrderByWithRelationInput> = z.object({
   FundingRecordID: z.lazy(() => SortOrderSchema).optional(),
+  Name: z.lazy(() => SortOrderSchema).optional(),
+  Description: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   Amount: z.lazy(() => SortOrderSchema).optional(),
   Date: z.lazy(() => SortOrderSchema).optional(),
   PatentFundingPatentID: z.lazy(() => SortOrderSchema).optional(),
@@ -2002,7 +1991,9 @@ export const PatentFundingRecordWhereUniqueInputSchema: z.ZodType<Prisma.PatentF
   AND: z.union([ z.lazy(() => PatentFundingRecordWhereInputSchema),z.lazy(() => PatentFundingRecordWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => PatentFundingRecordWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PatentFundingRecordWhereInputSchema),z.lazy(() => PatentFundingRecordWhereInputSchema).array() ]).optional(),
-  Amount: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  Amount: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   Date: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   PatentFundingPatentID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   ExportID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number().int() ]).optional().nullable(),
@@ -2013,6 +2004,8 @@ export const PatentFundingRecordWhereUniqueInputSchema: z.ZodType<Prisma.PatentF
 
 export const PatentFundingRecordOrderByWithAggregationInputSchema: z.ZodType<Prisma.PatentFundingRecordOrderByWithAggregationInput> = z.object({
   FundingRecordID: z.lazy(() => SortOrderSchema).optional(),
+  Name: z.lazy(() => SortOrderSchema).optional(),
+  Description: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   Amount: z.lazy(() => SortOrderSchema).optional(),
   Date: z.lazy(() => SortOrderSchema).optional(),
   PatentFundingPatentID: z.lazy(() => SortOrderSchema).optional(),
@@ -2029,7 +2022,9 @@ export const PatentFundingRecordScalarWhereWithAggregatesInputSchema: z.ZodType<
   OR: z.lazy(() => PatentFundingRecordScalarWhereWithAggregatesInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PatentFundingRecordScalarWhereWithAggregatesInputSchema),z.lazy(() => PatentFundingRecordScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   FundingRecordID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  Amount: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
+  Name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  Description: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  Amount: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   Date: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   PatentFundingPatentID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   ExportID: z.union([ z.lazy(() => IntNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
@@ -2101,7 +2096,7 @@ export const PatentFundingExportContributionWhereInputSchema: z.ZodType<Prisma.P
   ContributionID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   ExportID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   FundingUnitID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
-  Amount: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  Amount: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   export: z.union([ z.lazy(() => PatentFundingExportScalarRelationFilterSchema),z.lazy(() => PatentFundingExportWhereInputSchema) ]).optional(),
   fundingUnit: z.union([ z.lazy(() => FundingUnitNullableScalarRelationFilterSchema),z.lazy(() => FundingUnitWhereInputSchema) ]).optional().nullable(),
 }).strict();
@@ -2125,7 +2120,7 @@ export const PatentFundingExportContributionWhereUniqueInputSchema: z.ZodType<Pr
   NOT: z.union([ z.lazy(() => PatentFundingExportContributionWhereInputSchema),z.lazy(() => PatentFundingExportContributionWhereInputSchema).array() ]).optional(),
   ExportID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   FundingUnitID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number().int() ]).optional().nullable(),
-  Amount: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  Amount: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   export: z.union([ z.lazy(() => PatentFundingExportScalarRelationFilterSchema),z.lazy(() => PatentFundingExportWhereInputSchema) ]).optional(),
   fundingUnit: z.union([ z.lazy(() => FundingUnitNullableScalarRelationFilterSchema),z.lazy(() => FundingUnitWhereInputSchema) ]).optional().nullable(),
 }).strict());
@@ -2149,7 +2144,7 @@ export const PatentFundingExportContributionScalarWhereWithAggregatesInputSchema
   ContributionID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   ExportID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   FundingUnitID: z.union([ z.lazy(() => IntNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
-  Amount: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
+  Amount: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
 }).strict();
 
 export const PatentFundingExportInternalAllocationWhereInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationWhereInput> = z.object({
@@ -2157,19 +2152,19 @@ export const PatentFundingExportInternalAllocationWhereInputSchema: z.ZodType<Pr
   OR: z.lazy(() => PatentFundingExportInternalAllocationWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PatentFundingExportInternalAllocationWhereInputSchema),z.lazy(() => PatentFundingExportInternalAllocationWhereInputSchema).array() ]).optional(),
   InternalContributionID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  Amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  PlaneTargetID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  Amount: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  PlanTargetID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   ExportID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  planeTarget: z.union([ z.lazy(() => FundingPlanTargetScalarRelationFilterSchema),z.lazy(() => FundingPlanTargetWhereInputSchema) ]).optional(),
+  planTarget: z.union([ z.lazy(() => FundingPlanTargetScalarRelationFilterSchema),z.lazy(() => FundingPlanTargetWhereInputSchema) ]).optional(),
   export: z.union([ z.lazy(() => PatentFundingExportScalarRelationFilterSchema),z.lazy(() => PatentFundingExportWhereInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingExportInternalAllocationOrderByWithRelationInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationOrderByWithRelationInput> = z.object({
   InternalContributionID: z.lazy(() => SortOrderSchema).optional(),
   Amount: z.lazy(() => SortOrderSchema).optional(),
-  PlaneTargetID: z.lazy(() => SortOrderSchema).optional(),
+  PlanTargetID: z.lazy(() => SortOrderSchema).optional(),
   ExportID: z.lazy(() => SortOrderSchema).optional(),
-  planeTarget: z.lazy(() => FundingPlanTargetOrderByWithRelationInputSchema).optional(),
+  planTarget: z.lazy(() => FundingPlanTargetOrderByWithRelationInputSchema).optional(),
   export: z.lazy(() => PatentFundingExportOrderByWithRelationInputSchema).optional()
 }).strict();
 
@@ -2181,17 +2176,17 @@ export const PatentFundingExportInternalAllocationWhereUniqueInputSchema: z.ZodT
   AND: z.union([ z.lazy(() => PatentFundingExportInternalAllocationWhereInputSchema),z.lazy(() => PatentFundingExportInternalAllocationWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => PatentFundingExportInternalAllocationWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PatentFundingExportInternalAllocationWhereInputSchema),z.lazy(() => PatentFundingExportInternalAllocationWhereInputSchema).array() ]).optional(),
-  Amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  PlaneTargetID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  Amount: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  PlanTargetID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   ExportID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  planeTarget: z.union([ z.lazy(() => FundingPlanTargetScalarRelationFilterSchema),z.lazy(() => FundingPlanTargetWhereInputSchema) ]).optional(),
+  planTarget: z.union([ z.lazy(() => FundingPlanTargetScalarRelationFilterSchema),z.lazy(() => FundingPlanTargetWhereInputSchema) ]).optional(),
   export: z.union([ z.lazy(() => PatentFundingExportScalarRelationFilterSchema),z.lazy(() => PatentFundingExportWhereInputSchema) ]).optional(),
 }).strict());
 
 export const PatentFundingExportInternalAllocationOrderByWithAggregationInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationOrderByWithAggregationInput> = z.object({
   InternalContributionID: z.lazy(() => SortOrderSchema).optional(),
   Amount: z.lazy(() => SortOrderSchema).optional(),
-  PlaneTargetID: z.lazy(() => SortOrderSchema).optional(),
+  PlanTargetID: z.lazy(() => SortOrderSchema).optional(),
   ExportID: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => PatentFundingExportInternalAllocationCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => PatentFundingExportInternalAllocationAvgOrderByAggregateInputSchema).optional(),
@@ -2205,8 +2200,8 @@ export const PatentFundingExportInternalAllocationScalarWhereWithAggregatesInput
   OR: z.lazy(() => PatentFundingExportInternalAllocationScalarWhereWithAggregatesInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PatentFundingExportInternalAllocationScalarWhereWithAggregatesInputSchema),z.lazy(() => PatentFundingExportInternalAllocationScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   InternalContributionID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  Amount: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  PlaneTargetID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  Amount: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  PlanTargetID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   ExportID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
 }).strict();
 
@@ -2282,7 +2277,7 @@ export const PatentInventorWhereInputSchema: z.ZodType<Prisma.PatentInventorWher
   PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   InventorID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   Main: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  Contribution: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
+  Contribution: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
   patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
   inventor: z.union([ z.lazy(() => InventorScalarRelationFilterSchema),z.lazy(() => InventorWhereInputSchema) ]).optional(),
 }).strict();
@@ -2291,7 +2286,7 @@ export const PatentInventorOrderByWithRelationInputSchema: z.ZodType<Prisma.Pate
   PatentID: z.lazy(() => SortOrderSchema).optional(),
   InventorID: z.lazy(() => SortOrderSchema).optional(),
   Main: z.lazy(() => SortOrderSchema).optional(),
-  Contribution: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  Contribution: z.lazy(() => SortOrderSchema).optional(),
   patent: z.lazy(() => PatentOrderByWithRelationInputSchema).optional(),
   inventor: z.lazy(() => InventorOrderByWithRelationInputSchema).optional()
 }).strict();
@@ -2307,7 +2302,7 @@ export const PatentInventorWhereUniqueInputSchema: z.ZodType<Prisma.PatentInvent
   PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   InventorID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   Main: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  Contribution: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
+  Contribution: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
   patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
   inventor: z.union([ z.lazy(() => InventorScalarRelationFilterSchema),z.lazy(() => InventorWhereInputSchema) ]).optional(),
 }).strict());
@@ -2316,7 +2311,7 @@ export const PatentInventorOrderByWithAggregationInputSchema: z.ZodType<Prisma.P
   PatentID: z.lazy(() => SortOrderSchema).optional(),
   InventorID: z.lazy(() => SortOrderSchema).optional(),
   Main: z.lazy(() => SortOrderSchema).optional(),
-  Contribution: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  Contribution: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => PatentInventorCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => PatentInventorAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => PatentInventorMaxOrderByAggregateInputSchema).optional(),
@@ -2331,7 +2326,7 @@ export const PatentInventorScalarWhereWithAggregatesInputSchema: z.ZodType<Prism
   PatentID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   InventorID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   Main: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
-  Contribution: z.union([ z.lazy(() => FloatNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
+  Contribution: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
 }).strict();
 
 export const NoteWhereInputSchema: z.ZodType<Prisma.NoteWhereInput> = z.object({
@@ -2826,6 +2821,7 @@ export const PatentManualStatusWhereInputSchema: z.ZodType<Prisma.PatentManualSt
   Reason: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   Date: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   Active: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  OnTop: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
 }).strict();
 
@@ -2835,6 +2831,7 @@ export const PatentManualStatusOrderByWithRelationInputSchema: z.ZodType<Prisma.
   Reason: z.lazy(() => SortOrderSchema).optional(),
   Date: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   Active: z.lazy(() => SortOrderSchema).optional(),
+  OnTop: z.lazy(() => SortOrderSchema).optional(),
   patent: z.lazy(() => PatentOrderByWithRelationInputSchema).optional()
 }).strict();
 
@@ -2850,6 +2847,7 @@ export const PatentManualStatusWhereUniqueInputSchema: z.ZodType<Prisma.PatentMa
   Reason: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   Date: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   Active: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  OnTop: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
 }).strict());
 
@@ -2859,6 +2857,7 @@ export const PatentManualStatusOrderByWithAggregationInputSchema: z.ZodType<Pris
   Reason: z.lazy(() => SortOrderSchema).optional(),
   Date: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   Active: z.lazy(() => SortOrderSchema).optional(),
+  OnTop: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => PatentManualStatusCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => PatentManualStatusAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => PatentManualStatusMaxOrderByAggregateInputSchema).optional(),
@@ -2875,6 +2874,7 @@ export const PatentManualStatusScalarWhereWithAggregatesInputSchema: z.ZodType<P
   Reason: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   Date: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
   Active: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
+  OnTop: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
 }).strict();
 
 export const PatentMaintenanceWhereInputSchema: z.ZodType<Prisma.PatentMaintenanceWhereInput> = z.object({
@@ -3489,7 +3489,7 @@ export const FundingPlanCreateInputSchema: z.ZodType<Prisma.FundingPlanCreateInp
   PlanType: z.number().int(),
   Name: z.string(),
   fundings: z.lazy(() => PatentFundingCreateNestedManyWithoutPlanInputSchema).optional(),
-  plannAllocations: z.lazy(() => FundingPlanAllocationCreateNestedManyWithoutFundingPlanInputSchema).optional()
+  planAllocations: z.lazy(() => FundingPlanAllocationCreateNestedManyWithoutFundingPlanInputSchema).optional()
 }).strict();
 
 export const FundingPlanUncheckedCreateInputSchema: z.ZodType<Prisma.FundingPlanUncheckedCreateInput> = z.object({
@@ -3497,14 +3497,14 @@ export const FundingPlanUncheckedCreateInputSchema: z.ZodType<Prisma.FundingPlan
   PlanType: z.number().int(),
   Name: z.string(),
   fundings: z.lazy(() => PatentFundingUncheckedCreateNestedManyWithoutPlanInputSchema).optional(),
-  plannAllocations: z.lazy(() => FundingPlanAllocationUncheckedCreateNestedManyWithoutFundingPlanInputSchema).optional()
+  planAllocations: z.lazy(() => FundingPlanAllocationUncheckedCreateNestedManyWithoutFundingPlanInputSchema).optional()
 }).strict();
 
 export const FundingPlanUpdateInputSchema: z.ZodType<Prisma.FundingPlanUpdateInput> = z.object({
   PlanType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   fundings: z.lazy(() => PatentFundingUpdateManyWithoutPlanNestedInputSchema).optional(),
-  plannAllocations: z.lazy(() => FundingPlanAllocationUpdateManyWithoutFundingPlanNestedInputSchema).optional()
+  planAllocations: z.lazy(() => FundingPlanAllocationUpdateManyWithoutFundingPlanNestedInputSchema).optional()
 }).strict();
 
 export const FundingPlanUncheckedUpdateInputSchema: z.ZodType<Prisma.FundingPlanUncheckedUpdateInput> = z.object({
@@ -3512,7 +3512,7 @@ export const FundingPlanUncheckedUpdateInputSchema: z.ZodType<Prisma.FundingPlan
   PlanType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   fundings: z.lazy(() => PatentFundingUncheckedUpdateManyWithoutPlanNestedInputSchema).optional(),
-  plannAllocations: z.lazy(() => FundingPlanAllocationUncheckedUpdateManyWithoutFundingPlanNestedInputSchema).optional()
+  planAllocations: z.lazy(() => FundingPlanAllocationUncheckedUpdateManyWithoutFundingPlanNestedInputSchema).optional()
 }).strict();
 
 export const FundingPlanCreateManyInputSchema: z.ZodType<Prisma.FundingPlanCreateManyInput> = z.object({
@@ -3533,30 +3533,30 @@ export const FundingPlanUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Funding
 }).strict();
 
 export const FundingPlanAllocationCreateInputSchema: z.ZodType<Prisma.FundingPlanAllocationCreateInput> = z.object({
-  Percentage: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  Percentage: z.number().int(),
   target: z.lazy(() => FundingPlanTargetCreateNestedOneWithoutTargetsInputSchema),
-  fundingPlan: z.lazy(() => FundingPlanCreateNestedOneWithoutPlannAllocationsInputSchema),
+  fundingPlan: z.lazy(() => FundingPlanCreateNestedOneWithoutPlanAllocationsInputSchema),
   fundingUnits: z.lazy(() => FundingUnitCreateNestedManyWithoutFundingPlanAllocationInputSchema).optional()
 }).strict();
 
 export const FundingPlanAllocationUncheckedCreateInputSchema: z.ZodType<Prisma.FundingPlanAllocationUncheckedCreateInput> = z.object({
   FundingPlanAllocationID: z.number().int().optional(),
-  Percentage: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  Percentage: z.number().int(),
   TargetID: z.number().int(),
   FundingPlanID: z.number().int(),
   fundingUnits: z.lazy(() => FundingUnitUncheckedCreateNestedManyWithoutFundingPlanAllocationInputSchema).optional()
 }).strict();
 
 export const FundingPlanAllocationUpdateInputSchema: z.ZodType<Prisma.FundingPlanAllocationUpdateInput> = z.object({
-  Percentage: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Percentage: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   target: z.lazy(() => FundingPlanTargetUpdateOneRequiredWithoutTargetsNestedInputSchema).optional(),
-  fundingPlan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutPlannAllocationsNestedInputSchema).optional(),
+  fundingPlan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutPlanAllocationsNestedInputSchema).optional(),
   fundingUnits: z.lazy(() => FundingUnitUpdateManyWithoutFundingPlanAllocationNestedInputSchema).optional()
 }).strict();
 
 export const FundingPlanAllocationUncheckedUpdateInputSchema: z.ZodType<Prisma.FundingPlanAllocationUncheckedUpdateInput> = z.object({
   FundingPlanAllocationID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Percentage: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Percentage: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   TargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   FundingPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   fundingUnits: z.lazy(() => FundingUnitUncheckedUpdateManyWithoutFundingPlanAllocationNestedInputSchema).optional()
@@ -3564,18 +3564,18 @@ export const FundingPlanAllocationUncheckedUpdateInputSchema: z.ZodType<Prisma.F
 
 export const FundingPlanAllocationCreateManyInputSchema: z.ZodType<Prisma.FundingPlanAllocationCreateManyInput> = z.object({
   FundingPlanAllocationID: z.number().int().optional(),
-  Percentage: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  Percentage: z.number().int(),
   TargetID: z.number().int(),
   FundingPlanID: z.number().int()
 }).strict();
 
 export const FundingPlanAllocationUpdateManyMutationInputSchema: z.ZodType<Prisma.FundingPlanAllocationUpdateManyMutationInput> = z.object({
-  Percentage: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Percentage: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const FundingPlanAllocationUncheckedUpdateManyInputSchema: z.ZodType<Prisma.FundingPlanAllocationUncheckedUpdateManyInput> = z.object({
   FundingPlanAllocationID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Percentage: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Percentage: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   TargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   FundingPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -3583,27 +3583,27 @@ export const FundingPlanAllocationUncheckedUpdateManyInputSchema: z.ZodType<Pris
 export const FundingPlanTargetCreateInputSchema: z.ZodType<Prisma.FundingPlanTargetCreateInput> = z.object({
   Name: z.string(),
   targets: z.lazy(() => FundingPlanAllocationCreateNestedManyWithoutTargetInputSchema).optional(),
-  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationCreateNestedManyWithoutPlaneTargetInputSchema).optional()
+  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationCreateNestedManyWithoutPlanTargetInputSchema).optional()
 }).strict();
 
 export const FundingPlanTargetUncheckedCreateInputSchema: z.ZodType<Prisma.FundingPlanTargetUncheckedCreateInput> = z.object({
   TargetID: z.number().int().optional(),
   Name: z.string(),
   targets: z.lazy(() => FundingPlanAllocationUncheckedCreateNestedManyWithoutTargetInputSchema).optional(),
-  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateNestedManyWithoutPlaneTargetInputSchema).optional()
+  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateNestedManyWithoutPlanTargetInputSchema).optional()
 }).strict();
 
 export const FundingPlanTargetUpdateInputSchema: z.ZodType<Prisma.FundingPlanTargetUpdateInput> = z.object({
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   targets: z.lazy(() => FundingPlanAllocationUpdateManyWithoutTargetNestedInputSchema).optional(),
-  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationUpdateManyWithoutPlaneTargetNestedInputSchema).optional()
+  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationUpdateManyWithoutPlanTargetNestedInputSchema).optional()
 }).strict();
 
 export const FundingPlanTargetUncheckedUpdateInputSchema: z.ZodType<Prisma.FundingPlanTargetUncheckedUpdateInput> = z.object({
   TargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   targets: z.lazy(() => FundingPlanAllocationUncheckedUpdateManyWithoutTargetNestedInputSchema).optional(),
-  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlaneTargetNestedInputSchema).optional()
+  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlanTargetNestedInputSchema).optional()
 }).strict();
 
 export const FundingPlanTargetCreateManyInputSchema: z.ZodType<Prisma.FundingPlanTargetCreateManyInput> = z.object({
@@ -3622,7 +3622,7 @@ export const FundingPlanTargetUncheckedUpdateManyInputSchema: z.ZodType<Prisma.F
 
 export const PatentFundingCreateInputSchema: z.ZodType<Prisma.PatentFundingCreateInput> = z.object({
   patent: z.lazy(() => PatentCreateNestedOneWithoutFundingInputSchema),
-  plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema),
+  plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema).optional(),
   fundingRecords: z.lazy(() => PatentFundingRecordCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportCreateNestedManyWithoutPatentFundingInputSchema).optional()
@@ -3630,7 +3630,7 @@ export const PatentFundingCreateInputSchema: z.ZodType<Prisma.PatentFundingCreat
 
 export const PatentFundingUncheckedCreateInputSchema: z.ZodType<Prisma.PatentFundingUncheckedCreateInput> = z.object({
   PatentID: z.number().int(),
-  FundingPlanPlanID: z.number().int(),
+  FundingPlanPlanID: z.number().int().optional().nullable(),
   fundingRecords: z.lazy(() => PatentFundingRecordUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional()
@@ -3638,7 +3638,7 @@ export const PatentFundingUncheckedCreateInputSchema: z.ZodType<Prisma.PatentFun
 
 export const PatentFundingUpdateInputSchema: z.ZodType<Prisma.PatentFundingUpdateInput> = z.object({
   patent: z.lazy(() => PatentUpdateOneRequiredWithoutFundingNestedInputSchema).optional(),
-  plan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutFundingsNestedInputSchema).optional(),
+  plan: z.lazy(() => FundingPlanUpdateOneWithoutFundingsNestedInputSchema).optional(),
   fundingRecords: z.lazy(() => PatentFundingRecordUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportUpdateManyWithoutPatentFundingNestedInputSchema).optional()
@@ -3646,7 +3646,7 @@ export const PatentFundingUpdateInputSchema: z.ZodType<Prisma.PatentFundingUpdat
 
 export const PatentFundingUncheckedUpdateInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  FundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  FundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   fundingRecords: z.lazy(() => PatentFundingRecordUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional()
@@ -3654,7 +3654,7 @@ export const PatentFundingUncheckedUpdateInputSchema: z.ZodType<Prisma.PatentFun
 
 export const PatentFundingCreateManyInputSchema: z.ZodType<Prisma.PatentFundingCreateManyInput> = z.object({
   PatentID: z.number().int(),
-  FundingPlanPlanID: z.number().int()
+  FundingPlanPlanID: z.number().int().optional().nullable()
 }).strict();
 
 export const PatentFundingUpdateManyMutationInputSchema: z.ZodType<Prisma.PatentFundingUpdateManyMutationInput> = z.object({
@@ -3662,7 +3662,7 @@ export const PatentFundingUpdateManyMutationInputSchema: z.ZodType<Prisma.Patent
 
 export const PatentFundingUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateManyInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  FundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  FundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const PatentFundingUnitCreateInputSchema: z.ZodType<Prisma.PatentFundingUnitCreateInput> = z.object({
@@ -3706,7 +3706,9 @@ export const PatentFundingUnitUncheckedUpdateManyInputSchema: z.ZodType<Prisma.P
 }).strict();
 
 export const PatentFundingRecordCreateInputSchema: z.ZodType<Prisma.PatentFundingRecordCreateInput> = z.object({
-  Amount: z.number(),
+  Name: z.string(),
+  Description: z.string().optional().nullable(),
+  Amount: z.number().int(),
   Date: z.coerce.date(),
   patentFunding: z.lazy(() => PatentFundingCreateNestedOneWithoutFundingRecordsInputSchema),
   fundingExport: z.lazy(() => PatentFundingExportCreateNestedOneWithoutExportRecordsInputSchema).optional(),
@@ -3715,7 +3717,9 @@ export const PatentFundingRecordCreateInputSchema: z.ZodType<Prisma.PatentFundin
 
 export const PatentFundingRecordUncheckedCreateInputSchema: z.ZodType<Prisma.PatentFundingRecordUncheckedCreateInput> = z.object({
   FundingRecordID: z.number().int().optional(),
-  Amount: z.number(),
+  Name: z.string(),
+  Description: z.string().optional().nullable(),
+  Amount: z.number().int(),
   Date: z.coerce.date(),
   PatentFundingPatentID: z.number().int(),
   ExportID: z.number().int().optional().nullable(),
@@ -3723,7 +3727,9 @@ export const PatentFundingRecordUncheckedCreateInputSchema: z.ZodType<Prisma.Pat
 }).strict();
 
 export const PatentFundingRecordUpdateInputSchema: z.ZodType<Prisma.PatentFundingRecordUpdateInput> = z.object({
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   patentFunding: z.lazy(() => PatentFundingUpdateOneRequiredWithoutFundingRecordsNestedInputSchema).optional(),
   fundingExport: z.lazy(() => PatentFundingExportUpdateOneWithoutExportRecordsNestedInputSchema).optional(),
@@ -3732,7 +3738,9 @@ export const PatentFundingRecordUpdateInputSchema: z.ZodType<Prisma.PatentFundin
 
 export const PatentFundingRecordUncheckedUpdateInputSchema: z.ZodType<Prisma.PatentFundingRecordUncheckedUpdateInput> = z.object({
   FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   PatentFundingPatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -3741,20 +3749,26 @@ export const PatentFundingRecordUncheckedUpdateInputSchema: z.ZodType<Prisma.Pat
 
 export const PatentFundingRecordCreateManyInputSchema: z.ZodType<Prisma.PatentFundingRecordCreateManyInput> = z.object({
   FundingRecordID: z.number().int().optional(),
-  Amount: z.number(),
+  Name: z.string(),
+  Description: z.string().optional().nullable(),
+  Amount: z.number().int(),
   Date: z.coerce.date(),
   PatentFundingPatentID: z.number().int(),
   ExportID: z.number().int().optional().nullable()
 }).strict();
 
 export const PatentFundingRecordUpdateManyMutationInputSchema: z.ZodType<Prisma.PatentFundingRecordUpdateManyMutationInput> = z.object({
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingRecordUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PatentFundingRecordUncheckedUpdateManyInput> = z.object({
   FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   PatentFundingPatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -3811,7 +3825,7 @@ export const PatentFundingExportUncheckedUpdateManyInputSchema: z.ZodType<Prisma
 }).strict();
 
 export const PatentFundingExportContributionCreateInputSchema: z.ZodType<Prisma.PatentFundingExportContributionCreateInput> = z.object({
-  Amount: z.number(),
+  Amount: z.number().int(),
   export: z.lazy(() => PatentFundingExportCreateNestedOneWithoutContributionsInputSchema),
   fundingUnit: z.lazy(() => FundingUnitCreateNestedOneWithoutContributionsInputSchema).optional()
 }).strict();
@@ -3820,11 +3834,11 @@ export const PatentFundingExportContributionUncheckedCreateInputSchema: z.ZodTyp
   ContributionID: z.number().int().optional(),
   ExportID: z.number().int(),
   FundingUnitID: z.number().int().optional().nullable(),
-  Amount: z.number()
+  Amount: z.number().int()
 }).strict();
 
 export const PatentFundingExportContributionUpdateInputSchema: z.ZodType<Prisma.PatentFundingExportContributionUpdateInput> = z.object({
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   export: z.lazy(() => PatentFundingExportUpdateOneRequiredWithoutContributionsNestedInputSchema).optional(),
   fundingUnit: z.lazy(() => FundingUnitUpdateOneWithoutContributionsNestedInputSchema).optional()
 }).strict();
@@ -3833,68 +3847,68 @@ export const PatentFundingExportContributionUncheckedUpdateInputSchema: z.ZodTyp
   ContributionID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   FundingUnitID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingExportContributionCreateManyInputSchema: z.ZodType<Prisma.PatentFundingExportContributionCreateManyInput> = z.object({
   ContributionID: z.number().int().optional(),
   ExportID: z.number().int(),
   FundingUnitID: z.number().int().optional().nullable(),
-  Amount: z.number()
+  Amount: z.number().int()
 }).strict();
 
 export const PatentFundingExportContributionUpdateManyMutationInputSchema: z.ZodType<Prisma.PatentFundingExportContributionUpdateManyMutationInput> = z.object({
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingExportContributionUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PatentFundingExportContributionUncheckedUpdateManyInput> = z.object({
   ContributionID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   FundingUnitID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingExportInternalAllocationCreateInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateInput> = z.object({
-  Amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
-  planeTarget: z.lazy(() => FundingPlanTargetCreateNestedOneWithoutPatentFundingExportInternalAllocationInputSchema),
+  Amount: z.number().int(),
+  planTarget: z.lazy(() => FundingPlanTargetCreateNestedOneWithoutPatentFundingExportInternalAllocationInputSchema),
   export: z.lazy(() => PatentFundingExportCreateNestedOneWithoutInternalAllocationsInputSchema)
 }).strict();
 
 export const PatentFundingExportInternalAllocationUncheckedCreateInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedCreateInput> = z.object({
   InternalContributionID: z.number().int().optional(),
-  Amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
-  PlaneTargetID: z.number().int(),
+  Amount: z.number().int(),
+  PlanTargetID: z.number().int(),
   ExportID: z.number().int()
 }).strict();
 
 export const PatentFundingExportInternalAllocationUpdateInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUpdateInput> = z.object({
-  Amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  planeTarget: z.lazy(() => FundingPlanTargetUpdateOneRequiredWithoutPatentFundingExportInternalAllocationNestedInputSchema).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  planTarget: z.lazy(() => FundingPlanTargetUpdateOneRequiredWithoutPatentFundingExportInternalAllocationNestedInputSchema).optional(),
   export: z.lazy(() => PatentFundingExportUpdateOneRequiredWithoutInternalAllocationsNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingExportInternalAllocationUncheckedUpdateInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedUpdateInput> = z.object({
   InternalContributionID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  PlaneTargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  PlanTargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingExportInternalAllocationCreateManyInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateManyInput> = z.object({
   InternalContributionID: z.number().int().optional(),
-  Amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
-  PlaneTargetID: z.number().int(),
+  Amount: z.number().int(),
+  PlanTargetID: z.number().int(),
   ExportID: z.number().int()
 }).strict();
 
 export const PatentFundingExportInternalAllocationUpdateManyMutationInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUpdateManyMutationInput> = z.object({
-  Amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingExportInternalAllocationUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedUpdateManyInput> = z.object({
   InternalContributionID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  PlaneTargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  PlanTargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -3941,7 +3955,7 @@ export const InventorUncheckedUpdateManyInputSchema: z.ZodType<Prisma.InventorUn
 
 export const PatentInventorCreateInputSchema: z.ZodType<Prisma.PatentInventorCreateInput> = z.object({
   Main: z.boolean(),
-  Contribution: z.number().optional().nullable(),
+  Contribution: z.number().optional(),
   patent: z.lazy(() => PatentCreateNestedOneWithoutInventorsInputSchema),
   inventor: z.lazy(() => InventorCreateNestedOneWithoutPatentsInputSchema)
 }).strict();
@@ -3950,12 +3964,12 @@ export const PatentInventorUncheckedCreateInputSchema: z.ZodType<Prisma.PatentIn
   PatentID: z.number().int(),
   InventorID: z.number().int(),
   Main: z.boolean(),
-  Contribution: z.number().optional().nullable()
+  Contribution: z.number().optional()
 }).strict();
 
 export const PatentInventorUpdateInputSchema: z.ZodType<Prisma.PatentInventorUpdateInput> = z.object({
   Main: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  Contribution: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Contribution: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   patent: z.lazy(() => PatentUpdateOneRequiredWithoutInventorsNestedInputSchema).optional(),
   inventor: z.lazy(() => InventorUpdateOneRequiredWithoutPatentsNestedInputSchema).optional()
 }).strict();
@@ -3964,26 +3978,26 @@ export const PatentInventorUncheckedUpdateInputSchema: z.ZodType<Prisma.PatentIn
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   InventorID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Main: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  Contribution: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Contribution: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentInventorCreateManyInputSchema: z.ZodType<Prisma.PatentInventorCreateManyInput> = z.object({
   PatentID: z.number().int(),
   InventorID: z.number().int(),
   Main: z.boolean(),
-  Contribution: z.number().optional().nullable()
+  Contribution: z.number().optional()
 }).strict();
 
 export const PatentInventorUpdateManyMutationInputSchema: z.ZodType<Prisma.PatentInventorUpdateManyMutationInput> = z.object({
   Main: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  Contribution: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Contribution: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentInventorUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PatentInventorUncheckedUpdateManyInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   InventorID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Main: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  Contribution: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Contribution: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const NoteCreateInputSchema: z.ZodType<Prisma.NoteCreateInput> = z.object({
@@ -4419,6 +4433,7 @@ export const PatentManualStatusCreateInputSchema: z.ZodType<Prisma.PatentManualS
   Reason: z.string(),
   Date: z.coerce.date().optional().nullable(),
   Active: z.boolean(),
+  OnTop: z.boolean(),
   patent: z.lazy(() => PatentCreateNestedOneWithoutManualStatusInputSchema)
 }).strict();
 
@@ -4427,13 +4442,15 @@ export const PatentManualStatusUncheckedCreateInputSchema: z.ZodType<Prisma.Pate
   PatentID: z.number().int(),
   Reason: z.string(),
   Date: z.coerce.date().optional().nullable(),
-  Active: z.boolean()
+  Active: z.boolean(),
+  OnTop: z.boolean()
 }).strict();
 
 export const PatentManualStatusUpdateInputSchema: z.ZodType<Prisma.PatentManualStatusUpdateInput> = z.object({
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   patent: z.lazy(() => PatentUpdateOneRequiredWithoutManualStatusNestedInputSchema).optional()
 }).strict();
 
@@ -4443,6 +4460,7 @@ export const PatentManualStatusUncheckedUpdateInputSchema: z.ZodType<Prisma.Pate
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentManualStatusCreateManyInputSchema: z.ZodType<Prisma.PatentManualStatusCreateManyInput> = z.object({
@@ -4450,13 +4468,15 @@ export const PatentManualStatusCreateManyInputSchema: z.ZodType<Prisma.PatentMan
   PatentID: z.number().int(),
   Reason: z.string(),
   Date: z.coerce.date().optional().nullable(),
-  Active: z.boolean()
+  Active: z.boolean(),
+  OnTop: z.boolean()
 }).strict();
 
 export const PatentManualStatusUpdateManyMutationInputSchema: z.ZodType<Prisma.PatentManualStatusUpdateManyMutationInput> = z.object({
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentManualStatusUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PatentManualStatusUncheckedUpdateManyInput> = z.object({
@@ -4465,6 +4485,7 @@ export const PatentManualStatusUncheckedUpdateManyInputSchema: z.ZodType<Prisma.
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentMaintenanceCreateInputSchema: z.ZodType<Prisma.PatentMaintenanceCreateInput> = z.object({
@@ -5196,17 +5217,6 @@ export const FundingPlanSumOrderByAggregateInputSchema: z.ZodType<Prisma.Funding
   PlanType: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const DecimalFilterSchema: z.ZodType<Prisma.DecimalFilter> = z.object({
-  equals: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  in: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
-  notIn: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
-  lt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  lte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  gt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  gte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  not: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NestedDecimalFilterSchema) ]).optional(),
-}).strict();
-
 export const FundingPlanTargetScalarRelationFilterSchema: z.ZodType<Prisma.FundingPlanTargetScalarRelationFilter> = z.object({
   is: z.lazy(() => FundingPlanTargetWhereInputSchema).optional(),
   isNot: z.lazy(() => FundingPlanTargetWhereInputSchema).optional()
@@ -5262,22 +5272,6 @@ export const FundingPlanAllocationSumOrderByAggregateInputSchema: z.ZodType<Pris
   FundingPlanID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const DecimalWithAggregatesFilterSchema: z.ZodType<Prisma.DecimalWithAggregatesFilter> = z.object({
-  equals: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  in: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
-  notIn: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
-  lt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  lte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  gt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  gte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  not: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NestedDecimalWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _avg: z.lazy(() => NestedDecimalFilterSchema).optional(),
-  _sum: z.lazy(() => NestedDecimalFilterSchema).optional(),
-  _min: z.lazy(() => NestedDecimalFilterSchema).optional(),
-  _max: z.lazy(() => NestedDecimalFilterSchema).optional()
-}).strict();
-
 export const PatentFundingExportInternalAllocationListRelationFilterSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationListRelationFilter> = z.object({
   every: z.lazy(() => PatentFundingExportInternalAllocationWhereInputSchema).optional(),
   some: z.lazy(() => PatentFundingExportInternalAllocationWhereInputSchema).optional(),
@@ -5314,6 +5308,11 @@ export const FundingPlanTargetSumOrderByAggregateInputSchema: z.ZodType<Prisma.F
 export const PatentScalarRelationFilterSchema: z.ZodType<Prisma.PatentScalarRelationFilter> = z.object({
   is: z.lazy(() => PatentWhereInputSchema).optional(),
   isNot: z.lazy(() => PatentWhereInputSchema).optional()
+}).strict();
+
+export const FundingPlanNullableScalarRelationFilterSchema: z.ZodType<Prisma.FundingPlanNullableScalarRelationFilter> = z.object({
+  is: z.lazy(() => FundingPlanWhereInputSchema).optional().nullable(),
+  isNot: z.lazy(() => FundingPlanWhereInputSchema).optional().nullable()
 }).strict();
 
 export const PatentFundingExportListRelationFilterSchema: z.ZodType<Prisma.PatentFundingExportListRelationFilter> = z.object({
@@ -5394,17 +5393,6 @@ export const PatentFundingUnitSumOrderByAggregateInputSchema: z.ZodType<Prisma.P
   PatentID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const FloatFilterSchema: z.ZodType<Prisma.FloatFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedFloatFilterSchema) ]).optional(),
-}).strict();
-
 export const DateTimeFilterSchema: z.ZodType<Prisma.DateTimeFilter> = z.object({
   equals: z.coerce.date().optional(),
   in: z.coerce.date().array().optional(),
@@ -5423,6 +5411,8 @@ export const PatentFundingExportNullableScalarRelationFilterSchema: z.ZodType<Pr
 
 export const PatentFundingRecordCountOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingRecordCountOrderByAggregateInput> = z.object({
   FundingRecordID: z.lazy(() => SortOrderSchema).optional(),
+  Name: z.lazy(() => SortOrderSchema).optional(),
+  Description: z.lazy(() => SortOrderSchema).optional(),
   Amount: z.lazy(() => SortOrderSchema).optional(),
   Date: z.lazy(() => SortOrderSchema).optional(),
   PatentFundingPatentID: z.lazy(() => SortOrderSchema).optional(),
@@ -5438,6 +5428,8 @@ export const PatentFundingRecordAvgOrderByAggregateInputSchema: z.ZodType<Prisma
 
 export const PatentFundingRecordMaxOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingRecordMaxOrderByAggregateInput> = z.object({
   FundingRecordID: z.lazy(() => SortOrderSchema).optional(),
+  Name: z.lazy(() => SortOrderSchema).optional(),
+  Description: z.lazy(() => SortOrderSchema).optional(),
   Amount: z.lazy(() => SortOrderSchema).optional(),
   Date: z.lazy(() => SortOrderSchema).optional(),
   PatentFundingPatentID: z.lazy(() => SortOrderSchema).optional(),
@@ -5446,6 +5438,8 @@ export const PatentFundingRecordMaxOrderByAggregateInputSchema: z.ZodType<Prisma
 
 export const PatentFundingRecordMinOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingRecordMinOrderByAggregateInput> = z.object({
   FundingRecordID: z.lazy(() => SortOrderSchema).optional(),
+  Name: z.lazy(() => SortOrderSchema).optional(),
+  Description: z.lazy(() => SortOrderSchema).optional(),
   Amount: z.lazy(() => SortOrderSchema).optional(),
   Date: z.lazy(() => SortOrderSchema).optional(),
   PatentFundingPatentID: z.lazy(() => SortOrderSchema).optional(),
@@ -5457,22 +5451,6 @@ export const PatentFundingRecordSumOrderByAggregateInputSchema: z.ZodType<Prisma
   Amount: z.lazy(() => SortOrderSchema).optional(),
   PatentFundingPatentID: z.lazy(() => SortOrderSchema).optional(),
   ExportID: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const FloatWithAggregatesFilterSchema: z.ZodType<Prisma.FloatWithAggregatesFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedFloatWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _sum: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _min: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _max: z.lazy(() => NestedFloatFilterSchema).optional()
 }).strict();
 
 export const DateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.DateTimeWithAggregatesFilter> = z.object({
@@ -5565,35 +5543,35 @@ export const PatentFundingExportContributionSumOrderByAggregateInputSchema: z.Zo
 export const PatentFundingExportInternalAllocationCountOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCountOrderByAggregateInput> = z.object({
   InternalContributionID: z.lazy(() => SortOrderSchema).optional(),
   Amount: z.lazy(() => SortOrderSchema).optional(),
-  PlaneTargetID: z.lazy(() => SortOrderSchema).optional(),
+  PlanTargetID: z.lazy(() => SortOrderSchema).optional(),
   ExportID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentFundingExportInternalAllocationAvgOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationAvgOrderByAggregateInput> = z.object({
   InternalContributionID: z.lazy(() => SortOrderSchema).optional(),
   Amount: z.lazy(() => SortOrderSchema).optional(),
-  PlaneTargetID: z.lazy(() => SortOrderSchema).optional(),
+  PlanTargetID: z.lazy(() => SortOrderSchema).optional(),
   ExportID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentFundingExportInternalAllocationMaxOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationMaxOrderByAggregateInput> = z.object({
   InternalContributionID: z.lazy(() => SortOrderSchema).optional(),
   Amount: z.lazy(() => SortOrderSchema).optional(),
-  PlaneTargetID: z.lazy(() => SortOrderSchema).optional(),
+  PlanTargetID: z.lazy(() => SortOrderSchema).optional(),
   ExportID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentFundingExportInternalAllocationMinOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationMinOrderByAggregateInput> = z.object({
   InternalContributionID: z.lazy(() => SortOrderSchema).optional(),
   Amount: z.lazy(() => SortOrderSchema).optional(),
-  PlaneTargetID: z.lazy(() => SortOrderSchema).optional(),
+  PlanTargetID: z.lazy(() => SortOrderSchema).optional(),
   ExportID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentFundingExportInternalAllocationSumOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationSumOrderByAggregateInput> = z.object({
   InternalContributionID: z.lazy(() => SortOrderSchema).optional(),
   Amount: z.lazy(() => SortOrderSchema).optional(),
-  PlaneTargetID: z.lazy(() => SortOrderSchema).optional(),
+  PlanTargetID: z.lazy(() => SortOrderSchema).optional(),
   ExportID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -5647,15 +5625,15 @@ export const BoolFilterSchema: z.ZodType<Prisma.BoolFilter> = z.object({
   not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
 }).strict();
 
-export const FloatNullableFilterSchema: z.ZodType<Prisma.FloatNullableFilter> = z.object({
-  equals: z.number().optional().nullable(),
-  in: z.number().array().optional().nullable(),
-  notIn: z.number().array().optional().nullable(),
+export const FloatFilterSchema: z.ZodType<Prisma.FloatFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
   lt: z.number().optional(),
   lte: z.number().optional(),
   gt: z.number().optional(),
   gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedFloatNullableFilterSchema) ]).optional().nullable(),
+  not: z.union([ z.number(),z.lazy(() => NestedFloatFilterSchema) ]).optional(),
 }).strict();
 
 export const InventorScalarRelationFilterSchema: z.ZodType<Prisma.InventorScalarRelationFilter> = z.object({
@@ -5709,20 +5687,20 @@ export const BoolWithAggregatesFilterSchema: z.ZodType<Prisma.BoolWithAggregates
   _max: z.lazy(() => NestedBoolFilterSchema).optional()
 }).strict();
 
-export const FloatNullableWithAggregatesFilterSchema: z.ZodType<Prisma.FloatNullableWithAggregatesFilter> = z.object({
-  equals: z.number().optional().nullable(),
-  in: z.number().array().optional().nullable(),
-  notIn: z.number().array().optional().nullable(),
+export const FloatWithAggregatesFilterSchema: z.ZodType<Prisma.FloatWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
   lt: z.number().optional(),
   lte: z.number().optional(),
   gt: z.number().optional(),
   gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedFloatNullableWithAggregatesFilterSchema) ]).optional().nullable(),
-  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
-  _avg: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
-  _sum: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
-  _min: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
-  _max: z.lazy(() => NestedFloatNullableFilterSchema).optional()
+  not: z.union([ z.number(),z.lazy(() => NestedFloatWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _min: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _max: z.lazy(() => NestedFloatFilterSchema).optional()
 }).strict();
 
 export const NoteCountOrderByAggregateInputSchema: z.ZodType<Prisma.NoteCountOrderByAggregateInput> = z.object({
@@ -6084,7 +6062,8 @@ export const PatentManualStatusCountOrderByAggregateInputSchema: z.ZodType<Prism
   PatentID: z.lazy(() => SortOrderSchema).optional(),
   Reason: z.lazy(() => SortOrderSchema).optional(),
   Date: z.lazy(() => SortOrderSchema).optional(),
-  Active: z.lazy(() => SortOrderSchema).optional()
+  Active: z.lazy(() => SortOrderSchema).optional(),
+  OnTop: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentManualStatusAvgOrderByAggregateInputSchema: z.ZodType<Prisma.PatentManualStatusAvgOrderByAggregateInput> = z.object({
@@ -6097,7 +6076,8 @@ export const PatentManualStatusMaxOrderByAggregateInputSchema: z.ZodType<Prisma.
   PatentID: z.lazy(() => SortOrderSchema).optional(),
   Reason: z.lazy(() => SortOrderSchema).optional(),
   Date: z.lazy(() => SortOrderSchema).optional(),
-  Active: z.lazy(() => SortOrderSchema).optional()
+  Active: z.lazy(() => SortOrderSchema).optional(),
+  OnTop: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentManualStatusMinOrderByAggregateInputSchema: z.ZodType<Prisma.PatentManualStatusMinOrderByAggregateInput> = z.object({
@@ -6105,7 +6085,8 @@ export const PatentManualStatusMinOrderByAggregateInputSchema: z.ZodType<Prisma.
   PatentID: z.lazy(() => SortOrderSchema).optional(),
   Reason: z.lazy(() => SortOrderSchema).optional(),
   Date: z.lazy(() => SortOrderSchema).optional(),
-  Active: z.lazy(() => SortOrderSchema).optional()
+  Active: z.lazy(() => SortOrderSchema).optional(),
+  OnTop: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentManualStatusSumOrderByAggregateInputSchema: z.ZodType<Prisma.PatentManualStatusSumOrderByAggregateInput> = z.object({
@@ -6793,9 +6774,9 @@ export const FundingPlanTargetCreateNestedOneWithoutTargetsInputSchema: z.ZodTyp
   connect: z.lazy(() => FundingPlanTargetWhereUniqueInputSchema).optional()
 }).strict();
 
-export const FundingPlanCreateNestedOneWithoutPlannAllocationsInputSchema: z.ZodType<Prisma.FundingPlanCreateNestedOneWithoutPlannAllocationsInput> = z.object({
-  create: z.union([ z.lazy(() => FundingPlanCreateWithoutPlannAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedCreateWithoutPlannAllocationsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => FundingPlanCreateOrConnectWithoutPlannAllocationsInputSchema).optional(),
+export const FundingPlanCreateNestedOneWithoutPlanAllocationsInputSchema: z.ZodType<Prisma.FundingPlanCreateNestedOneWithoutPlanAllocationsInput> = z.object({
+  create: z.union([ z.lazy(() => FundingPlanCreateWithoutPlanAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedCreateWithoutPlanAllocationsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => FundingPlanCreateOrConnectWithoutPlanAllocationsInputSchema).optional(),
   connect: z.lazy(() => FundingPlanWhereUniqueInputSchema).optional()
 }).strict();
 
@@ -6813,14 +6794,6 @@ export const FundingUnitUncheckedCreateNestedManyWithoutFundingPlanAllocationInp
   connect: z.union([ z.lazy(() => FundingUnitWhereUniqueInputSchema),z.lazy(() => FundingUnitWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const DecimalFieldUpdateOperationsInputSchema: z.ZodType<Prisma.DecimalFieldUpdateOperationsInput> = z.object({
-  set: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  increment: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  decrement: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  multiply: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  divide: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional()
-}).strict();
-
 export const FundingPlanTargetUpdateOneRequiredWithoutTargetsNestedInputSchema: z.ZodType<Prisma.FundingPlanTargetUpdateOneRequiredWithoutTargetsNestedInput> = z.object({
   create: z.union([ z.lazy(() => FundingPlanTargetCreateWithoutTargetsInputSchema),z.lazy(() => FundingPlanTargetUncheckedCreateWithoutTargetsInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => FundingPlanTargetCreateOrConnectWithoutTargetsInputSchema).optional(),
@@ -6829,12 +6802,12 @@ export const FundingPlanTargetUpdateOneRequiredWithoutTargetsNestedInputSchema: 
   update: z.union([ z.lazy(() => FundingPlanTargetUpdateToOneWithWhereWithoutTargetsInputSchema),z.lazy(() => FundingPlanTargetUpdateWithoutTargetsInputSchema),z.lazy(() => FundingPlanTargetUncheckedUpdateWithoutTargetsInputSchema) ]).optional(),
 }).strict();
 
-export const FundingPlanUpdateOneRequiredWithoutPlannAllocationsNestedInputSchema: z.ZodType<Prisma.FundingPlanUpdateOneRequiredWithoutPlannAllocationsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => FundingPlanCreateWithoutPlannAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedCreateWithoutPlannAllocationsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => FundingPlanCreateOrConnectWithoutPlannAllocationsInputSchema).optional(),
-  upsert: z.lazy(() => FundingPlanUpsertWithoutPlannAllocationsInputSchema).optional(),
+export const FundingPlanUpdateOneRequiredWithoutPlanAllocationsNestedInputSchema: z.ZodType<Prisma.FundingPlanUpdateOneRequiredWithoutPlanAllocationsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => FundingPlanCreateWithoutPlanAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedCreateWithoutPlanAllocationsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => FundingPlanCreateOrConnectWithoutPlanAllocationsInputSchema).optional(),
+  upsert: z.lazy(() => FundingPlanUpsertWithoutPlanAllocationsInputSchema).optional(),
   connect: z.lazy(() => FundingPlanWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => FundingPlanUpdateToOneWithWhereWithoutPlannAllocationsInputSchema),z.lazy(() => FundingPlanUpdateWithoutPlannAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedUpdateWithoutPlannAllocationsInputSchema) ]).optional(),
+  update: z.union([ z.lazy(() => FundingPlanUpdateToOneWithWhereWithoutPlanAllocationsInputSchema),z.lazy(() => FundingPlanUpdateWithoutPlanAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedUpdateWithoutPlanAllocationsInputSchema) ]).optional(),
 }).strict();
 
 export const FundingUnitUpdateManyWithoutFundingPlanAllocationNestedInputSchema: z.ZodType<Prisma.FundingUnitUpdateManyWithoutFundingPlanAllocationNestedInput> = z.object({
@@ -6872,10 +6845,10 @@ export const FundingPlanAllocationCreateNestedManyWithoutTargetInputSchema: z.Zo
   connect: z.union([ z.lazy(() => FundingPlanAllocationWhereUniqueInputSchema),z.lazy(() => FundingPlanAllocationWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const PatentFundingExportInternalAllocationCreateNestedManyWithoutPlaneTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateNestedManyWithoutPlaneTargetInput> = z.object({
-  create: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlaneTargetInputSchema).array(),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlaneTargetInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlaneTargetInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => PatentFundingExportInternalAllocationCreateManyPlaneTargetInputEnvelopeSchema).optional(),
+export const PatentFundingExportInternalAllocationCreateNestedManyWithoutPlanTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateNestedManyWithoutPlanTargetInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlanTargetInputSchema).array(),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlanTargetInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlanTargetInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentFundingExportInternalAllocationCreateManyPlanTargetInputEnvelopeSchema).optional(),
   connect: z.union([ z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema),z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
@@ -6886,10 +6859,10 @@ export const FundingPlanAllocationUncheckedCreateNestedManyWithoutTargetInputSch
   connect: z.union([ z.lazy(() => FundingPlanAllocationWhereUniqueInputSchema),z.lazy(() => FundingPlanAllocationWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const PatentFundingExportInternalAllocationUncheckedCreateNestedManyWithoutPlaneTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedCreateNestedManyWithoutPlaneTargetInput> = z.object({
-  create: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlaneTargetInputSchema).array(),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlaneTargetInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlaneTargetInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => PatentFundingExportInternalAllocationCreateManyPlaneTargetInputEnvelopeSchema).optional(),
+export const PatentFundingExportInternalAllocationUncheckedCreateNestedManyWithoutPlanTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedCreateNestedManyWithoutPlanTargetInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlanTargetInputSchema).array(),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlanTargetInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlanTargetInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentFundingExportInternalAllocationCreateManyPlanTargetInputEnvelopeSchema).optional(),
   connect: z.union([ z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema),z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
@@ -6907,17 +6880,17 @@ export const FundingPlanAllocationUpdateManyWithoutTargetNestedInputSchema: z.Zo
   deleteMany: z.union([ z.lazy(() => FundingPlanAllocationScalarWhereInputSchema),z.lazy(() => FundingPlanAllocationScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const PatentFundingExportInternalAllocationUpdateManyWithoutPlaneTargetNestedInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUpdateManyWithoutPlaneTargetNestedInput> = z.object({
-  create: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlaneTargetInputSchema).array(),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlaneTargetInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlaneTargetInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpsertWithWhereUniqueWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUpsertWithWhereUniqueWithoutPlaneTargetInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => PatentFundingExportInternalAllocationCreateManyPlaneTargetInputEnvelopeSchema).optional(),
+export const PatentFundingExportInternalAllocationUpdateManyWithoutPlanTargetNestedInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUpdateManyWithoutPlanTargetNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlanTargetInputSchema).array(),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlanTargetInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlanTargetInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpsertWithWhereUniqueWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUpsertWithWhereUniqueWithoutPlanTargetInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentFundingExportInternalAllocationCreateManyPlanTargetInputEnvelopeSchema).optional(),
   set: z.union([ z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema),z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema).array() ]).optional(),
   disconnect: z.union([ z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema),z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema).array() ]).optional(),
   delete: z.union([ z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema),z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema).array() ]).optional(),
   connect: z.union([ z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema),z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateWithWhereUniqueWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUpdateWithWhereUniqueWithoutPlaneTargetInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateManyWithWhereWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUpdateManyWithWhereWithoutPlaneTargetInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateWithWhereUniqueWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUpdateWithWhereUniqueWithoutPlanTargetInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateManyWithWhereWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUpdateManyWithWhereWithoutPlanTargetInputSchema).array() ]).optional(),
   deleteMany: z.union([ z.lazy(() => PatentFundingExportInternalAllocationScalarWhereInputSchema),z.lazy(() => PatentFundingExportInternalAllocationScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
@@ -6935,17 +6908,17 @@ export const FundingPlanAllocationUncheckedUpdateManyWithoutTargetNestedInputSch
   deleteMany: z.union([ z.lazy(() => FundingPlanAllocationScalarWhereInputSchema),z.lazy(() => FundingPlanAllocationScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlaneTargetNestedInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlaneTargetNestedInput> = z.object({
-  create: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlaneTargetInputSchema).array(),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlaneTargetInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlaneTargetInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpsertWithWhereUniqueWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUpsertWithWhereUniqueWithoutPlaneTargetInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => PatentFundingExportInternalAllocationCreateManyPlaneTargetInputEnvelopeSchema).optional(),
+export const PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlanTargetNestedInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlanTargetNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlanTargetInputSchema).array(),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlanTargetInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateOrConnectWithoutPlanTargetInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpsertWithWhereUniqueWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUpsertWithWhereUniqueWithoutPlanTargetInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentFundingExportInternalAllocationCreateManyPlanTargetInputEnvelopeSchema).optional(),
   set: z.union([ z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema),z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema).array() ]).optional(),
   disconnect: z.union([ z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema),z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema).array() ]).optional(),
   delete: z.union([ z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema),z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema).array() ]).optional(),
   connect: z.union([ z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema),z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateWithWhereUniqueWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUpdateWithWhereUniqueWithoutPlaneTargetInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateManyWithWhereWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUpdateManyWithWhereWithoutPlaneTargetInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateWithWhereUniqueWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUpdateWithWhereUniqueWithoutPlanTargetInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateManyWithWhereWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUpdateManyWithWhereWithoutPlanTargetInputSchema).array() ]).optional(),
   deleteMany: z.union([ z.lazy(() => PatentFundingExportInternalAllocationScalarWhereInputSchema),z.lazy(() => PatentFundingExportInternalAllocationScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
@@ -7011,10 +6984,12 @@ export const PatentUpdateOneRequiredWithoutFundingNestedInputSchema: z.ZodType<P
   update: z.union([ z.lazy(() => PatentUpdateToOneWithWhereWithoutFundingInputSchema),z.lazy(() => PatentUpdateWithoutFundingInputSchema),z.lazy(() => PatentUncheckedUpdateWithoutFundingInputSchema) ]).optional(),
 }).strict();
 
-export const FundingPlanUpdateOneRequiredWithoutFundingsNestedInputSchema: z.ZodType<Prisma.FundingPlanUpdateOneRequiredWithoutFundingsNestedInput> = z.object({
+export const FundingPlanUpdateOneWithoutFundingsNestedInputSchema: z.ZodType<Prisma.FundingPlanUpdateOneWithoutFundingsNestedInput> = z.object({
   create: z.union([ z.lazy(() => FundingPlanCreateWithoutFundingsInputSchema),z.lazy(() => FundingPlanUncheckedCreateWithoutFundingsInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => FundingPlanCreateOrConnectWithoutFundingsInputSchema).optional(),
   upsert: z.lazy(() => FundingPlanUpsertWithoutFundingsInputSchema).optional(),
+  disconnect: z.union([ z.boolean(),z.lazy(() => FundingPlanWhereInputSchema) ]).optional(),
+  delete: z.union([ z.boolean(),z.lazy(() => FundingPlanWhereInputSchema) ]).optional(),
   connect: z.lazy(() => FundingPlanWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => FundingPlanUpdateToOneWithWhereWithoutFundingsInputSchema),z.lazy(() => FundingPlanUpdateWithoutFundingsInputSchema),z.lazy(() => FundingPlanUncheckedUpdateWithoutFundingsInputSchema) ]).optional(),
 }).strict();
@@ -7153,14 +7128,6 @@ export const FundingUnitUncheckedCreateNestedManyWithoutFundingRecordsInputSchem
   create: z.union([ z.lazy(() => FundingUnitCreateWithoutFundingRecordsInputSchema),z.lazy(() => FundingUnitCreateWithoutFundingRecordsInputSchema).array(),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingRecordsInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingRecordsInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => FundingUnitCreateOrConnectWithoutFundingRecordsInputSchema),z.lazy(() => FundingUnitCreateOrConnectWithoutFundingRecordsInputSchema).array() ]).optional(),
   connect: z.union([ z.lazy(() => FundingUnitWhereUniqueInputSchema),z.lazy(() => FundingUnitWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const FloatFieldUpdateOperationsInputSchema: z.ZodType<Prisma.FloatFieldUpdateOperationsInput> = z.object({
-  set: z.number().optional(),
-  increment: z.number().optional(),
-  decrement: z.number().optional(),
-  multiply: z.number().optional(),
-  divide: z.number().optional()
 }).strict();
 
 export const DateTimeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.DateTimeFieldUpdateOperationsInput> = z.object({
@@ -7495,8 +7462,8 @@ export const BoolFieldUpdateOperationsInputSchema: z.ZodType<Prisma.BoolFieldUpd
   set: z.boolean().optional()
 }).strict();
 
-export const NullableFloatFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableFloatFieldUpdateOperationsInput> = z.object({
-  set: z.number().optional().nullable(),
+export const FloatFieldUpdateOperationsInputSchema: z.ZodType<Prisma.FloatFieldUpdateOperationsInput> = z.object({
+  set: z.number().optional(),
   increment: z.number().optional(),
   decrement: z.number().optional(),
   multiply: z.number().optional(),
@@ -8559,33 +8526,6 @@ export const NestedFloatNullableFilterSchema: z.ZodType<Prisma.NestedFloatNullab
   not: z.union([ z.number(),z.lazy(() => NestedFloatNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
-export const NestedDecimalFilterSchema: z.ZodType<Prisma.NestedDecimalFilter> = z.object({
-  equals: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  in: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
-  notIn: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
-  lt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  lte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  gt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  gte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  not: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NestedDecimalFilterSchema) ]).optional(),
-}).strict();
-
-export const NestedDecimalWithAggregatesFilterSchema: z.ZodType<Prisma.NestedDecimalWithAggregatesFilter> = z.object({
-  equals: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  in: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
-  notIn: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
-  lt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  lte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  gt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  gte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  not: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NestedDecimalWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _avg: z.lazy(() => NestedDecimalFilterSchema).optional(),
-  _sum: z.lazy(() => NestedDecimalFilterSchema).optional(),
-  _min: z.lazy(() => NestedDecimalFilterSchema).optional(),
-  _max: z.lazy(() => NestedDecimalFilterSchema).optional()
-}).strict();
-
 export const NestedDateTimeFilterSchema: z.ZodType<Prisma.NestedDateTimeFilter> = z.object({
   equals: z.coerce.date().optional(),
   in: z.coerce.date().array().optional(),
@@ -8595,22 +8535,6 @@ export const NestedDateTimeFilterSchema: z.ZodType<Prisma.NestedDateTimeFilter> 
   gt: z.coerce.date().optional(),
   gte: z.coerce.date().optional(),
   not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeFilterSchema) ]).optional(),
-}).strict();
-
-export const NestedFloatWithAggregatesFilterSchema: z.ZodType<Prisma.NestedFloatWithAggregatesFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedFloatWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _sum: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _min: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _max: z.lazy(() => NestedFloatFilterSchema).optional()
 }).strict();
 
 export const NestedDateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.NestedDateTimeWithAggregatesFilter> = z.object({
@@ -8640,20 +8564,20 @@ export const NestedBoolWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBoolWi
   _max: z.lazy(() => NestedBoolFilterSchema).optional()
 }).strict();
 
-export const NestedFloatNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedFloatNullableWithAggregatesFilter> = z.object({
-  equals: z.number().optional().nullable(),
-  in: z.number().array().optional().nullable(),
-  notIn: z.number().array().optional().nullable(),
+export const NestedFloatWithAggregatesFilterSchema: z.ZodType<Prisma.NestedFloatWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
   lt: z.number().optional(),
   lte: z.number().optional(),
   gt: z.number().optional(),
   gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedFloatNullableWithAggregatesFilterSchema) ]).optional().nullable(),
-  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
-  _avg: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
-  _sum: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
-  _min: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
-  _max: z.lazy(() => NestedFloatNullableFilterSchema).optional()
+  not: z.union([ z.number(),z.lazy(() => NestedFloatWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _min: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _max: z.lazy(() => NestedFloatFilterSchema).optional()
 }).strict();
 
 export const NestedEnumEnumPatentTypeNullableFilterSchema: z.ZodType<Prisma.NestedEnumEnumPatentTypeNullableFilter> = z.object({
@@ -9142,7 +9066,9 @@ export const PatentFundingUnitCreateManyFundingUnitInputEnvelopeSchema: z.ZodTyp
 }).strict();
 
 export const PatentFundingRecordCreateWithoutCanFundingByInputSchema: z.ZodType<Prisma.PatentFundingRecordCreateWithoutCanFundingByInput> = z.object({
-  Amount: z.number(),
+  Name: z.string(),
+  Description: z.string().optional().nullable(),
+  Amount: z.number().int(),
   Date: z.coerce.date(),
   patentFunding: z.lazy(() => PatentFundingCreateNestedOneWithoutFundingRecordsInputSchema),
   fundingExport: z.lazy(() => PatentFundingExportCreateNestedOneWithoutExportRecordsInputSchema).optional()
@@ -9150,7 +9076,9 @@ export const PatentFundingRecordCreateWithoutCanFundingByInputSchema: z.ZodType<
 
 export const PatentFundingRecordUncheckedCreateWithoutCanFundingByInputSchema: z.ZodType<Prisma.PatentFundingRecordUncheckedCreateWithoutCanFundingByInput> = z.object({
   FundingRecordID: z.number().int().optional(),
-  Amount: z.number(),
+  Name: z.string(),
+  Description: z.string().optional().nullable(),
+  Amount: z.number().int(),
   Date: z.coerce.date(),
   PatentFundingPatentID: z.number().int(),
   ExportID: z.number().int().optional().nullable()
@@ -9162,14 +9090,14 @@ export const PatentFundingRecordCreateOrConnectWithoutCanFundingByInputSchema: z
 }).strict();
 
 export const PatentFundingExportContributionCreateWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingExportContributionCreateWithoutFundingUnitInput> = z.object({
-  Amount: z.number(),
+  Amount: z.number().int(),
   export: z.lazy(() => PatentFundingExportCreateNestedOneWithoutContributionsInputSchema)
 }).strict();
 
 export const PatentFundingExportContributionUncheckedCreateWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingExportContributionUncheckedCreateWithoutFundingUnitInput> = z.object({
   ContributionID: z.number().int().optional(),
   ExportID: z.number().int(),
-  Amount: z.number()
+  Amount: z.number().int()
 }).strict();
 
 export const PatentFundingExportContributionCreateOrConnectWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingExportContributionCreateOrConnectWithoutFundingUnitInput> = z.object({
@@ -9182,14 +9110,14 @@ export const PatentFundingExportContributionCreateManyFundingUnitInputEnvelopeSc
 }).strict();
 
 export const FundingPlanAllocationCreateWithoutFundingUnitsInputSchema: z.ZodType<Prisma.FundingPlanAllocationCreateWithoutFundingUnitsInput> = z.object({
-  Percentage: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  Percentage: z.number().int(),
   target: z.lazy(() => FundingPlanTargetCreateNestedOneWithoutTargetsInputSchema),
-  fundingPlan: z.lazy(() => FundingPlanCreateNestedOneWithoutPlannAllocationsInputSchema)
+  fundingPlan: z.lazy(() => FundingPlanCreateNestedOneWithoutPlanAllocationsInputSchema)
 }).strict();
 
 export const FundingPlanAllocationUncheckedCreateWithoutFundingUnitsInputSchema: z.ZodType<Prisma.FundingPlanAllocationUncheckedCreateWithoutFundingUnitsInput> = z.object({
   FundingPlanAllocationID: z.number().int().optional(),
-  Percentage: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  Percentage: z.number().int(),
   TargetID: z.number().int(),
   FundingPlanID: z.number().int()
 }).strict();
@@ -9245,7 +9173,9 @@ export const PatentFundingRecordScalarWhereInputSchema: z.ZodType<Prisma.PatentF
   OR: z.lazy(() => PatentFundingRecordScalarWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PatentFundingRecordScalarWhereInputSchema),z.lazy(() => PatentFundingRecordScalarWhereInputSchema).array() ]).optional(),
   FundingRecordID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  Amount: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  Amount: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   Date: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   PatentFundingPatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   ExportID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
@@ -9274,7 +9204,7 @@ export const PatentFundingExportContributionScalarWhereInputSchema: z.ZodType<Pr
   ContributionID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   ExportID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   FundingUnitID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
-  Amount: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  Amount: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
 }).strict();
 
 export const FundingPlanAllocationUpsertWithoutFundingUnitsInputSchema: z.ZodType<Prisma.FundingPlanAllocationUpsertWithoutFundingUnitsInput> = z.object({
@@ -9289,14 +9219,14 @@ export const FundingPlanAllocationUpdateToOneWithWhereWithoutFundingUnitsInputSc
 }).strict();
 
 export const FundingPlanAllocationUpdateWithoutFundingUnitsInputSchema: z.ZodType<Prisma.FundingPlanAllocationUpdateWithoutFundingUnitsInput> = z.object({
-  Percentage: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Percentage: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   target: z.lazy(() => FundingPlanTargetUpdateOneRequiredWithoutTargetsNestedInputSchema).optional(),
-  fundingPlan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutPlannAllocationsNestedInputSchema).optional()
+  fundingPlan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutPlanAllocationsNestedInputSchema).optional()
 }).strict();
 
 export const FundingPlanAllocationUncheckedUpdateWithoutFundingUnitsInputSchema: z.ZodType<Prisma.FundingPlanAllocationUncheckedUpdateWithoutFundingUnitsInput> = z.object({
   FundingPlanAllocationID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Percentage: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Percentage: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   TargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   FundingPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -9325,14 +9255,14 @@ export const PatentFundingCreateManyPlanInputEnvelopeSchema: z.ZodType<Prisma.Pa
 }).strict();
 
 export const FundingPlanAllocationCreateWithoutFundingPlanInputSchema: z.ZodType<Prisma.FundingPlanAllocationCreateWithoutFundingPlanInput> = z.object({
-  Percentage: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  Percentage: z.number().int(),
   target: z.lazy(() => FundingPlanTargetCreateNestedOneWithoutTargetsInputSchema),
   fundingUnits: z.lazy(() => FundingUnitCreateNestedManyWithoutFundingPlanAllocationInputSchema).optional()
 }).strict();
 
 export const FundingPlanAllocationUncheckedCreateWithoutFundingPlanInputSchema: z.ZodType<Prisma.FundingPlanAllocationUncheckedCreateWithoutFundingPlanInput> = z.object({
   FundingPlanAllocationID: z.number().int().optional(),
-  Percentage: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  Percentage: z.number().int(),
   TargetID: z.number().int(),
   fundingUnits: z.lazy(() => FundingUnitUncheckedCreateNestedManyWithoutFundingPlanAllocationInputSchema).optional()
 }).strict();
@@ -9367,7 +9297,7 @@ export const PatentFundingScalarWhereInputSchema: z.ZodType<Prisma.PatentFunding
   OR: z.lazy(() => PatentFundingScalarWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PatentFundingScalarWhereInputSchema),z.lazy(() => PatentFundingScalarWhereInputSchema).array() ]).optional(),
   PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  FundingPlanPlanID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  FundingPlanPlanID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
 }).strict();
 
 export const FundingPlanAllocationUpsertWithWhereUniqueWithoutFundingPlanInputSchema: z.ZodType<Prisma.FundingPlanAllocationUpsertWithWhereUniqueWithoutFundingPlanInput> = z.object({
@@ -9391,20 +9321,20 @@ export const FundingPlanAllocationScalarWhereInputSchema: z.ZodType<Prisma.Fundi
   OR: z.lazy(() => FundingPlanAllocationScalarWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => FundingPlanAllocationScalarWhereInputSchema),z.lazy(() => FundingPlanAllocationScalarWhereInputSchema).array() ]).optional(),
   FundingPlanAllocationID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  Percentage: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  Percentage: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   TargetID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   FundingPlanID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
 }).strict();
 
 export const FundingPlanTargetCreateWithoutTargetsInputSchema: z.ZodType<Prisma.FundingPlanTargetCreateWithoutTargetsInput> = z.object({
   Name: z.string(),
-  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationCreateNestedManyWithoutPlaneTargetInputSchema).optional()
+  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationCreateNestedManyWithoutPlanTargetInputSchema).optional()
 }).strict();
 
 export const FundingPlanTargetUncheckedCreateWithoutTargetsInputSchema: z.ZodType<Prisma.FundingPlanTargetUncheckedCreateWithoutTargetsInput> = z.object({
   TargetID: z.number().int().optional(),
   Name: z.string(),
-  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateNestedManyWithoutPlaneTargetInputSchema).optional()
+  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateNestedManyWithoutPlanTargetInputSchema).optional()
 }).strict();
 
 export const FundingPlanTargetCreateOrConnectWithoutTargetsInputSchema: z.ZodType<Prisma.FundingPlanTargetCreateOrConnectWithoutTargetsInput> = z.object({
@@ -9412,22 +9342,22 @@ export const FundingPlanTargetCreateOrConnectWithoutTargetsInputSchema: z.ZodTyp
   create: z.union([ z.lazy(() => FundingPlanTargetCreateWithoutTargetsInputSchema),z.lazy(() => FundingPlanTargetUncheckedCreateWithoutTargetsInputSchema) ]),
 }).strict();
 
-export const FundingPlanCreateWithoutPlannAllocationsInputSchema: z.ZodType<Prisma.FundingPlanCreateWithoutPlannAllocationsInput> = z.object({
+export const FundingPlanCreateWithoutPlanAllocationsInputSchema: z.ZodType<Prisma.FundingPlanCreateWithoutPlanAllocationsInput> = z.object({
   PlanType: z.number().int(),
   Name: z.string(),
   fundings: z.lazy(() => PatentFundingCreateNestedManyWithoutPlanInputSchema).optional()
 }).strict();
 
-export const FundingPlanUncheckedCreateWithoutPlannAllocationsInputSchema: z.ZodType<Prisma.FundingPlanUncheckedCreateWithoutPlannAllocationsInput> = z.object({
+export const FundingPlanUncheckedCreateWithoutPlanAllocationsInputSchema: z.ZodType<Prisma.FundingPlanUncheckedCreateWithoutPlanAllocationsInput> = z.object({
   FundingPlanID: z.number().int().optional(),
   PlanType: z.number().int(),
   Name: z.string(),
   fundings: z.lazy(() => PatentFundingUncheckedCreateNestedManyWithoutPlanInputSchema).optional()
 }).strict();
 
-export const FundingPlanCreateOrConnectWithoutPlannAllocationsInputSchema: z.ZodType<Prisma.FundingPlanCreateOrConnectWithoutPlannAllocationsInput> = z.object({
+export const FundingPlanCreateOrConnectWithoutPlanAllocationsInputSchema: z.ZodType<Prisma.FundingPlanCreateOrConnectWithoutPlanAllocationsInput> = z.object({
   where: z.lazy(() => FundingPlanWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => FundingPlanCreateWithoutPlannAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedCreateWithoutPlannAllocationsInputSchema) ]),
+  create: z.union([ z.lazy(() => FundingPlanCreateWithoutPlanAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedCreateWithoutPlanAllocationsInputSchema) ]),
 }).strict();
 
 export const FundingUnitCreateWithoutFundingPlanAllocationInputSchema: z.ZodType<Prisma.FundingUnitCreateWithoutFundingPlanAllocationInput> = z.object({
@@ -9467,33 +9397,33 @@ export const FundingPlanTargetUpdateToOneWithWhereWithoutTargetsInputSchema: z.Z
 
 export const FundingPlanTargetUpdateWithoutTargetsInputSchema: z.ZodType<Prisma.FundingPlanTargetUpdateWithoutTargetsInput> = z.object({
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationUpdateManyWithoutPlaneTargetNestedInputSchema).optional()
+  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationUpdateManyWithoutPlanTargetNestedInputSchema).optional()
 }).strict();
 
 export const FundingPlanTargetUncheckedUpdateWithoutTargetsInputSchema: z.ZodType<Prisma.FundingPlanTargetUncheckedUpdateWithoutTargetsInput> = z.object({
   TargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlaneTargetNestedInputSchema).optional()
+  PatentFundingExportInternalAllocation: z.lazy(() => PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlanTargetNestedInputSchema).optional()
 }).strict();
 
-export const FundingPlanUpsertWithoutPlannAllocationsInputSchema: z.ZodType<Prisma.FundingPlanUpsertWithoutPlannAllocationsInput> = z.object({
-  update: z.union([ z.lazy(() => FundingPlanUpdateWithoutPlannAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedUpdateWithoutPlannAllocationsInputSchema) ]),
-  create: z.union([ z.lazy(() => FundingPlanCreateWithoutPlannAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedCreateWithoutPlannAllocationsInputSchema) ]),
+export const FundingPlanUpsertWithoutPlanAllocationsInputSchema: z.ZodType<Prisma.FundingPlanUpsertWithoutPlanAllocationsInput> = z.object({
+  update: z.union([ z.lazy(() => FundingPlanUpdateWithoutPlanAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedUpdateWithoutPlanAllocationsInputSchema) ]),
+  create: z.union([ z.lazy(() => FundingPlanCreateWithoutPlanAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedCreateWithoutPlanAllocationsInputSchema) ]),
   where: z.lazy(() => FundingPlanWhereInputSchema).optional()
 }).strict();
 
-export const FundingPlanUpdateToOneWithWhereWithoutPlannAllocationsInputSchema: z.ZodType<Prisma.FundingPlanUpdateToOneWithWhereWithoutPlannAllocationsInput> = z.object({
+export const FundingPlanUpdateToOneWithWhereWithoutPlanAllocationsInputSchema: z.ZodType<Prisma.FundingPlanUpdateToOneWithWhereWithoutPlanAllocationsInput> = z.object({
   where: z.lazy(() => FundingPlanWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => FundingPlanUpdateWithoutPlannAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedUpdateWithoutPlannAllocationsInputSchema) ]),
+  data: z.union([ z.lazy(() => FundingPlanUpdateWithoutPlanAllocationsInputSchema),z.lazy(() => FundingPlanUncheckedUpdateWithoutPlanAllocationsInputSchema) ]),
 }).strict();
 
-export const FundingPlanUpdateWithoutPlannAllocationsInputSchema: z.ZodType<Prisma.FundingPlanUpdateWithoutPlannAllocationsInput> = z.object({
+export const FundingPlanUpdateWithoutPlanAllocationsInputSchema: z.ZodType<Prisma.FundingPlanUpdateWithoutPlanAllocationsInput> = z.object({
   PlanType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   fundings: z.lazy(() => PatentFundingUpdateManyWithoutPlanNestedInputSchema).optional()
 }).strict();
 
-export const FundingPlanUncheckedUpdateWithoutPlannAllocationsInputSchema: z.ZodType<Prisma.FundingPlanUncheckedUpdateWithoutPlannAllocationsInput> = z.object({
+export const FundingPlanUncheckedUpdateWithoutPlanAllocationsInputSchema: z.ZodType<Prisma.FundingPlanUncheckedUpdateWithoutPlanAllocationsInput> = z.object({
   FundingPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   PlanType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9526,14 +9456,14 @@ export const FundingUnitScalarWhereInputSchema: z.ZodType<Prisma.FundingUnitScal
 }).strict();
 
 export const FundingPlanAllocationCreateWithoutTargetInputSchema: z.ZodType<Prisma.FundingPlanAllocationCreateWithoutTargetInput> = z.object({
-  Percentage: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
-  fundingPlan: z.lazy(() => FundingPlanCreateNestedOneWithoutPlannAllocationsInputSchema),
+  Percentage: z.number().int(),
+  fundingPlan: z.lazy(() => FundingPlanCreateNestedOneWithoutPlanAllocationsInputSchema),
   fundingUnits: z.lazy(() => FundingUnitCreateNestedManyWithoutFundingPlanAllocationInputSchema).optional()
 }).strict();
 
 export const FundingPlanAllocationUncheckedCreateWithoutTargetInputSchema: z.ZodType<Prisma.FundingPlanAllocationUncheckedCreateWithoutTargetInput> = z.object({
   FundingPlanAllocationID: z.number().int().optional(),
-  Percentage: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  Percentage: z.number().int(),
   FundingPlanID: z.number().int(),
   fundingUnits: z.lazy(() => FundingUnitUncheckedCreateNestedManyWithoutFundingPlanAllocationInputSchema).optional()
 }).strict();
@@ -9547,24 +9477,24 @@ export const FundingPlanAllocationCreateManyTargetInputEnvelopeSchema: z.ZodType
   data: z.union([ z.lazy(() => FundingPlanAllocationCreateManyTargetInputSchema),z.lazy(() => FundingPlanAllocationCreateManyTargetInputSchema).array() ]),
 }).strict();
 
-export const PatentFundingExportInternalAllocationCreateWithoutPlaneTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateWithoutPlaneTargetInput> = z.object({
-  Amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+export const PatentFundingExportInternalAllocationCreateWithoutPlanTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateWithoutPlanTargetInput> = z.object({
+  Amount: z.number().int(),
   export: z.lazy(() => PatentFundingExportCreateNestedOneWithoutInternalAllocationsInputSchema)
 }).strict();
 
-export const PatentFundingExportInternalAllocationUncheckedCreateWithoutPlaneTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedCreateWithoutPlaneTargetInput> = z.object({
+export const PatentFundingExportInternalAllocationUncheckedCreateWithoutPlanTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedCreateWithoutPlanTargetInput> = z.object({
   InternalContributionID: z.number().int().optional(),
-  Amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  Amount: z.number().int(),
   ExportID: z.number().int()
 }).strict();
 
-export const PatentFundingExportInternalAllocationCreateOrConnectWithoutPlaneTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateOrConnectWithoutPlaneTargetInput> = z.object({
+export const PatentFundingExportInternalAllocationCreateOrConnectWithoutPlanTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateOrConnectWithoutPlanTargetInput> = z.object({
   where: z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlaneTargetInputSchema) ]),
+  create: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlanTargetInputSchema) ]),
 }).strict();
 
-export const PatentFundingExportInternalAllocationCreateManyPlaneTargetInputEnvelopeSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateManyPlaneTargetInputEnvelope> = z.object({
-  data: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateManyPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateManyPlaneTargetInputSchema).array() ]),
+export const PatentFundingExportInternalAllocationCreateManyPlanTargetInputEnvelopeSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateManyPlanTargetInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateManyPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationCreateManyPlanTargetInputSchema).array() ]),
 }).strict();
 
 export const FundingPlanAllocationUpsertWithWhereUniqueWithoutTargetInputSchema: z.ZodType<Prisma.FundingPlanAllocationUpsertWithWhereUniqueWithoutTargetInput> = z.object({
@@ -9583,20 +9513,20 @@ export const FundingPlanAllocationUpdateManyWithWhereWithoutTargetInputSchema: z
   data: z.union([ z.lazy(() => FundingPlanAllocationUpdateManyMutationInputSchema),z.lazy(() => FundingPlanAllocationUncheckedUpdateManyWithoutTargetInputSchema) ]),
 }).strict();
 
-export const PatentFundingExportInternalAllocationUpsertWithWhereUniqueWithoutPlaneTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUpsertWithWhereUniqueWithoutPlaneTargetInput> = z.object({
+export const PatentFundingExportInternalAllocationUpsertWithWhereUniqueWithoutPlanTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUpsertWithWhereUniqueWithoutPlanTargetInput> = z.object({
   where: z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedUpdateWithoutPlaneTargetInputSchema) ]),
-  create: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlaneTargetInputSchema) ]),
+  update: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedUpdateWithoutPlanTargetInputSchema) ]),
+  create: z.union([ z.lazy(() => PatentFundingExportInternalAllocationCreateWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedCreateWithoutPlanTargetInputSchema) ]),
 }).strict();
 
-export const PatentFundingExportInternalAllocationUpdateWithWhereUniqueWithoutPlaneTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUpdateWithWhereUniqueWithoutPlaneTargetInput> = z.object({
+export const PatentFundingExportInternalAllocationUpdateWithWhereUniqueWithoutPlanTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUpdateWithWhereUniqueWithoutPlanTargetInput> = z.object({
   where: z.lazy(() => PatentFundingExportInternalAllocationWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateWithoutPlaneTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedUpdateWithoutPlaneTargetInputSchema) ]),
+  data: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateWithoutPlanTargetInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedUpdateWithoutPlanTargetInputSchema) ]),
 }).strict();
 
-export const PatentFundingExportInternalAllocationUpdateManyWithWhereWithoutPlaneTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUpdateManyWithWhereWithoutPlaneTargetInput> = z.object({
+export const PatentFundingExportInternalAllocationUpdateManyWithWhereWithoutPlanTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUpdateManyWithWhereWithoutPlanTargetInput> = z.object({
   where: z.lazy(() => PatentFundingExportInternalAllocationScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateManyMutationInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlaneTargetInputSchema) ]),
+  data: z.union([ z.lazy(() => PatentFundingExportInternalAllocationUpdateManyMutationInputSchema),z.lazy(() => PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlanTargetInputSchema) ]),
 }).strict();
 
 export const PatentFundingExportInternalAllocationScalarWhereInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationScalarWhereInput> = z.object({
@@ -9604,8 +9534,8 @@ export const PatentFundingExportInternalAllocationScalarWhereInputSchema: z.ZodT
   OR: z.lazy(() => PatentFundingExportInternalAllocationScalarWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PatentFundingExportInternalAllocationScalarWhereInputSchema),z.lazy(() => PatentFundingExportInternalAllocationScalarWhereInputSchema).array() ]).optional(),
   InternalContributionID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  Amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  PlaneTargetID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  Amount: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  PlanTargetID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   ExportID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
 }).strict();
 
@@ -9658,14 +9588,14 @@ export const PatentCreateOrConnectWithoutFundingInputSchema: z.ZodType<Prisma.Pa
 export const FundingPlanCreateWithoutFundingsInputSchema: z.ZodType<Prisma.FundingPlanCreateWithoutFundingsInput> = z.object({
   PlanType: z.number().int(),
   Name: z.string(),
-  plannAllocations: z.lazy(() => FundingPlanAllocationCreateNestedManyWithoutFundingPlanInputSchema).optional()
+  planAllocations: z.lazy(() => FundingPlanAllocationCreateNestedManyWithoutFundingPlanInputSchema).optional()
 }).strict();
 
 export const FundingPlanUncheckedCreateWithoutFundingsInputSchema: z.ZodType<Prisma.FundingPlanUncheckedCreateWithoutFundingsInput> = z.object({
   FundingPlanID: z.number().int().optional(),
   PlanType: z.number().int(),
   Name: z.string(),
-  plannAllocations: z.lazy(() => FundingPlanAllocationUncheckedCreateNestedManyWithoutFundingPlanInputSchema).optional()
+  planAllocations: z.lazy(() => FundingPlanAllocationUncheckedCreateNestedManyWithoutFundingPlanInputSchema).optional()
 }).strict();
 
 export const FundingPlanCreateOrConnectWithoutFundingsInputSchema: z.ZodType<Prisma.FundingPlanCreateOrConnectWithoutFundingsInput> = z.object({
@@ -9674,7 +9604,9 @@ export const FundingPlanCreateOrConnectWithoutFundingsInputSchema: z.ZodType<Pri
 }).strict();
 
 export const PatentFundingRecordCreateWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingRecordCreateWithoutPatentFundingInput> = z.object({
-  Amount: z.number(),
+  Name: z.string(),
+  Description: z.string().optional().nullable(),
+  Amount: z.number().int(),
   Date: z.coerce.date(),
   fundingExport: z.lazy(() => PatentFundingExportCreateNestedOneWithoutExportRecordsInputSchema).optional(),
   canFundingBy: z.lazy(() => FundingUnitCreateNestedManyWithoutFundingRecordsInputSchema).optional()
@@ -9682,7 +9614,9 @@ export const PatentFundingRecordCreateWithoutPatentFundingInputSchema: z.ZodType
 
 export const PatentFundingRecordUncheckedCreateWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingRecordUncheckedCreateWithoutPatentFundingInput> = z.object({
   FundingRecordID: z.number().int().optional(),
-  Amount: z.number(),
+  Name: z.string(),
+  Description: z.string().optional().nullable(),
+  Amount: z.number().int(),
   Date: z.coerce.date(),
   ExportID: z.number().int().optional().nullable(),
   canFundingBy: z.lazy(() => FundingUnitUncheckedCreateNestedManyWithoutFundingRecordsInputSchema).optional()
@@ -9806,14 +9740,14 @@ export const FundingPlanUpdateToOneWithWhereWithoutFundingsInputSchema: z.ZodTyp
 export const FundingPlanUpdateWithoutFundingsInputSchema: z.ZodType<Prisma.FundingPlanUpdateWithoutFundingsInput> = z.object({
   PlanType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  plannAllocations: z.lazy(() => FundingPlanAllocationUpdateManyWithoutFundingPlanNestedInputSchema).optional()
+  planAllocations: z.lazy(() => FundingPlanAllocationUpdateManyWithoutFundingPlanNestedInputSchema).optional()
 }).strict();
 
 export const FundingPlanUncheckedUpdateWithoutFundingsInputSchema: z.ZodType<Prisma.FundingPlanUncheckedUpdateWithoutFundingsInput> = z.object({
   FundingPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   PlanType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  plannAllocations: z.lazy(() => FundingPlanAllocationUncheckedUpdateManyWithoutFundingPlanNestedInputSchema).optional()
+  planAllocations: z.lazy(() => FundingPlanAllocationUncheckedUpdateManyWithoutFundingPlanNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingRecordUpsertWithWhereUniqueWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingRecordUpsertWithWhereUniqueWithoutPatentFundingInput> = z.object({
@@ -9895,14 +9829,14 @@ export const FundingUnitCreateOrConnectWithoutFundingUnitsInputSchema: z.ZodType
 
 export const PatentFundingCreateWithoutFundingUnitsInputSchema: z.ZodType<Prisma.PatentFundingCreateWithoutFundingUnitsInput> = z.object({
   patent: z.lazy(() => PatentCreateNestedOneWithoutFundingInputSchema),
-  plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema),
+  plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema).optional(),
   fundingRecords: z.lazy(() => PatentFundingRecordCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportCreateNestedManyWithoutPatentFundingInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedCreateWithoutFundingUnitsInputSchema: z.ZodType<Prisma.PatentFundingUncheckedCreateWithoutFundingUnitsInput> = z.object({
   PatentID: z.number().int(),
-  FundingPlanPlanID: z.number().int(),
+  FundingPlanPlanID: z.number().int().optional().nullable(),
   fundingRecords: z.lazy(() => PatentFundingRecordUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional()
 }).strict();
@@ -9951,28 +9885,28 @@ export const PatentFundingUpdateToOneWithWhereWithoutFundingUnitsInputSchema: z.
 
 export const PatentFundingUpdateWithoutFundingUnitsInputSchema: z.ZodType<Prisma.PatentFundingUpdateWithoutFundingUnitsInput> = z.object({
   patent: z.lazy(() => PatentUpdateOneRequiredWithoutFundingNestedInputSchema).optional(),
-  plan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutFundingsNestedInputSchema).optional(),
+  plan: z.lazy(() => FundingPlanUpdateOneWithoutFundingsNestedInputSchema).optional(),
   fundingRecords: z.lazy(() => PatentFundingRecordUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedUpdateWithoutFundingUnitsInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateWithoutFundingUnitsInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  FundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  FundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   fundingRecords: z.lazy(() => PatentFundingRecordUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingCreateWithoutFundingRecordsInputSchema: z.ZodType<Prisma.PatentFundingCreateWithoutFundingRecordsInput> = z.object({
   patent: z.lazy(() => PatentCreateNestedOneWithoutFundingInputSchema),
-  plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema),
+  plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportCreateNestedManyWithoutPatentFundingInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedCreateWithoutFundingRecordsInputSchema: z.ZodType<Prisma.PatentFundingUncheckedCreateWithoutFundingRecordsInput> = z.object({
   PatentID: z.number().int(),
-  FundingPlanPlanID: z.number().int(),
+  FundingPlanPlanID: z.number().int().optional().nullable(),
   fundingUnits: z.lazy(() => PatentFundingUnitUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional()
 }).strict();
@@ -10035,14 +9969,14 @@ export const PatentFundingUpdateToOneWithWhereWithoutFundingRecordsInputSchema: 
 
 export const PatentFundingUpdateWithoutFundingRecordsInputSchema: z.ZodType<Prisma.PatentFundingUpdateWithoutFundingRecordsInput> = z.object({
   patent: z.lazy(() => PatentUpdateOneRequiredWithoutFundingNestedInputSchema).optional(),
-  plan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutFundingsNestedInputSchema).optional(),
+  plan: z.lazy(() => FundingPlanUpdateOneWithoutFundingsNestedInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedUpdateWithoutFundingRecordsInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateWithoutFundingRecordsInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  FundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  FundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   fundingUnits: z.lazy(() => PatentFundingUnitUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
@@ -10091,14 +10025,14 @@ export const FundingUnitUpdateManyWithWhereWithoutFundingRecordsInputSchema: z.Z
 
 export const PatentFundingCreateWithoutFundingExportsInputSchema: z.ZodType<Prisma.PatentFundingCreateWithoutFundingExportsInput> = z.object({
   patent: z.lazy(() => PatentCreateNestedOneWithoutFundingInputSchema),
-  plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema),
+  plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema).optional(),
   fundingRecords: z.lazy(() => PatentFundingRecordCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitCreateNestedManyWithoutPatentFundingInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedCreateWithoutFundingExportsInputSchema: z.ZodType<Prisma.PatentFundingUncheckedCreateWithoutFundingExportsInput> = z.object({
   PatentID: z.number().int(),
-  FundingPlanPlanID: z.number().int(),
+  FundingPlanPlanID: z.number().int().optional().nullable(),
   fundingRecords: z.lazy(() => PatentFundingRecordUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional()
 }).strict();
@@ -10109,7 +10043,9 @@ export const PatentFundingCreateOrConnectWithoutFundingExportsInputSchema: z.Zod
 }).strict();
 
 export const PatentFundingRecordCreateWithoutFundingExportInputSchema: z.ZodType<Prisma.PatentFundingRecordCreateWithoutFundingExportInput> = z.object({
-  Amount: z.number(),
+  Name: z.string(),
+  Description: z.string().optional().nullable(),
+  Amount: z.number().int(),
   Date: z.coerce.date(),
   patentFunding: z.lazy(() => PatentFundingCreateNestedOneWithoutFundingRecordsInputSchema),
   canFundingBy: z.lazy(() => FundingUnitCreateNestedManyWithoutFundingRecordsInputSchema).optional()
@@ -10117,7 +10053,9 @@ export const PatentFundingRecordCreateWithoutFundingExportInputSchema: z.ZodType
 
 export const PatentFundingRecordUncheckedCreateWithoutFundingExportInputSchema: z.ZodType<Prisma.PatentFundingRecordUncheckedCreateWithoutFundingExportInput> = z.object({
   FundingRecordID: z.number().int().optional(),
-  Amount: z.number(),
+  Name: z.string(),
+  Description: z.string().optional().nullable(),
+  Amount: z.number().int(),
   Date: z.coerce.date(),
   PatentFundingPatentID: z.number().int(),
   canFundingBy: z.lazy(() => FundingUnitUncheckedCreateNestedManyWithoutFundingRecordsInputSchema).optional()
@@ -10133,14 +10071,14 @@ export const PatentFundingRecordCreateManyFundingExportInputEnvelopeSchema: z.Zo
 }).strict();
 
 export const PatentFundingExportContributionCreateWithoutExportInputSchema: z.ZodType<Prisma.PatentFundingExportContributionCreateWithoutExportInput> = z.object({
-  Amount: z.number(),
+  Amount: z.number().int(),
   fundingUnit: z.lazy(() => FundingUnitCreateNestedOneWithoutContributionsInputSchema).optional()
 }).strict();
 
 export const PatentFundingExportContributionUncheckedCreateWithoutExportInputSchema: z.ZodType<Prisma.PatentFundingExportContributionUncheckedCreateWithoutExportInput> = z.object({
   ContributionID: z.number().int().optional(),
   FundingUnitID: z.number().int().optional().nullable(),
-  Amount: z.number()
+  Amount: z.number().int()
 }).strict();
 
 export const PatentFundingExportContributionCreateOrConnectWithoutExportInputSchema: z.ZodType<Prisma.PatentFundingExportContributionCreateOrConnectWithoutExportInput> = z.object({
@@ -10153,14 +10091,14 @@ export const PatentFundingExportContributionCreateManyExportInputEnvelopeSchema:
 }).strict();
 
 export const PatentFundingExportInternalAllocationCreateWithoutExportInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateWithoutExportInput> = z.object({
-  Amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
-  planeTarget: z.lazy(() => FundingPlanTargetCreateNestedOneWithoutPatentFundingExportInternalAllocationInputSchema)
+  Amount: z.number().int(),
+  planTarget: z.lazy(() => FundingPlanTargetCreateNestedOneWithoutPatentFundingExportInternalAllocationInputSchema)
 }).strict();
 
 export const PatentFundingExportInternalAllocationUncheckedCreateWithoutExportInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedCreateWithoutExportInput> = z.object({
   InternalContributionID: z.number().int().optional(),
-  Amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
-  PlaneTargetID: z.number().int()
+  Amount: z.number().int(),
+  PlanTargetID: z.number().int()
 }).strict();
 
 export const PatentFundingExportInternalAllocationCreateOrConnectWithoutExportInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateOrConnectWithoutExportInput> = z.object({
@@ -10185,14 +10123,14 @@ export const PatentFundingUpdateToOneWithWhereWithoutFundingExportsInputSchema: 
 
 export const PatentFundingUpdateWithoutFundingExportsInputSchema: z.ZodType<Prisma.PatentFundingUpdateWithoutFundingExportsInput> = z.object({
   patent: z.lazy(() => PatentUpdateOneRequiredWithoutFundingNestedInputSchema).optional(),
-  plan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutFundingsNestedInputSchema).optional(),
+  plan: z.lazy(() => FundingPlanUpdateOneWithoutFundingsNestedInputSchema).optional(),
   fundingRecords: z.lazy(() => PatentFundingRecordUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedUpdateWithoutFundingExportsInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateWithoutFundingExportsInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  FundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  FundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   fundingRecords: z.lazy(() => PatentFundingRecordUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
@@ -10469,14 +10407,14 @@ export const ContactInfoCreateOrConnectWithoutInventorInputSchema: z.ZodType<Pri
 
 export const PatentInventorCreateWithoutInventorInputSchema: z.ZodType<Prisma.PatentInventorCreateWithoutInventorInput> = z.object({
   Main: z.boolean(),
-  Contribution: z.number().optional().nullable(),
+  Contribution: z.number().optional(),
   patent: z.lazy(() => PatentCreateNestedOneWithoutInventorsInputSchema)
 }).strict();
 
 export const PatentInventorUncheckedCreateWithoutInventorInputSchema: z.ZodType<Prisma.PatentInventorUncheckedCreateWithoutInventorInput> = z.object({
   PatentID: z.number().int(),
   Main: z.boolean(),
-  Contribution: z.number().optional().nullable()
+  Contribution: z.number().optional()
 }).strict();
 
 export const PatentInventorCreateOrConnectWithoutInventorInputSchema: z.ZodType<Prisma.PatentInventorCreateOrConnectWithoutInventorInput> = z.object({
@@ -10569,7 +10507,7 @@ export const PatentInventorScalarWhereInputSchema: z.ZodType<Prisma.PatentInvent
   PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   InventorID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   Main: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  Contribution: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
+  Contribution: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
 }).strict();
 
 export const PatentCreateWithoutInventorsInputSchema: z.ZodType<Prisma.PatentCreateWithoutInventorsInput> = z.object({
@@ -10746,14 +10684,14 @@ export const DepartmentCreateOrConnectWithoutPatentsInputSchema: z.ZodType<Prism
 
 export const PatentInventorCreateWithoutPatentInputSchema: z.ZodType<Prisma.PatentInventorCreateWithoutPatentInput> = z.object({
   Main: z.boolean(),
-  Contribution: z.number().optional().nullable(),
+  Contribution: z.number().optional(),
   inventor: z.lazy(() => InventorCreateNestedOneWithoutPatentsInputSchema)
 }).strict();
 
 export const PatentInventorUncheckedCreateWithoutPatentInputSchema: z.ZodType<Prisma.PatentInventorUncheckedCreateWithoutPatentInput> = z.object({
   InventorID: z.number().int(),
   Main: z.boolean(),
-  Contribution: z.number().optional().nullable()
+  Contribution: z.number().optional()
 }).strict();
 
 export const PatentInventorCreateOrConnectWithoutPatentInputSchema: z.ZodType<Prisma.PatentInventorCreateOrConnectWithoutPatentInput> = z.object({
@@ -10785,14 +10723,14 @@ export const PatentApplicationDataCreateOrConnectWithoutPatentInputSchema: z.Zod
 }).strict();
 
 export const PatentFundingCreateWithoutPatentInputSchema: z.ZodType<Prisma.PatentFundingCreateWithoutPatentInput> = z.object({
-  plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema),
+  plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema).optional(),
   fundingRecords: z.lazy(() => PatentFundingRecordCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportCreateNestedManyWithoutPatentFundingInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedCreateWithoutPatentInputSchema: z.ZodType<Prisma.PatentFundingUncheckedCreateWithoutPatentInput> = z.object({
-  FundingPlanPlanID: z.number().int(),
+  FundingPlanPlanID: z.number().int().optional().nullable(),
   fundingRecords: z.lazy(() => PatentFundingRecordUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional()
@@ -10806,14 +10744,16 @@ export const PatentFundingCreateOrConnectWithoutPatentInputSchema: z.ZodType<Pri
 export const PatentManualStatusCreateWithoutPatentInputSchema: z.ZodType<Prisma.PatentManualStatusCreateWithoutPatentInput> = z.object({
   Reason: z.string(),
   Date: z.coerce.date().optional().nullable(),
-  Active: z.boolean()
+  Active: z.boolean(),
+  OnTop: z.boolean()
 }).strict();
 
 export const PatentManualStatusUncheckedCreateWithoutPatentInputSchema: z.ZodType<Prisma.PatentManualStatusUncheckedCreateWithoutPatentInput> = z.object({
   ManualStatusID: z.number().int().optional(),
   Reason: z.string(),
   Date: z.coerce.date().optional().nullable(),
-  Active: z.boolean()
+  Active: z.boolean(),
+  OnTop: z.boolean()
 }).strict();
 
 export const PatentManualStatusCreateOrConnectWithoutPatentInputSchema: z.ZodType<Prisma.PatentManualStatusCreateOrConnectWithoutPatentInput> = z.object({
@@ -11025,14 +10965,14 @@ export const PatentFundingUpdateToOneWithWhereWithoutPatentInputSchema: z.ZodTyp
 }).strict();
 
 export const PatentFundingUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentFundingUpdateWithoutPatentInput> = z.object({
-  plan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutFundingsNestedInputSchema).optional(),
+  plan: z.lazy(() => FundingPlanUpdateOneWithoutFundingsNestedInputSchema).optional(),
   fundingRecords: z.lazy(() => PatentFundingRecordUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateWithoutPatentInput> = z.object({
-  FundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  FundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   fundingRecords: z.lazy(() => PatentFundingRecordUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingUnits: z.lazy(() => PatentFundingUnitUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
   fundingExports: z.lazy(() => PatentFundingExportUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional()
@@ -11063,6 +11003,7 @@ export const PatentManualStatusScalarWhereInputSchema: z.ZodType<Prisma.PatentMa
   Reason: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   Date: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   Active: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  OnTop: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
 }).strict();
 
 export const PatentMaintenanceUpsertWithWhereUniqueWithoutPatentInputSchema: z.ZodType<Prisma.PatentMaintenanceUpsertWithWhereUniqueWithoutPatentInput> = z.object({
@@ -12447,7 +12388,7 @@ export const PatentFundingUnitCreateManyFundingUnitInputSchema: z.ZodType<Prisma
 export const PatentFundingExportContributionCreateManyFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingExportContributionCreateManyFundingUnitInput> = z.object({
   ContributionID: z.number().int().optional(),
   ExportID: z.number().int(),
-  Amount: z.number()
+  Amount: z.number().int()
 }).strict();
 
 export const PatentFundingUnitUpdateWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingUnitUpdateWithoutFundingUnitInput> = z.object({
@@ -12466,7 +12407,9 @@ export const PatentFundingUnitUncheckedUpdateManyWithoutFundingUnitInputSchema: 
 }).strict();
 
 export const PatentFundingRecordUpdateWithoutCanFundingByInputSchema: z.ZodType<Prisma.PatentFundingRecordUpdateWithoutCanFundingByInput> = z.object({
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   patentFunding: z.lazy(() => PatentFundingUpdateOneRequiredWithoutFundingRecordsNestedInputSchema).optional(),
   fundingExport: z.lazy(() => PatentFundingExportUpdateOneWithoutExportRecordsNestedInputSchema).optional()
@@ -12474,7 +12417,9 @@ export const PatentFundingRecordUpdateWithoutCanFundingByInputSchema: z.ZodType<
 
 export const PatentFundingRecordUncheckedUpdateWithoutCanFundingByInputSchema: z.ZodType<Prisma.PatentFundingRecordUncheckedUpdateWithoutCanFundingByInput> = z.object({
   FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   PatentFundingPatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -12482,27 +12427,29 @@ export const PatentFundingRecordUncheckedUpdateWithoutCanFundingByInputSchema: z
 
 export const PatentFundingRecordUncheckedUpdateManyWithoutCanFundingByInputSchema: z.ZodType<Prisma.PatentFundingRecordUncheckedUpdateManyWithoutCanFundingByInput> = z.object({
   FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   PatentFundingPatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const PatentFundingExportContributionUpdateWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingExportContributionUpdateWithoutFundingUnitInput> = z.object({
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   export: z.lazy(() => PatentFundingExportUpdateOneRequiredWithoutContributionsNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingExportContributionUncheckedUpdateWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingExportContributionUncheckedUpdateWithoutFundingUnitInput> = z.object({
   ContributionID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingExportContributionUncheckedUpdateManyWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingExportContributionUncheckedUpdateManyWithoutFundingUnitInput> = z.object({
   ContributionID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingCreateManyPlanInputSchema: z.ZodType<Prisma.PatentFundingCreateManyPlanInput> = z.object({
@@ -12511,7 +12458,7 @@ export const PatentFundingCreateManyPlanInputSchema: z.ZodType<Prisma.PatentFund
 
 export const FundingPlanAllocationCreateManyFundingPlanInputSchema: z.ZodType<Prisma.FundingPlanAllocationCreateManyFundingPlanInput> = z.object({
   FundingPlanAllocationID: z.number().int().optional(),
-  Percentage: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  Percentage: z.number().int(),
   TargetID: z.number().int()
 }).strict();
 
@@ -12534,21 +12481,21 @@ export const PatentFundingUncheckedUpdateManyWithoutPlanInputSchema: z.ZodType<P
 }).strict();
 
 export const FundingPlanAllocationUpdateWithoutFundingPlanInputSchema: z.ZodType<Prisma.FundingPlanAllocationUpdateWithoutFundingPlanInput> = z.object({
-  Percentage: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Percentage: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   target: z.lazy(() => FundingPlanTargetUpdateOneRequiredWithoutTargetsNestedInputSchema).optional(),
   fundingUnits: z.lazy(() => FundingUnitUpdateManyWithoutFundingPlanAllocationNestedInputSchema).optional()
 }).strict();
 
 export const FundingPlanAllocationUncheckedUpdateWithoutFundingPlanInputSchema: z.ZodType<Prisma.FundingPlanAllocationUncheckedUpdateWithoutFundingPlanInput> = z.object({
   FundingPlanAllocationID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Percentage: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Percentage: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   TargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   fundingUnits: z.lazy(() => FundingUnitUncheckedUpdateManyWithoutFundingPlanAllocationNestedInputSchema).optional()
 }).strict();
 
 export const FundingPlanAllocationUncheckedUpdateManyWithoutFundingPlanInputSchema: z.ZodType<Prisma.FundingPlanAllocationUncheckedUpdateManyWithoutFundingPlanInput> = z.object({
   FundingPlanAllocationID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Percentage: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Percentage: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   TargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -12579,55 +12526,57 @@ export const FundingUnitUncheckedUpdateManyWithoutFundingPlanAllocationInputSche
 
 export const FundingPlanAllocationCreateManyTargetInputSchema: z.ZodType<Prisma.FundingPlanAllocationCreateManyTargetInput> = z.object({
   FundingPlanAllocationID: z.number().int().optional(),
-  Percentage: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  Percentage: z.number().int(),
   FundingPlanID: z.number().int()
 }).strict();
 
-export const PatentFundingExportInternalAllocationCreateManyPlaneTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateManyPlaneTargetInput> = z.object({
+export const PatentFundingExportInternalAllocationCreateManyPlanTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateManyPlanTargetInput> = z.object({
   InternalContributionID: z.number().int().optional(),
-  Amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  Amount: z.number().int(),
   ExportID: z.number().int()
 }).strict();
 
 export const FundingPlanAllocationUpdateWithoutTargetInputSchema: z.ZodType<Prisma.FundingPlanAllocationUpdateWithoutTargetInput> = z.object({
-  Percentage: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  fundingPlan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutPlannAllocationsNestedInputSchema).optional(),
+  Percentage: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  fundingPlan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutPlanAllocationsNestedInputSchema).optional(),
   fundingUnits: z.lazy(() => FundingUnitUpdateManyWithoutFundingPlanAllocationNestedInputSchema).optional()
 }).strict();
 
 export const FundingPlanAllocationUncheckedUpdateWithoutTargetInputSchema: z.ZodType<Prisma.FundingPlanAllocationUncheckedUpdateWithoutTargetInput> = z.object({
   FundingPlanAllocationID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Percentage: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Percentage: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   FundingPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   fundingUnits: z.lazy(() => FundingUnitUncheckedUpdateManyWithoutFundingPlanAllocationNestedInputSchema).optional()
 }).strict();
 
 export const FundingPlanAllocationUncheckedUpdateManyWithoutTargetInputSchema: z.ZodType<Prisma.FundingPlanAllocationUncheckedUpdateManyWithoutTargetInput> = z.object({
   FundingPlanAllocationID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Percentage: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Percentage: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   FundingPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const PatentFundingExportInternalAllocationUpdateWithoutPlaneTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUpdateWithoutPlaneTargetInput> = z.object({
-  Amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+export const PatentFundingExportInternalAllocationUpdateWithoutPlanTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUpdateWithoutPlanTargetInput> = z.object({
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   export: z.lazy(() => PatentFundingExportUpdateOneRequiredWithoutInternalAllocationsNestedInputSchema).optional()
 }).strict();
 
-export const PatentFundingExportInternalAllocationUncheckedUpdateWithoutPlaneTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedUpdateWithoutPlaneTargetInput> = z.object({
+export const PatentFundingExportInternalAllocationUncheckedUpdateWithoutPlanTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedUpdateWithoutPlanTargetInput> = z.object({
   InternalContributionID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlaneTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlaneTargetInput> = z.object({
+export const PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlanTargetInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutPlanTargetInput> = z.object({
   InternalContributionID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingRecordCreateManyPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingRecordCreateManyPatentFundingInput> = z.object({
   FundingRecordID: z.number().int().optional(),
-  Amount: z.number(),
+  Name: z.string(),
+  Description: z.string().optional().nullable(),
+  Amount: z.number().int(),
   Date: z.coerce.date(),
   ExportID: z.number().int().optional().nullable()
 }).strict();
@@ -12643,7 +12592,9 @@ export const PatentFundingExportCreateManyPatentFundingInputSchema: z.ZodType<Pr
 }).strict();
 
 export const PatentFundingRecordUpdateWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingRecordUpdateWithoutPatentFundingInput> = z.object({
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   fundingExport: z.lazy(() => PatentFundingExportUpdateOneWithoutExportRecordsNestedInputSchema).optional(),
   canFundingBy: z.lazy(() => FundingUnitUpdateManyWithoutFundingRecordsNestedInputSchema).optional()
@@ -12651,7 +12602,9 @@ export const PatentFundingRecordUpdateWithoutPatentFundingInputSchema: z.ZodType
 
 export const PatentFundingRecordUncheckedUpdateWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingRecordUncheckedUpdateWithoutPatentFundingInput> = z.object({
   FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   canFundingBy: z.lazy(() => FundingUnitUncheckedUpdateManyWithoutFundingRecordsNestedInputSchema).optional()
@@ -12659,7 +12612,9 @@ export const PatentFundingRecordUncheckedUpdateWithoutPatentFundingInputSchema: 
 
 export const PatentFundingRecordUncheckedUpdateManyWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingRecordUncheckedUpdateManyWithoutPatentFundingInput> = z.object({
   FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ExportID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
@@ -12722,7 +12677,9 @@ export const FundingUnitUncheckedUpdateManyWithoutFundingRecordsInputSchema: z.Z
 
 export const PatentFundingRecordCreateManyFundingExportInputSchema: z.ZodType<Prisma.PatentFundingRecordCreateManyFundingExportInput> = z.object({
   FundingRecordID: z.number().int().optional(),
-  Amount: z.number(),
+  Name: z.string(),
+  Description: z.string().optional().nullable(),
+  Amount: z.number().int(),
   Date: z.coerce.date(),
   PatentFundingPatentID: z.number().int()
 }).strict();
@@ -12730,17 +12687,19 @@ export const PatentFundingRecordCreateManyFundingExportInputSchema: z.ZodType<Pr
 export const PatentFundingExportContributionCreateManyExportInputSchema: z.ZodType<Prisma.PatentFundingExportContributionCreateManyExportInput> = z.object({
   ContributionID: z.number().int().optional(),
   FundingUnitID: z.number().int().optional().nullable(),
-  Amount: z.number()
+  Amount: z.number().int()
 }).strict();
 
 export const PatentFundingExportInternalAllocationCreateManyExportInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationCreateManyExportInput> = z.object({
   InternalContributionID: z.number().int().optional(),
-  Amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
-  PlaneTargetID: z.number().int()
+  Amount: z.number().int(),
+  PlanTargetID: z.number().int()
 }).strict();
 
 export const PatentFundingRecordUpdateWithoutFundingExportInputSchema: z.ZodType<Prisma.PatentFundingRecordUpdateWithoutFundingExportInput> = z.object({
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   patentFunding: z.lazy(() => PatentFundingUpdateOneRequiredWithoutFundingRecordsNestedInputSchema).optional(),
   canFundingBy: z.lazy(() => FundingUnitUpdateManyWithoutFundingRecordsNestedInputSchema).optional()
@@ -12748,7 +12707,9 @@ export const PatentFundingRecordUpdateWithoutFundingExportInputSchema: z.ZodType
 
 export const PatentFundingRecordUncheckedUpdateWithoutFundingExportInputSchema: z.ZodType<Prisma.PatentFundingRecordUncheckedUpdateWithoutFundingExportInput> = z.object({
   FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   PatentFundingPatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   canFundingBy: z.lazy(() => FundingUnitUncheckedUpdateManyWithoutFundingRecordsNestedInputSchema).optional()
@@ -12756,80 +12717,83 @@ export const PatentFundingRecordUncheckedUpdateWithoutFundingExportInputSchema: 
 
 export const PatentFundingRecordUncheckedUpdateManyWithoutFundingExportInputSchema: z.ZodType<Prisma.PatentFundingRecordUncheckedUpdateManyWithoutFundingExportInput> = z.object({
   FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   PatentFundingPatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingExportContributionUpdateWithoutExportInputSchema: z.ZodType<Prisma.PatentFundingExportContributionUpdateWithoutExportInput> = z.object({
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   fundingUnit: z.lazy(() => FundingUnitUpdateOneWithoutContributionsNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingExportContributionUncheckedUpdateWithoutExportInputSchema: z.ZodType<Prisma.PatentFundingExportContributionUncheckedUpdateWithoutExportInput> = z.object({
   ContributionID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   FundingUnitID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingExportContributionUncheckedUpdateManyWithoutExportInputSchema: z.ZodType<Prisma.PatentFundingExportContributionUncheckedUpdateManyWithoutExportInput> = z.object({
   ContributionID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   FundingUnitID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingExportInternalAllocationUpdateWithoutExportInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUpdateWithoutExportInput> = z.object({
-  Amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  planeTarget: z.lazy(() => FundingPlanTargetUpdateOneRequiredWithoutPatentFundingExportInternalAllocationNestedInputSchema).optional()
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  planTarget: z.lazy(() => FundingPlanTargetUpdateOneRequiredWithoutPatentFundingExportInternalAllocationNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingExportInternalAllocationUncheckedUpdateWithoutExportInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedUpdateWithoutExportInput> = z.object({
   InternalContributionID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  PlaneTargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  PlanTargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutExportInputSchema: z.ZodType<Prisma.PatentFundingExportInternalAllocationUncheckedUpdateManyWithoutExportInput> = z.object({
   InternalContributionID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  PlaneTargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  PlanTargetID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentInventorCreateManyInventorInputSchema: z.ZodType<Prisma.PatentInventorCreateManyInventorInput> = z.object({
   PatentID: z.number().int(),
   Main: z.boolean(),
-  Contribution: z.number().optional().nullable()
+  Contribution: z.number().optional()
 }).strict();
 
 export const PatentInventorUpdateWithoutInventorInputSchema: z.ZodType<Prisma.PatentInventorUpdateWithoutInventorInput> = z.object({
   Main: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  Contribution: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Contribution: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   patent: z.lazy(() => PatentUpdateOneRequiredWithoutInventorsNestedInputSchema).optional()
 }).strict();
 
 export const PatentInventorUncheckedUpdateWithoutInventorInputSchema: z.ZodType<Prisma.PatentInventorUncheckedUpdateWithoutInventorInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Main: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  Contribution: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Contribution: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentInventorUncheckedUpdateManyWithoutInventorInputSchema: z.ZodType<Prisma.PatentInventorUncheckedUpdateManyWithoutInventorInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Main: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  Contribution: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Contribution: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentInventorCreateManyPatentInputSchema: z.ZodType<Prisma.PatentInventorCreateManyPatentInput> = z.object({
   InventorID: z.number().int(),
   Main: z.boolean(),
-  Contribution: z.number().optional().nullable()
+  Contribution: z.number().optional()
 }).strict();
 
 export const PatentManualStatusCreateManyPatentInputSchema: z.ZodType<Prisma.PatentManualStatusCreateManyPatentInput> = z.object({
   ManualStatusID: z.number().int().optional(),
   Reason: z.string(),
   Date: z.coerce.date().optional().nullable(),
-  Active: z.boolean()
+  Active: z.boolean(),
+  OnTop: z.boolean()
 }).strict();
 
 export const PatentMaintenanceCreateManyPatentInputSchema: z.ZodType<Prisma.PatentMaintenanceCreateManyPatentInput> = z.object({
@@ -12846,26 +12810,27 @@ export const PatentRecordCreateManyPatentInputSchema: z.ZodType<Prisma.PatentRec
 
 export const PatentInventorUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentInventorUpdateWithoutPatentInput> = z.object({
   Main: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  Contribution: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Contribution: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   inventor: z.lazy(() => InventorUpdateOneRequiredWithoutPatentsNestedInputSchema).optional()
 }).strict();
 
 export const PatentInventorUncheckedUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentInventorUncheckedUpdateWithoutPatentInput> = z.object({
   InventorID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Main: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  Contribution: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Contribution: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentInventorUncheckedUpdateManyWithoutPatentInputSchema: z.ZodType<Prisma.PatentInventorUncheckedUpdateManyWithoutPatentInput> = z.object({
   InventorID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Main: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  Contribution: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  Contribution: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentManualStatusUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentManualStatusUpdateWithoutPatentInput> = z.object({
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentManualStatusUncheckedUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentManualStatusUncheckedUpdateWithoutPatentInput> = z.object({
@@ -12873,6 +12838,7 @@ export const PatentManualStatusUncheckedUpdateWithoutPatentInputSchema: z.ZodTyp
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentManualStatusUncheckedUpdateManyWithoutPatentInputSchema: z.ZodType<Prisma.PatentManualStatusUncheckedUpdateManyWithoutPatentInput> = z.object({
@@ -12880,6 +12846,7 @@ export const PatentManualStatusUncheckedUpdateManyWithoutPatentInputSchema: z.Zo
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentMaintenanceUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentMaintenanceUpdateWithoutPatentInput> = z.object({

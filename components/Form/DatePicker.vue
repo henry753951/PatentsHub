@@ -30,7 +30,7 @@
       date-format="yy/mm/dd"
       icon-display="input"
       show-button-bar
-      size="small"
+      :size="size"
       :min-date="minDate"
       :max-date="maxDate"
    >
@@ -63,6 +63,11 @@ const props = defineProps({
       type: Date,
       required: false,
       default: undefined,
+   },
+   size: {
+      type: String,
+      required: false,
+      default: "small",
    },
 });
 

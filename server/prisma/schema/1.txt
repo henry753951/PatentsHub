@@ -1,4 +1,4 @@
-邏輯請從UI流程規劃，並且最適合的寫法 ps:我寫的是nuxt3，但不用幫我寫 UI，僅需參考我其他的 composable 就好()，下方為範例。幫我寫 usePatentFunddings
+邏輯請從UI流程規劃，並且最適合的寫法 ps:我寫的是nuxt3，但不用幫我寫 UI，僅需參考我其他的 composable 就好()，下方為範例。幫我寫 usePatentFundings
 model FundingUnit {
   FundingUnitID           Int                               @id @default(autoincrement())
   Name                    String

@@ -67,7 +67,10 @@
             </CustomContentBlockRow>
          </CustomContentBlock>
          <CustomContentBlock
-            v-if="applicationData.data.value && applicationData.data.value.application"
+            v-if="
+               applicationData.data.value &&
+                  applicationData.data.value.application
+            "
             title="申請資訊"
             tclass="sticky top-[87px]"
             :note-key="`${patent.PatentID}:application`"
@@ -77,28 +80,50 @@
             <div class="grid grid-cols-2 gap-4">
                <CustomContentBlockRow
                   title="申請日期"
-                  :is-synced="JSON.stringify(applicationData.data.value?.application?.FilingDate) === JSON.stringify(applicationData.refData.value?.application?.FilingDate)"
+                  :is-synced="
+                     JSON.stringify(
+                        applicationData.data.value?.application?.FilingDate,
+                     ) ===
+                        JSON.stringify(
+                           applicationData.refData.value?.application?.FilingDate,
+                        )
+                  "
                >
                   <FormDatePicker
                      v-model="applicationData.data.value.application.FilingDate"
                   />
                </CustomContentBlockRow>
                <CustomContentBlockRow
-                  v-model="applicationData.data.value.application.ApplicationNumber"
+                  v-model="
+                     applicationData.data.value.application.ApplicationNumber
+                  "
                   title="申請案號"
-                  :is-synced="applicationData.data.value?.application?.ApplicationNumber === applicationData.refData.value?.application?.ApplicationNumber"
+                  :is-synced="
+                     applicationData.data.value?.application
+                        ?.ApplicationNumber ===
+                        applicationData.refData.value?.application
+                           ?.ApplicationNumber
+                  "
                />
             </div>
             <div class="grid grid-cols-2 gap-4">
                <CustomContentBlockRow
-                  v-model="applicationData.data.value.application.RDResultNumber"
+                  v-model="
+                     applicationData.data.value.application.RDResultNumber
+                  "
                   title="研發成果編號"
-                  :is-synced="applicationData.data.value?.application?.RDResultNumber === applicationData.refData.value?.application?.RDResultNumber"
+                  :is-synced="
+                     applicationData.data.value?.application?.RDResultNumber ===
+                        applicationData.refData.value?.application?.RDResultNumber
+                  "
                />
                <CustomContentBlockRow
                   v-model="applicationData.data.value.application.NSCNumber"
                   title="國科會編號"
-                  :is-synced="applicationData.data.value?.application?.NSCNumber === applicationData.refData.value?.application?.NSCNumber"
+                  :is-synced="
+                     applicationData.data.value?.application?.NSCNumber ===
+                        applicationData.refData.value?.application?.NSCNumber
+                  "
                />
             </div>
          </CustomContentBlock>
@@ -278,6 +303,7 @@
             </CustomContentBlockRow>
          </CustomContentBlock>
          <CustomContentBlock
+            v-if="inventorData.data.value"
             title="發明人"
             note-key="`${patent.PatentID}:inventors`"
             :save-button="!inventorData.isSynced.value"
@@ -504,7 +530,6 @@ const inventorData = useSyncData(patent, async (newData) => {
       {
          inventors: {
             create: newData.inventors.map((i) => ({
-
                InventorID: i.InventorID,
                Contribution: i.Contribution,
                Main: i.Main,
@@ -513,7 +538,6 @@ const inventorData = useSyncData(patent, async (newData) => {
       },
    ]);
 });
-
 </script>
 
 <style scoped></style>

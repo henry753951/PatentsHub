@@ -10,17 +10,17 @@ model FundingUnit {
 
 // [Patent root node]
 model FundingPlan {
-  FundingPlanID    Int                     @id @default(autoincrement())
-  PlanType         Int
-  Name             String
-  fundings         PatentFunding[]
-  plannAllocations FundingPlanAllocation[]
+  FundingPlanID   Int                     @id @default(autoincrement())
+  PlanType        Int
+  Name            String
+  fundings        PatentFunding[]
+  planAllocations FundingPlanAllocation[]
 }
 
 // FundingPlan root node > FundingPlanAllocations[]
 model FundingPlanAllocation {
   FundingPlanAllocationID Int               @id @default(autoincrement())
-  Percentage              Decimal
+  Percentage              Int
   TargetID                Int
   target                  FundingPlanTarget @relation(fields: [TargetID], references: [TargetID])
   FundingPlanID           Int
@@ -41,8 +41,8 @@ model FundingPlanTarget {
 model PatentFunding {
   PatentID          Int                   @id
   patent            Patent                @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
-  FundingPlanPlanID Int
-  plan              FundingPlan           @relation(fields: [FundingPlanPlanID], references: [FundingPlanID])
+  FundingPlanPlanID Int?
+  plan              FundingPlan?           @relation(fields: [FundingPlanPlanID], references: [FundingPlanID])
   fundingRecords    PatentFundingRecord[]
   fundingUnits      PatentFundingUnit[]
   fundingExports    PatentFundingExport[]
@@ -62,7 +62,9 @@ model PatentFundingUnit {
 // PatentFunding root node > FundingRecords[]
 model PatentFundingRecord {
   FundingRecordID       Int                  @id @default(autoincrement())
-  Amount                Float
+  Name                  String
+  Description           String?
+  Amount                Int
   Date                  DateTime
   PatentFundingPatentID Int
   patentFunding         PatentFunding        @relation(fields: [PatentFundingPatentID], references: [PatentID])
@@ -88,7 +90,7 @@ model PatentFundingExportContribution {
   ContributionID Int                 @id @default(autoincrement())
   ExportID       Int
   FundingUnitID  Int?
-  Amount         Float
+  Amount         Int
   export         PatentFundingExport @relation(fields: [ExportID], references: [ExportID], onDelete: Cascade, onUpdate: Cascade)
   fundingUnit    FundingUnit?        @relation(fields: [FundingUnitID], references: [FundingUnitID], onDelete: Cascade, onUpdate: Cascade)
 
@@ -98,9 +100,9 @@ model PatentFundingExportContribution {
 // Export root node > InternalAllocation[]
 model PatentFundingExportInternalAllocation {
   InternalContributionID Int                 @id @default(autoincrement())
-  Amount                 Decimal
-  PlaneTargetID          Int
-  planeTarget            FundingPlanTarget   @relation(fields: [PlaneTargetID], references: [TargetID])
+  Amount                 Int
+  PlanTargetID           Int
+  planTarget             FundingPlanTarget   @relation(fields: [PlanTargetID], references: [TargetID])
   ExportID               Int
   export                 PatentFundingExport @relation(fields: [ExportID], references: [ExportID], onDelete: Cascade, onUpdate: Cascade)
 

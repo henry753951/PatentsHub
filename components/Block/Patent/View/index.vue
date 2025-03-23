@@ -181,6 +181,12 @@
                         :patent-maintainances-service="patentMaintainances"
                      />
                   </TabPanel>
+                  <TabPanel value="finance">
+                     <BlockPatentViewTabFunding
+                        v-if="activeTab === 'finance'"
+                        v-model="patent"
+                     />
+                  </TabPanel>
                </TabPanels>
             </Tabs>
          </div>

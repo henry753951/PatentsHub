@@ -11,7 +11,7 @@ model PatentInventor {
   PatentID     Int
   InventorID   Int
   Main         Boolean
-  Contribution Float?
+  Contribution Float    @default(0)
   patent       Patent   @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
   inventor     Inventor @relation(fields: [InventorID], references: [InventorID])
 

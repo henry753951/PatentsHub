@@ -97,6 +97,9 @@ export default router({
                external: {
                   create: {},
                },
+               funding: {
+                  create: {},
+               },
                inventors: {
                   create: input.inventors.map((inventor) => ({
                      Main: inventor.isMain,
@@ -153,8 +156,11 @@ export default router({
                funding: {
                   include: {
                      plan: true,
-                     fundingRecords: true,
-                     fundingUnits: true,
+                     fundingUnits: {
+                        include: {
+                           fundingUnit: true,
+                        },
+                     },
                   },
                },
                inventors: {
@@ -212,8 +218,11 @@ export default router({
                funding: {
                   include: {
                      plan: true,
-                     fundingRecords: true,
-                     fundingUnits: true,
+                     fundingUnits: {
+                        include: {
+                           fundingUnit: true,
+                        },
+                     },
                   },
                },
                inventors: {
@@ -259,6 +268,54 @@ export default router({
       .mutation(async ({ input }) => {
          return await prisma.patent.delete({
             where: input as Prisma.PatentWhereUniqueInput,
+         });
+      }),
+
+   getPatentFunding: procedure
+      .input(dbZ.PatentWhereUniqueInputSchema)
+      .query(async ({ input }) => {
+         return await prisma.patentFunding.findUnique({
+            where: input as Prisma.PatentFundingWhereUniqueInput,
+            include: {
+               plan: {
+                  include: {
+                     planAllocations: {
+                        include: {
+                           target: true,
+                        },
+                     },
+                  },
+               },
+               fundingRecords: {
+                  include: {
+                     canFundingBy: true,
+                  },
+               },
+               fundingUnits: {
+                  include: {
+                     fundingUnit: true,
+                  },
+               },
+               fundingExports: {
+                  include: {
+                     contributions: {
+                        include: {
+                           fundingUnit: true,
+                        },
+                     },
+                     exportRecords: {
+                        include: {
+                           canFundingBy: true,
+                        },
+                     },
+                     internalAllocations: {
+                        include: {
+                           planTarget: true,
+                        },
+                     },
+                  },
+               },
+            },
          });
       }),
 });

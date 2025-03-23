@@ -112,6 +112,7 @@ model PatentManualStatus {
   Reason         String
   Date           DateTime?
   Active         Boolean
+  OnTop          Boolean
   patent         Patent    @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
 }
 
