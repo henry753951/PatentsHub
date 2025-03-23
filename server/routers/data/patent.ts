@@ -154,7 +154,7 @@ export default router({
                   include: {
                      plan: true,
                      fundingRecords: true,
-                     patentFundingUnits: true,
+                     fundingUnits: true,
                   },
                },
                inventors: {
@@ -213,7 +213,7 @@ export default router({
                   include: {
                      plan: true,
                      fundingRecords: true,
-                     patentFundingUnits: true,
+                     fundingUnits: true,
                   },
                },
                inventors: {
