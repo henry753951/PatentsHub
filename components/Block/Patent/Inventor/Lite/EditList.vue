@@ -42,7 +42,7 @@
          <div class="font-semibold">
             其他共同發明人
          </div>
-         <div class="flex flex-col gap-3">
+         <div class="flex flex-col gap-3 h-[88px]">
             <BlockPatentInventorRow
                v-for="inventor in otherInventors"
                :key="inventor.InventorID"
