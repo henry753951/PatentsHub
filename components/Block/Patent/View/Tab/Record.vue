@@ -3,7 +3,7 @@
       <!-- 左邊：時間線 (加入 OverlayScrollbars) -->
       <div class="w-full md:w-2/3 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
          <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">
-            專利審查記錄
+            專利記錄
          </h2>
          <OverlayScrollbarsComponent
             class="timeline-container"
