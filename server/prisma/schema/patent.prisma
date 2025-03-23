@@ -23,6 +23,7 @@ model Patent {
   external      PatentExternal?
   patentRecords PatentRecord[]
   createdAt     DateTime                   @default(now())
+  pinned        Boolean                    @default(false)
 }
 
 // ========================

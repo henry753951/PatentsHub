@@ -56,7 +56,6 @@ const isOpen = defineModel("open", {
    type: Boolean,
    default: false,
 });
-
 const { open } = useModals();
 
 const props = defineProps<{
@@ -66,7 +65,15 @@ const props = defineProps<{
    }
    deleteCallback?: () => void
 }>();
-
+const {
+   data: patentInfo,
+   patentStatus,
+   patentRecords,
+   patentMaintainances,
+   refresh,
+   crud,
+   status,
+} = useDatabasePatent(props.patent.PatentId);
 const actionItems = ref([
    {
       title: "移除專利",
@@ -99,6 +106,21 @@ const actionItems = ref([
             onClick: () => {
                refreshNuxtData(["patents", `patent-${props.patent.PatentId}`]);
                isOpen.value = false;
+            },
+         },
+      ],
+   },
+   {
+      title: "置頂專利",
+      description: "此動作將把此專利置頂。",
+      actions: [
+         {
+            title: "置頂",
+            type: "secondary",
+            onClick: async () => {
+               await crud.updatePatent([{ pinned: true }]);
+               console.log(patentInfo.value?.pinned);
+               isOpen.value = false; // 關閉對話框
             },
          },
       ],
