@@ -27,6 +27,11 @@
                   </Button>
                   <Button
                      class="bg-gradient-to-r from-blue-500 to-indigo-600 border-0 hover:from-blue-600 hover:to-indigo-700 text-white"
+                     @click="
+                        open('PatentCreateModal', {
+                           props: {},
+                        })
+                     "
                   >
                      <Plus class="w-4 h-4 mr-2" />
                      添加專利

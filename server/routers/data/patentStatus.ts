@@ -55,11 +55,8 @@ export default router({
                funding: {
                   include: {
                      plan: true,
-                     fundingUnitsDatas: {
-                        include: {
-                           fundingUnit: true,
-                        },
-                     },
+                     fundingRecords: true,
+                     patentFundingUnits: true,
                   },
                },
                inventors: {
