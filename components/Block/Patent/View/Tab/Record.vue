@@ -1,7 +1,7 @@
 <template>
    <div class="p-8 flex flex-col md:flex-row gap-6 relative">
       <!-- 左邊：時間線 (加入 OverlayScrollbars) -->
-      <div class="w-full md:w-2/3 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+      <div class="w-full md:w-2/3 bg-white dark:bg-zinc-800 rounded-lg shadow-sm p-4">
          <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">
             專利記錄
          </h2>
@@ -42,14 +42,14 @@
                   </template>
                   <template #opposite="slotProps">
                      <div
-                        class="text-sm font-medium text-gray-500 bg-gray-100 dark:bg-gray-700 dark:text-gray-300 rounded-md px-3 py-1 inline-block"
+                        class="text-sm font-medium text-gray-500 bg-zinc-100 dark:bg-zinc-700 dark:text-gray-300 rounded-md px-3 py-1 inline-block"
                      >
                         {{ slotProps.item.date }}
                      </div>
                   </template>
                   <template #content="slotProps">
                      <div
-                        class="bg-white dark:bg-gray-800 border-l-4 border-l-gray-300 dark:border-l-gray-600 pl-3 hover:border-l-blue-500 transition-colors duration-200 mb-8"
+                        class="bg-white dark:bg-zinc-800 border-l-4 border-l-gray-300 dark:border-l-gray-600 pl-3 hover:border-l-blue-500 transition-colors duration-200 mb-8"
                      >
                         <div
                            class="flex flex-col md:flex-row md:items-center justify-between space-y-2 md:space-y-0"
@@ -93,7 +93,7 @@
       <div
          class="w-full md:w-1/3 flex flex-col justify-start gap-4 md:sticky md:top-24"
       >
-         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
+         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
             <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">
                {{ newRecord.id ? "更新記錄" : "新增記錄" }}
             </h2>
@@ -114,7 +114,7 @@
                      class="w-full"
                      :class="{
                         'border-rose-500': !newRecord.date && formSubmitted,
-                        'dark:bg-gray-700 dark:text-white dark:border-gray-600': true
+                        'dark:bg-zinc-700 dark:text-white dark:border-gray-600': true
                      }"
                   />
                   <label
@@ -127,7 +127,7 @@
                   <Textarea
                      v-model="newRecord.record"
                      placeholder="輸入新的紀錄，例如 '初審開始'"
-                     class="w-full h-32 resize-none border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                     class="w-full h-32 resize-none border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:text-white"
                      :class="{
                         'border-rose-500': !newRecord.record && formSubmitted,
                      }"
@@ -151,7 +151,7 @@
                   </Button>
                   <Button
                      v-if="newRecord.id"
-                     class="w-full flex items-center justify-center gap-1 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                     class="w-full flex items-center justify-center gap-1 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-zinc-700"
                      variant="outline"
                      @click="resetForm"
                   >
@@ -231,34 +231,6 @@ const editRecord = (id: number) => {
    };
 };
 </script>
-
-<style>
-/* PrimeVue 組件在黑暗模式下的樣式 */
-.dark .p-component {
-  background-color: #1e293b;
-  color: #f8fafc;
-}
-
-.dark .p-datepicker {
-  background-color: #1e293b;
-  color: #f8fafc;
-  border-color: #475569;
-}
-
-.dark .p-datepicker-header {
-  background-color: #334155;
-  color: #f8fafc;
-}
-
-.dark .p-datepicker-calendar td > span {
-  color: #f8fafc;
-}
-
-.dark .p-datepicker-calendar td.p-datepicker-today > span {
-  background-color: #3B82F6;
-  color: #ffffff;
-}
-</style>
 
 <style scoped>
 .timeline-container {

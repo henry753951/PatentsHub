@@ -27,9 +27,10 @@
 import InputNumber from "primevue/inputnumber";
 import FloatLabel from "primevue/floatlabel";
 const reviewDate = defineModel("reviewDate", {
-   type: Object as PropType<string | Date | null>,
+   type: null as unknown as PropType<Date | null>,
    required: true,
 });
+
 const reviewNumber = defineModel("reviewNumber", {
    type: Number as PropType<number | null>,
    required: false,

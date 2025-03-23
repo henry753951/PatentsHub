@@ -66,11 +66,13 @@ export const AgencyUnitPersonScalarFieldEnumSchema = z.enum(['AgencyUnitID','Con
 
 export const FundingPlanScalarFieldEnumSchema = z.enum(['PlanID','PlanType','Name']);
 
-export const FundingUnitScalarFieldEnumSchema = z.enum(['UnitID','Name']);
-
-export const FundingUnitDataScalarFieldEnumSchema = z.enum(['FundingUnitID','PatentID','ProjectCode','Amount','patentFundingPatentID']);
+export const FundingUnitScalarFieldEnumSchema = z.enum(['FundingUnitID','Name']);
 
 export const PatentFundingScalarFieldEnumSchema = z.enum(['PatentID','fundingPlanPlanID']);
+
+export const FundingRecordScalarFieldEnumSchema = z.enum(['FundingRecordID','PatentFundingPatentID','Amount']);
+
+export const PatentFundingUnitScalarFieldEnumSchema = z.enum(['PatentID','FundingUnitID','ProjectCode']);
 
 export const InventorScalarFieldEnumSchema = z.enum(['InventorID','DepartmentID','ContactInfoID']);
 
@@ -187,25 +189,11 @@ export type FundingPlan = z.infer<typeof FundingPlanSchema>
 /////////////////////////////////////////
 
 export const FundingUnitSchema = z.object({
-  UnitID: z.number().int(),
+  FundingUnitID: z.number().int(),
   Name: z.string(),
 })
 
 export type FundingUnit = z.infer<typeof FundingUnitSchema>
-
-/////////////////////////////////////////
-// FUNDING UNIT DATA SCHEMA
-/////////////////////////////////////////
-
-export const FundingUnitDataSchema = z.object({
-  FundingUnitID: z.number().int(),
-  PatentID: z.number().int(),
-  ProjectCode: z.string().nullish(),
-  Amount: z.number(),
-  patentFundingPatentID: z.number().int().nullish(),
-})
-
-export type FundingUnitData = z.infer<typeof FundingUnitDataSchema>
 
 /////////////////////////////////////////
 // PATENT FUNDING SCHEMA
@@ -217,6 +205,30 @@ export const PatentFundingSchema = z.object({
 })
 
 export type PatentFunding = z.infer<typeof PatentFundingSchema>
+
+/////////////////////////////////////////
+// FUNDING RECORD SCHEMA
+/////////////////////////////////////////
+
+export const FundingRecordSchema = z.object({
+  FundingRecordID: z.number().int(),
+  PatentFundingPatentID: z.number().int(),
+  Amount: z.number(),
+})
+
+export type FundingRecord = z.infer<typeof FundingRecordSchema>
+
+/////////////////////////////////////////
+// PATENT FUNDING UNIT SCHEMA
+/////////////////////////////////////////
+
+export const PatentFundingUnitSchema = z.object({
+  PatentID: z.number().int(),
+  FundingUnitID: z.number().int(),
+  ProjectCode: z.string(),
+})
+
+export type PatentFundingUnit = z.infer<typeof PatentFundingUnitSchema>
 
 /////////////////////////////////////////
 // INVENTOR SCHEMA
@@ -569,7 +581,8 @@ export const FundingPlanSelectSchema: z.ZodType<Prisma.FundingPlanSelect> = z.ob
 //------------------------------------------------------
 
 export const FundingUnitIncludeSchema: z.ZodType<Prisma.FundingUnitInclude> = z.object({
-  FundingUnitData: z.union([z.boolean(),z.lazy(() => FundingUnitDataFindManyArgsSchema)]).optional(),
+  PatentFundingUnit: z.union([z.boolean(),z.lazy(() => PatentFundingUnitFindManyArgsSchema)]).optional(),
+  FundingRecord: z.union([z.boolean(),z.lazy(() => FundingRecordFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => FundingUnitCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -583,37 +596,16 @@ export const FundingUnitCountOutputTypeArgsSchema: z.ZodType<Prisma.FundingUnitC
 }).strict();
 
 export const FundingUnitCountOutputTypeSelectSchema: z.ZodType<Prisma.FundingUnitCountOutputTypeSelect> = z.object({
-  FundingUnitData: z.boolean().optional(),
+  PatentFundingUnit: z.boolean().optional(),
+  FundingRecord: z.boolean().optional(),
 }).strict();
 
 export const FundingUnitSelectSchema: z.ZodType<Prisma.FundingUnitSelect> = z.object({
-  UnitID: z.boolean().optional(),
-  Name: z.boolean().optional(),
-  FundingUnitData: z.union([z.boolean(),z.lazy(() => FundingUnitDataFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => FundingUnitCountOutputTypeArgsSchema)]).optional(),
-}).strict()
-
-// FUNDING UNIT DATA
-//------------------------------------------------------
-
-export const FundingUnitDataIncludeSchema: z.ZodType<Prisma.FundingUnitDataInclude> = z.object({
-  fundingUnit: z.union([z.boolean(),z.lazy(() => FundingUnitArgsSchema)]).optional(),
-  PatentFunding: z.union([z.boolean(),z.lazy(() => PatentFundingArgsSchema)]).optional(),
-}).strict()
-
-export const FundingUnitDataArgsSchema: z.ZodType<Prisma.FundingUnitDataDefaultArgs> = z.object({
-  select: z.lazy(() => FundingUnitDataSelectSchema).optional(),
-  include: z.lazy(() => FundingUnitDataIncludeSchema).optional(),
-}).strict();
-
-export const FundingUnitDataSelectSchema: z.ZodType<Prisma.FundingUnitDataSelect> = z.object({
   FundingUnitID: z.boolean().optional(),
-  PatentID: z.boolean().optional(),
-  ProjectCode: z.boolean().optional(),
-  Amount: z.boolean().optional(),
-  patentFundingPatentID: z.boolean().optional(),
-  fundingUnit: z.union([z.boolean(),z.lazy(() => FundingUnitArgsSchema)]).optional(),
-  PatentFunding: z.union([z.boolean(),z.lazy(() => PatentFundingArgsSchema)]).optional(),
+  Name: z.boolean().optional(),
+  PatentFundingUnit: z.union([z.boolean(),z.lazy(() => PatentFundingUnitFindManyArgsSchema)]).optional(),
+  FundingRecord: z.union([z.boolean(),z.lazy(() => FundingRecordFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => FundingUnitCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
 // PATENT FUNDING
@@ -622,7 +614,8 @@ export const FundingUnitDataSelectSchema: z.ZodType<Prisma.FundingUnitDataSelect
 export const PatentFundingIncludeSchema: z.ZodType<Prisma.PatentFundingInclude> = z.object({
   patent: z.union([z.boolean(),z.lazy(() => PatentArgsSchema)]).optional(),
   plan: z.union([z.boolean(),z.lazy(() => FundingPlanArgsSchema)]).optional(),
-  fundingUnitsDatas: z.union([z.boolean(),z.lazy(() => FundingUnitDataFindManyArgsSchema)]).optional(),
+  fundingRecords: z.union([z.boolean(),z.lazy(() => FundingRecordFindManyArgsSchema)]).optional(),
+  patentFundingUnits: z.union([z.boolean(),z.lazy(() => PatentFundingUnitFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => PatentFundingCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -636,7 +629,8 @@ export const PatentFundingCountOutputTypeArgsSchema: z.ZodType<Prisma.PatentFund
 }).strict();
 
 export const PatentFundingCountOutputTypeSelectSchema: z.ZodType<Prisma.PatentFundingCountOutputTypeSelect> = z.object({
-  fundingUnitsDatas: z.boolean().optional(),
+  fundingRecords: z.boolean().optional(),
+  patentFundingUnits: z.boolean().optional(),
 }).strict();
 
 export const PatentFundingSelectSchema: z.ZodType<Prisma.PatentFundingSelect> = z.object({
@@ -644,8 +638,61 @@ export const PatentFundingSelectSchema: z.ZodType<Prisma.PatentFundingSelect> = 
   fundingPlanPlanID: z.boolean().optional(),
   patent: z.union([z.boolean(),z.lazy(() => PatentArgsSchema)]).optional(),
   plan: z.union([z.boolean(),z.lazy(() => FundingPlanArgsSchema)]).optional(),
-  fundingUnitsDatas: z.union([z.boolean(),z.lazy(() => FundingUnitDataFindManyArgsSchema)]).optional(),
+  fundingRecords: z.union([z.boolean(),z.lazy(() => FundingRecordFindManyArgsSchema)]).optional(),
+  patentFundingUnits: z.union([z.boolean(),z.lazy(() => PatentFundingUnitFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => PatentFundingCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// FUNDING RECORD
+//------------------------------------------------------
+
+export const FundingRecordIncludeSchema: z.ZodType<Prisma.FundingRecordInclude> = z.object({
+  patentFunding: z.union([z.boolean(),z.lazy(() => PatentFundingArgsSchema)]).optional(),
+  canFundingBy: z.union([z.boolean(),z.lazy(() => FundingUnitFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => FundingRecordCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+export const FundingRecordArgsSchema: z.ZodType<Prisma.FundingRecordDefaultArgs> = z.object({
+  select: z.lazy(() => FundingRecordSelectSchema).optional(),
+  include: z.lazy(() => FundingRecordIncludeSchema).optional(),
+}).strict();
+
+export const FundingRecordCountOutputTypeArgsSchema: z.ZodType<Prisma.FundingRecordCountOutputTypeDefaultArgs> = z.object({
+  select: z.lazy(() => FundingRecordCountOutputTypeSelectSchema).nullish(),
+}).strict();
+
+export const FundingRecordCountOutputTypeSelectSchema: z.ZodType<Prisma.FundingRecordCountOutputTypeSelect> = z.object({
+  canFundingBy: z.boolean().optional(),
+}).strict();
+
+export const FundingRecordSelectSchema: z.ZodType<Prisma.FundingRecordSelect> = z.object({
+  FundingRecordID: z.boolean().optional(),
+  PatentFundingPatentID: z.boolean().optional(),
+  Amount: z.boolean().optional(),
+  patentFunding: z.union([z.boolean(),z.lazy(() => PatentFundingArgsSchema)]).optional(),
+  canFundingBy: z.union([z.boolean(),z.lazy(() => FundingUnitFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => FundingRecordCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// PATENT FUNDING UNIT
+//------------------------------------------------------
+
+export const PatentFundingUnitIncludeSchema: z.ZodType<Prisma.PatentFundingUnitInclude> = z.object({
+  fundingUnit: z.union([z.boolean(),z.lazy(() => FundingUnitArgsSchema)]).optional(),
+  patentFunding: z.union([z.boolean(),z.lazy(() => PatentFundingArgsSchema)]).optional(),
+}).strict()
+
+export const PatentFundingUnitArgsSchema: z.ZodType<Prisma.PatentFundingUnitDefaultArgs> = z.object({
+  select: z.lazy(() => PatentFundingUnitSelectSchema).optional(),
+  include: z.lazy(() => PatentFundingUnitIncludeSchema).optional(),
+}).strict();
+
+export const PatentFundingUnitSelectSchema: z.ZodType<Prisma.PatentFundingUnitSelect> = z.object({
+  PatentID: z.boolean().optional(),
+  FundingUnitID: z.boolean().optional(),
+  ProjectCode: z.boolean().optional(),
+  fundingUnit: z.union([z.boolean(),z.lazy(() => FundingUnitArgsSchema)]).optional(),
+  patentFunding: z.union([z.boolean(),z.lazy(() => PatentFundingArgsSchema)]).optional(),
 }).strict()
 
 // INVENTOR
@@ -1386,31 +1433,34 @@ export const FundingUnitWhereInputSchema: z.ZodType<Prisma.FundingUnitWhereInput
   AND: z.union([ z.lazy(() => FundingUnitWhereInputSchema),z.lazy(() => FundingUnitWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => FundingUnitWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => FundingUnitWhereInputSchema),z.lazy(() => FundingUnitWhereInputSchema).array() ]).optional(),
-  UnitID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  FundingUnitID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  FundingUnitData: z.lazy(() => FundingUnitDataListRelationFilterSchema).optional()
+  PatentFundingUnit: z.lazy(() => PatentFundingUnitListRelationFilterSchema).optional(),
+  FundingRecord: z.lazy(() => FundingRecordListRelationFilterSchema).optional()
 }).strict();
 
 export const FundingUnitOrderByWithRelationInputSchema: z.ZodType<Prisma.FundingUnitOrderByWithRelationInput> = z.object({
-  UnitID: z.lazy(() => SortOrderSchema).optional(),
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
   Name: z.lazy(() => SortOrderSchema).optional(),
-  FundingUnitData: z.lazy(() => FundingUnitDataOrderByRelationAggregateInputSchema).optional()
+  PatentFundingUnit: z.lazy(() => PatentFundingUnitOrderByRelationAggregateInputSchema).optional(),
+  FundingRecord: z.lazy(() => FundingRecordOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const FundingUnitWhereUniqueInputSchema: z.ZodType<Prisma.FundingUnitWhereUniqueInput> = z.object({
-  UnitID: z.number().int()
+  FundingUnitID: z.number().int()
 })
 .and(z.object({
-  UnitID: z.number().int().optional(),
+  FundingUnitID: z.number().int().optional(),
   AND: z.union([ z.lazy(() => FundingUnitWhereInputSchema),z.lazy(() => FundingUnitWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => FundingUnitWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => FundingUnitWhereInputSchema),z.lazy(() => FundingUnitWhereInputSchema).array() ]).optional(),
   Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  FundingUnitData: z.lazy(() => FundingUnitDataListRelationFilterSchema).optional()
+  PatentFundingUnit: z.lazy(() => PatentFundingUnitListRelationFilterSchema).optional(),
+  FundingRecord: z.lazy(() => FundingRecordListRelationFilterSchema).optional()
 }).strict());
 
 export const FundingUnitOrderByWithAggregationInputSchema: z.ZodType<Prisma.FundingUnitOrderByWithAggregationInput> = z.object({
-  UnitID: z.lazy(() => SortOrderSchema).optional(),
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
   Name: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => FundingUnitCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => FundingUnitAvgOrderByAggregateInputSchema).optional(),
@@ -1423,72 +1473,8 @@ export const FundingUnitScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.F
   AND: z.union([ z.lazy(() => FundingUnitScalarWhereWithAggregatesInputSchema),z.lazy(() => FundingUnitScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   OR: z.lazy(() => FundingUnitScalarWhereWithAggregatesInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => FundingUnitScalarWhereWithAggregatesInputSchema),z.lazy(() => FundingUnitScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  UnitID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  Name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-}).strict();
-
-export const FundingUnitDataWhereInputSchema: z.ZodType<Prisma.FundingUnitDataWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => FundingUnitDataWhereInputSchema),z.lazy(() => FundingUnitDataWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => FundingUnitDataWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => FundingUnitDataWhereInputSchema),z.lazy(() => FundingUnitDataWhereInputSchema).array() ]).optional(),
-  FundingUnitID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  ProjectCode: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  Amount: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
-  patentFundingPatentID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
-  fundingUnit: z.union([ z.lazy(() => FundingUnitScalarRelationFilterSchema),z.lazy(() => FundingUnitWhereInputSchema) ]).optional(),
-  PatentFunding: z.union([ z.lazy(() => PatentFundingNullableScalarRelationFilterSchema),z.lazy(() => PatentFundingWhereInputSchema) ]).optional().nullable(),
-}).strict();
-
-export const FundingUnitDataOrderByWithRelationInputSchema: z.ZodType<Prisma.FundingUnitDataOrderByWithRelationInput> = z.object({
-  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
-  PatentID: z.lazy(() => SortOrderSchema).optional(),
-  ProjectCode: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  Amount: z.lazy(() => SortOrderSchema).optional(),
-  patentFundingPatentID: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  fundingUnit: z.lazy(() => FundingUnitOrderByWithRelationInputSchema).optional(),
-  PatentFunding: z.lazy(() => PatentFundingOrderByWithRelationInputSchema).optional()
-}).strict();
-
-export const FundingUnitDataWhereUniqueInputSchema: z.ZodType<Prisma.FundingUnitDataWhereUniqueInput> = z.object({
-  FundingUnitID_PatentID: z.lazy(() => FundingUnitDataFundingUnitIDPatentIDCompoundUniqueInputSchema)
-})
-.and(z.object({
-  FundingUnitID_PatentID: z.lazy(() => FundingUnitDataFundingUnitIDPatentIDCompoundUniqueInputSchema).optional(),
-  AND: z.union([ z.lazy(() => FundingUnitDataWhereInputSchema),z.lazy(() => FundingUnitDataWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => FundingUnitDataWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => FundingUnitDataWhereInputSchema),z.lazy(() => FundingUnitDataWhereInputSchema).array() ]).optional(),
-  FundingUnitID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  ProjectCode: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  Amount: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
-  patentFundingPatentID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number().int() ]).optional().nullable(),
-  fundingUnit: z.union([ z.lazy(() => FundingUnitScalarRelationFilterSchema),z.lazy(() => FundingUnitWhereInputSchema) ]).optional(),
-  PatentFunding: z.union([ z.lazy(() => PatentFundingNullableScalarRelationFilterSchema),z.lazy(() => PatentFundingWhereInputSchema) ]).optional().nullable(),
-}).strict());
-
-export const FundingUnitDataOrderByWithAggregationInputSchema: z.ZodType<Prisma.FundingUnitDataOrderByWithAggregationInput> = z.object({
-  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
-  PatentID: z.lazy(() => SortOrderSchema).optional(),
-  ProjectCode: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  Amount: z.lazy(() => SortOrderSchema).optional(),
-  patentFundingPatentID: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  _count: z.lazy(() => FundingUnitDataCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => FundingUnitDataAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => FundingUnitDataMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => FundingUnitDataMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => FundingUnitDataSumOrderByAggregateInputSchema).optional()
-}).strict();
-
-export const FundingUnitDataScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.FundingUnitDataScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => FundingUnitDataScalarWhereWithAggregatesInputSchema),z.lazy(() => FundingUnitDataScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => FundingUnitDataScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => FundingUnitDataScalarWhereWithAggregatesInputSchema),z.lazy(() => FundingUnitDataScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   FundingUnitID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  PatentID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  ProjectCode: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
-  Amount: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
-  patentFundingPatentID: z.union([ z.lazy(() => IntNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
+  Name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
 export const PatentFundingWhereInputSchema: z.ZodType<Prisma.PatentFundingWhereInput> = z.object({
@@ -1499,7 +1485,8 @@ export const PatentFundingWhereInputSchema: z.ZodType<Prisma.PatentFundingWhereI
   fundingPlanPlanID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
   plan: z.union([ z.lazy(() => FundingPlanScalarRelationFilterSchema),z.lazy(() => FundingPlanWhereInputSchema) ]).optional(),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataListRelationFilterSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordListRelationFilterSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitListRelationFilterSchema).optional()
 }).strict();
 
 export const PatentFundingOrderByWithRelationInputSchema: z.ZodType<Prisma.PatentFundingOrderByWithRelationInput> = z.object({
@@ -1507,7 +1494,8 @@ export const PatentFundingOrderByWithRelationInputSchema: z.ZodType<Prisma.Paten
   fundingPlanPlanID: z.lazy(() => SortOrderSchema).optional(),
   patent: z.lazy(() => PatentOrderByWithRelationInputSchema).optional(),
   plan: z.lazy(() => FundingPlanOrderByWithRelationInputSchema).optional(),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataOrderByRelationAggregateInputSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordOrderByRelationAggregateInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const PatentFundingWhereUniqueInputSchema: z.ZodType<Prisma.PatentFundingWhereUniqueInput> = z.object({
@@ -1521,7 +1509,8 @@ export const PatentFundingWhereUniqueInputSchema: z.ZodType<Prisma.PatentFunding
   fundingPlanPlanID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
   plan: z.union([ z.lazy(() => FundingPlanScalarRelationFilterSchema),z.lazy(() => FundingPlanWhereInputSchema) ]).optional(),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataListRelationFilterSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordListRelationFilterSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitListRelationFilterSchema).optional()
 }).strict());
 
 export const PatentFundingOrderByWithAggregationInputSchema: z.ZodType<Prisma.PatentFundingOrderByWithAggregationInput> = z.object({
@@ -1540,6 +1529,113 @@ export const PatentFundingScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma
   NOT: z.union([ z.lazy(() => PatentFundingScalarWhereWithAggregatesInputSchema),z.lazy(() => PatentFundingScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   PatentID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   fundingPlanPlanID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+}).strict();
+
+export const FundingRecordWhereInputSchema: z.ZodType<Prisma.FundingRecordWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => FundingRecordWhereInputSchema),z.lazy(() => FundingRecordWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => FundingRecordWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => FundingRecordWhereInputSchema),z.lazy(() => FundingRecordWhereInputSchema).array() ]).optional(),
+  FundingRecordID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  PatentFundingPatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  Amount: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  patentFunding: z.union([ z.lazy(() => PatentFundingScalarRelationFilterSchema),z.lazy(() => PatentFundingWhereInputSchema) ]).optional(),
+  canFundingBy: z.lazy(() => FundingUnitListRelationFilterSchema).optional()
+}).strict();
+
+export const FundingRecordOrderByWithRelationInputSchema: z.ZodType<Prisma.FundingRecordOrderByWithRelationInput> = z.object({
+  FundingRecordID: z.lazy(() => SortOrderSchema).optional(),
+  PatentFundingPatentID: z.lazy(() => SortOrderSchema).optional(),
+  Amount: z.lazy(() => SortOrderSchema).optional(),
+  patentFunding: z.lazy(() => PatentFundingOrderByWithRelationInputSchema).optional(),
+  canFundingBy: z.lazy(() => FundingUnitOrderByRelationAggregateInputSchema).optional()
+}).strict();
+
+export const FundingRecordWhereUniqueInputSchema: z.ZodType<Prisma.FundingRecordWhereUniqueInput> = z.object({
+  FundingRecordID: z.number().int()
+})
+.and(z.object({
+  FundingRecordID: z.number().int().optional(),
+  AND: z.union([ z.lazy(() => FundingRecordWhereInputSchema),z.lazy(() => FundingRecordWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => FundingRecordWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => FundingRecordWhereInputSchema),z.lazy(() => FundingRecordWhereInputSchema).array() ]).optional(),
+  PatentFundingPatentID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  Amount: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  patentFunding: z.union([ z.lazy(() => PatentFundingScalarRelationFilterSchema),z.lazy(() => PatentFundingWhereInputSchema) ]).optional(),
+  canFundingBy: z.lazy(() => FundingUnitListRelationFilterSchema).optional()
+}).strict());
+
+export const FundingRecordOrderByWithAggregationInputSchema: z.ZodType<Prisma.FundingRecordOrderByWithAggregationInput> = z.object({
+  FundingRecordID: z.lazy(() => SortOrderSchema).optional(),
+  PatentFundingPatentID: z.lazy(() => SortOrderSchema).optional(),
+  Amount: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => FundingRecordCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => FundingRecordAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => FundingRecordMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => FundingRecordMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => FundingRecordSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const FundingRecordScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.FundingRecordScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => FundingRecordScalarWhereWithAggregatesInputSchema),z.lazy(() => FundingRecordScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => FundingRecordScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => FundingRecordScalarWhereWithAggregatesInputSchema),z.lazy(() => FundingRecordScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  FundingRecordID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  PatentFundingPatentID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  Amount: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
+}).strict();
+
+export const PatentFundingUnitWhereInputSchema: z.ZodType<Prisma.PatentFundingUnitWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => PatentFundingUnitWhereInputSchema),z.lazy(() => PatentFundingUnitWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PatentFundingUnitWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PatentFundingUnitWhereInputSchema),z.lazy(() => PatentFundingUnitWhereInputSchema).array() ]).optional(),
+  PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  FundingUnitID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  ProjectCode: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  fundingUnit: z.union([ z.lazy(() => FundingUnitScalarRelationFilterSchema),z.lazy(() => FundingUnitWhereInputSchema) ]).optional(),
+  patentFunding: z.union([ z.lazy(() => PatentFundingScalarRelationFilterSchema),z.lazy(() => PatentFundingWhereInputSchema) ]).optional(),
+}).strict();
+
+export const PatentFundingUnitOrderByWithRelationInputSchema: z.ZodType<Prisma.PatentFundingUnitOrderByWithRelationInput> = z.object({
+  PatentID: z.lazy(() => SortOrderSchema).optional(),
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
+  ProjectCode: z.lazy(() => SortOrderSchema).optional(),
+  fundingUnit: z.lazy(() => FundingUnitOrderByWithRelationInputSchema).optional(),
+  patentFunding: z.lazy(() => PatentFundingOrderByWithRelationInputSchema).optional()
+}).strict();
+
+export const PatentFundingUnitWhereUniqueInputSchema: z.ZodType<Prisma.PatentFundingUnitWhereUniqueInput> = z.object({
+  PatentID_FundingUnitID: z.lazy(() => PatentFundingUnitPatentIDFundingUnitIDCompoundUniqueInputSchema)
+})
+.and(z.object({
+  PatentID_FundingUnitID: z.lazy(() => PatentFundingUnitPatentIDFundingUnitIDCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => PatentFundingUnitWhereInputSchema),z.lazy(() => PatentFundingUnitWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PatentFundingUnitWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PatentFundingUnitWhereInputSchema),z.lazy(() => PatentFundingUnitWhereInputSchema).array() ]).optional(),
+  PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  FundingUnitID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  ProjectCode: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  fundingUnit: z.union([ z.lazy(() => FundingUnitScalarRelationFilterSchema),z.lazy(() => FundingUnitWhereInputSchema) ]).optional(),
+  patentFunding: z.union([ z.lazy(() => PatentFundingScalarRelationFilterSchema),z.lazy(() => PatentFundingWhereInputSchema) ]).optional(),
+}).strict());
+
+export const PatentFundingUnitOrderByWithAggregationInputSchema: z.ZodType<Prisma.PatentFundingUnitOrderByWithAggregationInput> = z.object({
+  PatentID: z.lazy(() => SortOrderSchema).optional(),
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
+  ProjectCode: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => PatentFundingUnitCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => PatentFundingUnitAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => PatentFundingUnitMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => PatentFundingUnitMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => PatentFundingUnitSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const PatentFundingUnitScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.PatentFundingUnitScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => PatentFundingUnitScalarWhereWithAggregatesInputSchema),z.lazy(() => PatentFundingUnitScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PatentFundingUnitScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PatentFundingUnitScalarWhereWithAggregatesInputSchema),z.lazy(() => PatentFundingUnitScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  PatentID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  FundingUnitID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  ProjectCode: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
 export const InventorWhereInputSchema: z.ZodType<Prisma.InventorWhereInput> = z.object({
@@ -2812,28 +2908,32 @@ export const FundingPlanUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Funding
 
 export const FundingUnitCreateInputSchema: z.ZodType<Prisma.FundingUnitCreateInput> = z.object({
   Name: z.string(),
-  FundingUnitData: z.lazy(() => FundingUnitDataCreateNestedManyWithoutFundingUnitInputSchema).optional()
+  PatentFundingUnit: z.lazy(() => PatentFundingUnitCreateNestedManyWithoutFundingUnitInputSchema).optional(),
+  FundingRecord: z.lazy(() => FundingRecordCreateNestedManyWithoutCanFundingByInputSchema).optional()
 }).strict();
 
 export const FundingUnitUncheckedCreateInputSchema: z.ZodType<Prisma.FundingUnitUncheckedCreateInput> = z.object({
-  UnitID: z.number().int().optional(),
+  FundingUnitID: z.number().int().optional(),
   Name: z.string(),
-  FundingUnitData: z.lazy(() => FundingUnitDataUncheckedCreateNestedManyWithoutFundingUnitInputSchema).optional()
+  PatentFundingUnit: z.lazy(() => PatentFundingUnitUncheckedCreateNestedManyWithoutFundingUnitInputSchema).optional(),
+  FundingRecord: z.lazy(() => FundingRecordUncheckedCreateNestedManyWithoutCanFundingByInputSchema).optional()
 }).strict();
 
 export const FundingUnitUpdateInputSchema: z.ZodType<Prisma.FundingUnitUpdateInput> = z.object({
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  FundingUnitData: z.lazy(() => FundingUnitDataUpdateManyWithoutFundingUnitNestedInputSchema).optional()
+  PatentFundingUnit: z.lazy(() => PatentFundingUnitUpdateManyWithoutFundingUnitNestedInputSchema).optional(),
+  FundingRecord: z.lazy(() => FundingRecordUpdateManyWithoutCanFundingByNestedInputSchema).optional()
 }).strict();
 
 export const FundingUnitUncheckedUpdateInputSchema: z.ZodType<Prisma.FundingUnitUncheckedUpdateInput> = z.object({
-  UnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  FundingUnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  FundingUnitData: z.lazy(() => FundingUnitDataUncheckedUpdateManyWithoutFundingUnitNestedInputSchema).optional()
+  PatentFundingUnit: z.lazy(() => PatentFundingUnitUncheckedUpdateManyWithoutFundingUnitNestedInputSchema).optional(),
+  FundingRecord: z.lazy(() => FundingRecordUncheckedUpdateManyWithoutCanFundingByNestedInputSchema).optional()
 }).strict();
 
 export const FundingUnitCreateManyInputSchema: z.ZodType<Prisma.FundingUnitCreateManyInput> = z.object({
-  UnitID: z.number().int().optional(),
+  FundingUnitID: z.number().int().optional(),
   Name: z.string()
 }).strict();
 
@@ -2842,86 +2942,36 @@ export const FundingUnitUpdateManyMutationInputSchema: z.ZodType<Prisma.FundingU
 }).strict();
 
 export const FundingUnitUncheckedUpdateManyInputSchema: z.ZodType<Prisma.FundingUnitUncheckedUpdateManyInput> = z.object({
-  UnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  FundingUnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const FundingUnitDataCreateInputSchema: z.ZodType<Prisma.FundingUnitDataCreateInput> = z.object({
-  PatentID: z.number().int(),
-  ProjectCode: z.string().optional().nullable(),
-  Amount: z.number(),
-  fundingUnit: z.lazy(() => FundingUnitCreateNestedOneWithoutFundingUnitDataInputSchema),
-  PatentFunding: z.lazy(() => PatentFundingCreateNestedOneWithoutFundingUnitsDatasInputSchema).optional()
-}).strict();
-
-export const FundingUnitDataUncheckedCreateInputSchema: z.ZodType<Prisma.FundingUnitDataUncheckedCreateInput> = z.object({
-  FundingUnitID: z.number().int(),
-  PatentID: z.number().int(),
-  ProjectCode: z.string().optional().nullable(),
-  Amount: z.number(),
-  patentFundingPatentID: z.number().int().optional().nullable()
-}).strict();
-
-export const FundingUnitDataUpdateInputSchema: z.ZodType<Prisma.FundingUnitDataUpdateInput> = z.object({
-  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  ProjectCode: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-  fundingUnit: z.lazy(() => FundingUnitUpdateOneRequiredWithoutFundingUnitDataNestedInputSchema).optional(),
-  PatentFunding: z.lazy(() => PatentFundingUpdateOneWithoutFundingUnitsDatasNestedInputSchema).optional()
-}).strict();
-
-export const FundingUnitDataUncheckedUpdateInputSchema: z.ZodType<Prisma.FundingUnitDataUncheckedUpdateInput> = z.object({
-  FundingUnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  ProjectCode: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-  patentFundingPatentID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-}).strict();
-
-export const FundingUnitDataCreateManyInputSchema: z.ZodType<Prisma.FundingUnitDataCreateManyInput> = z.object({
-  FundingUnitID: z.number().int(),
-  PatentID: z.number().int(),
-  ProjectCode: z.string().optional().nullable(),
-  Amount: z.number(),
-  patentFundingPatentID: z.number().int().optional().nullable()
-}).strict();
-
-export const FundingUnitDataUpdateManyMutationInputSchema: z.ZodType<Prisma.FundingUnitDataUpdateManyMutationInput> = z.object({
-  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  ProjectCode: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const FundingUnitDataUncheckedUpdateManyInputSchema: z.ZodType<Prisma.FundingUnitDataUncheckedUpdateManyInput> = z.object({
-  FundingUnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  ProjectCode: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-  patentFundingPatentID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const PatentFundingCreateInputSchema: z.ZodType<Prisma.PatentFundingCreateInput> = z.object({
   patent: z.lazy(() => PatentCreateNestedOneWithoutFundingInputSchema),
   plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataCreateNestedManyWithoutPatentFundingInputSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordCreateNestedManyWithoutPatentFundingInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitCreateNestedManyWithoutPatentFundingInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedCreateInputSchema: z.ZodType<Prisma.PatentFundingUncheckedCreateInput> = z.object({
   PatentID: z.number().int(),
   fundingPlanPlanID: z.number().int(),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional()
 }).strict();
 
 export const PatentFundingUpdateInputSchema: z.ZodType<Prisma.PatentFundingUpdateInput> = z.object({
   patent: z.lazy(() => PatentUpdateOneRequiredWithoutFundingNestedInputSchema).optional(),
   plan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutFundingsNestedInputSchema).optional(),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataUpdateManyWithoutPatentFundingNestedInputSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedUpdateInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   fundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingCreateManyInputSchema: z.ZodType<Prisma.PatentFundingCreateManyInput> = z.object({
@@ -2935,6 +2985,88 @@ export const PatentFundingUpdateManyMutationInputSchema: z.ZodType<Prisma.Patent
 export const PatentFundingUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateManyInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   fundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const FundingRecordCreateInputSchema: z.ZodType<Prisma.FundingRecordCreateInput> = z.object({
+  Amount: z.number(),
+  patentFunding: z.lazy(() => PatentFundingCreateNestedOneWithoutFundingRecordsInputSchema),
+  canFundingBy: z.lazy(() => FundingUnitCreateNestedManyWithoutFundingRecordInputSchema).optional()
+}).strict();
+
+export const FundingRecordUncheckedCreateInputSchema: z.ZodType<Prisma.FundingRecordUncheckedCreateInput> = z.object({
+  FundingRecordID: z.number().int().optional(),
+  PatentFundingPatentID: z.number().int(),
+  Amount: z.number(),
+  canFundingBy: z.lazy(() => FundingUnitUncheckedCreateNestedManyWithoutFundingRecordInputSchema).optional()
+}).strict();
+
+export const FundingRecordUpdateInputSchema: z.ZodType<Prisma.FundingRecordUpdateInput> = z.object({
+  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  patentFunding: z.lazy(() => PatentFundingUpdateOneRequiredWithoutFundingRecordsNestedInputSchema).optional(),
+  canFundingBy: z.lazy(() => FundingUnitUpdateManyWithoutFundingRecordNestedInputSchema).optional()
+}).strict();
+
+export const FundingRecordUncheckedUpdateInputSchema: z.ZodType<Prisma.FundingRecordUncheckedUpdateInput> = z.object({
+  FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  PatentFundingPatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  canFundingBy: z.lazy(() => FundingUnitUncheckedUpdateManyWithoutFundingRecordNestedInputSchema).optional()
+}).strict();
+
+export const FundingRecordCreateManyInputSchema: z.ZodType<Prisma.FundingRecordCreateManyInput> = z.object({
+  FundingRecordID: z.number().int().optional(),
+  PatentFundingPatentID: z.number().int(),
+  Amount: z.number()
+}).strict();
+
+export const FundingRecordUpdateManyMutationInputSchema: z.ZodType<Prisma.FundingRecordUpdateManyMutationInput> = z.object({
+  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const FundingRecordUncheckedUpdateManyInputSchema: z.ZodType<Prisma.FundingRecordUncheckedUpdateManyInput> = z.object({
+  FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  PatentFundingPatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const PatentFundingUnitCreateInputSchema: z.ZodType<Prisma.PatentFundingUnitCreateInput> = z.object({
+  ProjectCode: z.string(),
+  fundingUnit: z.lazy(() => FundingUnitCreateNestedOneWithoutPatentFundingUnitInputSchema),
+  patentFunding: z.lazy(() => PatentFundingCreateNestedOneWithoutPatentFundingUnitsInputSchema)
+}).strict();
+
+export const PatentFundingUnitUncheckedCreateInputSchema: z.ZodType<Prisma.PatentFundingUnitUncheckedCreateInput> = z.object({
+  PatentID: z.number().int(),
+  FundingUnitID: z.number().int(),
+  ProjectCode: z.string()
+}).strict();
+
+export const PatentFundingUnitUpdateInputSchema: z.ZodType<Prisma.PatentFundingUnitUpdateInput> = z.object({
+  ProjectCode: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  fundingUnit: z.lazy(() => FundingUnitUpdateOneRequiredWithoutPatentFundingUnitNestedInputSchema).optional(),
+  patentFunding: z.lazy(() => PatentFundingUpdateOneRequiredWithoutPatentFundingUnitsNestedInputSchema).optional()
+}).strict();
+
+export const PatentFundingUnitUncheckedUpdateInputSchema: z.ZodType<Prisma.PatentFundingUnitUncheckedUpdateInput> = z.object({
+  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  FundingUnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  ProjectCode: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const PatentFundingUnitCreateManyInputSchema: z.ZodType<Prisma.PatentFundingUnitCreateManyInput> = z.object({
+  PatentID: z.number().int(),
+  FundingUnitID: z.number().int(),
+  ProjectCode: z.string()
+}).strict();
+
+export const PatentFundingUnitUpdateManyMutationInputSchema: z.ZodType<Prisma.PatentFundingUnitUpdateManyMutationInput> = z.object({
+  ProjectCode: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const PatentFundingUnitUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PatentFundingUnitUncheckedUpdateManyInput> = z.object({
+  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  FundingUnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  ProjectCode: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const InventorCreateInputSchema: z.ZodType<Prisma.InventorCreateInput> = z.object({
@@ -4135,144 +4267,47 @@ export const FundingPlanSumOrderByAggregateInputSchema: z.ZodType<Prisma.Funding
   PlanType: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const FundingUnitDataListRelationFilterSchema: z.ZodType<Prisma.FundingUnitDataListRelationFilter> = z.object({
-  every: z.lazy(() => FundingUnitDataWhereInputSchema).optional(),
-  some: z.lazy(() => FundingUnitDataWhereInputSchema).optional(),
-  none: z.lazy(() => FundingUnitDataWhereInputSchema).optional()
+export const PatentFundingUnitListRelationFilterSchema: z.ZodType<Prisma.PatentFundingUnitListRelationFilter> = z.object({
+  every: z.lazy(() => PatentFundingUnitWhereInputSchema).optional(),
+  some: z.lazy(() => PatentFundingUnitWhereInputSchema).optional(),
+  none: z.lazy(() => PatentFundingUnitWhereInputSchema).optional()
 }).strict();
 
-export const FundingUnitDataOrderByRelationAggregateInputSchema: z.ZodType<Prisma.FundingUnitDataOrderByRelationAggregateInput> = z.object({
+export const FundingRecordListRelationFilterSchema: z.ZodType<Prisma.FundingRecordListRelationFilter> = z.object({
+  every: z.lazy(() => FundingRecordWhereInputSchema).optional(),
+  some: z.lazy(() => FundingRecordWhereInputSchema).optional(),
+  none: z.lazy(() => FundingRecordWhereInputSchema).optional()
+}).strict();
+
+export const PatentFundingUnitOrderByRelationAggregateInputSchema: z.ZodType<Prisma.PatentFundingUnitOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const FundingRecordOrderByRelationAggregateInputSchema: z.ZodType<Prisma.FundingRecordOrderByRelationAggregateInput> = z.object({
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const FundingUnitCountOrderByAggregateInputSchema: z.ZodType<Prisma.FundingUnitCountOrderByAggregateInput> = z.object({
-  UnitID: z.lazy(() => SortOrderSchema).optional(),
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
   Name: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const FundingUnitAvgOrderByAggregateInputSchema: z.ZodType<Prisma.FundingUnitAvgOrderByAggregateInput> = z.object({
-  UnitID: z.lazy(() => SortOrderSchema).optional()
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const FundingUnitMaxOrderByAggregateInputSchema: z.ZodType<Prisma.FundingUnitMaxOrderByAggregateInput> = z.object({
-  UnitID: z.lazy(() => SortOrderSchema).optional(),
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
   Name: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const FundingUnitMinOrderByAggregateInputSchema: z.ZodType<Prisma.FundingUnitMinOrderByAggregateInput> = z.object({
-  UnitID: z.lazy(() => SortOrderSchema).optional(),
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
   Name: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const FundingUnitSumOrderByAggregateInputSchema: z.ZodType<Prisma.FundingUnitSumOrderByAggregateInput> = z.object({
-  UnitID: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const FloatFilterSchema: z.ZodType<Prisma.FloatFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedFloatFilterSchema) ]).optional(),
-}).strict();
-
-export const IntNullableFilterSchema: z.ZodType<Prisma.IntNullableFilter> = z.object({
-  equals: z.number().optional().nullable(),
-  in: z.number().array().optional().nullable(),
-  notIn: z.number().array().optional().nullable(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntNullableFilterSchema) ]).optional().nullable(),
-}).strict();
-
-export const FundingUnitScalarRelationFilterSchema: z.ZodType<Prisma.FundingUnitScalarRelationFilter> = z.object({
-  is: z.lazy(() => FundingUnitWhereInputSchema).optional(),
-  isNot: z.lazy(() => FundingUnitWhereInputSchema).optional()
-}).strict();
-
-export const PatentFundingNullableScalarRelationFilterSchema: z.ZodType<Prisma.PatentFundingNullableScalarRelationFilter> = z.object({
-  is: z.lazy(() => PatentFundingWhereInputSchema).optional().nullable(),
-  isNot: z.lazy(() => PatentFundingWhereInputSchema).optional().nullable()
-}).strict();
-
-export const FundingUnitDataFundingUnitIDPatentIDCompoundUniqueInputSchema: z.ZodType<Prisma.FundingUnitDataFundingUnitIDPatentIDCompoundUniqueInput> = z.object({
-  FundingUnitID: z.number(),
-  PatentID: z.number()
-}).strict();
-
-export const FundingUnitDataCountOrderByAggregateInputSchema: z.ZodType<Prisma.FundingUnitDataCountOrderByAggregateInput> = z.object({
-  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
-  PatentID: z.lazy(() => SortOrderSchema).optional(),
-  ProjectCode: z.lazy(() => SortOrderSchema).optional(),
-  Amount: z.lazy(() => SortOrderSchema).optional(),
-  patentFundingPatentID: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const FundingUnitDataAvgOrderByAggregateInputSchema: z.ZodType<Prisma.FundingUnitDataAvgOrderByAggregateInput> = z.object({
-  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
-  PatentID: z.lazy(() => SortOrderSchema).optional(),
-  Amount: z.lazy(() => SortOrderSchema).optional(),
-  patentFundingPatentID: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const FundingUnitDataMaxOrderByAggregateInputSchema: z.ZodType<Prisma.FundingUnitDataMaxOrderByAggregateInput> = z.object({
-  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
-  PatentID: z.lazy(() => SortOrderSchema).optional(),
-  ProjectCode: z.lazy(() => SortOrderSchema).optional(),
-  Amount: z.lazy(() => SortOrderSchema).optional(),
-  patentFundingPatentID: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const FundingUnitDataMinOrderByAggregateInputSchema: z.ZodType<Prisma.FundingUnitDataMinOrderByAggregateInput> = z.object({
-  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
-  PatentID: z.lazy(() => SortOrderSchema).optional(),
-  ProjectCode: z.lazy(() => SortOrderSchema).optional(),
-  Amount: z.lazy(() => SortOrderSchema).optional(),
-  patentFundingPatentID: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const FundingUnitDataSumOrderByAggregateInputSchema: z.ZodType<Prisma.FundingUnitDataSumOrderByAggregateInput> = z.object({
-  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
-  PatentID: z.lazy(() => SortOrderSchema).optional(),
-  Amount: z.lazy(() => SortOrderSchema).optional(),
-  patentFundingPatentID: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const FloatWithAggregatesFilterSchema: z.ZodType<Prisma.FloatWithAggregatesFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedFloatWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _sum: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _min: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _max: z.lazy(() => NestedFloatFilterSchema).optional()
-}).strict();
-
-export const IntNullableWithAggregatesFilterSchema: z.ZodType<Prisma.IntNullableWithAggregatesFilter> = z.object({
-  equals: z.number().optional().nullable(),
-  in: z.number().array().optional().nullable(),
-  notIn: z.number().array().optional().nullable(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntNullableWithAggregatesFilterSchema) ]).optional().nullable(),
-  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
-  _avg: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
-  _sum: z.lazy(() => NestedIntNullableFilterSchema).optional(),
-  _min: z.lazy(() => NestedIntNullableFilterSchema).optional(),
-  _max: z.lazy(() => NestedIntNullableFilterSchema).optional()
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentScalarRelationFilterSchema: z.ZodType<Prisma.PatentScalarRelationFilter> = z.object({
@@ -4308,6 +4343,116 @@ export const PatentFundingMinOrderByAggregateInputSchema: z.ZodType<Prisma.Paten
 export const PatentFundingSumOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingSumOrderByAggregateInput> = z.object({
   PatentID: z.lazy(() => SortOrderSchema).optional(),
   fundingPlanPlanID: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const FloatFilterSchema: z.ZodType<Prisma.FloatFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedFloatFilterSchema) ]).optional(),
+}).strict();
+
+export const PatentFundingScalarRelationFilterSchema: z.ZodType<Prisma.PatentFundingScalarRelationFilter> = z.object({
+  is: z.lazy(() => PatentFundingWhereInputSchema).optional(),
+  isNot: z.lazy(() => PatentFundingWhereInputSchema).optional()
+}).strict();
+
+export const FundingUnitListRelationFilterSchema: z.ZodType<Prisma.FundingUnitListRelationFilter> = z.object({
+  every: z.lazy(() => FundingUnitWhereInputSchema).optional(),
+  some: z.lazy(() => FundingUnitWhereInputSchema).optional(),
+  none: z.lazy(() => FundingUnitWhereInputSchema).optional()
+}).strict();
+
+export const FundingUnitOrderByRelationAggregateInputSchema: z.ZodType<Prisma.FundingUnitOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const FundingRecordCountOrderByAggregateInputSchema: z.ZodType<Prisma.FundingRecordCountOrderByAggregateInput> = z.object({
+  FundingRecordID: z.lazy(() => SortOrderSchema).optional(),
+  PatentFundingPatentID: z.lazy(() => SortOrderSchema).optional(),
+  Amount: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const FundingRecordAvgOrderByAggregateInputSchema: z.ZodType<Prisma.FundingRecordAvgOrderByAggregateInput> = z.object({
+  FundingRecordID: z.lazy(() => SortOrderSchema).optional(),
+  PatentFundingPatentID: z.lazy(() => SortOrderSchema).optional(),
+  Amount: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const FundingRecordMaxOrderByAggregateInputSchema: z.ZodType<Prisma.FundingRecordMaxOrderByAggregateInput> = z.object({
+  FundingRecordID: z.lazy(() => SortOrderSchema).optional(),
+  PatentFundingPatentID: z.lazy(() => SortOrderSchema).optional(),
+  Amount: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const FundingRecordMinOrderByAggregateInputSchema: z.ZodType<Prisma.FundingRecordMinOrderByAggregateInput> = z.object({
+  FundingRecordID: z.lazy(() => SortOrderSchema).optional(),
+  PatentFundingPatentID: z.lazy(() => SortOrderSchema).optional(),
+  Amount: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const FundingRecordSumOrderByAggregateInputSchema: z.ZodType<Prisma.FundingRecordSumOrderByAggregateInput> = z.object({
+  FundingRecordID: z.lazy(() => SortOrderSchema).optional(),
+  PatentFundingPatentID: z.lazy(() => SortOrderSchema).optional(),
+  Amount: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const FloatWithAggregatesFilterSchema: z.ZodType<Prisma.FloatWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedFloatWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _min: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _max: z.lazy(() => NestedFloatFilterSchema).optional()
+}).strict();
+
+export const FundingUnitScalarRelationFilterSchema: z.ZodType<Prisma.FundingUnitScalarRelationFilter> = z.object({
+  is: z.lazy(() => FundingUnitWhereInputSchema).optional(),
+  isNot: z.lazy(() => FundingUnitWhereInputSchema).optional()
+}).strict();
+
+export const PatentFundingUnitPatentIDFundingUnitIDCompoundUniqueInputSchema: z.ZodType<Prisma.PatentFundingUnitPatentIDFundingUnitIDCompoundUniqueInput> = z.object({
+  PatentID: z.number(),
+  FundingUnitID: z.number()
+}).strict();
+
+export const PatentFundingUnitCountOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingUnitCountOrderByAggregateInput> = z.object({
+  PatentID: z.lazy(() => SortOrderSchema).optional(),
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
+  ProjectCode: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PatentFundingUnitAvgOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingUnitAvgOrderByAggregateInput> = z.object({
+  PatentID: z.lazy(() => SortOrderSchema).optional(),
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PatentFundingUnitMaxOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingUnitMaxOrderByAggregateInput> = z.object({
+  PatentID: z.lazy(() => SortOrderSchema).optional(),
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
+  ProjectCode: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PatentFundingUnitMinOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingUnitMinOrderByAggregateInput> = z.object({
+  PatentID: z.lazy(() => SortOrderSchema).optional(),
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional(),
+  ProjectCode: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PatentFundingUnitSumOrderByAggregateInputSchema: z.ZodType<Prisma.PatentFundingUnitSumOrderByAggregateInput> = z.object({
+  PatentID: z.lazy(() => SortOrderSchema).optional(),
+  FundingUnitID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const DepartmentScalarRelationFilterSchema: z.ZodType<Prisma.DepartmentScalarRelationFilter> = z.object({
@@ -4495,6 +4640,17 @@ export const DateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.DateTimeWithAg
   _max: z.lazy(() => NestedDateTimeFilterSchema).optional()
 }).strict();
 
+export const IntNullableFilterSchema: z.ZodType<Prisma.IntNullableFilter> = z.object({
+  equals: z.number().optional().nullable(),
+  in: z.number().array().optional().nullable(),
+  notIn: z.number().array().optional().nullable(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntNullableFilterSchema) ]).optional().nullable(),
+}).strict();
+
 export const EnumEnumPatentTypeNullableFilterSchema: z.ZodType<Prisma.EnumEnumPatentTypeNullableFilter> = z.object({
   equals: z.lazy(() => EnumPatentTypeSchema).optional().nullable(),
   in: z.lazy(() => EnumPatentTypeSchema).array().optional().nullable(),
@@ -4510,6 +4666,11 @@ export const CountryNullableScalarRelationFilterSchema: z.ZodType<Prisma.Country
 export const PatentApplicationDataNullableScalarRelationFilterSchema: z.ZodType<Prisma.PatentApplicationDataNullableScalarRelationFilter> = z.object({
   is: z.lazy(() => PatentApplicationDataWhereInputSchema).optional().nullable(),
   isNot: z.lazy(() => PatentApplicationDataWhereInputSchema).optional().nullable()
+}).strict();
+
+export const PatentFundingNullableScalarRelationFilterSchema: z.ZodType<Prisma.PatentFundingNullableScalarRelationFilter> = z.object({
+  is: z.lazy(() => PatentFundingWhereInputSchema).optional().nullable(),
+  isNot: z.lazy(() => PatentFundingWhereInputSchema).optional().nullable()
 }).strict();
 
 export const PatentManualStatusListRelationFilterSchema: z.ZodType<Prisma.PatentManualStatusListRelationFilter> = z.object({
@@ -4608,6 +4769,22 @@ export const PatentSumOrderByAggregateInputSchema: z.ZodType<Prisma.PatentSumOrd
   DepartmentID: z.lazy(() => SortOrderSchema).optional(),
   Year: z.lazy(() => SortOrderSchema).optional(),
   CountryID: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const IntNullableWithAggregatesFilterSchema: z.ZodType<Prisma.IntNullableWithAggregatesFilter> = z.object({
+  equals: z.number().optional().nullable(),
+  in: z.number().array().optional().nullable(),
+  notIn: z.number().array().optional().nullable(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntNullableWithAggregatesFilterSchema) ]).optional().nullable(),
+  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
+  _sum: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _min: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _max: z.lazy(() => NestedIntNullableFilterSchema).optional()
 }).strict();
 
 export const EnumEnumPatentTypeNullableWithAggregatesFilterSchema: z.ZodType<Prisma.EnumEnumPatentTypeNullableWithAggregatesFilter> = z.object({
@@ -5332,92 +5509,84 @@ export const PatentFundingUncheckedUpdateManyWithoutPlanNestedInputSchema: z.Zod
   deleteMany: z.union([ z.lazy(() => PatentFundingScalarWhereInputSchema),z.lazy(() => PatentFundingScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const FundingUnitDataCreateNestedManyWithoutFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitDataCreateNestedManyWithoutFundingUnitInput> = z.object({
-  create: z.union([ z.lazy(() => FundingUnitDataCreateWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataCreateWithoutFundingUnitInputSchema).array(),z.lazy(() => FundingUnitDataUncheckedCreateWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUncheckedCreateWithoutFundingUnitInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => FundingUnitDataCreateOrConnectWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataCreateOrConnectWithoutFundingUnitInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => FundingUnitDataCreateManyFundingUnitInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
+export const PatentFundingUnitCreateNestedManyWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingUnitCreateNestedManyWithoutFundingUnitInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingUnitCreateWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitCreateWithoutFundingUnitInputSchema).array(),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutFundingUnitInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentFundingUnitCreateOrConnectWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitCreateOrConnectWithoutFundingUnitInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentFundingUnitCreateManyFundingUnitInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const FundingUnitDataUncheckedCreateNestedManyWithoutFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitDataUncheckedCreateNestedManyWithoutFundingUnitInput> = z.object({
-  create: z.union([ z.lazy(() => FundingUnitDataCreateWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataCreateWithoutFundingUnitInputSchema).array(),z.lazy(() => FundingUnitDataUncheckedCreateWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUncheckedCreateWithoutFundingUnitInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => FundingUnitDataCreateOrConnectWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataCreateOrConnectWithoutFundingUnitInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => FundingUnitDataCreateManyFundingUnitInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
+export const FundingRecordCreateNestedManyWithoutCanFundingByInputSchema: z.ZodType<Prisma.FundingRecordCreateNestedManyWithoutCanFundingByInput> = z.object({
+  create: z.union([ z.lazy(() => FundingRecordCreateWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordCreateWithoutCanFundingByInputSchema).array(),z.lazy(() => FundingRecordUncheckedCreateWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUncheckedCreateWithoutCanFundingByInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => FundingRecordCreateOrConnectWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordCreateOrConnectWithoutCanFundingByInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const FundingUnitDataUpdateManyWithoutFundingUnitNestedInputSchema: z.ZodType<Prisma.FundingUnitDataUpdateManyWithoutFundingUnitNestedInput> = z.object({
-  create: z.union([ z.lazy(() => FundingUnitDataCreateWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataCreateWithoutFundingUnitInputSchema).array(),z.lazy(() => FundingUnitDataUncheckedCreateWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUncheckedCreateWithoutFundingUnitInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => FundingUnitDataCreateOrConnectWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataCreateOrConnectWithoutFundingUnitInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => FundingUnitDataUpsertWithWhereUniqueWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUpsertWithWhereUniqueWithoutFundingUnitInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => FundingUnitDataCreateManyFundingUnitInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => FundingUnitDataUpdateWithWhereUniqueWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUpdateWithWhereUniqueWithoutFundingUnitInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => FundingUnitDataUpdateManyWithWhereWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUpdateManyWithWhereWithoutFundingUnitInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => FundingUnitDataScalarWhereInputSchema),z.lazy(() => FundingUnitDataScalarWhereInputSchema).array() ]).optional(),
+export const PatentFundingUnitUncheckedCreateNestedManyWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingUnitUncheckedCreateNestedManyWithoutFundingUnitInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingUnitCreateWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitCreateWithoutFundingUnitInputSchema).array(),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutFundingUnitInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentFundingUnitCreateOrConnectWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitCreateOrConnectWithoutFundingUnitInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentFundingUnitCreateManyFundingUnitInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const FundingUnitDataUncheckedUpdateManyWithoutFundingUnitNestedInputSchema: z.ZodType<Prisma.FundingUnitDataUncheckedUpdateManyWithoutFundingUnitNestedInput> = z.object({
-  create: z.union([ z.lazy(() => FundingUnitDataCreateWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataCreateWithoutFundingUnitInputSchema).array(),z.lazy(() => FundingUnitDataUncheckedCreateWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUncheckedCreateWithoutFundingUnitInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => FundingUnitDataCreateOrConnectWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataCreateOrConnectWithoutFundingUnitInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => FundingUnitDataUpsertWithWhereUniqueWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUpsertWithWhereUniqueWithoutFundingUnitInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => FundingUnitDataCreateManyFundingUnitInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => FundingUnitDataUpdateWithWhereUniqueWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUpdateWithWhereUniqueWithoutFundingUnitInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => FundingUnitDataUpdateManyWithWhereWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUpdateManyWithWhereWithoutFundingUnitInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => FundingUnitDataScalarWhereInputSchema),z.lazy(() => FundingUnitDataScalarWhereInputSchema).array() ]).optional(),
+export const FundingRecordUncheckedCreateNestedManyWithoutCanFundingByInputSchema: z.ZodType<Prisma.FundingRecordUncheckedCreateNestedManyWithoutCanFundingByInput> = z.object({
+  create: z.union([ z.lazy(() => FundingRecordCreateWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordCreateWithoutCanFundingByInputSchema).array(),z.lazy(() => FundingRecordUncheckedCreateWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUncheckedCreateWithoutCanFundingByInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => FundingRecordCreateOrConnectWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordCreateOrConnectWithoutCanFundingByInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const FundingUnitCreateNestedOneWithoutFundingUnitDataInputSchema: z.ZodType<Prisma.FundingUnitCreateNestedOneWithoutFundingUnitDataInput> = z.object({
-  create: z.union([ z.lazy(() => FundingUnitCreateWithoutFundingUnitDataInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingUnitDataInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => FundingUnitCreateOrConnectWithoutFundingUnitDataInputSchema).optional(),
-  connect: z.lazy(() => FundingUnitWhereUniqueInputSchema).optional()
+export const PatentFundingUnitUpdateManyWithoutFundingUnitNestedInputSchema: z.ZodType<Prisma.PatentFundingUnitUpdateManyWithoutFundingUnitNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingUnitCreateWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitCreateWithoutFundingUnitInputSchema).array(),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutFundingUnitInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentFundingUnitCreateOrConnectWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitCreateOrConnectWithoutFundingUnitInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => PatentFundingUnitUpsertWithWhereUniqueWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUpsertWithWhereUniqueWithoutFundingUnitInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentFundingUnitCreateManyFundingUnitInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => PatentFundingUnitUpdateWithWhereUniqueWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUpdateWithWhereUniqueWithoutFundingUnitInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => PatentFundingUnitUpdateManyWithWhereWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUpdateManyWithWhereWithoutFundingUnitInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => PatentFundingUnitScalarWhereInputSchema),z.lazy(() => PatentFundingUnitScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const PatentFundingCreateNestedOneWithoutFundingUnitsDatasInputSchema: z.ZodType<Prisma.PatentFundingCreateNestedOneWithoutFundingUnitsDatasInput> = z.object({
-  create: z.union([ z.lazy(() => PatentFundingCreateWithoutFundingUnitsDatasInputSchema),z.lazy(() => PatentFundingUncheckedCreateWithoutFundingUnitsDatasInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => PatentFundingCreateOrConnectWithoutFundingUnitsDatasInputSchema).optional(),
-  connect: z.lazy(() => PatentFundingWhereUniqueInputSchema).optional()
+export const FundingRecordUpdateManyWithoutCanFundingByNestedInputSchema: z.ZodType<Prisma.FundingRecordUpdateManyWithoutCanFundingByNestedInput> = z.object({
+  create: z.union([ z.lazy(() => FundingRecordCreateWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordCreateWithoutCanFundingByInputSchema).array(),z.lazy(() => FundingRecordUncheckedCreateWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUncheckedCreateWithoutCanFundingByInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => FundingRecordCreateOrConnectWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordCreateOrConnectWithoutCanFundingByInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => FundingRecordUpsertWithWhereUniqueWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUpsertWithWhereUniqueWithoutCanFundingByInputSchema).array() ]).optional(),
+  set: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => FundingRecordUpdateWithWhereUniqueWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUpdateWithWhereUniqueWithoutCanFundingByInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => FundingRecordUpdateManyWithWhereWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUpdateManyWithWhereWithoutCanFundingByInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => FundingRecordScalarWhereInputSchema),z.lazy(() => FundingRecordScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const FloatFieldUpdateOperationsInputSchema: z.ZodType<Prisma.FloatFieldUpdateOperationsInput> = z.object({
-  set: z.number().optional(),
-  increment: z.number().optional(),
-  decrement: z.number().optional(),
-  multiply: z.number().optional(),
-  divide: z.number().optional()
+export const PatentFundingUnitUncheckedUpdateManyWithoutFundingUnitNestedInputSchema: z.ZodType<Prisma.PatentFundingUnitUncheckedUpdateManyWithoutFundingUnitNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingUnitCreateWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitCreateWithoutFundingUnitInputSchema).array(),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutFundingUnitInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentFundingUnitCreateOrConnectWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitCreateOrConnectWithoutFundingUnitInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => PatentFundingUnitUpsertWithWhereUniqueWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUpsertWithWhereUniqueWithoutFundingUnitInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentFundingUnitCreateManyFundingUnitInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => PatentFundingUnitUpdateWithWhereUniqueWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUpdateWithWhereUniqueWithoutFundingUnitInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => PatentFundingUnitUpdateManyWithWhereWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUpdateManyWithWhereWithoutFundingUnitInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => PatentFundingUnitScalarWhereInputSchema),z.lazy(() => PatentFundingUnitScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const FundingUnitUpdateOneRequiredWithoutFundingUnitDataNestedInputSchema: z.ZodType<Prisma.FundingUnitUpdateOneRequiredWithoutFundingUnitDataNestedInput> = z.object({
-  create: z.union([ z.lazy(() => FundingUnitCreateWithoutFundingUnitDataInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingUnitDataInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => FundingUnitCreateOrConnectWithoutFundingUnitDataInputSchema).optional(),
-  upsert: z.lazy(() => FundingUnitUpsertWithoutFundingUnitDataInputSchema).optional(),
-  connect: z.lazy(() => FundingUnitWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => FundingUnitUpdateToOneWithWhereWithoutFundingUnitDataInputSchema),z.lazy(() => FundingUnitUpdateWithoutFundingUnitDataInputSchema),z.lazy(() => FundingUnitUncheckedUpdateWithoutFundingUnitDataInputSchema) ]).optional(),
-}).strict();
-
-export const PatentFundingUpdateOneWithoutFundingUnitsDatasNestedInputSchema: z.ZodType<Prisma.PatentFundingUpdateOneWithoutFundingUnitsDatasNestedInput> = z.object({
-  create: z.union([ z.lazy(() => PatentFundingCreateWithoutFundingUnitsDatasInputSchema),z.lazy(() => PatentFundingUncheckedCreateWithoutFundingUnitsDatasInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => PatentFundingCreateOrConnectWithoutFundingUnitsDatasInputSchema).optional(),
-  upsert: z.lazy(() => PatentFundingUpsertWithoutFundingUnitsDatasInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => PatentFundingWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => PatentFundingWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => PatentFundingWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => PatentFundingUpdateToOneWithWhereWithoutFundingUnitsDatasInputSchema),z.lazy(() => PatentFundingUpdateWithoutFundingUnitsDatasInputSchema),z.lazy(() => PatentFundingUncheckedUpdateWithoutFundingUnitsDatasInputSchema) ]).optional(),
-}).strict();
-
-export const NullableIntFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableIntFieldUpdateOperationsInput> = z.object({
-  set: z.number().optional().nullable(),
-  increment: z.number().optional(),
-  decrement: z.number().optional(),
-  multiply: z.number().optional(),
-  divide: z.number().optional()
+export const FundingRecordUncheckedUpdateManyWithoutCanFundingByNestedInputSchema: z.ZodType<Prisma.FundingRecordUncheckedUpdateManyWithoutCanFundingByNestedInput> = z.object({
+  create: z.union([ z.lazy(() => FundingRecordCreateWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordCreateWithoutCanFundingByInputSchema).array(),z.lazy(() => FundingRecordUncheckedCreateWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUncheckedCreateWithoutCanFundingByInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => FundingRecordCreateOrConnectWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordCreateOrConnectWithoutCanFundingByInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => FundingRecordUpsertWithWhereUniqueWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUpsertWithWhereUniqueWithoutCanFundingByInputSchema).array() ]).optional(),
+  set: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => FundingRecordUpdateWithWhereUniqueWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUpdateWithWhereUniqueWithoutCanFundingByInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => FundingRecordUpdateManyWithWhereWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUpdateManyWithWhereWithoutCanFundingByInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => FundingRecordScalarWhereInputSchema),z.lazy(() => FundingRecordScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const PatentCreateNestedOneWithoutFundingInputSchema: z.ZodType<Prisma.PatentCreateNestedOneWithoutFundingInput> = z.object({
@@ -5432,18 +5601,32 @@ export const FundingPlanCreateNestedOneWithoutFundingsInputSchema: z.ZodType<Pri
   connect: z.lazy(() => FundingPlanWhereUniqueInputSchema).optional()
 }).strict();
 
-export const FundingUnitDataCreateNestedManyWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingUnitDataCreateNestedManyWithoutPatentFundingInput> = z.object({
-  create: z.union([ z.lazy(() => FundingUnitDataCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataCreateWithoutPatentFundingInputSchema).array(),z.lazy(() => FundingUnitDataUncheckedCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUncheckedCreateWithoutPatentFundingInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => FundingUnitDataCreateOrConnectWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataCreateOrConnectWithoutPatentFundingInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => FundingUnitDataCreateManyPatentFundingInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
+export const FundingRecordCreateNestedManyWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingRecordCreateNestedManyWithoutPatentFundingInput> = z.object({
+  create: z.union([ z.lazy(() => FundingRecordCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordCreateWithoutPatentFundingInputSchema).array(),z.lazy(() => FundingRecordUncheckedCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUncheckedCreateWithoutPatentFundingInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => FundingRecordCreateOrConnectWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordCreateOrConnectWithoutPatentFundingInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => FundingRecordCreateManyPatentFundingInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const FundingUnitDataUncheckedCreateNestedManyWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingUnitDataUncheckedCreateNestedManyWithoutPatentFundingInput> = z.object({
-  create: z.union([ z.lazy(() => FundingUnitDataCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataCreateWithoutPatentFundingInputSchema).array(),z.lazy(() => FundingUnitDataUncheckedCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUncheckedCreateWithoutPatentFundingInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => FundingUnitDataCreateOrConnectWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataCreateOrConnectWithoutPatentFundingInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => FundingUnitDataCreateManyPatentFundingInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
+export const PatentFundingUnitCreateNestedManyWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingUnitCreateNestedManyWithoutPatentFundingInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingUnitCreateWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitCreateWithoutPatentFundingInputSchema).array(),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutPatentFundingInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentFundingUnitCreateOrConnectWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitCreateOrConnectWithoutPatentFundingInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentFundingUnitCreateManyPatentFundingInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const FundingRecordUncheckedCreateNestedManyWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingRecordUncheckedCreateNestedManyWithoutPatentFundingInput> = z.object({
+  create: z.union([ z.lazy(() => FundingRecordCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordCreateWithoutPatentFundingInputSchema).array(),z.lazy(() => FundingRecordUncheckedCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUncheckedCreateWithoutPatentFundingInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => FundingRecordCreateOrConnectWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordCreateOrConnectWithoutPatentFundingInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => FundingRecordCreateManyPatentFundingInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const PatentFundingUnitUncheckedCreateNestedManyWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingUnitUncheckedCreateNestedManyWithoutPatentFundingInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingUnitCreateWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitCreateWithoutPatentFundingInputSchema).array(),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutPatentFundingInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentFundingUnitCreateOrConnectWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitCreateOrConnectWithoutPatentFundingInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentFundingUnitCreateManyPatentFundingInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const PatentUpdateOneRequiredWithoutFundingNestedInputSchema: z.ZodType<Prisma.PatentUpdateOneRequiredWithoutFundingNestedInput> = z.object({
@@ -5462,32 +5645,148 @@ export const FundingPlanUpdateOneRequiredWithoutFundingsNestedInputSchema: z.Zod
   update: z.union([ z.lazy(() => FundingPlanUpdateToOneWithWhereWithoutFundingsInputSchema),z.lazy(() => FundingPlanUpdateWithoutFundingsInputSchema),z.lazy(() => FundingPlanUncheckedUpdateWithoutFundingsInputSchema) ]).optional(),
 }).strict();
 
-export const FundingUnitDataUpdateManyWithoutPatentFundingNestedInputSchema: z.ZodType<Prisma.FundingUnitDataUpdateManyWithoutPatentFundingNestedInput> = z.object({
-  create: z.union([ z.lazy(() => FundingUnitDataCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataCreateWithoutPatentFundingInputSchema).array(),z.lazy(() => FundingUnitDataUncheckedCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUncheckedCreateWithoutPatentFundingInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => FundingUnitDataCreateOrConnectWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataCreateOrConnectWithoutPatentFundingInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => FundingUnitDataUpsertWithWhereUniqueWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUpsertWithWhereUniqueWithoutPatentFundingInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => FundingUnitDataCreateManyPatentFundingInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => FundingUnitDataUpdateWithWhereUniqueWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUpdateWithWhereUniqueWithoutPatentFundingInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => FundingUnitDataUpdateManyWithWhereWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUpdateManyWithWhereWithoutPatentFundingInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => FundingUnitDataScalarWhereInputSchema),z.lazy(() => FundingUnitDataScalarWhereInputSchema).array() ]).optional(),
+export const FundingRecordUpdateManyWithoutPatentFundingNestedInputSchema: z.ZodType<Prisma.FundingRecordUpdateManyWithoutPatentFundingNestedInput> = z.object({
+  create: z.union([ z.lazy(() => FundingRecordCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordCreateWithoutPatentFundingInputSchema).array(),z.lazy(() => FundingRecordUncheckedCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUncheckedCreateWithoutPatentFundingInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => FundingRecordCreateOrConnectWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordCreateOrConnectWithoutPatentFundingInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => FundingRecordUpsertWithWhereUniqueWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUpsertWithWhereUniqueWithoutPatentFundingInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => FundingRecordCreateManyPatentFundingInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => FundingRecordUpdateWithWhereUniqueWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUpdateWithWhereUniqueWithoutPatentFundingInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => FundingRecordUpdateManyWithWhereWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUpdateManyWithWhereWithoutPatentFundingInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => FundingRecordScalarWhereInputSchema),z.lazy(() => FundingRecordScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const FundingUnitDataUncheckedUpdateManyWithoutPatentFundingNestedInputSchema: z.ZodType<Prisma.FundingUnitDataUncheckedUpdateManyWithoutPatentFundingNestedInput> = z.object({
-  create: z.union([ z.lazy(() => FundingUnitDataCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataCreateWithoutPatentFundingInputSchema).array(),z.lazy(() => FundingUnitDataUncheckedCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUncheckedCreateWithoutPatentFundingInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => FundingUnitDataCreateOrConnectWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataCreateOrConnectWithoutPatentFundingInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => FundingUnitDataUpsertWithWhereUniqueWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUpsertWithWhereUniqueWithoutPatentFundingInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => FundingUnitDataCreateManyPatentFundingInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => FundingUnitDataWhereUniqueInputSchema),z.lazy(() => FundingUnitDataWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => FundingUnitDataUpdateWithWhereUniqueWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUpdateWithWhereUniqueWithoutPatentFundingInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => FundingUnitDataUpdateManyWithWhereWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUpdateManyWithWhereWithoutPatentFundingInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => FundingUnitDataScalarWhereInputSchema),z.lazy(() => FundingUnitDataScalarWhereInputSchema).array() ]).optional(),
+export const PatentFundingUnitUpdateManyWithoutPatentFundingNestedInputSchema: z.ZodType<Prisma.PatentFundingUnitUpdateManyWithoutPatentFundingNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingUnitCreateWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitCreateWithoutPatentFundingInputSchema).array(),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutPatentFundingInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentFundingUnitCreateOrConnectWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitCreateOrConnectWithoutPatentFundingInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => PatentFundingUnitUpsertWithWhereUniqueWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUpsertWithWhereUniqueWithoutPatentFundingInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentFundingUnitCreateManyPatentFundingInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => PatentFundingUnitUpdateWithWhereUniqueWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUpdateWithWhereUniqueWithoutPatentFundingInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => PatentFundingUnitUpdateManyWithWhereWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUpdateManyWithWhereWithoutPatentFundingInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => PatentFundingUnitScalarWhereInputSchema),z.lazy(() => PatentFundingUnitScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const FundingRecordUncheckedUpdateManyWithoutPatentFundingNestedInputSchema: z.ZodType<Prisma.FundingRecordUncheckedUpdateManyWithoutPatentFundingNestedInput> = z.object({
+  create: z.union([ z.lazy(() => FundingRecordCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordCreateWithoutPatentFundingInputSchema).array(),z.lazy(() => FundingRecordUncheckedCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUncheckedCreateWithoutPatentFundingInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => FundingRecordCreateOrConnectWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordCreateOrConnectWithoutPatentFundingInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => FundingRecordUpsertWithWhereUniqueWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUpsertWithWhereUniqueWithoutPatentFundingInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => FundingRecordCreateManyPatentFundingInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => FundingRecordWhereUniqueInputSchema),z.lazy(() => FundingRecordWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => FundingRecordUpdateWithWhereUniqueWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUpdateWithWhereUniqueWithoutPatentFundingInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => FundingRecordUpdateManyWithWhereWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUpdateManyWithWhereWithoutPatentFundingInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => FundingRecordScalarWhereInputSchema),z.lazy(() => FundingRecordScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const PatentFundingUnitUncheckedUpdateManyWithoutPatentFundingNestedInputSchema: z.ZodType<Prisma.PatentFundingUnitUncheckedUpdateManyWithoutPatentFundingNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingUnitCreateWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitCreateWithoutPatentFundingInputSchema).array(),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutPatentFundingInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PatentFundingUnitCreateOrConnectWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitCreateOrConnectWithoutPatentFundingInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => PatentFundingUnitUpsertWithWhereUniqueWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUpsertWithWhereUniqueWithoutPatentFundingInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => PatentFundingUnitCreateManyPatentFundingInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),z.lazy(() => PatentFundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => PatentFundingUnitUpdateWithWhereUniqueWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUpdateWithWhereUniqueWithoutPatentFundingInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => PatentFundingUnitUpdateManyWithWhereWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUpdateManyWithWhereWithoutPatentFundingInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => PatentFundingUnitScalarWhereInputSchema),z.lazy(() => PatentFundingUnitScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const PatentFundingCreateNestedOneWithoutFundingRecordsInputSchema: z.ZodType<Prisma.PatentFundingCreateNestedOneWithoutFundingRecordsInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingCreateWithoutFundingRecordsInputSchema),z.lazy(() => PatentFundingUncheckedCreateWithoutFundingRecordsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => PatentFundingCreateOrConnectWithoutFundingRecordsInputSchema).optional(),
+  connect: z.lazy(() => PatentFundingWhereUniqueInputSchema).optional()
+}).strict();
+
+export const FundingUnitCreateNestedManyWithoutFundingRecordInputSchema: z.ZodType<Prisma.FundingUnitCreateNestedManyWithoutFundingRecordInput> = z.object({
+  create: z.union([ z.lazy(() => FundingUnitCreateWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitCreateWithoutFundingRecordInputSchema).array(),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingRecordInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => FundingUnitCreateOrConnectWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitCreateOrConnectWithoutFundingRecordInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => FundingUnitWhereUniqueInputSchema),z.lazy(() => FundingUnitWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const FundingUnitUncheckedCreateNestedManyWithoutFundingRecordInputSchema: z.ZodType<Prisma.FundingUnitUncheckedCreateNestedManyWithoutFundingRecordInput> = z.object({
+  create: z.union([ z.lazy(() => FundingUnitCreateWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitCreateWithoutFundingRecordInputSchema).array(),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingRecordInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => FundingUnitCreateOrConnectWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitCreateOrConnectWithoutFundingRecordInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => FundingUnitWhereUniqueInputSchema),z.lazy(() => FundingUnitWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const FloatFieldUpdateOperationsInputSchema: z.ZodType<Prisma.FloatFieldUpdateOperationsInput> = z.object({
+  set: z.number().optional(),
+  increment: z.number().optional(),
+  decrement: z.number().optional(),
+  multiply: z.number().optional(),
+  divide: z.number().optional()
+}).strict();
+
+export const PatentFundingUpdateOneRequiredWithoutFundingRecordsNestedInputSchema: z.ZodType<Prisma.PatentFundingUpdateOneRequiredWithoutFundingRecordsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingCreateWithoutFundingRecordsInputSchema),z.lazy(() => PatentFundingUncheckedCreateWithoutFundingRecordsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => PatentFundingCreateOrConnectWithoutFundingRecordsInputSchema).optional(),
+  upsert: z.lazy(() => PatentFundingUpsertWithoutFundingRecordsInputSchema).optional(),
+  connect: z.lazy(() => PatentFundingWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => PatentFundingUpdateToOneWithWhereWithoutFundingRecordsInputSchema),z.lazy(() => PatentFundingUpdateWithoutFundingRecordsInputSchema),z.lazy(() => PatentFundingUncheckedUpdateWithoutFundingRecordsInputSchema) ]).optional(),
+}).strict();
+
+export const FundingUnitUpdateManyWithoutFundingRecordNestedInputSchema: z.ZodType<Prisma.FundingUnitUpdateManyWithoutFundingRecordNestedInput> = z.object({
+  create: z.union([ z.lazy(() => FundingUnitCreateWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitCreateWithoutFundingRecordInputSchema).array(),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingRecordInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => FundingUnitCreateOrConnectWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitCreateOrConnectWithoutFundingRecordInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => FundingUnitUpsertWithWhereUniqueWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUpsertWithWhereUniqueWithoutFundingRecordInputSchema).array() ]).optional(),
+  set: z.union([ z.lazy(() => FundingUnitWhereUniqueInputSchema),z.lazy(() => FundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => FundingUnitWhereUniqueInputSchema),z.lazy(() => FundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => FundingUnitWhereUniqueInputSchema),z.lazy(() => FundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => FundingUnitWhereUniqueInputSchema),z.lazy(() => FundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => FundingUnitUpdateWithWhereUniqueWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUpdateWithWhereUniqueWithoutFundingRecordInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => FundingUnitUpdateManyWithWhereWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUpdateManyWithWhereWithoutFundingRecordInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => FundingUnitScalarWhereInputSchema),z.lazy(() => FundingUnitScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const FundingUnitUncheckedUpdateManyWithoutFundingRecordNestedInputSchema: z.ZodType<Prisma.FundingUnitUncheckedUpdateManyWithoutFundingRecordNestedInput> = z.object({
+  create: z.union([ z.lazy(() => FundingUnitCreateWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitCreateWithoutFundingRecordInputSchema).array(),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingRecordInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => FundingUnitCreateOrConnectWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitCreateOrConnectWithoutFundingRecordInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => FundingUnitUpsertWithWhereUniqueWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUpsertWithWhereUniqueWithoutFundingRecordInputSchema).array() ]).optional(),
+  set: z.union([ z.lazy(() => FundingUnitWhereUniqueInputSchema),z.lazy(() => FundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => FundingUnitWhereUniqueInputSchema),z.lazy(() => FundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => FundingUnitWhereUniqueInputSchema),z.lazy(() => FundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => FundingUnitWhereUniqueInputSchema),z.lazy(() => FundingUnitWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => FundingUnitUpdateWithWhereUniqueWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUpdateWithWhereUniqueWithoutFundingRecordInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => FundingUnitUpdateManyWithWhereWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUpdateManyWithWhereWithoutFundingRecordInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => FundingUnitScalarWhereInputSchema),z.lazy(() => FundingUnitScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const FundingUnitCreateNestedOneWithoutPatentFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitCreateNestedOneWithoutPatentFundingUnitInput> = z.object({
+  create: z.union([ z.lazy(() => FundingUnitCreateWithoutPatentFundingUnitInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutPatentFundingUnitInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => FundingUnitCreateOrConnectWithoutPatentFundingUnitInputSchema).optional(),
+  connect: z.lazy(() => FundingUnitWhereUniqueInputSchema).optional()
+}).strict();
+
+export const PatentFundingCreateNestedOneWithoutPatentFundingUnitsInputSchema: z.ZodType<Prisma.PatentFundingCreateNestedOneWithoutPatentFundingUnitsInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingCreateWithoutPatentFundingUnitsInputSchema),z.lazy(() => PatentFundingUncheckedCreateWithoutPatentFundingUnitsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => PatentFundingCreateOrConnectWithoutPatentFundingUnitsInputSchema).optional(),
+  connect: z.lazy(() => PatentFundingWhereUniqueInputSchema).optional()
+}).strict();
+
+export const FundingUnitUpdateOneRequiredWithoutPatentFundingUnitNestedInputSchema: z.ZodType<Prisma.FundingUnitUpdateOneRequiredWithoutPatentFundingUnitNestedInput> = z.object({
+  create: z.union([ z.lazy(() => FundingUnitCreateWithoutPatentFundingUnitInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutPatentFundingUnitInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => FundingUnitCreateOrConnectWithoutPatentFundingUnitInputSchema).optional(),
+  upsert: z.lazy(() => FundingUnitUpsertWithoutPatentFundingUnitInputSchema).optional(),
+  connect: z.lazy(() => FundingUnitWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => FundingUnitUpdateToOneWithWhereWithoutPatentFundingUnitInputSchema),z.lazy(() => FundingUnitUpdateWithoutPatentFundingUnitInputSchema),z.lazy(() => FundingUnitUncheckedUpdateWithoutPatentFundingUnitInputSchema) ]).optional(),
+}).strict();
+
+export const PatentFundingUpdateOneRequiredWithoutPatentFundingUnitsNestedInputSchema: z.ZodType<Prisma.PatentFundingUpdateOneRequiredWithoutPatentFundingUnitsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PatentFundingCreateWithoutPatentFundingUnitsInputSchema),z.lazy(() => PatentFundingUncheckedCreateWithoutPatentFundingUnitsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => PatentFundingCreateOrConnectWithoutPatentFundingUnitsInputSchema).optional(),
+  upsert: z.lazy(() => PatentFundingUpsertWithoutPatentFundingUnitsInputSchema).optional(),
+  connect: z.lazy(() => PatentFundingWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => PatentFundingUpdateToOneWithWhereWithoutPatentFundingUnitsInputSchema),z.lazy(() => PatentFundingUpdateWithoutPatentFundingUnitsInputSchema),z.lazy(() => PatentFundingUncheckedUpdateWithoutPatentFundingUnitsInputSchema) ]).optional(),
 }).strict();
 
 export const DepartmentCreateNestedOneWithoutInventorsInputSchema: z.ZodType<Prisma.DepartmentCreateNestedOneWithoutInventorsInput> = z.object({
@@ -5858,6 +6157,14 @@ export const PatentRecordUpdateManyWithoutPatentNestedInputSchema: z.ZodType<Pri
   update: z.union([ z.lazy(() => PatentRecordUpdateWithWhereUniqueWithoutPatentInputSchema),z.lazy(() => PatentRecordUpdateWithWhereUniqueWithoutPatentInputSchema).array() ]).optional(),
   updateMany: z.union([ z.lazy(() => PatentRecordUpdateManyWithWhereWithoutPatentInputSchema),z.lazy(() => PatentRecordUpdateManyWithWhereWithoutPatentInputSchema).array() ]).optional(),
   deleteMany: z.union([ z.lazy(() => PatentRecordScalarWhereInputSchema),z.lazy(() => PatentRecordScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const NullableIntFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableIntFieldUpdateOperationsInput> = z.object({
+  set: z.number().optional().nullable(),
+  increment: z.number().optional(),
+  decrement: z.number().optional(),
+  multiply: z.number().optional(),
+  divide: z.number().optional()
 }).strict();
 
 export const PatentInventorUncheckedUpdateManyWithoutPatentNestedInputSchema: z.ZodType<Prisma.PatentInventorUncheckedUpdateManyWithoutPatentNestedInput> = z.object({
@@ -6633,20 +6940,9 @@ export const NestedFloatWithAggregatesFilterSchema: z.ZodType<Prisma.NestedFloat
   _max: z.lazy(() => NestedFloatFilterSchema).optional()
 }).strict();
 
-export const NestedIntNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedIntNullableWithAggregatesFilter> = z.object({
-  equals: z.number().optional().nullable(),
-  in: z.number().array().optional().nullable(),
-  notIn: z.number().array().optional().nullable(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntNullableWithAggregatesFilterSchema) ]).optional().nullable(),
-  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
-  _avg: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
-  _sum: z.lazy(() => NestedIntNullableFilterSchema).optional(),
-  _min: z.lazy(() => NestedIntNullableFilterSchema).optional(),
-  _max: z.lazy(() => NestedIntNullableFilterSchema).optional()
+export const NestedBoolFilterSchema: z.ZodType<Prisma.NestedBoolFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
 }).strict();
 
 export const NestedFloatNullableFilterSchema: z.ZodType<Prisma.NestedFloatNullableFilter> = z.object({
@@ -6658,11 +6954,6 @@ export const NestedFloatNullableFilterSchema: z.ZodType<Prisma.NestedFloatNullab
   gt: z.number().optional(),
   gte: z.number().optional(),
   not: z.union([ z.number(),z.lazy(() => NestedFloatNullableFilterSchema) ]).optional().nullable(),
-}).strict();
-
-export const NestedBoolFilterSchema: z.ZodType<Prisma.NestedBoolFilter> = z.object({
-  equals: z.boolean().optional(),
-  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
 }).strict();
 
 export const NestedBoolWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBoolWithAggregatesFilter> = z.object({
@@ -6719,6 +7010,22 @@ export const NestedEnumEnumPatentTypeNullableFilterSchema: z.ZodType<Prisma.Nest
   in: z.lazy(() => EnumPatentTypeSchema).array().optional().nullable(),
   notIn: z.lazy(() => EnumPatentTypeSchema).array().optional().nullable(),
   not: z.union([ z.lazy(() => EnumPatentTypeSchema),z.lazy(() => NestedEnumEnumPatentTypeNullableFilterSchema) ]).optional().nullable(),
+}).strict();
+
+export const NestedIntNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedIntNullableWithAggregatesFilter> = z.object({
+  equals: z.number().optional().nullable(),
+  in: z.number().array().optional().nullable(),
+  notIn: z.number().array().optional().nullable(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntNullableWithAggregatesFilterSchema) ]).optional().nullable(),
+  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
+  _sum: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _min: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _max: z.lazy(() => NestedIntNullableFilterSchema).optional()
 }).strict();
 
 export const NestedEnumEnumPatentTypeNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumEnumPatentTypeNullableWithAggregatesFilter> = z.object({
@@ -7182,12 +7489,14 @@ export const ContactInfoUncheckedUpdateWithoutAgencyUnitPersonInputSchema: z.Zod
 
 export const PatentFundingCreateWithoutPlanInputSchema: z.ZodType<Prisma.PatentFundingCreateWithoutPlanInput> = z.object({
   patent: z.lazy(() => PatentCreateNestedOneWithoutFundingInputSchema),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataCreateNestedManyWithoutPatentFundingInputSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordCreateNestedManyWithoutPatentFundingInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitCreateNestedManyWithoutPatentFundingInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedCreateWithoutPlanInputSchema: z.ZodType<Prisma.PatentFundingUncheckedCreateWithoutPlanInput> = z.object({
   PatentID: z.number().int(),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional()
 }).strict();
 
 export const PatentFundingCreateOrConnectWithoutPlanInputSchema: z.ZodType<Prisma.PatentFundingCreateOrConnectWithoutPlanInput> = z.object({
@@ -7223,124 +7532,89 @@ export const PatentFundingScalarWhereInputSchema: z.ZodType<Prisma.PatentFunding
   fundingPlanPlanID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
 }).strict();
 
-export const FundingUnitDataCreateWithoutFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitDataCreateWithoutFundingUnitInput> = z.object({
+export const PatentFundingUnitCreateWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingUnitCreateWithoutFundingUnitInput> = z.object({
+  ProjectCode: z.string(),
+  patentFunding: z.lazy(() => PatentFundingCreateNestedOneWithoutPatentFundingUnitsInputSchema)
+}).strict();
+
+export const PatentFundingUnitUncheckedCreateWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingUnitUncheckedCreateWithoutFundingUnitInput> = z.object({
   PatentID: z.number().int(),
-  ProjectCode: z.string().optional().nullable(),
+  ProjectCode: z.string()
+}).strict();
+
+export const PatentFundingUnitCreateOrConnectWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingUnitCreateOrConnectWithoutFundingUnitInput> = z.object({
+  where: z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => PatentFundingUnitCreateWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutFundingUnitInputSchema) ]),
+}).strict();
+
+export const PatentFundingUnitCreateManyFundingUnitInputEnvelopeSchema: z.ZodType<Prisma.PatentFundingUnitCreateManyFundingUnitInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => PatentFundingUnitCreateManyFundingUnitInputSchema),z.lazy(() => PatentFundingUnitCreateManyFundingUnitInputSchema).array() ]),
+}).strict();
+
+export const FundingRecordCreateWithoutCanFundingByInputSchema: z.ZodType<Prisma.FundingRecordCreateWithoutCanFundingByInput> = z.object({
   Amount: z.number(),
-  PatentFunding: z.lazy(() => PatentFundingCreateNestedOneWithoutFundingUnitsDatasInputSchema).optional()
+  patentFunding: z.lazy(() => PatentFundingCreateNestedOneWithoutFundingRecordsInputSchema)
 }).strict();
 
-export const FundingUnitDataUncheckedCreateWithoutFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitDataUncheckedCreateWithoutFundingUnitInput> = z.object({
-  PatentID: z.number().int(),
-  ProjectCode: z.string().optional().nullable(),
-  Amount: z.number(),
-  patentFundingPatentID: z.number().int().optional().nullable()
+export const FundingRecordUncheckedCreateWithoutCanFundingByInputSchema: z.ZodType<Prisma.FundingRecordUncheckedCreateWithoutCanFundingByInput> = z.object({
+  FundingRecordID: z.number().int().optional(),
+  PatentFundingPatentID: z.number().int(),
+  Amount: z.number()
 }).strict();
 
-export const FundingUnitDataCreateOrConnectWithoutFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitDataCreateOrConnectWithoutFundingUnitInput> = z.object({
-  where: z.lazy(() => FundingUnitDataWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => FundingUnitDataCreateWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUncheckedCreateWithoutFundingUnitInputSchema) ]),
+export const FundingRecordCreateOrConnectWithoutCanFundingByInputSchema: z.ZodType<Prisma.FundingRecordCreateOrConnectWithoutCanFundingByInput> = z.object({
+  where: z.lazy(() => FundingRecordWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => FundingRecordCreateWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUncheckedCreateWithoutCanFundingByInputSchema) ]),
 }).strict();
 
-export const FundingUnitDataCreateManyFundingUnitInputEnvelopeSchema: z.ZodType<Prisma.FundingUnitDataCreateManyFundingUnitInputEnvelope> = z.object({
-  data: z.union([ z.lazy(() => FundingUnitDataCreateManyFundingUnitInputSchema),z.lazy(() => FundingUnitDataCreateManyFundingUnitInputSchema).array() ]),
+export const PatentFundingUnitUpsertWithWhereUniqueWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingUnitUpsertWithWhereUniqueWithoutFundingUnitInput> = z.object({
+  where: z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => PatentFundingUnitUpdateWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUncheckedUpdateWithoutFundingUnitInputSchema) ]),
+  create: z.union([ z.lazy(() => PatentFundingUnitCreateWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutFundingUnitInputSchema) ]),
 }).strict();
 
-export const FundingUnitDataUpsertWithWhereUniqueWithoutFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitDataUpsertWithWhereUniqueWithoutFundingUnitInput> = z.object({
-  where: z.lazy(() => FundingUnitDataWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => FundingUnitDataUpdateWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUncheckedUpdateWithoutFundingUnitInputSchema) ]),
-  create: z.union([ z.lazy(() => FundingUnitDataCreateWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUncheckedCreateWithoutFundingUnitInputSchema) ]),
+export const PatentFundingUnitUpdateWithWhereUniqueWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingUnitUpdateWithWhereUniqueWithoutFundingUnitInput> = z.object({
+  where: z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => PatentFundingUnitUpdateWithoutFundingUnitInputSchema),z.lazy(() => PatentFundingUnitUncheckedUpdateWithoutFundingUnitInputSchema) ]),
 }).strict();
 
-export const FundingUnitDataUpdateWithWhereUniqueWithoutFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitDataUpdateWithWhereUniqueWithoutFundingUnitInput> = z.object({
-  where: z.lazy(() => FundingUnitDataWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => FundingUnitDataUpdateWithoutFundingUnitInputSchema),z.lazy(() => FundingUnitDataUncheckedUpdateWithoutFundingUnitInputSchema) ]),
+export const PatentFundingUnitUpdateManyWithWhereWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingUnitUpdateManyWithWhereWithoutFundingUnitInput> = z.object({
+  where: z.lazy(() => PatentFundingUnitScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => PatentFundingUnitUpdateManyMutationInputSchema),z.lazy(() => PatentFundingUnitUncheckedUpdateManyWithoutFundingUnitInputSchema) ]),
 }).strict();
 
-export const FundingUnitDataUpdateManyWithWhereWithoutFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitDataUpdateManyWithWhereWithoutFundingUnitInput> = z.object({
-  where: z.lazy(() => FundingUnitDataScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => FundingUnitDataUpdateManyMutationInputSchema),z.lazy(() => FundingUnitDataUncheckedUpdateManyWithoutFundingUnitInputSchema) ]),
-}).strict();
-
-export const FundingUnitDataScalarWhereInputSchema: z.ZodType<Prisma.FundingUnitDataScalarWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => FundingUnitDataScalarWhereInputSchema),z.lazy(() => FundingUnitDataScalarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => FundingUnitDataScalarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => FundingUnitDataScalarWhereInputSchema),z.lazy(() => FundingUnitDataScalarWhereInputSchema).array() ]).optional(),
-  FundingUnitID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+export const PatentFundingUnitScalarWhereInputSchema: z.ZodType<Prisma.PatentFundingUnitScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => PatentFundingUnitScalarWhereInputSchema),z.lazy(() => PatentFundingUnitScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PatentFundingUnitScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PatentFundingUnitScalarWhereInputSchema),z.lazy(() => PatentFundingUnitScalarWhereInputSchema).array() ]).optional(),
   PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  ProjectCode: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  FundingUnitID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  ProjectCode: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+}).strict();
+
+export const FundingRecordUpsertWithWhereUniqueWithoutCanFundingByInputSchema: z.ZodType<Prisma.FundingRecordUpsertWithWhereUniqueWithoutCanFundingByInput> = z.object({
+  where: z.lazy(() => FundingRecordWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => FundingRecordUpdateWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUncheckedUpdateWithoutCanFundingByInputSchema) ]),
+  create: z.union([ z.lazy(() => FundingRecordCreateWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUncheckedCreateWithoutCanFundingByInputSchema) ]),
+}).strict();
+
+export const FundingRecordUpdateWithWhereUniqueWithoutCanFundingByInputSchema: z.ZodType<Prisma.FundingRecordUpdateWithWhereUniqueWithoutCanFundingByInput> = z.object({
+  where: z.lazy(() => FundingRecordWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => FundingRecordUpdateWithoutCanFundingByInputSchema),z.lazy(() => FundingRecordUncheckedUpdateWithoutCanFundingByInputSchema) ]),
+}).strict();
+
+export const FundingRecordUpdateManyWithWhereWithoutCanFundingByInputSchema: z.ZodType<Prisma.FundingRecordUpdateManyWithWhereWithoutCanFundingByInput> = z.object({
+  where: z.lazy(() => FundingRecordScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => FundingRecordUpdateManyMutationInputSchema),z.lazy(() => FundingRecordUncheckedUpdateManyWithoutCanFundingByInputSchema) ]),
+}).strict();
+
+export const FundingRecordScalarWhereInputSchema: z.ZodType<Prisma.FundingRecordScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => FundingRecordScalarWhereInputSchema),z.lazy(() => FundingRecordScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => FundingRecordScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => FundingRecordScalarWhereInputSchema),z.lazy(() => FundingRecordScalarWhereInputSchema).array() ]).optional(),
+  FundingRecordID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  PatentFundingPatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   Amount: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
-  patentFundingPatentID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
-}).strict();
-
-export const FundingUnitCreateWithoutFundingUnitDataInputSchema: z.ZodType<Prisma.FundingUnitCreateWithoutFundingUnitDataInput> = z.object({
-  Name: z.string()
-}).strict();
-
-export const FundingUnitUncheckedCreateWithoutFundingUnitDataInputSchema: z.ZodType<Prisma.FundingUnitUncheckedCreateWithoutFundingUnitDataInput> = z.object({
-  UnitID: z.number().int().optional(),
-  Name: z.string()
-}).strict();
-
-export const FundingUnitCreateOrConnectWithoutFundingUnitDataInputSchema: z.ZodType<Prisma.FundingUnitCreateOrConnectWithoutFundingUnitDataInput> = z.object({
-  where: z.lazy(() => FundingUnitWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => FundingUnitCreateWithoutFundingUnitDataInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingUnitDataInputSchema) ]),
-}).strict();
-
-export const PatentFundingCreateWithoutFundingUnitsDatasInputSchema: z.ZodType<Prisma.PatentFundingCreateWithoutFundingUnitsDatasInput> = z.object({
-  patent: z.lazy(() => PatentCreateNestedOneWithoutFundingInputSchema),
-  plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema)
-}).strict();
-
-export const PatentFundingUncheckedCreateWithoutFundingUnitsDatasInputSchema: z.ZodType<Prisma.PatentFundingUncheckedCreateWithoutFundingUnitsDatasInput> = z.object({
-  PatentID: z.number().int(),
-  fundingPlanPlanID: z.number().int()
-}).strict();
-
-export const PatentFundingCreateOrConnectWithoutFundingUnitsDatasInputSchema: z.ZodType<Prisma.PatentFundingCreateOrConnectWithoutFundingUnitsDatasInput> = z.object({
-  where: z.lazy(() => PatentFundingWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => PatentFundingCreateWithoutFundingUnitsDatasInputSchema),z.lazy(() => PatentFundingUncheckedCreateWithoutFundingUnitsDatasInputSchema) ]),
-}).strict();
-
-export const FundingUnitUpsertWithoutFundingUnitDataInputSchema: z.ZodType<Prisma.FundingUnitUpsertWithoutFundingUnitDataInput> = z.object({
-  update: z.union([ z.lazy(() => FundingUnitUpdateWithoutFundingUnitDataInputSchema),z.lazy(() => FundingUnitUncheckedUpdateWithoutFundingUnitDataInputSchema) ]),
-  create: z.union([ z.lazy(() => FundingUnitCreateWithoutFundingUnitDataInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingUnitDataInputSchema) ]),
-  where: z.lazy(() => FundingUnitWhereInputSchema).optional()
-}).strict();
-
-export const FundingUnitUpdateToOneWithWhereWithoutFundingUnitDataInputSchema: z.ZodType<Prisma.FundingUnitUpdateToOneWithWhereWithoutFundingUnitDataInput> = z.object({
-  where: z.lazy(() => FundingUnitWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => FundingUnitUpdateWithoutFundingUnitDataInputSchema),z.lazy(() => FundingUnitUncheckedUpdateWithoutFundingUnitDataInputSchema) ]),
-}).strict();
-
-export const FundingUnitUpdateWithoutFundingUnitDataInputSchema: z.ZodType<Prisma.FundingUnitUpdateWithoutFundingUnitDataInput> = z.object({
-  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const FundingUnitUncheckedUpdateWithoutFundingUnitDataInputSchema: z.ZodType<Prisma.FundingUnitUncheckedUpdateWithoutFundingUnitDataInput> = z.object({
-  UnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const PatentFundingUpsertWithoutFundingUnitsDatasInputSchema: z.ZodType<Prisma.PatentFundingUpsertWithoutFundingUnitsDatasInput> = z.object({
-  update: z.union([ z.lazy(() => PatentFundingUpdateWithoutFundingUnitsDatasInputSchema),z.lazy(() => PatentFundingUncheckedUpdateWithoutFundingUnitsDatasInputSchema) ]),
-  create: z.union([ z.lazy(() => PatentFundingCreateWithoutFundingUnitsDatasInputSchema),z.lazy(() => PatentFundingUncheckedCreateWithoutFundingUnitsDatasInputSchema) ]),
-  where: z.lazy(() => PatentFundingWhereInputSchema).optional()
-}).strict();
-
-export const PatentFundingUpdateToOneWithWhereWithoutFundingUnitsDatasInputSchema: z.ZodType<Prisma.PatentFundingUpdateToOneWithWhereWithoutFundingUnitsDatasInput> = z.object({
-  where: z.lazy(() => PatentFundingWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => PatentFundingUpdateWithoutFundingUnitsDatasInputSchema),z.lazy(() => PatentFundingUncheckedUpdateWithoutFundingUnitsDatasInputSchema) ]),
-}).strict();
-
-export const PatentFundingUpdateWithoutFundingUnitsDatasInputSchema: z.ZodType<Prisma.PatentFundingUpdateWithoutFundingUnitsDatasInput> = z.object({
-  patent: z.lazy(() => PatentUpdateOneRequiredWithoutFundingNestedInputSchema).optional(),
-  plan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutFundingsNestedInputSchema).optional()
-}).strict();
-
-export const PatentFundingUncheckedUpdateWithoutFundingUnitsDatasInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateWithoutFundingUnitsDatasInput> = z.object({
-  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  fundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentCreateWithoutFundingInputSchema: z.ZodType<Prisma.PatentCreateWithoutFundingInput> = z.object({
@@ -7405,27 +7679,43 @@ export const FundingPlanCreateOrConnectWithoutFundingsInputSchema: z.ZodType<Pri
   create: z.union([ z.lazy(() => FundingPlanCreateWithoutFundingsInputSchema),z.lazy(() => FundingPlanUncheckedCreateWithoutFundingsInputSchema) ]),
 }).strict();
 
-export const FundingUnitDataCreateWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingUnitDataCreateWithoutPatentFundingInput> = z.object({
-  PatentID: z.number().int(),
-  ProjectCode: z.string().optional().nullable(),
+export const FundingRecordCreateWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingRecordCreateWithoutPatentFundingInput> = z.object({
   Amount: z.number(),
-  fundingUnit: z.lazy(() => FundingUnitCreateNestedOneWithoutFundingUnitDataInputSchema)
+  canFundingBy: z.lazy(() => FundingUnitCreateNestedManyWithoutFundingRecordInputSchema).optional()
 }).strict();
 
-export const FundingUnitDataUncheckedCreateWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingUnitDataUncheckedCreateWithoutPatentFundingInput> = z.object({
+export const FundingRecordUncheckedCreateWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingRecordUncheckedCreateWithoutPatentFundingInput> = z.object({
+  FundingRecordID: z.number().int().optional(),
+  Amount: z.number(),
+  canFundingBy: z.lazy(() => FundingUnitUncheckedCreateNestedManyWithoutFundingRecordInputSchema).optional()
+}).strict();
+
+export const FundingRecordCreateOrConnectWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingRecordCreateOrConnectWithoutPatentFundingInput> = z.object({
+  where: z.lazy(() => FundingRecordWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => FundingRecordCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUncheckedCreateWithoutPatentFundingInputSchema) ]),
+}).strict();
+
+export const FundingRecordCreateManyPatentFundingInputEnvelopeSchema: z.ZodType<Prisma.FundingRecordCreateManyPatentFundingInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => FundingRecordCreateManyPatentFundingInputSchema),z.lazy(() => FundingRecordCreateManyPatentFundingInputSchema).array() ]),
+}).strict();
+
+export const PatentFundingUnitCreateWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingUnitCreateWithoutPatentFundingInput> = z.object({
+  ProjectCode: z.string(),
+  fundingUnit: z.lazy(() => FundingUnitCreateNestedOneWithoutPatentFundingUnitInputSchema)
+}).strict();
+
+export const PatentFundingUnitUncheckedCreateWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingUnitUncheckedCreateWithoutPatentFundingInput> = z.object({
   FundingUnitID: z.number().int(),
-  PatentID: z.number().int(),
-  ProjectCode: z.string().optional().nullable(),
-  Amount: z.number()
+  ProjectCode: z.string()
 }).strict();
 
-export const FundingUnitDataCreateOrConnectWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingUnitDataCreateOrConnectWithoutPatentFundingInput> = z.object({
-  where: z.lazy(() => FundingUnitDataWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => FundingUnitDataCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUncheckedCreateWithoutPatentFundingInputSchema) ]),
+export const PatentFundingUnitCreateOrConnectWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingUnitCreateOrConnectWithoutPatentFundingInput> = z.object({
+  where: z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => PatentFundingUnitCreateWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutPatentFundingInputSchema) ]),
 }).strict();
 
-export const FundingUnitDataCreateManyPatentFundingInputEnvelopeSchema: z.ZodType<Prisma.FundingUnitDataCreateManyPatentFundingInputEnvelope> = z.object({
-  data: z.union([ z.lazy(() => FundingUnitDataCreateManyPatentFundingInputSchema),z.lazy(() => FundingUnitDataCreateManyPatentFundingInputSchema).array() ]),
+export const PatentFundingUnitCreateManyPatentFundingInputEnvelopeSchema: z.ZodType<Prisma.PatentFundingUnitCreateManyPatentFundingInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => PatentFundingUnitCreateManyPatentFundingInputSchema),z.lazy(() => PatentFundingUnitCreateManyPatentFundingInputSchema).array() ]),
 }).strict();
 
 export const PatentUpsertWithoutFundingInputSchema: z.ZodType<Prisma.PatentUpsertWithoutFundingInput> = z.object({
@@ -7502,20 +7792,194 @@ export const FundingPlanUncheckedUpdateWithoutFundingsInputSchema: z.ZodType<Pri
   Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const FundingUnitDataUpsertWithWhereUniqueWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingUnitDataUpsertWithWhereUniqueWithoutPatentFundingInput> = z.object({
-  where: z.lazy(() => FundingUnitDataWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => FundingUnitDataUpdateWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUncheckedUpdateWithoutPatentFundingInputSchema) ]),
-  create: z.union([ z.lazy(() => FundingUnitDataCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUncheckedCreateWithoutPatentFundingInputSchema) ]),
+export const FundingRecordUpsertWithWhereUniqueWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingRecordUpsertWithWhereUniqueWithoutPatentFundingInput> = z.object({
+  where: z.lazy(() => FundingRecordWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => FundingRecordUpdateWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUncheckedUpdateWithoutPatentFundingInputSchema) ]),
+  create: z.union([ z.lazy(() => FundingRecordCreateWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUncheckedCreateWithoutPatentFundingInputSchema) ]),
 }).strict();
 
-export const FundingUnitDataUpdateWithWhereUniqueWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingUnitDataUpdateWithWhereUniqueWithoutPatentFundingInput> = z.object({
-  where: z.lazy(() => FundingUnitDataWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => FundingUnitDataUpdateWithoutPatentFundingInputSchema),z.lazy(() => FundingUnitDataUncheckedUpdateWithoutPatentFundingInputSchema) ]),
+export const FundingRecordUpdateWithWhereUniqueWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingRecordUpdateWithWhereUniqueWithoutPatentFundingInput> = z.object({
+  where: z.lazy(() => FundingRecordWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => FundingRecordUpdateWithoutPatentFundingInputSchema),z.lazy(() => FundingRecordUncheckedUpdateWithoutPatentFundingInputSchema) ]),
 }).strict();
 
-export const FundingUnitDataUpdateManyWithWhereWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingUnitDataUpdateManyWithWhereWithoutPatentFundingInput> = z.object({
-  where: z.lazy(() => FundingUnitDataScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => FundingUnitDataUpdateManyMutationInputSchema),z.lazy(() => FundingUnitDataUncheckedUpdateManyWithoutPatentFundingInputSchema) ]),
+export const FundingRecordUpdateManyWithWhereWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingRecordUpdateManyWithWhereWithoutPatentFundingInput> = z.object({
+  where: z.lazy(() => FundingRecordScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => FundingRecordUpdateManyMutationInputSchema),z.lazy(() => FundingRecordUncheckedUpdateManyWithoutPatentFundingInputSchema) ]),
+}).strict();
+
+export const PatentFundingUnitUpsertWithWhereUniqueWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingUnitUpsertWithWhereUniqueWithoutPatentFundingInput> = z.object({
+  where: z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => PatentFundingUnitUpdateWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUncheckedUpdateWithoutPatentFundingInputSchema) ]),
+  create: z.union([ z.lazy(() => PatentFundingUnitCreateWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUncheckedCreateWithoutPatentFundingInputSchema) ]),
+}).strict();
+
+export const PatentFundingUnitUpdateWithWhereUniqueWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingUnitUpdateWithWhereUniqueWithoutPatentFundingInput> = z.object({
+  where: z.lazy(() => PatentFundingUnitWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => PatentFundingUnitUpdateWithoutPatentFundingInputSchema),z.lazy(() => PatentFundingUnitUncheckedUpdateWithoutPatentFundingInputSchema) ]),
+}).strict();
+
+export const PatentFundingUnitUpdateManyWithWhereWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingUnitUpdateManyWithWhereWithoutPatentFundingInput> = z.object({
+  where: z.lazy(() => PatentFundingUnitScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => PatentFundingUnitUpdateManyMutationInputSchema),z.lazy(() => PatentFundingUnitUncheckedUpdateManyWithoutPatentFundingInputSchema) ]),
+}).strict();
+
+export const PatentFundingCreateWithoutFundingRecordsInputSchema: z.ZodType<Prisma.PatentFundingCreateWithoutFundingRecordsInput> = z.object({
+  patent: z.lazy(() => PatentCreateNestedOneWithoutFundingInputSchema),
+  plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitCreateNestedManyWithoutPatentFundingInputSchema).optional()
+}).strict();
+
+export const PatentFundingUncheckedCreateWithoutFundingRecordsInputSchema: z.ZodType<Prisma.PatentFundingUncheckedCreateWithoutFundingRecordsInput> = z.object({
+  PatentID: z.number().int(),
+  fundingPlanPlanID: z.number().int(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional()
+}).strict();
+
+export const PatentFundingCreateOrConnectWithoutFundingRecordsInputSchema: z.ZodType<Prisma.PatentFundingCreateOrConnectWithoutFundingRecordsInput> = z.object({
+  where: z.lazy(() => PatentFundingWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => PatentFundingCreateWithoutFundingRecordsInputSchema),z.lazy(() => PatentFundingUncheckedCreateWithoutFundingRecordsInputSchema) ]),
+}).strict();
+
+export const FundingUnitCreateWithoutFundingRecordInputSchema: z.ZodType<Prisma.FundingUnitCreateWithoutFundingRecordInput> = z.object({
+  Name: z.string(),
+  PatentFundingUnit: z.lazy(() => PatentFundingUnitCreateNestedManyWithoutFundingUnitInputSchema).optional()
+}).strict();
+
+export const FundingUnitUncheckedCreateWithoutFundingRecordInputSchema: z.ZodType<Prisma.FundingUnitUncheckedCreateWithoutFundingRecordInput> = z.object({
+  FundingUnitID: z.number().int().optional(),
+  Name: z.string(),
+  PatentFundingUnit: z.lazy(() => PatentFundingUnitUncheckedCreateNestedManyWithoutFundingUnitInputSchema).optional()
+}).strict();
+
+export const FundingUnitCreateOrConnectWithoutFundingRecordInputSchema: z.ZodType<Prisma.FundingUnitCreateOrConnectWithoutFundingRecordInput> = z.object({
+  where: z.lazy(() => FundingUnitWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => FundingUnitCreateWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingRecordInputSchema) ]),
+}).strict();
+
+export const PatentFundingUpsertWithoutFundingRecordsInputSchema: z.ZodType<Prisma.PatentFundingUpsertWithoutFundingRecordsInput> = z.object({
+  update: z.union([ z.lazy(() => PatentFundingUpdateWithoutFundingRecordsInputSchema),z.lazy(() => PatentFundingUncheckedUpdateWithoutFundingRecordsInputSchema) ]),
+  create: z.union([ z.lazy(() => PatentFundingCreateWithoutFundingRecordsInputSchema),z.lazy(() => PatentFundingUncheckedCreateWithoutFundingRecordsInputSchema) ]),
+  where: z.lazy(() => PatentFundingWhereInputSchema).optional()
+}).strict();
+
+export const PatentFundingUpdateToOneWithWhereWithoutFundingRecordsInputSchema: z.ZodType<Prisma.PatentFundingUpdateToOneWithWhereWithoutFundingRecordsInput> = z.object({
+  where: z.lazy(() => PatentFundingWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => PatentFundingUpdateWithoutFundingRecordsInputSchema),z.lazy(() => PatentFundingUncheckedUpdateWithoutFundingRecordsInputSchema) ]),
+}).strict();
+
+export const PatentFundingUpdateWithoutFundingRecordsInputSchema: z.ZodType<Prisma.PatentFundingUpdateWithoutFundingRecordsInput> = z.object({
+  patent: z.lazy(() => PatentUpdateOneRequiredWithoutFundingNestedInputSchema).optional(),
+  plan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutFundingsNestedInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitUpdateManyWithoutPatentFundingNestedInputSchema).optional()
+}).strict();
+
+export const PatentFundingUncheckedUpdateWithoutFundingRecordsInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateWithoutFundingRecordsInput> = z.object({
+  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  fundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional()
+}).strict();
+
+export const FundingUnitUpsertWithWhereUniqueWithoutFundingRecordInputSchema: z.ZodType<Prisma.FundingUnitUpsertWithWhereUniqueWithoutFundingRecordInput> = z.object({
+  where: z.lazy(() => FundingUnitWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => FundingUnitUpdateWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUncheckedUpdateWithoutFundingRecordInputSchema) ]),
+  create: z.union([ z.lazy(() => FundingUnitCreateWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutFundingRecordInputSchema) ]),
+}).strict();
+
+export const FundingUnitUpdateWithWhereUniqueWithoutFundingRecordInputSchema: z.ZodType<Prisma.FundingUnitUpdateWithWhereUniqueWithoutFundingRecordInput> = z.object({
+  where: z.lazy(() => FundingUnitWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => FundingUnitUpdateWithoutFundingRecordInputSchema),z.lazy(() => FundingUnitUncheckedUpdateWithoutFundingRecordInputSchema) ]),
+}).strict();
+
+export const FundingUnitUpdateManyWithWhereWithoutFundingRecordInputSchema: z.ZodType<Prisma.FundingUnitUpdateManyWithWhereWithoutFundingRecordInput> = z.object({
+  where: z.lazy(() => FundingUnitScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => FundingUnitUpdateManyMutationInputSchema),z.lazy(() => FundingUnitUncheckedUpdateManyWithoutFundingRecordInputSchema) ]),
+}).strict();
+
+export const FundingUnitScalarWhereInputSchema: z.ZodType<Prisma.FundingUnitScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => FundingUnitScalarWhereInputSchema),z.lazy(() => FundingUnitScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => FundingUnitScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => FundingUnitScalarWhereInputSchema),z.lazy(() => FundingUnitScalarWhereInputSchema).array() ]).optional(),
+  FundingUnitID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  Name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+}).strict();
+
+export const FundingUnitCreateWithoutPatentFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitCreateWithoutPatentFundingUnitInput> = z.object({
+  Name: z.string(),
+  FundingRecord: z.lazy(() => FundingRecordCreateNestedManyWithoutCanFundingByInputSchema).optional()
+}).strict();
+
+export const FundingUnitUncheckedCreateWithoutPatentFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitUncheckedCreateWithoutPatentFundingUnitInput> = z.object({
+  FundingUnitID: z.number().int().optional(),
+  Name: z.string(),
+  FundingRecord: z.lazy(() => FundingRecordUncheckedCreateNestedManyWithoutCanFundingByInputSchema).optional()
+}).strict();
+
+export const FundingUnitCreateOrConnectWithoutPatentFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitCreateOrConnectWithoutPatentFundingUnitInput> = z.object({
+  where: z.lazy(() => FundingUnitWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => FundingUnitCreateWithoutPatentFundingUnitInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutPatentFundingUnitInputSchema) ]),
+}).strict();
+
+export const PatentFundingCreateWithoutPatentFundingUnitsInputSchema: z.ZodType<Prisma.PatentFundingCreateWithoutPatentFundingUnitsInput> = z.object({
+  patent: z.lazy(() => PatentCreateNestedOneWithoutFundingInputSchema),
+  plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema),
+  fundingRecords: z.lazy(() => FundingRecordCreateNestedManyWithoutPatentFundingInputSchema).optional()
+}).strict();
+
+export const PatentFundingUncheckedCreateWithoutPatentFundingUnitsInputSchema: z.ZodType<Prisma.PatentFundingUncheckedCreateWithoutPatentFundingUnitsInput> = z.object({
+  PatentID: z.number().int(),
+  fundingPlanPlanID: z.number().int(),
+  fundingRecords: z.lazy(() => FundingRecordUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional()
+}).strict();
+
+export const PatentFundingCreateOrConnectWithoutPatentFundingUnitsInputSchema: z.ZodType<Prisma.PatentFundingCreateOrConnectWithoutPatentFundingUnitsInput> = z.object({
+  where: z.lazy(() => PatentFundingWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => PatentFundingCreateWithoutPatentFundingUnitsInputSchema),z.lazy(() => PatentFundingUncheckedCreateWithoutPatentFundingUnitsInputSchema) ]),
+}).strict();
+
+export const FundingUnitUpsertWithoutPatentFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitUpsertWithoutPatentFundingUnitInput> = z.object({
+  update: z.union([ z.lazy(() => FundingUnitUpdateWithoutPatentFundingUnitInputSchema),z.lazy(() => FundingUnitUncheckedUpdateWithoutPatentFundingUnitInputSchema) ]),
+  create: z.union([ z.lazy(() => FundingUnitCreateWithoutPatentFundingUnitInputSchema),z.lazy(() => FundingUnitUncheckedCreateWithoutPatentFundingUnitInputSchema) ]),
+  where: z.lazy(() => FundingUnitWhereInputSchema).optional()
+}).strict();
+
+export const FundingUnitUpdateToOneWithWhereWithoutPatentFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitUpdateToOneWithWhereWithoutPatentFundingUnitInput> = z.object({
+  where: z.lazy(() => FundingUnitWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => FundingUnitUpdateWithoutPatentFundingUnitInputSchema),z.lazy(() => FundingUnitUncheckedUpdateWithoutPatentFundingUnitInputSchema) ]),
+}).strict();
+
+export const FundingUnitUpdateWithoutPatentFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitUpdateWithoutPatentFundingUnitInput> = z.object({
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  FundingRecord: z.lazy(() => FundingRecordUpdateManyWithoutCanFundingByNestedInputSchema).optional()
+}).strict();
+
+export const FundingUnitUncheckedUpdateWithoutPatentFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitUncheckedUpdateWithoutPatentFundingUnitInput> = z.object({
+  FundingUnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  FundingRecord: z.lazy(() => FundingRecordUncheckedUpdateManyWithoutCanFundingByNestedInputSchema).optional()
+}).strict();
+
+export const PatentFundingUpsertWithoutPatentFundingUnitsInputSchema: z.ZodType<Prisma.PatentFundingUpsertWithoutPatentFundingUnitsInput> = z.object({
+  update: z.union([ z.lazy(() => PatentFundingUpdateWithoutPatentFundingUnitsInputSchema),z.lazy(() => PatentFundingUncheckedUpdateWithoutPatentFundingUnitsInputSchema) ]),
+  create: z.union([ z.lazy(() => PatentFundingCreateWithoutPatentFundingUnitsInputSchema),z.lazy(() => PatentFundingUncheckedCreateWithoutPatentFundingUnitsInputSchema) ]),
+  where: z.lazy(() => PatentFundingWhereInputSchema).optional()
+}).strict();
+
+export const PatentFundingUpdateToOneWithWhereWithoutPatentFundingUnitsInputSchema: z.ZodType<Prisma.PatentFundingUpdateToOneWithWhereWithoutPatentFundingUnitsInput> = z.object({
+  where: z.lazy(() => PatentFundingWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => PatentFundingUpdateWithoutPatentFundingUnitsInputSchema),z.lazy(() => PatentFundingUncheckedUpdateWithoutPatentFundingUnitsInputSchema) ]),
+}).strict();
+
+export const PatentFundingUpdateWithoutPatentFundingUnitsInputSchema: z.ZodType<Prisma.PatentFundingUpdateWithoutPatentFundingUnitsInput> = z.object({
+  patent: z.lazy(() => PatentUpdateOneRequiredWithoutFundingNestedInputSchema).optional(),
+  plan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutFundingsNestedInputSchema).optional(),
+  fundingRecords: z.lazy(() => FundingRecordUpdateManyWithoutPatentFundingNestedInputSchema).optional()
+}).strict();
+
+export const PatentFundingUncheckedUpdateWithoutPatentFundingUnitsInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateWithoutPatentFundingUnitsInput> = z.object({
+  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  fundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  fundingRecords: z.lazy(() => FundingRecordUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
 
 export const DepartmentCreateWithoutInventorsInputSchema: z.ZodType<Prisma.DepartmentCreateWithoutInventorsInput> = z.object({
@@ -7883,12 +8347,14 @@ export const PatentApplicationDataCreateOrConnectWithoutPatentInputSchema: z.Zod
 
 export const PatentFundingCreateWithoutPatentInputSchema: z.ZodType<Prisma.PatentFundingCreateWithoutPatentInput> = z.object({
   plan: z.lazy(() => FundingPlanCreateNestedOneWithoutFundingsInputSchema),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataCreateNestedManyWithoutPatentFundingInputSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordCreateNestedManyWithoutPatentFundingInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitCreateNestedManyWithoutPatentFundingInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedCreateWithoutPatentInputSchema: z.ZodType<Prisma.PatentFundingUncheckedCreateWithoutPatentInput> = z.object({
   fundingPlanPlanID: z.number().int(),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitUncheckedCreateNestedManyWithoutPatentFundingInputSchema).optional()
 }).strict();
 
 export const PatentFundingCreateOrConnectWithoutPatentInputSchema: z.ZodType<Prisma.PatentFundingCreateOrConnectWithoutPatentInput> = z.object({
@@ -8119,12 +8585,14 @@ export const PatentFundingUpdateToOneWithWhereWithoutPatentInputSchema: z.ZodTyp
 
 export const PatentFundingUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentFundingUpdateWithoutPatentInput> = z.object({
   plan: z.lazy(() => FundingPlanUpdateOneRequiredWithoutFundingsNestedInputSchema).optional(),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataUpdateManyWithoutPatentFundingNestedInputSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateWithoutPatentInput> = z.object({
   fundingPlanPlanID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
 
 export const PatentManualStatusUpsertWithWhereUniqueWithoutPatentInputSchema: z.ZodType<Prisma.PatentManualStatusUpsertWithWhereUniqueWithoutPatentInput> = z.object({
@@ -9534,72 +10002,112 @@ export const PatentFundingCreateManyPlanInputSchema: z.ZodType<Prisma.PatentFund
 
 export const PatentFundingUpdateWithoutPlanInputSchema: z.ZodType<Prisma.PatentFundingUpdateWithoutPlanInput> = z.object({
   patent: z.lazy(() => PatentUpdateOneRequiredWithoutFundingNestedInputSchema).optional(),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataUpdateManyWithoutPatentFundingNestedInputSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedUpdateWithoutPlanInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateWithoutPlanInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  fundingUnitsDatas: z.lazy(() => FundingUnitDataUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional()
+  fundingRecords: z.lazy(() => FundingRecordUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional(),
+  patentFundingUnits: z.lazy(() => PatentFundingUnitUncheckedUpdateManyWithoutPatentFundingNestedInputSchema).optional()
 }).strict();
 
 export const PatentFundingUncheckedUpdateManyWithoutPlanInputSchema: z.ZodType<Prisma.PatentFundingUncheckedUpdateManyWithoutPlanInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const FundingUnitDataCreateManyFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitDataCreateManyFundingUnitInput> = z.object({
+export const PatentFundingUnitCreateManyFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingUnitCreateManyFundingUnitInput> = z.object({
   PatentID: z.number().int(),
-  ProjectCode: z.string().optional().nullable(),
-  Amount: z.number(),
-  patentFundingPatentID: z.number().int().optional().nullable()
+  ProjectCode: z.string()
 }).strict();
 
-export const FundingUnitDataUpdateWithoutFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitDataUpdateWithoutFundingUnitInput> = z.object({
+export const PatentFundingUnitUpdateWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingUnitUpdateWithoutFundingUnitInput> = z.object({
+  ProjectCode: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  patentFunding: z.lazy(() => PatentFundingUpdateOneRequiredWithoutPatentFundingUnitsNestedInputSchema).optional()
+}).strict();
+
+export const PatentFundingUnitUncheckedUpdateWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingUnitUncheckedUpdateWithoutFundingUnitInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  ProjectCode: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-  PatentFunding: z.lazy(() => PatentFundingUpdateOneWithoutFundingUnitsDatasNestedInputSchema).optional()
+  ProjectCode: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const FundingUnitDataUncheckedUpdateWithoutFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitDataUncheckedUpdateWithoutFundingUnitInput> = z.object({
+export const PatentFundingUnitUncheckedUpdateManyWithoutFundingUnitInputSchema: z.ZodType<Prisma.PatentFundingUnitUncheckedUpdateManyWithoutFundingUnitInput> = z.object({
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  ProjectCode: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-  patentFundingPatentID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  ProjectCode: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const FundingUnitDataUncheckedUpdateManyWithoutFundingUnitInputSchema: z.ZodType<Prisma.FundingUnitDataUncheckedUpdateManyWithoutFundingUnitInput> = z.object({
-  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  ProjectCode: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+export const FundingRecordUpdateWithoutCanFundingByInputSchema: z.ZodType<Prisma.FundingRecordUpdateWithoutCanFundingByInput> = z.object({
   Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-  patentFundingPatentID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  patentFunding: z.lazy(() => PatentFundingUpdateOneRequiredWithoutFundingRecordsNestedInputSchema).optional()
 }).strict();
 
-export const FundingUnitDataCreateManyPatentFundingInputSchema: z.ZodType<Prisma.FundingUnitDataCreateManyPatentFundingInput> = z.object({
-  FundingUnitID: z.number().int(),
-  PatentID: z.number().int(),
-  ProjectCode: z.string().optional().nullable(),
+export const FundingRecordUncheckedUpdateWithoutCanFundingByInputSchema: z.ZodType<Prisma.FundingRecordUncheckedUpdateWithoutCanFundingByInput> = z.object({
+  FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  PatentFundingPatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const FundingRecordUncheckedUpdateManyWithoutCanFundingByInputSchema: z.ZodType<Prisma.FundingRecordUncheckedUpdateManyWithoutCanFundingByInput> = z.object({
+  FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  PatentFundingPatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const FundingRecordCreateManyPatentFundingInputSchema: z.ZodType<Prisma.FundingRecordCreateManyPatentFundingInput> = z.object({
+  FundingRecordID: z.number().int().optional(),
   Amount: z.number()
 }).strict();
 
-export const FundingUnitDataUpdateWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingUnitDataUpdateWithoutPatentFundingInput> = z.object({
-  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  ProjectCode: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-  fundingUnit: z.lazy(() => FundingUnitUpdateOneRequiredWithoutFundingUnitDataNestedInputSchema).optional()
+export const PatentFundingUnitCreateManyPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingUnitCreateManyPatentFundingInput> = z.object({
+  FundingUnitID: z.number().int(),
+  ProjectCode: z.string()
 }).strict();
 
-export const FundingUnitDataUncheckedUpdateWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingUnitDataUncheckedUpdateWithoutPatentFundingInput> = z.object({
-  FundingUnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  ProjectCode: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+export const FundingRecordUpdateWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingRecordUpdateWithoutPatentFundingInput> = z.object({
+  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  canFundingBy: z.lazy(() => FundingUnitUpdateManyWithoutFundingRecordNestedInputSchema).optional()
+}).strict();
+
+export const FundingRecordUncheckedUpdateWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingRecordUncheckedUpdateWithoutPatentFundingInput> = z.object({
+  FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  canFundingBy: z.lazy(() => FundingUnitUncheckedUpdateManyWithoutFundingRecordNestedInputSchema).optional()
+}).strict();
+
+export const FundingRecordUncheckedUpdateManyWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingRecordUncheckedUpdateManyWithoutPatentFundingInput> = z.object({
+  FundingRecordID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const FundingUnitDataUncheckedUpdateManyWithoutPatentFundingInputSchema: z.ZodType<Prisma.FundingUnitDataUncheckedUpdateManyWithoutPatentFundingInput> = z.object({
+export const PatentFundingUnitUpdateWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingUnitUpdateWithoutPatentFundingInput> = z.object({
+  ProjectCode: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  fundingUnit: z.lazy(() => FundingUnitUpdateOneRequiredWithoutPatentFundingUnitNestedInputSchema).optional()
+}).strict();
+
+export const PatentFundingUnitUncheckedUpdateWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingUnitUncheckedUpdateWithoutPatentFundingInput> = z.object({
   FundingUnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  ProjectCode: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  Amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  ProjectCode: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const PatentFundingUnitUncheckedUpdateManyWithoutPatentFundingInputSchema: z.ZodType<Prisma.PatentFundingUnitUncheckedUpdateManyWithoutPatentFundingInput> = z.object({
+  FundingUnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  ProjectCode: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const FundingUnitUpdateWithoutFundingRecordInputSchema: z.ZodType<Prisma.FundingUnitUpdateWithoutFundingRecordInput> = z.object({
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  PatentFundingUnit: z.lazy(() => PatentFundingUnitUpdateManyWithoutFundingUnitNestedInputSchema).optional()
+}).strict();
+
+export const FundingUnitUncheckedUpdateWithoutFundingRecordInputSchema: z.ZodType<Prisma.FundingUnitUncheckedUpdateWithoutFundingRecordInput> = z.object({
+  FundingUnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  PatentFundingUnit: z.lazy(() => PatentFundingUnitUncheckedUpdateManyWithoutFundingUnitNestedInputSchema).optional()
+}).strict();
+
+export const FundingUnitUncheckedUpdateManyWithoutFundingRecordInputSchema: z.ZodType<Prisma.FundingUnitUncheckedUpdateManyWithoutFundingRecordInput> = z.object({
+  FundingUnitID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  Name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentInventorCreateManyInventorInputSchema: z.ZodType<Prisma.PatentInventorCreateManyInventorInput> = z.object({
@@ -10387,68 +10895,6 @@ export const FundingUnitFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.FundingUni
   where: FundingUnitWhereUniqueInputSchema,
 }).strict() ;
 
-export const FundingUnitDataFindFirstArgsSchema: z.ZodType<Prisma.FundingUnitDataFindFirstArgs> = z.object({
-  select: FundingUnitDataSelectSchema.optional(),
-  include: FundingUnitDataIncludeSchema.optional(),
-  where: FundingUnitDataWhereInputSchema.optional(),
-  orderBy: z.union([ FundingUnitDataOrderByWithRelationInputSchema.array(),FundingUnitDataOrderByWithRelationInputSchema ]).optional(),
-  cursor: FundingUnitDataWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ FundingUnitDataScalarFieldEnumSchema,FundingUnitDataScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const FundingUnitDataFindFirstOrThrowArgsSchema: z.ZodType<Prisma.FundingUnitDataFindFirstOrThrowArgs> = z.object({
-  select: FundingUnitDataSelectSchema.optional(),
-  include: FundingUnitDataIncludeSchema.optional(),
-  where: FundingUnitDataWhereInputSchema.optional(),
-  orderBy: z.union([ FundingUnitDataOrderByWithRelationInputSchema.array(),FundingUnitDataOrderByWithRelationInputSchema ]).optional(),
-  cursor: FundingUnitDataWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ FundingUnitDataScalarFieldEnumSchema,FundingUnitDataScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const FundingUnitDataFindManyArgsSchema: z.ZodType<Prisma.FundingUnitDataFindManyArgs> = z.object({
-  select: FundingUnitDataSelectSchema.optional(),
-  include: FundingUnitDataIncludeSchema.optional(),
-  where: FundingUnitDataWhereInputSchema.optional(),
-  orderBy: z.union([ FundingUnitDataOrderByWithRelationInputSchema.array(),FundingUnitDataOrderByWithRelationInputSchema ]).optional(),
-  cursor: FundingUnitDataWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ FundingUnitDataScalarFieldEnumSchema,FundingUnitDataScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const FundingUnitDataAggregateArgsSchema: z.ZodType<Prisma.FundingUnitDataAggregateArgs> = z.object({
-  where: FundingUnitDataWhereInputSchema.optional(),
-  orderBy: z.union([ FundingUnitDataOrderByWithRelationInputSchema.array(),FundingUnitDataOrderByWithRelationInputSchema ]).optional(),
-  cursor: FundingUnitDataWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const FundingUnitDataGroupByArgsSchema: z.ZodType<Prisma.FundingUnitDataGroupByArgs> = z.object({
-  where: FundingUnitDataWhereInputSchema.optional(),
-  orderBy: z.union([ FundingUnitDataOrderByWithAggregationInputSchema.array(),FundingUnitDataOrderByWithAggregationInputSchema ]).optional(),
-  by: FundingUnitDataScalarFieldEnumSchema.array(),
-  having: FundingUnitDataScalarWhereWithAggregatesInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const FundingUnitDataFindUniqueArgsSchema: z.ZodType<Prisma.FundingUnitDataFindUniqueArgs> = z.object({
-  select: FundingUnitDataSelectSchema.optional(),
-  include: FundingUnitDataIncludeSchema.optional(),
-  where: FundingUnitDataWhereUniqueInputSchema,
-}).strict() ;
-
-export const FundingUnitDataFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.FundingUnitDataFindUniqueOrThrowArgs> = z.object({
-  select: FundingUnitDataSelectSchema.optional(),
-  include: FundingUnitDataIncludeSchema.optional(),
-  where: FundingUnitDataWhereUniqueInputSchema,
-}).strict() ;
-
 export const PatentFundingFindFirstArgsSchema: z.ZodType<Prisma.PatentFundingFindFirstArgs> = z.object({
   select: PatentFundingSelectSchema.optional(),
   include: PatentFundingIncludeSchema.optional(),
@@ -10509,6 +10955,130 @@ export const PatentFundingFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.PatentFu
   select: PatentFundingSelectSchema.optional(),
   include: PatentFundingIncludeSchema.optional(),
   where: PatentFundingWhereUniqueInputSchema,
+}).strict() ;
+
+export const FundingRecordFindFirstArgsSchema: z.ZodType<Prisma.FundingRecordFindFirstArgs> = z.object({
+  select: FundingRecordSelectSchema.optional(),
+  include: FundingRecordIncludeSchema.optional(),
+  where: FundingRecordWhereInputSchema.optional(),
+  orderBy: z.union([ FundingRecordOrderByWithRelationInputSchema.array(),FundingRecordOrderByWithRelationInputSchema ]).optional(),
+  cursor: FundingRecordWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ FundingRecordScalarFieldEnumSchema,FundingRecordScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const FundingRecordFindFirstOrThrowArgsSchema: z.ZodType<Prisma.FundingRecordFindFirstOrThrowArgs> = z.object({
+  select: FundingRecordSelectSchema.optional(),
+  include: FundingRecordIncludeSchema.optional(),
+  where: FundingRecordWhereInputSchema.optional(),
+  orderBy: z.union([ FundingRecordOrderByWithRelationInputSchema.array(),FundingRecordOrderByWithRelationInputSchema ]).optional(),
+  cursor: FundingRecordWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ FundingRecordScalarFieldEnumSchema,FundingRecordScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const FundingRecordFindManyArgsSchema: z.ZodType<Prisma.FundingRecordFindManyArgs> = z.object({
+  select: FundingRecordSelectSchema.optional(),
+  include: FundingRecordIncludeSchema.optional(),
+  where: FundingRecordWhereInputSchema.optional(),
+  orderBy: z.union([ FundingRecordOrderByWithRelationInputSchema.array(),FundingRecordOrderByWithRelationInputSchema ]).optional(),
+  cursor: FundingRecordWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ FundingRecordScalarFieldEnumSchema,FundingRecordScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const FundingRecordAggregateArgsSchema: z.ZodType<Prisma.FundingRecordAggregateArgs> = z.object({
+  where: FundingRecordWhereInputSchema.optional(),
+  orderBy: z.union([ FundingRecordOrderByWithRelationInputSchema.array(),FundingRecordOrderByWithRelationInputSchema ]).optional(),
+  cursor: FundingRecordWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const FundingRecordGroupByArgsSchema: z.ZodType<Prisma.FundingRecordGroupByArgs> = z.object({
+  where: FundingRecordWhereInputSchema.optional(),
+  orderBy: z.union([ FundingRecordOrderByWithAggregationInputSchema.array(),FundingRecordOrderByWithAggregationInputSchema ]).optional(),
+  by: FundingRecordScalarFieldEnumSchema.array(),
+  having: FundingRecordScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const FundingRecordFindUniqueArgsSchema: z.ZodType<Prisma.FundingRecordFindUniqueArgs> = z.object({
+  select: FundingRecordSelectSchema.optional(),
+  include: FundingRecordIncludeSchema.optional(),
+  where: FundingRecordWhereUniqueInputSchema,
+}).strict() ;
+
+export const FundingRecordFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.FundingRecordFindUniqueOrThrowArgs> = z.object({
+  select: FundingRecordSelectSchema.optional(),
+  include: FundingRecordIncludeSchema.optional(),
+  where: FundingRecordWhereUniqueInputSchema,
+}).strict() ;
+
+export const PatentFundingUnitFindFirstArgsSchema: z.ZodType<Prisma.PatentFundingUnitFindFirstArgs> = z.object({
+  select: PatentFundingUnitSelectSchema.optional(),
+  include: PatentFundingUnitIncludeSchema.optional(),
+  where: PatentFundingUnitWhereInputSchema.optional(),
+  orderBy: z.union([ PatentFundingUnitOrderByWithRelationInputSchema.array(),PatentFundingUnitOrderByWithRelationInputSchema ]).optional(),
+  cursor: PatentFundingUnitWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ PatentFundingUnitScalarFieldEnumSchema,PatentFundingUnitScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const PatentFundingUnitFindFirstOrThrowArgsSchema: z.ZodType<Prisma.PatentFundingUnitFindFirstOrThrowArgs> = z.object({
+  select: PatentFundingUnitSelectSchema.optional(),
+  include: PatentFundingUnitIncludeSchema.optional(),
+  where: PatentFundingUnitWhereInputSchema.optional(),
+  orderBy: z.union([ PatentFundingUnitOrderByWithRelationInputSchema.array(),PatentFundingUnitOrderByWithRelationInputSchema ]).optional(),
+  cursor: PatentFundingUnitWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ PatentFundingUnitScalarFieldEnumSchema,PatentFundingUnitScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const PatentFundingUnitFindManyArgsSchema: z.ZodType<Prisma.PatentFundingUnitFindManyArgs> = z.object({
+  select: PatentFundingUnitSelectSchema.optional(),
+  include: PatentFundingUnitIncludeSchema.optional(),
+  where: PatentFundingUnitWhereInputSchema.optional(),
+  orderBy: z.union([ PatentFundingUnitOrderByWithRelationInputSchema.array(),PatentFundingUnitOrderByWithRelationInputSchema ]).optional(),
+  cursor: PatentFundingUnitWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ PatentFundingUnitScalarFieldEnumSchema,PatentFundingUnitScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const PatentFundingUnitAggregateArgsSchema: z.ZodType<Prisma.PatentFundingUnitAggregateArgs> = z.object({
+  where: PatentFundingUnitWhereInputSchema.optional(),
+  orderBy: z.union([ PatentFundingUnitOrderByWithRelationInputSchema.array(),PatentFundingUnitOrderByWithRelationInputSchema ]).optional(),
+  cursor: PatentFundingUnitWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const PatentFundingUnitGroupByArgsSchema: z.ZodType<Prisma.PatentFundingUnitGroupByArgs> = z.object({
+  where: PatentFundingUnitWhereInputSchema.optional(),
+  orderBy: z.union([ PatentFundingUnitOrderByWithAggregationInputSchema.array(),PatentFundingUnitOrderByWithAggregationInputSchema ]).optional(),
+  by: PatentFundingUnitScalarFieldEnumSchema.array(),
+  having: PatentFundingUnitScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const PatentFundingUnitFindUniqueArgsSchema: z.ZodType<Prisma.PatentFundingUnitFindUniqueArgs> = z.object({
+  select: PatentFundingUnitSelectSchema.optional(),
+  include: PatentFundingUnitIncludeSchema.optional(),
+  where: PatentFundingUnitWhereUniqueInputSchema,
+}).strict() ;
+
+export const PatentFundingUnitFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.PatentFundingUnitFindUniqueOrThrowArgs> = z.object({
+  select: PatentFundingUnitSelectSchema.optional(),
+  include: PatentFundingUnitIncludeSchema.optional(),
+  where: PatentFundingUnitWhereUniqueInputSchema,
 }).strict() ;
 
 export const InventorFindFirstArgsSchema: z.ZodType<Prisma.InventorFindFirstArgs> = z.object({
@@ -11810,58 +12380,6 @@ export const FundingUnitDeleteManyArgsSchema: z.ZodType<Prisma.FundingUnitDelete
   limit: z.number().optional(),
 }).strict() ;
 
-export const FundingUnitDataCreateArgsSchema: z.ZodType<Prisma.FundingUnitDataCreateArgs> = z.object({
-  select: FundingUnitDataSelectSchema.optional(),
-  include: FundingUnitDataIncludeSchema.optional(),
-  data: z.union([ FundingUnitDataCreateInputSchema,FundingUnitDataUncheckedCreateInputSchema ]),
-}).strict() ;
-
-export const FundingUnitDataUpsertArgsSchema: z.ZodType<Prisma.FundingUnitDataUpsertArgs> = z.object({
-  select: FundingUnitDataSelectSchema.optional(),
-  include: FundingUnitDataIncludeSchema.optional(),
-  where: FundingUnitDataWhereUniqueInputSchema,
-  create: z.union([ FundingUnitDataCreateInputSchema,FundingUnitDataUncheckedCreateInputSchema ]),
-  update: z.union([ FundingUnitDataUpdateInputSchema,FundingUnitDataUncheckedUpdateInputSchema ]),
-}).strict() ;
-
-export const FundingUnitDataCreateManyArgsSchema: z.ZodType<Prisma.FundingUnitDataCreateManyArgs> = z.object({
-  data: z.union([ FundingUnitDataCreateManyInputSchema,FundingUnitDataCreateManyInputSchema.array() ]),
-}).strict() ;
-
-export const FundingUnitDataCreateManyAndReturnArgsSchema: z.ZodType<Prisma.FundingUnitDataCreateManyAndReturnArgs> = z.object({
-  data: z.union([ FundingUnitDataCreateManyInputSchema,FundingUnitDataCreateManyInputSchema.array() ]),
-}).strict() ;
-
-export const FundingUnitDataDeleteArgsSchema: z.ZodType<Prisma.FundingUnitDataDeleteArgs> = z.object({
-  select: FundingUnitDataSelectSchema.optional(),
-  include: FundingUnitDataIncludeSchema.optional(),
-  where: FundingUnitDataWhereUniqueInputSchema,
-}).strict() ;
-
-export const FundingUnitDataUpdateArgsSchema: z.ZodType<Prisma.FundingUnitDataUpdateArgs> = z.object({
-  select: FundingUnitDataSelectSchema.optional(),
-  include: FundingUnitDataIncludeSchema.optional(),
-  data: z.union([ FundingUnitDataUpdateInputSchema,FundingUnitDataUncheckedUpdateInputSchema ]),
-  where: FundingUnitDataWhereUniqueInputSchema,
-}).strict() ;
-
-export const FundingUnitDataUpdateManyArgsSchema: z.ZodType<Prisma.FundingUnitDataUpdateManyArgs> = z.object({
-  data: z.union([ FundingUnitDataUpdateManyMutationInputSchema,FundingUnitDataUncheckedUpdateManyInputSchema ]),
-  where: FundingUnitDataWhereInputSchema.optional(),
-  limit: z.number().optional(),
-}).strict() ;
-
-export const FundingUnitDataUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.FundingUnitDataUpdateManyAndReturnArgs> = z.object({
-  data: z.union([ FundingUnitDataUpdateManyMutationInputSchema,FundingUnitDataUncheckedUpdateManyInputSchema ]),
-  where: FundingUnitDataWhereInputSchema.optional(),
-  limit: z.number().optional(),
-}).strict() ;
-
-export const FundingUnitDataDeleteManyArgsSchema: z.ZodType<Prisma.FundingUnitDataDeleteManyArgs> = z.object({
-  where: FundingUnitDataWhereInputSchema.optional(),
-  limit: z.number().optional(),
-}).strict() ;
-
 export const PatentFundingCreateArgsSchema: z.ZodType<Prisma.PatentFundingCreateArgs> = z.object({
   select: PatentFundingSelectSchema.optional(),
   include: PatentFundingIncludeSchema.optional(),
@@ -11911,6 +12429,110 @@ export const PatentFundingUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.Patent
 
 export const PatentFundingDeleteManyArgsSchema: z.ZodType<Prisma.PatentFundingDeleteManyArgs> = z.object({
   where: PatentFundingWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const FundingRecordCreateArgsSchema: z.ZodType<Prisma.FundingRecordCreateArgs> = z.object({
+  select: FundingRecordSelectSchema.optional(),
+  include: FundingRecordIncludeSchema.optional(),
+  data: z.union([ FundingRecordCreateInputSchema,FundingRecordUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const FundingRecordUpsertArgsSchema: z.ZodType<Prisma.FundingRecordUpsertArgs> = z.object({
+  select: FundingRecordSelectSchema.optional(),
+  include: FundingRecordIncludeSchema.optional(),
+  where: FundingRecordWhereUniqueInputSchema,
+  create: z.union([ FundingRecordCreateInputSchema,FundingRecordUncheckedCreateInputSchema ]),
+  update: z.union([ FundingRecordUpdateInputSchema,FundingRecordUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const FundingRecordCreateManyArgsSchema: z.ZodType<Prisma.FundingRecordCreateManyArgs> = z.object({
+  data: z.union([ FundingRecordCreateManyInputSchema,FundingRecordCreateManyInputSchema.array() ]),
+}).strict() ;
+
+export const FundingRecordCreateManyAndReturnArgsSchema: z.ZodType<Prisma.FundingRecordCreateManyAndReturnArgs> = z.object({
+  data: z.union([ FundingRecordCreateManyInputSchema,FundingRecordCreateManyInputSchema.array() ]),
+}).strict() ;
+
+export const FundingRecordDeleteArgsSchema: z.ZodType<Prisma.FundingRecordDeleteArgs> = z.object({
+  select: FundingRecordSelectSchema.optional(),
+  include: FundingRecordIncludeSchema.optional(),
+  where: FundingRecordWhereUniqueInputSchema,
+}).strict() ;
+
+export const FundingRecordUpdateArgsSchema: z.ZodType<Prisma.FundingRecordUpdateArgs> = z.object({
+  select: FundingRecordSelectSchema.optional(),
+  include: FundingRecordIncludeSchema.optional(),
+  data: z.union([ FundingRecordUpdateInputSchema,FundingRecordUncheckedUpdateInputSchema ]),
+  where: FundingRecordWhereUniqueInputSchema,
+}).strict() ;
+
+export const FundingRecordUpdateManyArgsSchema: z.ZodType<Prisma.FundingRecordUpdateManyArgs> = z.object({
+  data: z.union([ FundingRecordUpdateManyMutationInputSchema,FundingRecordUncheckedUpdateManyInputSchema ]),
+  where: FundingRecordWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const FundingRecordUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.FundingRecordUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ FundingRecordUpdateManyMutationInputSchema,FundingRecordUncheckedUpdateManyInputSchema ]),
+  where: FundingRecordWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const FundingRecordDeleteManyArgsSchema: z.ZodType<Prisma.FundingRecordDeleteManyArgs> = z.object({
+  where: FundingRecordWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const PatentFundingUnitCreateArgsSchema: z.ZodType<Prisma.PatentFundingUnitCreateArgs> = z.object({
+  select: PatentFundingUnitSelectSchema.optional(),
+  include: PatentFundingUnitIncludeSchema.optional(),
+  data: z.union([ PatentFundingUnitCreateInputSchema,PatentFundingUnitUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const PatentFundingUnitUpsertArgsSchema: z.ZodType<Prisma.PatentFundingUnitUpsertArgs> = z.object({
+  select: PatentFundingUnitSelectSchema.optional(),
+  include: PatentFundingUnitIncludeSchema.optional(),
+  where: PatentFundingUnitWhereUniqueInputSchema,
+  create: z.union([ PatentFundingUnitCreateInputSchema,PatentFundingUnitUncheckedCreateInputSchema ]),
+  update: z.union([ PatentFundingUnitUpdateInputSchema,PatentFundingUnitUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const PatentFundingUnitCreateManyArgsSchema: z.ZodType<Prisma.PatentFundingUnitCreateManyArgs> = z.object({
+  data: z.union([ PatentFundingUnitCreateManyInputSchema,PatentFundingUnitCreateManyInputSchema.array() ]),
+}).strict() ;
+
+export const PatentFundingUnitCreateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentFundingUnitCreateManyAndReturnArgs> = z.object({
+  data: z.union([ PatentFundingUnitCreateManyInputSchema,PatentFundingUnitCreateManyInputSchema.array() ]),
+}).strict() ;
+
+export const PatentFundingUnitDeleteArgsSchema: z.ZodType<Prisma.PatentFundingUnitDeleteArgs> = z.object({
+  select: PatentFundingUnitSelectSchema.optional(),
+  include: PatentFundingUnitIncludeSchema.optional(),
+  where: PatentFundingUnitWhereUniqueInputSchema,
+}).strict() ;
+
+export const PatentFundingUnitUpdateArgsSchema: z.ZodType<Prisma.PatentFundingUnitUpdateArgs> = z.object({
+  select: PatentFundingUnitSelectSchema.optional(),
+  include: PatentFundingUnitIncludeSchema.optional(),
+  data: z.union([ PatentFundingUnitUpdateInputSchema,PatentFundingUnitUncheckedUpdateInputSchema ]),
+  where: PatentFundingUnitWhereUniqueInputSchema,
+}).strict() ;
+
+export const PatentFundingUnitUpdateManyArgsSchema: z.ZodType<Prisma.PatentFundingUnitUpdateManyArgs> = z.object({
+  data: z.union([ PatentFundingUnitUpdateManyMutationInputSchema,PatentFundingUnitUncheckedUpdateManyInputSchema ]),
+  where: PatentFundingUnitWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const PatentFundingUnitUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.PatentFundingUnitUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ PatentFundingUnitUpdateManyMutationInputSchema,PatentFundingUnitUncheckedUpdateManyInputSchema ]),
+  where: PatentFundingUnitWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const PatentFundingUnitDeleteManyArgsSchema: z.ZodType<Prisma.PatentFundingUnitDeleteManyArgs> = z.object({
+  where: PatentFundingUnitWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;
 

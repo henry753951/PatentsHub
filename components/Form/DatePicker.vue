@@ -42,10 +42,12 @@
 <script lang="ts" setup>
 import DatePicker from "primevue/datepicker";
 import FloatLabel from "primevue/floatlabel";
+
 const date = defineModel({
-   type: Object as PropType<string | Date | null>,
+   type: null,
    required: true,
 });
+
 const props = defineProps({
    label: {
       type: String,
@@ -65,7 +67,7 @@ const props = defineProps({
 });
 
 const dateFormatted = computed({
-   get: () => (date.value ? new Date(date.value) : null),
+   get: () => (date.value ? new Date(date.value as any) : null),
    set: (value: Date | string | null) => {
       if (typeof value === "string") {
          date.value = new Date(value);

@@ -50,15 +50,18 @@ export const usePatentStatus = (patentService: {
             data.reason = reason ?? (data.active ? "已獲證" : "獲證");
          }
          else if (status === "EXPIRED") {
-            const sortedMaintenances = DbMaintenances.value.sort(
-               (a, b) => a.ExpireDate.getTime() - b.ExpireDate.getTime(),
-            );
+            const sortedMaintenances = DbMaintenances.value.sort((a, b) => {
+               if (a.ExpireDate instanceof Date && b.ExpireDate instanceof Date)
+                  return a.ExpireDate.getTime() - b.ExpireDate.getTime();
+               return 0;
+            });
             const latestMaintenance = sortedMaintenances.length
                ? sortedMaintenances[sortedMaintenances.length - 1]
                : null;
 
-            const isExpired
-               = latestMaintenance ? now.value > latestMaintenance.ExpireDate : false;
+            const isExpired = latestMaintenance
+               ? now.value > latestMaintenance.ExpireDate
+               : false;
             data.active = isExpired;
             data.date = latestMaintenance?.ExpireDate ?? null;
             data.reason = reason ?? (isExpired ? "已過期" : "到期");
