@@ -17,7 +17,6 @@ const builderConfig = {
          to: "node_modules/.prisma",
       },
       "dist-electron/**/*",
-      "package.json",
    ],
    removePackageScripts: true,
    compression: "maximum",

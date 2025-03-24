@@ -17,7 +17,7 @@ const isProduction = app.isPackaged;
 const dbPath = isProduction
    ? `file:${path.join(app.getPath("userData"), "app.db")}`
    : process.env.DATABASE_URL;
-
+console.log("DB Path:", dbPath);
 export const prisma
    = global.prisma
      ?? new PrismaClient({

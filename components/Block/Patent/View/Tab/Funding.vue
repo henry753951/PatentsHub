@@ -36,7 +36,7 @@
                      name="ic:round-exit-to-app"
                      class="h-4 w-4 mr-2"
                   />
-                  {{ selectedRecords.length ? "出帳已選取的帳目" : "出帳所有未出帳的項目" }}
+                  {{ selectedRecords.length ? "出帳已選 取的帳目" : "出帳所有未出帳的項目" }}
                </Button>
             </div>
          </div>

@@ -20,7 +20,6 @@
    "dependencies": {
       "@formkit/auto-animate": "^0.8.2",
       "@internationalized/date": "^3.7.0",
-      "@nuxt/image": "1.9.0",
       "@pinia/nuxt": "0.10.1",
       "@primevue/forms": "^4.3.2",
       "@primevue/nuxt-module": "^4.2.5",
@@ -39,7 +38,6 @@
       "electron-updater": "^6.3.9",
       "express": "^4.21.2",
       "lucide-vue-next": "^0.473.0",
-      "nuxt": "^3.15.2",
       "nuxt-lodash": "^2.5.3",
       "nuxt-marquee": "^1.0.4",
       "nuxt-typed-router": "^3.7.3",
@@ -62,10 +60,14 @@
       "vue": "latest",
       "vue-router": "latest",
       "vue-sonner": "^1.3.0",
-      "zod": "^3.24.1"
+      "zod": "^3.24.1",
+      "@vueuse/core": "^12.8.2",
+      "@vueuse/nuxt": "^12.4.0"
    },
    "packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1",
    "devDependencies": {
+      "nuxt": "^3.15.2",
+      "@nuxt/image": "1.9.0",
       "@iconify/vue": "^4.3.0",
       "@nuxt/eslint": "^0.7.5",
       "@nuxt/fonts": "^0.10.3",
@@ -73,7 +75,6 @@
       "@nuxt/kit": "^3.15.2",
       "@nuxtjs/color-mode": "^3.5.2",
       "@nuxtjs/tailwindcss": "npm:@nuxtjs/tailwindcss@nightly",
-      "@parcel/watcher": "^2.5.1",
       "@stylistic/eslint-plugin": "^2.13.0",
       "@stylistic/eslint-plugin-js": "^2.13.0",
       "@stylistic/eslint-plugin-jsx": "^2.13.0",
@@ -82,8 +83,6 @@
       "@tailwindcss/typography": "^0.5.16",
       "@types/eslint": "^9.6.1",
       "@types/express": "^5.0.0",
-      "@vueuse/core": "^12.8.2",
-      "@vueuse/nuxt": "^12.4.0",
       "electron": "^33.3.1",
       "electron-builder": "^25.1.8",
       "eslint": "^9.18.0",
