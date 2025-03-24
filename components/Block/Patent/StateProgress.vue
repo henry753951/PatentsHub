@@ -2,19 +2,32 @@
    <div
       class="bg-white rounded-lg p-4 space-y-2 border border-gray-200 dark:bg-zinc-900 dark:border-zinc-800"
    >
-      <div class="flex justify-between">
-         <div>狀態</div>
-         <div
-            class="font-bold"
-            :class="{
-               'text-success': currentState?.type === 'success',
-               'text-warning': currentState?.type === 'warning',
-               'text-none': currentState?.type === 'none',
-            }"
-         >
-            {{ currentState?.title }}
+      <!-- 狀態標題 + 新增按鈕 -->
+      <div class="flex justify-between items-center">
+         <div class="text-base">
+            狀態
+         </div>
+         <div class="flex items-center gap-2">
+            <div
+               class="font-bold"
+               :class="{
+                  'text-success': currentState?.type === 'success',
+                  'text-warning': currentState?.type === 'warning',
+                  'text-none': currentState?.type === 'none',
+               }"
+            >
+               {{ currentState?.title }}
+            </div>
+            <button
+               class="text-xs text-primary underline"
+               @click="handleAddManualStatus"
+            >
+               新增自訂狀態
+            </button>
          </div>
       </div>
+
+      <!-- 狀態進度區塊 -->
       <div
          class="w-full flex gap-1"
          @mouseover="tooltipEnable = true"
@@ -22,7 +35,7 @@
       >
          <TooltipProvider
             v-for="(item, index) in stateProgress"
-            :key="item.status"
+            :key="item.status + index"
             :delay-duration="100"
             :disabled="!tooltipEnable"
          >
@@ -46,6 +59,7 @@
                </TooltipContent>
             </Tooltip>
          </TooltipProvider>
+
          <div
             v-if="!isStopped"
             class="status-block flex-1 none"
@@ -55,9 +69,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { z } from "zod";
 import { format } from "date-fns";
-import type { usePatentStatus } from "@/composables/database/patent/status";
 import {
    Tooltip,
    TooltipContent,
@@ -70,6 +83,42 @@ const tooltipEnable = ref(false);
 const { statusService } = defineProps<{
    statusService: ReturnType<typeof usePatentStatus>
 }>();
+
+const { openAutoModal } = useModals();
+
+const handleAddManualStatus = () => {
+   const schema = z.object({
+      reason: z.string().min(1, "請輸入狀態名稱"),
+      date: z.preprocess(
+         (val) => {
+            if (typeof val === "string") {
+               const parsed = new Date(val);
+               return isNaN(parsed.getTime()) ? null : parsed;
+            }
+            return val;
+         },
+         z.date().nullable(),
+      ),
+   });
+
+   openAutoModal(
+      "新增自訂狀態",
+      "",
+      schema,
+      async (data) => {
+         await statusService.addManualStatus(data.reason, data.date ?? new Date());
+      },
+      {
+         reason: { label: "狀態名稱" },
+         date: { label: "狀態日期" },
+      },
+      undefined, // passthrough
+      {
+         reason: "",
+         date: new Date(), // 預設為今天
+      },
+   );
+};
 
 const stateProgress = computed(() => {
    return statusService.status.value.map((s) => ({

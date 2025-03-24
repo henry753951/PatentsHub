@@ -97,4 +97,34 @@ export default router({
          }
          return result;
       }),
+
+   manualStatusAdd: procedure
+      .input(
+         z.object({
+            patentId: z.number(),
+            reason: z.string(),
+            date: z.date(),
+         }),
+      )
+      .mutation(async ({ input }) => {
+         const { patentId, reason, date } = input;
+
+         // 將其他 active manual 狀態設為 inactive
+         await prisma.patentManualStatus.updateMany({
+            where: { PatentID: patentId },
+            data: { Active: false },
+         });
+
+         // 建立新的 active manual 狀態
+         await prisma.patentManualStatus.create({
+            data: {
+               PatentID: patentId,
+               Reason: reason,
+               Date: date,
+               Active: true,
+            },
+         });
+
+         return { success: true };
+      }),
 });
