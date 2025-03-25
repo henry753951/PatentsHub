@@ -4,8 +4,6 @@ model FundingUnit {
   fundingUnits            PatentFundingUnit[]
   fundingRecords          PatentFundingRecord[]
   contributions           PatentFundingExportContribution[] // 新增的分帳關聯
-  FundingPlanAllocation   FundingPlanAllocation?            @relation(fields: [FundingPlanAllocationID], references: [FundingPlanAllocationID])
-  FundingPlanAllocationID Int?
 }
 
 // [Patent root node]
@@ -25,7 +23,6 @@ model FundingPlanAllocation {
   target                  FundingPlanTarget @relation(fields: [TargetID], references: [TargetID])
   FundingPlanID           Int
   fundingPlan             FundingPlan       @relation(fields: [FundingPlanID], references: [FundingPlanID], onDelete: Cascade, onUpdate: Cascade)
-  fundingUnits            FundingUnit[]
 }
 
 // FundingPlan root node > FundingPlanTargets[]

@@ -128,18 +128,24 @@
             </div>
          </CustomContentBlock>
          <CustomContentBlock
-            title="資助資訊"
+            v-if="fundingData.data.value && fundingData.data.value.funding"
+            title="帳務資訊"
             tclass="sticky top-[87px]"
             :note-key="`${patent.PatentID}:funding`"
+            :save-button="!fundingData.isSynced.value"
+            @save="fundingData.save"
          >
-            <CustomContentBlockRow title="資助單位">
-               <div
-                  v-for="funding in patent.funding?.fundingUnitsDatas"
-                  :key="funding.FundingUnitID"
-               >
-                  {{ funding.fundingUnit.Name }}
-                  {{ funding.ProjectCode }}
-               </div>
+            <CustomContentBlockRow
+               title="資助單位"
+               :is-synced="
+                  JSON.stringify(fundingData.data.value) ===
+                     JSON.stringify(fundingData.refData.value)
+               "
+            >
+               <FormPatentFundingUnitEditList
+                  v-model="fundingData.data.value.funding.fundingUnits"
+                  :patent-i-d="patent.PatentID"
+               />
             </CustomContentBlockRow>
          </CustomContentBlock>
          <CustomContentBlock
@@ -534,6 +540,37 @@ const inventorData = useSyncData(patent, async (newData) => {
                Contribution: i.Contribution,
                Main: i.Main,
             })),
+         },
+      },
+   ]);
+});
+
+const fundingData = useSyncData(patent, async (newData) => {
+   if (!newData || !Array.isArray(newData.funding?.fundingUnits)) return;
+   await crud.updatePatent([
+      {
+         funding: {
+            update: {
+               data: {
+                  fundingUnits: {
+                     deleteMany: {},
+                  },
+               },
+            },
+         },
+      },
+      {
+         funding: {
+            update: {
+               data: {
+                  fundingUnits: {
+                     create: newData.funding.fundingUnits.map((f) => ({
+                        FundingUnitID: f.FundingUnitID,
+                        ProjectCode: f.ProjectCode,
+                     })),
+                  },
+               },
+            },
          },
       },
    ]);

@@ -140,12 +140,28 @@
             </TabsList>
             <TabsContent value="summary">
                <Card>
-                  <CardHeader>
+                  <CardHeader class="p-4">
                      <CardTitle>統計資料</CardTitle>
-                     <CardDescription> 帳目記錄的統計資料 </CardDescription>
+                     <CardDescription> 帳目記錄的統計資料</CardDescription>
                   </CardHeader>
-                  <CardContent class="space-y-2">
-                     <div class="grid grid-cols-2 gap-4">
+                  <CardContent class="space-y-1 px-4 pb-4">
+                     <div class="grid grid-cols-2 gap-2">
+                        <div class="col-span-2">
+                           <p class="text-sm text-gray-500 dark:text-gray-400">
+                              資助單位
+                           </p>
+                           <div class="flex gap-2 flex-wrap">
+                              <template
+                                 v-for="unit in fundingUnits"
+                                 :key="unit.FundingUnitID"
+                              >
+                                 <CustomBadgeWithText
+                                    :text="unit.fundingUnit.Name"
+                                    size="sm"
+                                 />
+                              </template>
+                           </div>
+                        </div>
                         <div>
                            <p class="text-sm text-gray-500 dark:text-gray-400">
                               總金額
@@ -267,6 +283,7 @@ const formatNumber = (num: number) => num.toLocaleString("zh-TW");
 const formatDate = (date: Date) => format(date, "PPP", { locale: zhTW });
 
 // 統計資料
+const fundingUnits = fundingsService.fundingUnits;
 const summaryData = computed(() => {
    const totalAmount = records.value.unexported.reduce(
       (acc, record) => acc + record.Amount,
@@ -313,7 +330,7 @@ const openExportModal = () => {
    open("PatentFundingExportModal", {
       props: {
          fundingService: fundingsService,
-         records: selectedRecords.value.length
+         selectedRecords: selectedRecords.value.length
             ? selectedRecords.value
             : records.value.unexported,
       },

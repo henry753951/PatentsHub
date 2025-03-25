@@ -8,6 +8,7 @@ import agency from "./agency";
 import contactInfo from "./contactInfo";
 import patentRecord from "./patentRecord";
 import patentStatus from "./patentStatus";
+import fundingUnit from "./fundingUnit";
 export default router({
    country: country,
    patent: patent,
@@ -18,4 +19,5 @@ export default router({
    note: note,
    patentStatus: patentStatus,
    patentRecord: patentRecord,
+   fundingUnit: fundingUnit,
 });

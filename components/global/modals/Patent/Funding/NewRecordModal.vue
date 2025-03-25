@@ -54,24 +54,19 @@
                <div class="space-y-2">
                   <label>可資助單位</label>
                   <div
-                     class="border border-gray-200 dark:border-gray-700 rounded-md p-3 space-y-2"
+                     class="border border-gray-200 dark:border-gray-700 rounded-md p-3 grid grid-cols-2"
                   >
                      <div
-                        v-for="unit in fundingUnits"
-                        :key="unit.FundingUnitID"
-                        class="flex items-center"
+                        v-for="unit in fundingUnitsCanFunding"
+                        :key="unit.fundingUnit.FundingUnitID"
+                        class="flex items-center gap-2"
                      >
-                        <Checkbox
-                           :id="`unit-${unit.FundingUnitID}`"
-                           v-model="newRecord.canFundingBy"
-                           :value="`${unit.FundingUnitID}`"
-                           class="mr-2"
-                        />
+                        <ToggleSwitch v-model="unit.canFunding" />
                         <label
-                           :for="`unit-${unit.FundingUnitID}`"
+                           :for="`unit-${unit.fundingUnit.FundingUnitID}`"
                            class="cursor-pointer"
                         >
-                           {{ unit.fundingUnit.Name }}
+                           {{ unit.fundingUnit.fundingUnit.Name }}
                         </label>
                      </div>
                   </div>
@@ -102,6 +97,7 @@
 import { ref, computed } from "vue";
 import { format } from "date-fns";
 import { zhTW } from "date-fns/locale";
+import ToggleSwitch from "primevue/toggleswitch";
 import {
    usePatentFundings,
    type UsePatentFundings,
@@ -124,10 +120,7 @@ const { fundingService } = defineProps<{
    fundingService: UsePatentFundings
 }>();
 
-onMounted(() => {
-   consola.info("NewRecordModal mounted");
-   console.log(fundingService);
-});
+const { fundingUnits } = toRefs(fundingService);
 
 // 新增紀錄
 const newRecord = ref({
@@ -137,6 +130,23 @@ const newRecord = ref({
    description: "",
    canFundingBy: [] as number[],
 });
+
+const fundingUnitsCanFunding = ref(
+   fundingUnits.value.map((unit) => ({
+      fundingUnit: unit,
+      canFunding: false,
+   })),
+);
+
+watch(
+   fundingUnitsCanFunding,
+   () => {
+      newRecord.value.canFundingBy = fundingUnitsCanFunding.value
+         .filter((unit) => unit.canFunding)
+         .map((unit) => unit.fundingUnit.fundingUnit.FundingUnitID);
+   },
+   { deep: true },
+);
 
 const isNewRecordValid = computed(
    () => newRecord.value.name && newRecord.value.amount > 0,
@@ -152,8 +162,6 @@ const addRecord = async () => {
    });
    isOpen.value = false;
 };
-
-const fundingUnits = fundingService.fundingUnits;
 </script>
 
 <style scoped></style>
