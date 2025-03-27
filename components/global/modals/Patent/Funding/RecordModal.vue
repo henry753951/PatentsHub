@@ -4,19 +4,24 @@
       <Dialog v-model:open="isOpen">
          <DialogContent @pointer-down-outside.prevent>
             <DialogHeader>
-               <DialogTitle>新增帳務款項</DialogTitle>
+               <DialogTitle>
+                  {{ recordID ? "編輯" : "新增" }}帳務款項
+               </DialogTitle>
                <DialogDescription>
-                  新增款項與設定款項可受資助等資訊
+                  {{ recordID ? "編輯" : "新增" }}款項與設定款項可受資助等資訊
                </DialogDescription>
                <hr class="my-4" />
             </DialogHeader>
 
-            <div class="grid grid-cols-1 gap-3">
+            <div
+               v-if="tempRecord"
+               class="grid grid-cols-1 gap-3"
+            >
                <div class="flex flex-col gap-2">
                   <label for="record-name">帳款名稱</label>
                   <InputText
                      id="record-name"
-                     v-model="newRecord.name"
+                     v-model="tempRecord.name"
                      placeholder="輸入帳款名稱"
                   />
                </div>
@@ -26,7 +31,7 @@
                      <label for="record-amount">金額</label>
                      <InputNumber
                         id="record-amount"
-                        v-model="newRecord.amount"
+                        v-model="tempRecord.amount"
                         type="number"
                         placeholder="輸入金額"
                         prefix="NT$ "
@@ -36,7 +41,7 @@
                   <div class="flex flex-col gap-2 w-1/2">
                      <label for="record-date">日期</label>
                      <FormDatePicker
-                        v-model="newRecord.date"
+                        v-model="tempRecord.date"
                         size="medium"
                      />
                   </div>
@@ -46,7 +51,7 @@
                   <label for="record-description">描述（選填）</label>
                   <Textarea
                      id="record-description"
-                     v-model="newRecord.description"
+                     v-model="tempRecord.description"
                      placeholder="輸入詳細描述"
                   />
                </div>
@@ -85,7 +90,7 @@
                   :disabled="!isNewRecordValid"
                   @click="addRecord"
                >
-                  新增
+                  {{ recordID ? "儲存" : "新增" }}
                </Button>
             </DialogFooter>
          </DialogContent>
@@ -116,19 +121,41 @@ import { Button } from "@/components/ui/button";
 
 const isOpen = defineModel("open", { type: Boolean, default: false });
 
-const { fundingService } = defineProps<{
+const { fundingService, recordID } = defineProps<{
    fundingService: UsePatentFundings
+   recordID?: number
 }>();
 
 const { fundingUnits } = toRefs(fundingService);
-
-// 新增紀錄
-const newRecord = ref({
+const tempRecord = ref({
    name: "",
    amount: 0,
-   date: new Date(),
    description: "",
+   date: format(new Date(), "yyyy-MM-dd", { locale: zhTW }),
    canFundingBy: [] as number[],
+});
+
+onMounted(async () => {
+   if (recordID) {
+      const data
+         = await fundingService.records.actions.getFundingRecord(recordID);
+      if (data) {
+         tempRecord.value = {
+            name: data.Name,
+            amount: data.Amount,
+            description: data.Description || "",
+            date: format(new Date(data.Date), "yyyy-MM-dd", { locale: zhTW }),
+            canFundingBy: data.canFundingBy.map((unit) => unit.FundingUnitID),
+         };
+         fundingUnitsCanFunding.value = fundingUnits.value.map((unit) => ({
+            fundingUnit: unit,
+            canFunding: data.canFundingBy.some(
+               (canFundingBy) =>
+                  canFundingBy.FundingUnitID === unit.FundingUnitID,
+            ),
+         }));
+      }
+   }
 });
 
 const fundingUnitsCanFunding = ref(
@@ -141,7 +168,7 @@ const fundingUnitsCanFunding = ref(
 watch(
    fundingUnitsCanFunding,
    () => {
-      newRecord.value.canFundingBy = fundingUnitsCanFunding.value
+      tempRecord.value!.canFundingBy = fundingUnitsCanFunding.value
          .filter((unit) => unit.canFunding)
          .map((unit) => unit.fundingUnit.fundingUnit.FundingUnitID);
    },
@@ -149,17 +176,28 @@ watch(
 );
 
 const isNewRecordValid = computed(
-   () => newRecord.value.name && newRecord.value.amount > 0,
+   () => tempRecord.value.name && tempRecord.value.amount > 0,
 );
 
 const addRecord = async () => {
-   await fundingService.records.actions.addFundingRecord({
-      name: newRecord.value.name,
-      amount: newRecord.value.amount,
-      description: newRecord.value.description || undefined,
-      date: new Date(newRecord.value.date),
-      canFundingBy: newRecord.value.canFundingBy,
-   });
+   if (recordID) {
+      await fundingService.records.actions.updateFundingRecord(recordID, {
+         name: tempRecord.value!.name,
+         amount: tempRecord.value!.amount,
+         description: tempRecord.value!.description || undefined,
+         date: new Date(tempRecord.value!.date),
+         canFundingBy: tempRecord.value!.canFundingBy,
+      });
+   }
+   else {
+      await fundingService.records.actions.addFundingRecord({
+         name: tempRecord.value!.name,
+         amount: tempRecord.value!.amount,
+         description: tempRecord.value!.description || undefined,
+         date: new Date(tempRecord.value!.date),
+         canFundingBy: tempRecord.value!.canFundingBy,
+      });
+   }
    isOpen.value = false;
 };
 </script>

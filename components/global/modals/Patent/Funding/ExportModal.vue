@@ -93,7 +93,7 @@
                <h3 class="text-lg font-semibold text-gray-800">
                   步驟 3: 調整資助金額
                </h3>
-               <div class="bg-gray-100/50 p-4 rounded-lg">
+               <div>
                   <div
                      v-for="account in fundingUnitAccounting"
                      :key="account.record.FundingRecordID"
@@ -103,24 +103,41 @@
                         {{ account.record.Name }} - 剩餘金額:
                         {{ account.remainingAmount }}
                      </div>
-                     <div
-                        v-for="contrib in account.unitContributions"
-                        :key="contrib.unitId"
-                        class="flex items-center justify-between"
-                     >
-                        <label class="text-gray-700">
-                           {{ getUnit(contrib.unitId)?.name }}
-                        </label>
-                        <input
-                           v-model="contrib.amount"
-                           type="number"
-                           :max="
-                              (getRemaining(contrib.unitId)?.amount ?? 0) +
-                                 contrib.amount
-                           "
-                           :min="0"
-                           class="w-24 px-2 py-1 border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
-                        />
+                     <div class="bg-gray-100/50 p-4 rounded-lg">
+                        <div
+                           v-for="contrib in account.unitContributions"
+                           :key="contrib.unitId"
+                           class="flex flex-col"
+                        >
+                           <label class="text-gray-700">
+                              {{ getUnit(contrib.unitId)?.name }}
+                           </label>
+                           <div class="flex gap-5 items-center">
+                              <Slider
+                                 v-model="contrib.amount"
+                                 class="w-full"
+                                 :max="
+                                    contrib.amount + Math.min(
+                                       getRemaining(contrib.unitId)?.amount || 0,
+                                       account.remainingAmount,
+                                    )
+                                 "
+                                 :min="0"
+                              />
+                              <input
+                                 v-model="contrib.amount"
+                                 type="number"
+                                 :max="
+                                    contrib.amount + Math.min(
+                                       getRemaining(contrib.unitId)?.amount || 0,
+                                       account.remainingAmount,
+                                    )
+                                 "
+                                 :min="0"
+                                 class="w-24 px-2 py-1 border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                              />
+                           </div>
+                        </div>
                      </div>
                   </div>
                </div>
@@ -207,6 +224,8 @@ import {
    type PatentFundingRecord,
 } from "~/composables/database/patent/funding";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Slider from "primevue/slider";
+
 import {
    Dialog,
    DialogContent,
@@ -253,6 +272,17 @@ const totalInternalAllocated = computed(() => {
       (sum, adj) => sum + adj.amount,
       0,
    );
+});
+
+const parsentControls = computed(() => {
+   return fundingUnitAccountingRef.value.map((record) => {
+      return record.unitContributions.map((contrib) => {
+         return {
+            remaining: getRemaining(contrib.unitId),
+            current: contrib.amount,
+         };
+      });
+   });
 });
 
 const getUnit = (id: number) => {

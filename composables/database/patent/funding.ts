@@ -94,6 +94,86 @@ export const usePatentFundings = (patentService: {
       refresh();
    };
 
+   // 獲取帳目
+   const getFundingRecord = (recordId: number) => {
+      return fundingRecords.value.find(
+         (record) => record.FundingRecordID === recordId,
+      );
+   };
+
+   // 更新帳目
+   const updateFundingRecord = async (
+      recordId: number,
+      record: {
+         name: string
+         amount: number
+         description?: string
+         date: Date
+         canFundingBy: number[]
+      },
+   ) => {
+      if (!patent.value?.funding) return;
+      await $trpc.data.patent.updatePatent.mutate([
+         {
+            data: {
+               funding: {
+                  update: {
+                     fundingRecords: {
+                        update: {
+                           where: { FundingRecordID: recordId },
+                           data: {
+                              Amount: record.amount,
+                              Date: record.date,
+                              Name: record.name,
+                              Description: record.description,
+                              canFundingBy: {
+                                 set: record.canFundingBy.map((id) => ({
+                                    FundingUnitID: id,
+                                 })),
+                              },
+                           },
+                        },
+                     },
+                  },
+               },
+            },
+            patentID: patent.value.PatentID,
+         },
+      ]);
+
+      if (refreshCallback) await refreshCallback();
+      refresh();
+   };
+
+   // 刪除帳目
+   const deleteFundingRecord = async (recordIds: number[]) => {
+      if (!patent.value?.funding) return;
+      console.log(recordIds);
+      await $trpc.data.patent.updatePatent.mutate([
+         {
+            data: {
+               funding: {
+                  update: {
+                     data: {
+                        fundingRecords: {
+                           deleteMany: {
+                              FundingRecordID: {
+                                 in: recordIds,
+                              },
+                           },
+                        },
+                     },
+                  },
+               },
+            },
+            patentID: patent.value.PatentID,
+         },
+      ]);
+
+      if (refreshCallback) await refreshCallback();
+      refresh();
+   };
+
    // === 導出相關 ===
    // 導出的紀錄
    const exportedRecords = computed(() => funding.value?.fundingExports ?? []);
@@ -335,11 +415,11 @@ export const usePatentFundings = (patentService: {
    };
 
    const useExportModal = (selectedRecords: PatentFundingRecord[]) => {
-   // 定義底層 ref，不包含 remainingAmount
+      // 定義底層 ref，不包含 remainingAmount
       const fundingUnitAccountingRef = ref<FundingUnitAccounting[]>([]);
-      const internalAccountingAdjustmentRef = ref<InternalAccountingAdjustment[]>(
-         [],
-      );
+      const internalAccountingAdjustmentRef = ref<
+         InternalAccountingAdjustment[]
+      >([]);
 
       const fundingUnits = computed(() => funding.value?.fundingUnits ?? []);
 
@@ -361,7 +441,7 @@ export const usePatentFundings = (patentService: {
 
       // 定義 computed property，動態計算 remainingAmount
       const fundingUnitAccounting = computed({
-      // Getter：返回帶有 remainingAmount 的數組
+         // Getter：返回帶有 remainingAmount 的數組
          get: () => {
             return fundingUnitAccountingRef.value.map((item) => {
                const totalContributed = item.unitContributions.reduce(
@@ -381,6 +461,7 @@ export const usePatentFundings = (patentService: {
          set: (newValue) => {
             fundingUnitAccountingRef.value = newValue.map((item) => ({
                originalAmount: item.originalAmount,
+               remainingAmount: item.remainingAmount,
                unitContributions: item.unitContributions,
                record: item.record,
             }));
@@ -408,9 +489,9 @@ export const usePatentFundings = (patentService: {
          });
          return unitContributionsRef.value.map((contrib) => {
             const totalContrib
-            = totalContributions.find(
-               (entry) => entry.unitId === contrib.fundingUnitId,
-            )?.amount || 0;
+               = totalContributions.find(
+                  (entry) => entry.unitId === contrib.fundingUnitId,
+               )?.amount || 0;
             return {
                unitId: contrib.fundingUnitId,
                amount: contrib.amount - totalContrib,
@@ -422,10 +503,10 @@ export const usePatentFundings = (patentService: {
       const calculateDefaultFundingUnitAccounting = () => {
          if (!selectedRecords.length) return;
          const contributionsAmounts: ContributionEntry[]
-         = unitContributionsRef.value.map((contrib) => ({
-            unitId: contrib.fundingUnitId,
-            amount: contrib.amount,
-         }));
+            = unitContributionsRef.value.map((contrib) => ({
+               unitId: contrib.fundingUnitId,
+               amount: contrib.amount,
+            }));
          const accounting = calculateFundingUnitAccounting(
             selectedRecords,
             contributionsAmounts,
@@ -463,7 +544,12 @@ export const usePatentFundings = (patentService: {
       fundingUnits,
       // 紀錄相關
       records: {
-         actions: { addFundingRecord },
+         actions: {
+            addFundingRecord,
+            deleteFundingRecord,
+            getFundingRecord,
+            updateFundingRecord,
+         },
          list: fundingRecords,
       },
       // 導出相關

@@ -24,7 +24,7 @@
                >
                   <Icon
                      name="ic:round-add"
-                     class="h-4 w-4 mr-2"
+                     class="h-4 w-4 mr-1"
                   />
                   新增帳目
                </Button>
@@ -34,9 +34,25 @@
                >
                   <Icon
                      name="ic:round-exit-to-app"
-                     class="h-4 w-4 mr-2"
+                     class="h-4 w-4 mr-1"
                   />
-                  {{ selectedRecords.length ? "出帳已選 取的帳目" : "出帳所有未出帳的項目" }}
+                  {{
+                     selectedRecords.length
+                        ? "出帳已選 取的帳目"
+                        : "出帳所有未出帳的項目"
+                  }}
+               </Button>
+               <Button
+                  v-if="selectedRecords.length"
+                  size="sm"
+                  variant="destructive"
+                  @click="deleteSelectedRecords"
+               >
+                  <Icon
+                     name="ic:round-delete"
+                     class="h-4 w-4 mr-1"
+                  />
+                  清除選擇
                </Button>
             </div>
          </div>
@@ -82,7 +98,10 @@
                   header="名稱"
                >
                   <template #body="{ data }">
-                     <span class="font-medium text-gray-900 dark:text-white">
+                     <span
+                        class="font-medium text-gray-900 dark:text-white cursor-pointer"
+                        @click="openEditRecordModal(data)"
+                     >
                         {{ data.Name }}
                      </span>
                   </template>
@@ -312,16 +331,30 @@ const summaryData = computed(() => {
 
 // 選擇的記錄
 const selectedRecords = ref<PatentFundingRecord[]>([]);
+const deleteSelectedRecords = () => {
+   const ids = selectedRecords.value.map((record) => record.FundingRecordID);
+   fundingsService.records.actions.deleteFundingRecord(ids);
 
+   selectedRecords.value = [];
+};
 // 根據出帳狀態設置行樣式
 const rowClass = (data: PatentFundingRecord) => {
    return { "opacity-60": data.ExportID !== null };
 };
 
 const openNewRecordModal = () => {
-   open("PatentFundingNewRecordModal", {
+   open("PatentFundingRecordModal", {
       props: {
          fundingService: fundingsService,
+      },
+   });
+};
+
+const openEditRecordModal = (record: PatentFundingRecord) => {
+   open("PatentFundingRecordModal", {
+      props: {
+         fundingService: fundingsService,
+         recordID: record.FundingRecordID,
       },
    });
 };
