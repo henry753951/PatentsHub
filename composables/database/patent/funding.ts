@@ -1,3 +1,4 @@
+import { computedWithControl } from "@vueuse/core";
 type Patent = NonNullable<RouterOutput["data"]["patent"]["getPatent"]>;
 type PatentFunding = NonNullable<
    RouterOutput["data"]["patent"]["getPatentFunding"]
@@ -7,12 +8,20 @@ export type PatentFundingUnit = PatentFunding["fundingUnits"][number];
 export type FundingPlan = NonNullable<PatentFunding["plan"]>;
 export type FundingPlanAllocation = FundingPlan["planAllocations"][number];
 
-// 資助單位帳務的回傳型別
-interface FundingUnitAccounting {
+export interface FundingUnitAccounting {
    originalAmount: number
    unitContributions: { unitId: number, amount: number }[]
-   remainingAmount: number
    record: PatentFundingRecord
+   remainingAmount: number
+}
+
+export interface FundingUnitAccountingDynamic extends FundingUnitAccounting {
+   unitContributions: {
+      unitId: number
+      name: string
+      amount: number
+      percent: number
+   }[]
 }
 
 // 校內帳務的調整型別
@@ -25,6 +34,7 @@ export interface InternalAccountingAdjustment {
 interface ContributionEntry {
    unitId: number
    amount: number
+   name: string
 }
 
 export const usePatentFundings = (patentService: {
@@ -56,6 +66,7 @@ export const usePatentFundings = (patentService: {
       fundingRecords.value.filter((record) => record.ExportID === null),
    );
 
+   // [帳目 CRUD]
    // 新增帳目
    const addFundingRecord = async (record: {
       name: string
@@ -174,6 +185,106 @@ export const usePatentFundings = (patentService: {
       refresh();
    };
 
+   const useDynamicFundingUnitAccounting = (
+      value: Ref<FundingUnitAccounting[]>,
+   ) => {
+      return useDeepComputed(
+         computed({
+            get: () => {
+               return value.value.map((item) => {
+                  const totalContributed = item.unitContributions.reduce(
+                     (sum, contrib) => sum + contrib.amount,
+                     0,
+                  );
+                  const remainingAmount = Math.max(
+                     item.originalAmount - totalContributed,
+                     0,
+                  );
+                  return {
+                     ...item,
+                     unitContributions: item.unitContributions.map(
+                        (contrib) => {
+                           const percent = Math.ceil(
+                              (contrib.amount / item.originalAmount) * 100,
+                           );
+                           return {
+                              ...contrib,
+                              name:
+                                 fundingUnits.value.find(
+                                    (unit) =>
+                                       unit.FundingUnitID === contrib.unitId,
+                                 )?.fundingUnit.Name ?? "",
+                              percent,
+                           };
+                        },
+                     ),
+                     remainingAmount,
+                  };
+               });
+            },
+            set: (newValue) => {
+               newValue.forEach((item, account_index) => {
+                  item.unitContributions.forEach((contrib, contrib_index) => {
+                     if (
+                        contrib.amount
+                        > item.remainingAmount + contrib.amount
+                     ) {
+                        contrib.amount = item.remainingAmount + contrib.amount;
+                     }
+                  });
+               });
+               value.value = newValue.map((item) => {
+                  return {
+                     originalAmount: item.originalAmount,
+                     remainingAmount: item.remainingAmount,
+                     unitContributions: item.unitContributions.map(
+                        (contrib) => ({
+                           unitId: contrib.unitId,
+                           amount: contrib.amount,
+                        }),
+                     ),
+                     record: item.record,
+                  };
+               });
+            },
+         }),
+      );
+   };
+
+   const useDynamicFundingUnitRemaining = (
+      accountingValue: Ref<FundingUnitAccountingDynamic[]>,
+      fundingUnitEnrty: Ref<ContributionEntry[]>,
+   ) => {
+      return useDeepComputed(
+         computed({
+            get: () => {
+               return fundingUnitEnrty.value.map((entry) => {
+                  const totalContributed = accountingValue.value.reduce(
+                     (sum, item) => {
+                        const unitContrib = item.unitContributions.find(
+                           (contrib) => contrib.unitId === entry.unitId,
+                        );
+                        return sum + (unitContrib ? unitContrib.amount : 0);
+                     },
+                     0,
+                  );
+                  const remainingAmount = Math.max(
+                     entry.amount - totalContributed,
+                     0,
+                  );
+                  return {
+                     ...entry,
+                     remainingAmount,
+                  };
+               });
+            },
+            set: (newValue) => {
+               fundingUnitEnrty.value = newValue;
+            },
+         }),
+      );
+   };
+
    // === 導出相關 ===
    // 導出的紀錄
    const exportedRecords = computed(() => funding.value?.fundingExports ?? []);
@@ -183,7 +294,6 @@ export const usePatentFundings = (patentService: {
       selectedRecords: PatentFundingRecord[],
       unitContributions: ContributionEntry[],
    ): FundingUnitAccounting[] => {
-      // 創建 remainingContributions 的深層副本，避免修改原始陣列
       const remainingContributions = unitContributions.map((entry) => ({
          ...entry,
       }));
@@ -228,7 +338,7 @@ export const usePatentFundings = (patentService: {
       return accounting;
    };
 
-   // 計算校內帳務（初始值）
+   // 計算校內帳務
    const calculateInternalAccounting = (
       fundingUnitAccounting: FundingUnitAccounting[],
       fundingPlan: FundingPlan,
@@ -254,143 +364,7 @@ export const usePatentFundings = (patentService: {
       );
       return { records: remainingRecords, results };
    };
-
-   // 執行導出
-   const performExport = async (
-      fundingUnitAccounting: FundingUnitAccounting[],
-      internalAccounting: InternalAccountingAdjustment[],
-   ) => {
-      if (!patent.value?.funding) return;
-
-      // 計算各資助單位的總貢獻
-      const totalContributions: { [unitId: number]: number } = {};
-      fundingUnitAccounting.forEach((account) => {
-         account.unitContributions.forEach((contrib) => {
-            totalContributions[contrib.unitId]
-               = (totalContributions[contrib.unitId] || 0) + contrib.amount;
-         });
-      });
-
-      const selectedRecords = fundingUnitAccounting.map((a) => a.record);
-      const exportDate = new Date();
-
-      await $trpc.data.patent.updatePatent.mutate([
-         {
-            data: {
-               funding: {
-                  update: {
-                     fundingExports: {
-                        create: {
-                           ExportDate: exportDate,
-                           exportRecords: {
-                              connect: selectedRecords.map((r) => ({
-                                 FundingRecordID: r.FundingRecordID,
-                              })),
-                           },
-                           contributions: {
-                              createMany: {
-                                 data: Object.entries(totalContributions).map(
-                                    ([unitId, amount]) => ({
-                                       FundingUnitID: parseInt(unitId),
-                                       Amount: amount,
-                                    }),
-                                 ),
-                              },
-                           },
-                           internalAllocations: {
-                              createMany: {
-                                 data: internalAccounting.map((alloc) => ({
-                                    PlanTargetID: alloc.targetId,
-                                    Amount: alloc.amount,
-                                 })),
-                              },
-                           },
-                        },
-                     },
-                  },
-               },
-            },
-            patentID: patent.value.PatentID,
-         },
-      ]);
-
-      if (refreshCallback) await refreshCallback();
-      refresh();
-   };
-
-   // 編輯導出（假設更新 ExportDate 與金額）
-   const editExport = async (
-      exportId: number,
-      data: {
-         exportDate: Date
-         contributions: { unitId: number, amount: number }[]
-         internalAllocations: { targetId: number, amount: number }[]
-      },
-   ) => {
-      if (!patent.value?.funding) return;
-
-      await $trpc.data.patent.updatePatent.mutate([
-         {
-            data: {
-               funding: {
-                  update: {
-                     fundingExports: {
-                        update: {
-                           where: { ExportID: exportId },
-                           data: {
-                              contributions: {
-                                 deleteMany: {},
-                              },
-                              internalAllocations: {
-                                 deleteMany: {},
-                              },
-                           },
-                        },
-                     },
-                  },
-               },
-            },
-            patentID: patent.value.PatentID,
-         },
-         {
-            data: {
-               funding: {
-                  update: {
-                     fundingExports: {
-                        update: {
-                           where: { ExportID: exportId },
-                           data: {
-                              ExportDate: data.exportDate,
-                              contributions: {
-                                 createMany: {
-                                    data: data.contributions.map((c) => ({
-                                       FundingUnitID: c.unitId,
-                                       Amount: c.amount,
-                                    })),
-                                 },
-                              },
-                              internalAllocations: {
-                                 createMany: {
-                                    data: data.internalAllocations.map((a) => ({
-                                       PlanTargetID: a.targetId,
-                                       Amount: a.amount,
-                                    })),
-                                 },
-                              },
-                           },
-                        },
-                     },
-                  },
-               },
-            },
-            patentID: patent.value.PatentID,
-         },
-      ]);
-
-      if (refreshCallback) await refreshCallback();
-      refresh();
-   };
-
+   // [編輯帳目]
    // 刪除導出
    const deleteExport = async (exportId: number) => {
       if (!patent.value?.funding) return;
@@ -414,134 +388,264 @@ export const usePatentFundings = (patentService: {
       refresh();
    };
 
-   const useExportModal = (selectedRecords: PatentFundingRecord[]) => {
-      // 定義底層 ref，不包含 remainingAmount
-      const fundingUnitAccountingRef = ref<FundingUnitAccounting[]>([]);
-      const internalAccountingAdjustmentRef = ref<
-         InternalAccountingAdjustment[]
-      >([]);
+   // 執行導出
+   const performExport = async (
+      fundingUnitAccounting: FundingUnitAccounting[],
+      internalAccounting: InternalAccountingAdjustment[],
+      name: string,
+      description: string,
+      exportId: number | null = null,
+   ) => {
+      if (!patent.value?.funding) return;
 
-      const fundingUnits = computed(() => funding.value?.fundingUnits ?? []);
-
-      // UnitContribution 介面
-      interface UnitContribution {
-         fundingUnitId: number
-         name: string
-         amount: number
+      const selectedRecords = fundingUnitAccounting.map((a) => a.record);
+      const exportDate = new Date();
+      if (!exportId) {
+         await $trpc.data.patent.updatePatent.mutate([
+            {
+               data: {
+                  funding: {
+                     update: {
+                        fundingExports: {
+                           create: {
+                              Name: name,
+                              Description: description,
+                              ExportDate: exportDate,
+                              exportRecords: {
+                                 connect: selectedRecords.map((r) => ({
+                                    FundingRecordID: r.FundingRecordID,
+                                 })),
+                              },
+                              contributions: {
+                                 createMany: {
+                                    data: fundingUnitAccounting.flatMap((a) =>
+                                       a.unitContributions.map((contrib) => ({
+                                          FundingUnitID: contrib.unitId,
+                                          Amount: contrib.amount,
+                                          RecordID: a.record.FundingRecordID,
+                                       })),
+                                    ),
+                                 },
+                              },
+                              internalAllocations: {
+                                 createMany: {
+                                    data: internalAccounting.map((alloc) => ({
+                                       PlanTargetID: alloc.targetId,
+                                       Amount: alloc.amount,
+                                    })),
+                                 },
+                              },
+                           },
+                        },
+                     },
+                  },
+               },
+               patentID: patent.value.PatentID,
+            },
+         ]);
+      }
+      else {
+         await $trpc.data.patent.updatePatent.mutate([
+            {
+               data: {
+                  funding: {
+                     update: {
+                        fundingExports: {
+                           update: {
+                              where: { ExportID: exportId },
+                              data: {
+                                 contributions: {
+                                    deleteMany: {},
+                                 },
+                                 internalAllocations: {
+                                    deleteMany: {},
+                                 },
+                              },
+                           },
+                        },
+                     },
+                  },
+               },
+               patentID: patent.value.PatentID,
+            },
+            {
+               data: {
+                  funding: {
+                     update: {
+                        fundingExports: {
+                           update: {
+                              where: { ExportID: exportId },
+                              data: {
+                                 Name: name,
+                                 Description: description,
+                                 ExportDate: exportDate,
+                                 contributions: {
+                                    createMany: {
+                                       data: fundingUnitAccounting.flatMap(
+                                          (a) =>
+                                             a.unitContributions.map(
+                                                (contrib) => ({
+                                                   FundingUnitID:
+                                                      contrib.unitId,
+                                                   Amount: contrib.amount,
+                                                   RecordID:
+                                                      a.record.FundingRecordID,
+                                                }),
+                                             ),
+                                       ),
+                                    },
+                                 },
+                                 internalAllocations: {
+                                    createMany: {
+                                       data: internalAccounting.map(
+                                          (alloc) => ({
+                                             PlanTargetID: alloc.targetId,
+                                             Amount: alloc.amount,
+                                          }),
+                                       ),
+                                    },
+                                 },
+                              },
+                           },
+                        },
+                     },
+                  },
+               },
+               patentID: patent.value.PatentID,
+            },
+         ]);
       }
 
-      // unitContributionsRef 為陣列
-      const unitContributionsRef = ref<UnitContribution[]>(
-         fundingUnits.value.map((unit) => ({
-            fundingUnitId: unit.FundingUnitID,
-            name: unit.fundingUnit.Name,
-            amount: 0,
+      if (refreshCallback) await refreshCallback();
+      refresh();
+   };
+
+   // 取得導出
+   const getExport = (
+      exportId: number,
+   ): {
+      fundingUnitAccounting: FundingUnitAccounting[]
+      internalAccounting: InternalAccountingAdjustment[]
+      records: PatentFundingRecord[]
+      date: Date
+      name: string
+      description: string | null
+   } | null => {
+      const exportRecord = exportedRecords.value.find(
+         (record) => record.ExportID === exportId,
+      );
+      if (!exportRecord) return null;
+      const fundingUnitAccounting = exportRecord.contributions.map(
+         (contrib) => {
+            const record = fundingRecords.value.find(
+               (r) => r.FundingRecordID === contrib.RecordID,
+            );
+            return {
+               originalAmount: record?.Amount ?? 0,
+               unitContributions: [
+                  {
+                     unitId: contrib.FundingUnitID,
+                     amount: contrib.Amount,
+                  },
+               ],
+               remainingAmount: record?.Amount ?? 0,
+               record: record!,
+            };
+         },
+      );
+      const internalAccounting = exportRecord.internalAllocations.map(
+         (alloc) => ({
+            targetId: alloc.PlanTargetID,
+            targetName: alloc.planTarget.Name,
+            amount: Math.floor(alloc.Amount),
+         }),
+      );
+      return {
+         name: exportRecord.Name,
+         description: exportRecord.Description,
+         records: exportRecord.exportRecords,
+         fundingUnitAccounting,
+         internalAccounting,
+         date: exportRecord.ExportDate,
+      };
+   };
+
+   // 導出 Dialog
+   const useExportModal = (selectedRecords: PatentFundingRecord[]) => {
+      // 資助單位
+      const fundingUnits = funding.value?.fundingUnits ?? [];
+
+      // [資助單位的貢獻金額]
+      // 原始資料
+      const fundingUnitAccountingRef = ref<FundingUnitAccounting[]>(
+         selectedRecords.map((record) => ({
+            originalAmount: Math.floor(record.Amount),
+            unitContributions: record.canFundingBy.map((unit) => ({
+               unitId: unit.FundingUnitID,
+               amount: 0,
+            })),
+            record,
+            remainingAmount: Math.floor(record.Amount),
          })),
       );
+      // 動態資料
+      const fundingUnitAccounting = useDynamicFundingUnitAccounting(
+         fundingUnitAccountingRef,
+      );
 
-      // 定義 computed property，動態計算 remainingAmount
-      const fundingUnitAccounting = computed({
-         // Getter：返回帶有 remainingAmount 的數組
-         get: () => {
-            return fundingUnitAccountingRef.value.map((item) => {
-               const totalContributed = item.unitContributions.reduce(
-                  (sum, contrib) => sum + contrib.amount,
-                  0,
-               );
-               return {
-                  ...item,
-                  remainingAmount: Math.max(
-                     item.originalAmount - totalContributed,
-                     0,
-                  ),
-               };
-            });
-         },
-         // Setter：更新底層 ref
-         set: (newValue) => {
-            fundingUnitAccountingRef.value = newValue.map((item) => ({
-               originalAmount: item.originalAmount,
-               remainingAmount: item.remainingAmount,
-               unitContributions: item.unitContributions,
-               record: item.record,
-            }));
-         },
-      });
+      // [各資助單位的貢獻金額]
+      // 原始資料
+      const unitContributionsRef = ref(
+         fundingUnits.map(
+            (unit) =>
+               ({
+                  unitId: unit.FundingUnitID,
+                  name: unit.fundingUnit.Name,
+                  amount: 0,
+               }) as ContributionEntry,
+         ),
+      );
+      // 動態資料
+      const unitContributions = useDynamicFundingUnitRemaining(
+         fundingUnitAccounting,
+         unitContributionsRef,
+      );
 
-      // 計算各資助單位的剩餘金額
-      const remainingContributions = computed<ContributionEntry[]>(() => {
-         const totalContributions: ContributionEntry[] = [];
-         fundingUnitAccounting.value.forEach((account) => {
-            account.unitContributions.forEach((contrib) => {
-               const existing = totalContributions.find(
-                  (entry) => entry.unitId === contrib.unitId,
-               );
-               if (existing) {
-                  existing.amount += contrib.amount;
-               }
-               else {
-                  totalContributions.push({
-                     unitId: contrib.unitId,
-                     amount: contrib.amount,
-                  });
-               }
-            });
-         });
-         return unitContributionsRef.value.map((contrib) => {
-            const totalContrib
-               = totalContributions.find(
-                  (entry) => entry.unitId === contrib.fundingUnitId,
-               )?.amount || 0;
-            return {
-               unitId: contrib.fundingUnitId,
-               amount: contrib.amount - totalContrib,
-            };
-         });
-      });
-
-      // 計算並覆寫 FundingUnitAccounting[]
+      // === 計算預設資助金額 ===
       const calculateDefaultFundingUnitAccounting = () => {
-         if (!selectedRecords.length) return;
-         const contributionsAmounts: ContributionEntry[]
-            = unitContributionsRef.value.map((contrib) => ({
-               unitId: contrib.fundingUnitId,
-               amount: contrib.amount,
-            }));
          const accounting = calculateFundingUnitAccounting(
             selectedRecords,
-            contributionsAmounts,
+            unitContributionsRef.value,
          );
-         // 直接賦值給 ref，computed 會自動更新
          fundingUnitAccountingRef.value = accounting;
-         internalAccountingAdjustmentRef.value = [];
       };
 
-      // 計算並覆寫 InternalAccountingAdjustment[]
+      const internalAccountingAdjustment = ref(
+         [] as InternalAccountingAdjustment[],
+      );
+      // === 計算預設校內帳務 ===
       const calculateDefaultInternalAccounting = () => {
          if (!funding.value?.plan) return;
          const { results } = calculateInternalAccounting(
-            fundingUnitAccounting.value,
+            fundingUnitAccountingRef.value,
             funding.value.plan,
          );
-         internalAccountingAdjustmentRef.value = results;
+         internalAccountingAdjustment.value = [...results];
       };
 
-      // 回傳所有需要的資料與函數
       return {
-         fundingUnitAccounting, // 返回 computed property
-         fundingUnitAccountingRef, // 可選：如果需要直接訪問底層 ref
-         internalAccountingAdjustmentRef,
+         fundingUnitAccounting,
          calculateDefaultFundingUnitAccounting,
+         internalAccountingAdjustment,
          calculateDefaultInternalAccounting,
-         unitContribution: {
-            contributions: unitContributionsRef,
-            remains: remainingContributions,
-         },
+         unitContribution: unitContributions,
       };
    };
 
    return {
       fundingUnits,
+      patentData: patent,
+      fundingData: funding,
       // 紀錄相關
       records: {
          actions: {
@@ -558,8 +662,8 @@ export const usePatentFundings = (patentService: {
             calculateFundingUnitAccounting,
             calculateInternalAccounting,
             performExport,
-            editExport,
             deleteExport,
+            getExport,
          },
          list: exportedRecords,
          exportableRecords,

@@ -7,12 +7,12 @@
       @selectstart.prevent
    >
       <div
-         class="h-full rounded-xl  flex justify-end py-1 transition-transform duration-200"
+         class="h-full rounded-xl flex justify-end py-1 transition-all duration-200"
          :class="{
             'animate-bg-red-500': isOutofRange,
-            'bg-zinc-800 dark:bg-zinc-400' : !isOutofRange
+            'bg-zinc-800 dark:bg-zinc-400': !isOutofRange,
          }"
-         :style="{ width: `${modelValue}%` }"
+         :style="{ width: `${percent}%` }"
          @selectstart.prevent
       >
          <div
@@ -35,12 +35,23 @@ const modelValue = defineModel<number>({
    default: 80,
 });
 
-const { max = 40, min = 0 } = defineProps<{
+const percent = computed(() => {
+   return ((modelValue.value - range[0]) / (range[1] - range[0])) * 100;
+});
+
+const {
+   max = 40,
+   min = 0,
+   range = [0, 100],
+} = defineProps<{
    max?: number
    min?: number
+   range?: number[]
 }>();
 
-const isOutofRange = computed(() => modelValue.value < min || modelValue.value > max);
+const isOutofRange = computed(
+   () => modelValue.value < min || modelValue.value > max,
+);
 
 const container = useTemplateRef<HTMLElement>("container");
 const handle = useTemplateRef<HTMLElement>("handle");
@@ -54,10 +65,22 @@ watch(pressed, (value) => {
 
 watch([elementX, isDragging], (value) => {
    if (isDragging.value) {
-      modelValue.value = Math.max(
-         min,
-         Math.min(Math.round((elementX.value / elementWidth.value) * 100), max),
+      document.body.style.userSelect = "none";
+      document.body.style.cursor = "grabbing";
+
+      const clampedValue = Math.round(
+         (elementX.value / elementWidth.value) * (range[1] - range[0])
+         + range[0],
       );
+
+      modelValue.value = Math.max(
+         range[0],
+         Math.min(Math.max(min, Math.min(clampedValue, max)), range[1]),
+      );
+   }
+   else {
+      document.body.style.userSelect = "auto";
+      document.body.style.cursor = "auto";
    }
 });
 </script>

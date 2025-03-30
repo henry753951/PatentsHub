@@ -37,9 +37,11 @@
                      class="h-4 w-4 mr-1"
                   />
                   {{
-                     selectedRecords.length
-                        ? "出帳已選 取的帳目"
-                        : "出帳所有未出帳的項目"
+                     selectedRecords.filter(
+                        (record) => record.ExportID === null,
+                     ).length
+                        ? "匯出已選取未匯出的項目"
+                        : "匯出所有未匯出的項目"
                   }}
                </Button>
                <Button
@@ -61,7 +63,7 @@
          >
             <DataTable
                v-model:selection="selectedRecords"
-               :value="records.unexported"
+               :value="[...records.unexported, ...records.exported]"
                data-key="FundingRecordID"
                class="p-datatable-sm"
                :row-class="rowClass"
@@ -130,7 +132,7 @@
                </Column>
                <Column
                   field="ExportID"
-                  header="出帳狀態"
+                  header="匯出狀態"
                >
                   <template #body="{ data }">
                      <Badge
@@ -138,7 +140,7 @@
                            data.ExportID === null ? 'default' : 'secondary'
                         "
                      >
-                        {{ data.ExportID === null ? "未出帳" : "已出帳" }}
+                        {{ data.ExportID === null ? "未匯出" : "已匯出" }}
                      </Badge>
                   </template>
                </Column>
@@ -146,7 +148,7 @@
          </div>
       </div>
 
-      <!-- 出帳紀錄 (佔 1/3) -->
+      <!-- 匯出紀錄 (佔 1/3) -->
       <div class="col-span-1 space-y-4">
          <Tabs default-value="summary">
             <TabsList class="grid w-full grid-cols-2">
@@ -203,7 +205,7 @@
                         </div>
                         <div>
                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                              未出帳金額
+                              未匯出金額
                            </p>
                            <p
                               class="text-lg font-semibold text-gray-900 dark:text-white"
@@ -213,7 +215,7 @@
                         </div>
                         <div>
                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                              未出帳記錄數
+                              未匯出記錄數
                            </p>
                            <p
                               class="text-lg font-semibold text-gray-900 dark:text-white"
@@ -223,7 +225,7 @@
                         </div>
                         <div>
                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                              已出帳金額
+                              已匯出金額
                            </p>
                            <p
                               class="text-lg font-semibold text-gray-900 dark:text-white"
@@ -233,7 +235,7 @@
                         </div>
                         <div>
                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                              已出帳記錄數
+                              已匯出記錄數
                            </p>
                            <p
                               class="text-lg font-semibold text-gray-900 dark:text-white"
@@ -295,7 +297,6 @@ const records = computed(() => ({
       (record) => record.ExportID === null,
    ),
 }));
-const exports = fundingsService.exports.list;
 
 // 日期與數字格式化
 const formatNumber = (num: number) => num.toLocaleString("zh-TW");
@@ -334,10 +335,9 @@ const selectedRecords = ref<PatentFundingRecord[]>([]);
 const deleteSelectedRecords = () => {
    const ids = selectedRecords.value.map((record) => record.FundingRecordID);
    fundingsService.records.actions.deleteFundingRecord(ids);
-
    selectedRecords.value = [];
 };
-// 根據出帳狀態設置行樣式
+// 根據匯出狀態設置行樣式
 const rowClass = (data: PatentFundingRecord) => {
    return { "opacity-60": data.ExportID !== null };
 };
@@ -363,8 +363,10 @@ const openExportModal = () => {
    open("PatentFundingExportModal", {
       props: {
          fundingService: fundingsService,
-         selectedRecords: selectedRecords.value.length
-            ? selectedRecords.value
+         selectedRecords: selectedRecords.value.filter(
+            (record) => record.ExportID === null,
+         ).length
+            ? selectedRecords.value.filter((record) => record.ExportID === null)
             : records.value.unexported,
       },
    });

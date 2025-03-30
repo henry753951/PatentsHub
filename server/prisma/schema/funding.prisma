@@ -1,15 +1,14 @@
 model FundingUnit {
-  FundingUnitID           Int                               @id @default(autoincrement())
-  Name                    String
-  fundingUnits            PatentFundingUnit[]
-  fundingRecords          PatentFundingRecord[]
-  contributions           PatentFundingExportContribution[] // 新增的分帳關聯
+  FundingUnitID  Int                               @id @default(autoincrement())
+  Name           String
+  fundingUnits   PatentFundingUnit[]
+  fundingRecords PatentFundingRecord[]
+  contributions  PatentFundingExportContribution[] // 新增的分帳關聯
 }
 
 // [Patent root node]
 model FundingPlan {
   FundingPlanID   Int                     @id @default(autoincrement())
-  PlanType        Int
   Name            String
   fundings        PatentFunding[]
   planAllocations FundingPlanAllocation[]
@@ -39,7 +38,7 @@ model PatentFunding {
   PatentID          Int                   @id
   patent            Patent                @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
   FundingPlanPlanID Int?
-  plan              FundingPlan?           @relation(fields: [FundingPlanPlanID], references: [FundingPlanID])
+  plan              FundingPlan?          @relation(fields: [FundingPlanPlanID], references: [FundingPlanID])
   fundingRecords    PatentFundingRecord[]
   fundingUnits      PatentFundingUnit[]
   fundingExports    PatentFundingExport[]
@@ -66,13 +65,17 @@ model PatentFundingRecord {
   PatentFundingPatentID Int
   patentFunding         PatentFunding        @relation(fields: [PatentFundingPatentID], references: [PatentID])
   ExportID              Int?
-  fundingExport         PatentFundingExport? @relation(fields: [ExportID], references: [ExportID])
+  fundingExport         PatentFundingExport? @relation(fields: [ExportID], references: [ExportID], onDelete: SetNull, onUpdate: Cascade)
   canFundingBy          FundingUnit[] // 可選擇的資助單位，若為空則全額自行資助
+
+  PatentFundingExportContribution PatentFundingExportContribution[]
 }
 
 // [Export root node]
 model PatentFundingExport {
   ExportID            Int                                     @id @default(autoincrement())
+  Name                String
+  Description         String?
   ExportDate          DateTime
   PatentID            Int
   patentFunding       PatentFunding                           @relation(fields: [PatentID], references: [PatentID])
@@ -86,8 +89,10 @@ model PatentFundingExport {
 model PatentFundingExportContribution {
   ContributionID Int                 @id @default(autoincrement())
   ExportID       Int
-  FundingUnitID  Int?
+  FundingUnitID  Int
+  RecordID       Int
   Amount         Int
+  record         PatentFundingRecord @relation(fields: [RecordID], references: [FundingRecordID])
   export         PatentFundingExport @relation(fields: [ExportID], references: [ExportID], onDelete: Cascade, onUpdate: Cascade)
   fundingUnit    FundingUnit?        @relation(fields: [FundingUnitID], references: [FundingUnitID], onDelete: Cascade, onUpdate: Cascade)
 

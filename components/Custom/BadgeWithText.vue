@@ -27,7 +27,7 @@ const props = defineProps<Props>();
 const badgeColor = computed(() => {
    if (props.color) {
       // 如果提供了自定義顏色，解析它
-      return useParseColor(props.color).value;
+      return useParseColor(props.color);
    }
    else {
       // 否則使用 Composable 生成顏色

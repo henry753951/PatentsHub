@@ -155,7 +155,15 @@ export default router({
                application: true,
                funding: {
                   include: {
-                     plan: true,
+                     plan: {
+                        include: {
+                           planAllocations: {
+                              include: {
+                                 target: true,
+                              },
+                           },
+                        },
+                     },
                      fundingUnits: {
                         include: {
                            fundingUnit: true,

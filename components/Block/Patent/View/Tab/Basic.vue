@@ -138,14 +138,39 @@
             <CustomContentBlockRow
                title="資助單位"
                :is-synced="
-                  JSON.stringify(fundingData.data.value) ===
-                     JSON.stringify(fundingData.refData.value)
+                  JSON.stringify(fundingData.data.value.funding.fundingUnits) ===
+                     JSON.stringify(fundingData.refData.value?.funding?.fundingUnits)
                "
             >
                <FormPatentFundingUnitEditList
                   v-model="fundingData.data.value.funding.fundingUnits"
                   :patent-i-d="patent.PatentID"
                />
+            </CustomContentBlockRow>
+            <CustomContentBlockRow
+               title="資助類別"
+               :is-synced="
+                  fundingData.data.value.funding.plan?.FundingPlanID ===
+                     fundingData.refData.value?.funding?.plan?.FundingPlanID
+               "
+            >
+               <div class="grid grid-cols-3 gap-4">
+                  <FormFundingPlanSelect
+                     v-model="fundingData.data.value.funding.plan"
+                     class="col-span-1"
+                  />
+                  <div
+                     class="flex gap-2 items-center col-span-2"
+                  >
+                     <div
+                        v-for="allocation in fundingData.data.value.funding.plan?.planAllocations"
+                        :key="allocation.FundingPlanAllocationID"
+                        class="flex items-center gap-1"
+                     >
+                        <Badge>{{ allocation.target.Name }}</Badge>  {{ allocation.Percentage }}%
+                     </div>
+                  </div>
+               </div>
             </CustomContentBlockRow>
          </CustomContentBlock>
          <CustomContentBlock
@@ -555,6 +580,13 @@ const fundingData = useSyncData(patent, async (newData) => {
                   fundingUnits: {
                      deleteMany: {},
                   },
+                  plan: newData.funding.plan
+                     ? {
+                        connect: {
+                           FundingPlanID: newData.funding.plan.FundingPlanID,
+                        },
+                     }
+                     : undefined,
                },
             },
          },
