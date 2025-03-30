@@ -8,17 +8,8 @@ export const usePatentStatus = (patentService: {
    const { $trpc } = useNuxtApp();
    const { data: patent, refreshCallback } = patentService;
 
-   const DbMaintenances = computed(() => {
-      return patent.value?.maintenances ?? [];
-   });
-
-   const DbManualStatus = computed(() => {
-      return patent.value?.manualStatus ?? [];
-   });
-
-   // ==================================================
-   // [Status Computed]
-   // ==================================================
+   const DbMaintenances = computed(() => patent.value?.maintenances ?? []);
+   const DbManualStatus = computed(() => patent.value?.manualStatus ?? []);
 
    const createStatus = (
       status: "SIGNED" | "REVIEWED" | "CERTIFIED" | "EXPIRED" | "MANUAL",
@@ -26,121 +17,112 @@ export const usePatentStatus = (patentService: {
       date?: Date | null,
       active?: boolean,
    ) => {
-      const base = {
+      const data = {
          status,
          active: false,
          reason: "",
          date: null as Date | null,
       };
 
-      if (!patent.value) return base;
+      if (!patent.value) return data;
 
-      if (status === "SIGNED") {
-         return {
-            ...base,
-            active: active ?? true,
-            date: patent.value.createdAt,
-            reason: "教師登錄",
-         };
+      switch (status) {
+         case "SIGNED":
+            data.date = patent.value.createdAt ?? null;
+            data.active = active ?? true;
+            data.reason = "教師登錄";
+            break;
+         case "REVIEWED":
+            data.date = patent.value.internal?.InitialReviewDate ?? null;
+            data.active = active ?? data.date !== null;
+            data.reason = reason ?? (data.active ? "已初評" : "初評");
+            break;
+         case "CERTIFIED":
+            data.date = patent.value.external?.StartDate ?? null;
+            data.active = active ?? data.date !== null;
+            data.reason = reason ?? (data.active ? "已獲證" : "獲證");
+            break;
+         case "EXPIRED": {
+            const latest = [...DbMaintenances.value]
+               .filter((m) => m.ExpireDate instanceof Date)
+               .sort((a, b) => a.ExpireDate.getTime() - b.ExpireDate.getTime())
+               .at(-1);
+
+            const isExpired = latest ? now.value > latest.ExpireDate : false;
+            data.date = latest?.ExpireDate ?? null;
+            data.active = isExpired;
+            data.reason = reason ?? (isExpired ? "已過期" : "到期");
+            break;
+         }
+         case "MANUAL":
+            data.date = date ?? null;
+            data.active = active ?? false;
+            data.reason = reason ?? "";
+            break;
       }
 
-      if (status === "REVIEWED") {
-         const d = patent.value.internal?.InitialReviewDate ?? null;
-         return {
-            ...base,
-            active: active ?? d !== null,
-            date: d,
-            reason: reason ?? (d ? "已初評" : "初評"),
-         };
-      }
-
-      if (status === "CERTIFIED") {
-         const d = patent.value.external?.StartDate ?? null;
-         return {
-            ...base,
-            active: active ?? d !== null,
-            date: d,
-            reason: reason ?? (d ? "已獲證" : "獲證"),
-         };
-      }
-
-      if (status === "EXPIRED") {
-         const sorted = DbMaintenances.value.sort(
-            (a, b) => a.ExpireDate.getTime() - b.ExpireDate.getTime(),
-         );
-         const latest = sorted.at(-1);
-         const isExpired = latest ? now.value > latest.ExpireDate : false;
-
-         return {
-            ...base,
-            active: isExpired,
-            date: latest?.ExpireDate ?? null,
-            reason: reason ?? (isExpired ? "已過期" : "到期"),
-         };
-      }
-
-      if (status === "MANUAL") {
-         return DbManualStatus.value.map((m) => ({
-            status: "MANUAL",
-            active: m.Active,
-            reason: m.Reason,
-            date: m.Date ?? null,
-         }));
-      }
-
-      return base;
+      return data;
    };
 
    const status = computed(() => {
-      const rawArray = [
+      const base = [
          createStatus("SIGNED"),
          createStatus("REVIEWED"),
          createStatus("CERTIFIED"),
          createStatus("EXPIRED"),
-         createStatus("MANUAL"),
       ];
 
-      const statusArray = rawArray.flat(); // 展平 manual 多筆狀態
+      const manual = DbManualStatus.value.map((m) => ({
+         ...createStatus("MANUAL", m.Reason, m.Date ?? null, m.Active),
+         ManualStatusID: m.ManualStatusID,
+      }));
 
-      statusArray.sort((a, b) => {
-         if (a.date instanceof Date && b.date instanceof Date) {
-            return a.date.getTime() - b.date.getTime();
-         }
-         if (a.date && !b.date) return -1;
-         if (!a.date && b.date) return 1;
-
-         const priority = [
-            "SIGNED",
-            "REVIEWED",
-            "CERTIFIED",
-            "EXPIRED",
-            "MANUAL",
-         ];
-         return priority.indexOf(a.status) - priority.indexOf(b.status);
+      manual.sort((a, b) => {
+         const dateA = a.date instanceof Date ? a.date.getTime() : Infinity;
+         const dateB = b.date instanceof Date ? b.date.getTime() : Infinity;
+         return dateA - dateB;
       });
 
-      return statusArray;
+      return [...base, ...manual];
    });
 
-   // ==================================================
-   // [Actions]
-   // ==================================================
-
-   const addManualStatus = async (reason: string, date: Date) => {
-      if (!patent.value?.PatentID) return;
-
-      await $trpc.patent.manualStatusAdd.mutate({
-         patentId: patent.value.PatentID,
-         reason,
-         date,
+   const addManualStatus = async (manual: { reason: string, date?: Date }) => {
+      if (!patent.value) return;
+      await $trpc.data.patentStatus.addManualStatus.mutate({
+         patentID: patent.value.PatentID,
+         reason: manual.reason,
+         date: manual.date ?? undefined,
+         active: true,
       });
+   };
 
-      if (refreshCallback) await refreshCallback();
+   const updateManualStatus = async (manual: {
+      ManualStatusID: number
+      reason: string
+      date?: Date
+   }) => {
+      if (!patent.value) return;
+      await $trpc.data.patentStatus.updateManualStatus.mutate({
+         manualStatusID: manual.ManualStatusID,
+         reason: manual.reason,
+         date: manual.date ?? undefined,
+      });
+   };
+
+   const removeManualStatus = async (manualStatusID: number) => {
+      if (!patent.value) return;
+      await $trpc.data.patentStatus.removeManualStatus.mutate({
+         manualStatusID,
+      });
    };
 
    return {
       status,
       actions: [],
+      createStatus,
       addManualStatus,
+      updateManualStatus,
+      removeManualStatus,
+      refreshCallback,
    };
 };
