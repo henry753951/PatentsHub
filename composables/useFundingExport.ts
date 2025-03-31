@@ -125,12 +125,23 @@ export const useFundingExport = (params: UseFundingExportParams) => {
             const fundingUnits = patent.value.funding?.fundingUnits || [];
             return fundingUnits.map((unit) => {
                const totalContribution = dataExported
-                  .value!.fundingUnitAccounting.find((fua) =>
-                  fua.unitContributions.find(
+                  .value!.fundingUnitAccounting.filter((fua) =>
+                  fua.unitContributions.some(
                      (uc) => uc.unitId === unit.fundingUnit.FundingUnitID,
                   ),
                )
-                  ?.unitContributions.reduce((sum, uc) => sum + uc.amount, 0);
+                  .reduce((sum, fua) => {
+                     return (
+                        sum
+                        + fua.unitContributions
+                           .filter(
+                              (uc) =>
+                                 uc.unitId === unit.fundingUnit.FundingUnitID,
+                           )
+                           .reduce((subSum, uc) => subSum + uc.amount, 0)
+                     );
+                  }, 0);
+
                return {
                   name: unit.fundingUnit.Name,
                   amount: totalContribution || 0,
@@ -188,15 +199,15 @@ export const useFundingExport = (params: UseFundingExportParams) => {
       const computedData = computed(() => {
          const mainInventor = patent.value?.inventors.find((inv) => inv.Main);
          return {
-            internalId: patent.value?.internal?.InternalID,
-            title: patent.value?.Title,
-            country: patent.value?.country?.CountryName,
-            applicant: mainInventor?.inventor.contactInfo.Name,
-            fundingUnits: patent.value?.funding?.fundingUnits.map((unit) => ({
-               name: unit.fundingUnit.Name,
-               projectCode: unit.ProjectCode,
+            本校編號: patent.value?.internal?.InternalID,
+            專利名稱: patent.value?.Title,
+            專利國別: patent.value?.country?.CountryName,
+            申請人: mainInventor?.inventor.contactInfo.Name,
+            補助機關: patent.value?.funding?.fundingUnits.map((unit) => ({
+               名稱: unit.fundingUnit.Name,
+               計畫編號: unit.ProjectCode,
             })),
-            scheme: "C",
+            方案名稱: fundingPlan.value?.Name,
          };
       });
 
@@ -214,34 +225,102 @@ export const useFundingExport = (params: UseFundingExportParams) => {
 
    // PDF 3: 便函 MEMORANDUM
    const departmentCostMemo = async () => {
+      const unitContribution = computed(() => {
+         if (!dataExported.value || !patent.value) return [];
+         const fundingUnits = patent.value.funding?.fundingUnits || [];
+         return fundingUnits.map((unit) => {
+            const totalContribution = dataExported
+               .value!.fundingUnitAccounting.filter((fua) =>
+               fua.unitContributions.some(
+                  (uc) => uc.unitId === unit.fundingUnit.FundingUnitID,
+               ),
+            )
+               .reduce((sum, fua) => {
+                  return (
+                     sum
+                     + fua.unitContributions
+                        .filter(
+                           (uc) => uc.unitId === unit.fundingUnit.FundingUnitID,
+                        )
+                        .reduce((subSum, uc) => subSum + uc.amount, 0)
+                  );
+               }, 0);
+
+            return {
+               name: unit.fundingUnit.Name,
+               amount: totalContribution || 0,
+            };
+         });
+      });
+
+      const unitTotal = computed(() => {
+         if (!unitContribution.value) return 0;
+         return unitContribution.value.reduce(
+            (sum, item) => sum + item.amount,
+            0,
+         );
+      });
+
       const computedData = computed(() => {
          const mainInventor = patent.value?.inventors.find((inv) => inv.Main);
          const departmentShare
             = dataExported.value?.internalAccounting.find((adj) =>
-               adj.targetName.includes("系所"),
+               adj.targetName.includes("院系所"),
             )?.amount || 0;
+         const totalAmount
+            = dataExported.value?.records.reduce(
+               (sum, rec) => sum + rec.Amount,
+               0,
+            ) || 0;
          const patentType
             = patent.value?.PatentType === "INVENTION"
-               ? "發明專利"
+               ? "發明"
                : patent.value?.PatentType === "UTILITY_MODEL"
-                  ? "新型專利"
-                  : "設計專利";
+                  ? "新型"
+                  : patent.value?.PatentType === "DESIGN"
+                     ? "設計"
+                     : patent.value?.PatentType === "PLANT"
+                        ? "植物"
+                        : "其他";
+
+         const departmentSharePercent = computed(() => {
+            return fundingPlan.value
+               ? fundingPlan.value.planAllocations.find(
+                  (a) => a.target.Name === "院系所",
+               )?.Percentage || 0
+               : 0;
+         });
          return {
-            recipient: patent.value?.department.Name,
-            subject: `有關貴系分攤 ${mainInventor?.inventor.contactInfo.Name} 老師 ${patent.value?.country?.CountryName} ${patentType} 申請及實審費用 新臺幣 ${departmentShare} 元整`,
-            title: `${patent.value?.Title} (校內編號: ${patent.value?.internal?.InternalID})`,
-            expenseItem: dataExported.value?.name,
-            totalAmount:
-               dataExported.value?.records.reduce(
-                  (sum, rec) => sum + rec.Amount,
-                  0,
-               ) || 0,
-            departmentShare,
+            受文者: patent.value?.department.Name,
+            發明人: `${mainInventor?.inventor.contactInfo.Name} ${mainInventor?.inventor.contactInfo.Role}`,
+            完整項目名稱: `${patent.value?.country?.CountryName}${patentType}${dataExported.value?.name}`,
+            專利名稱: `${patent.value?.Title}`,
+            校內編號: `${patent.value?.internal?.InternalID}`,
+            國別: `${patent.value?.country?.CountryName}`,
+            方案: `${fundingPlan.value?.Name}`,
+            分攤: fundingPlan.value?.planAllocations.map((a, index) => ({
+               名稱: a.target.Name,
+               百分比: `${a.Percentage}%`,
+               end:
+                  index
+                  === (fundingPlan.value?.planAllocations?.length ?? 0) - 1
+                     ? ""
+                     : "、",
+            })),
+            專利類型: `${patentType}`,
+            費用項目: dataExported.value?.name,
+            費用總額: formatNumber(totalAmount),
+            系所分攤費用: `${formatNumber(departmentShare)}`,
+            系所分攤算式: `${formatNumber(totalAmount)} × ${Math.round(
+               ((totalAmount - unitTotal.value) / totalAmount) * 100,
+            )}% × ${departmentSharePercent.value}% = ${formatNumber(departmentShare)}`,
          };
       });
 
       const refData = ref<Record<string, string>>({
-         paymentDeadline: formatTaiwanDate(new Date()), // 預設為當前日期
+         日期: formatTaiwanDate(new Date(), "YY.MM.DD"), // 預設為當前日期
+         期限: formatTaiwanDate(new Date(), "YY年MM月DD日"), // 預設為當前日期
+         當天日期2: formatTaiwanDate(new Date(), "YY 年 MM 月 DD 日"), // 預設為當前日期
       });
 
       return {
