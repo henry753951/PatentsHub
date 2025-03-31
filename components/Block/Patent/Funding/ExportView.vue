@@ -8,7 +8,7 @@
             <div
                class="w-full border border-gray-300 dark:border-zinc-800 rounded-lg overflow-hidden flex-1"
             >
-               <ScrollArea class="p-3 h-full">
+               <ScrollArea class="p-3 h-[300px]">
                   <DataTable
                      :value="dataExported?.records"
                      data-key="FundingRecordID"
@@ -184,12 +184,20 @@ const unitContribution = computed(() => {
    const fundingUnits = patent.value.funding?.fundingUnits || [];
    return fundingUnits.map((unit) => {
       const totalContribution = dataExported
-         .value!.fundingUnitAccounting.find((fua) =>
-         fua.unitContributions.find(
+         .value!.fundingUnitAccounting.filter((fua) =>
+         fua.unitContributions.some(
             (uc) => uc.unitId === unit.fundingUnit.FundingUnitID,
          ),
       )
-         ?.unitContributions.reduce((sum, uc) => sum + uc.amount, 0);
+         .reduce((sum, fua) => {
+            return (
+               sum
+               + fua.unitContributions
+                  .filter((uc) => uc.unitId === unit.fundingUnit.FundingUnitID)
+                  .reduce((subSum, uc) => subSum + uc.amount, 0)
+            );
+         }, 0);
+
       return {
          name: unit.fundingUnit.Name,
          amount: totalContribution || 0,

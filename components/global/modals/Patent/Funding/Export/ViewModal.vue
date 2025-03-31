@@ -1,6 +1,6 @@
 <template>
    <Dialog v-model:open="isOpen">
-      <DialogContent class="max-w-[80vw] gap-1 min-h-[70vh] flex flex-col">
+      <DialogContent class="max-w-[80vw] gap-1 max-h-[70vh] flex flex-col overflow-hidden min-h-0">
          <DialogHeader>
             <DialogTitle
                class="text-2xl font-bold text-gray-900 bg-gradient-to-r from-gray-700 to-gray-500 bg-clip-text text-transparent"
@@ -44,7 +44,7 @@
          <Divider />
          <Tabs
             v-model:value="activeTab"
-            class="w-full flex-1"
+            class="w-full flex-1 h-full overflow-auto"
          >
             <TabList>
                <Tab value="view">
@@ -64,7 +64,7 @@
                </TabPanel>
                <TabPanel
                   value="export"
-                  class="flex-1 flex"
+                  class="flex-1 flex p-0"
                >
                   <BlockPatentFundingExportFile
                      v-if="activeTab === 'export'"
