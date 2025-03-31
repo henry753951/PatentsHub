@@ -140,6 +140,9 @@
                         refData: t.service.refData,
                      },
                      t.service.template,
+                     `[${patent.internal?.InternalID}] ${mainInventor?.inventor.contactInfo.Name}${patent.Title}-${t.title} (${formatTaiwanDate(
+                        dataExported?.date,'YY.MM.DD',
+                     )})`,
                   )
                "
             >
@@ -170,6 +173,9 @@ const dataExported = toRef(() => props.dataExported);
 const { patentData: patent, fundingData } = toRefs(fundingService);
 const fundingPlan = computed(() => {
    return fundingData.value?.plan ?? null;
+});
+const mainInventor = computed(() => {
+   return patent.value?.inventors.find((i) => i.Main) ?? null;
 });
 
 const exportService = useFundingExport({
