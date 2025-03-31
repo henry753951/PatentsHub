@@ -1,7 +1,8 @@
 import { ref, computed, type Ref, type ComputedRef } from "vue";
+
 interface PdfData<T> {
    computedData: ComputedRef<T>
-   refData: Ref<any>
+   refData: Map<string, Ref<string>>
 }
 
 interface UseFundingExportParams {
@@ -20,19 +21,6 @@ interface UseFundingExportParams {
 
 export const useFundingExport = (params: UseFundingExportParams) => {
    const { dataExported, patent, fundingPlan, formatTaiwanDate } = params;
-
-   // 定義彈性欄位 Ref
-   const pdf1PaymentDate = ref(new Date());
-   const pdf2CoOwners = ref<string[]>([]);
-   const pdf3PaymentDeadline = ref(new Date());
-   const pdf4FundingUnitNotes = ref<{ notes: string, description: string }[]>(
-      [],
-   );
-   const pdf4UniversityNotes = ref("");
-   const pdf4UniversityDescription = ref("");
-   const pdf5SubjectDetails = ref<
-      { subjectCode: string, projectName: string, subjectName: string }[]
-   >([]);
 
    // PDF 1: 專利費用繳款通知單
    const patentFeeNotice = () => {
@@ -56,10 +44,14 @@ export const useFundingExport = (params: UseFundingExportParams) => {
             inventorShare,
             inventor: `${mainInventor?.inventor.contactInfo.Name} ${mainInventor?.inventor.contactInfo.Role}`,
             department: `${patent.value?.department.college.Name} ${patent.value?.department.Name}`,
-            date: formatTaiwanDate(pdf1PaymentDate.value),
          };
       });
-      return { computedData, refData: pdf1PaymentDate };
+
+      const refData = new Map<string, Ref<string>>([
+         ["paymentDate", ref(formatTaiwanDate(new Date()))], // 預設為當前日期
+      ]);
+
+      return { computedData, refData };
    };
 
    // PDF 2: 國立高雄大學研發成果申請專利費用分攤協議書
@@ -75,12 +67,16 @@ export const useFundingExport = (params: UseFundingExportParams) => {
                name: unit.fundingUnit.Name,
                projectCode: unit.ProjectCode,
             })),
-            hasCoOwners: pdf2CoOwners.value.length > 0,
-            coOwners: pdf2CoOwners.value,
             scheme: "C",
          };
       });
-      return { computedData, refData: pdf2CoOwners };
+
+      // 彈性欄位 Map，預設值
+      const refData = new Map<string, Ref<string>>([
+         ["coOwners", ref("無共同所有人")], // 預設為空共同所有人
+      ]);
+
+      return { computedData, refData };
    };
 
    // PDF 3: 便函 MEMORANDUM
@@ -99,7 +95,6 @@ export const useFundingExport = (params: UseFundingExportParams) => {
                   : "設計專利";
          return {
             recipient: patent.value?.department.Name,
-            date: formatTaiwanDate(pdf3PaymentDeadline.value),
             subject: `有關貴系分攤 ${mainInventor?.inventor.contactInfo.Name} 老師 ${patent.value?.country?.CountryName} ${patentType} 申請及實審費用 新臺幣 ${departmentShare} 元整`,
             title: `${patent.value?.Title} (校內編號: ${patent.value?.internal?.InternalID})`,
             expenseItem: dataExported.value?.name,
@@ -111,7 +106,12 @@ export const useFundingExport = (params: UseFundingExportParams) => {
             departmentShare,
          };
       });
-      return { computedData, refData: pdf3PaymentDeadline };
+
+      const refData = new Map<string, Ref<string>>([
+         ["paymentDeadline", ref(formatTaiwanDate(new Date()))], // 預設為當前日期
+      ]);
+
+      return { computedData, refData };
    };
 
    // PDF 4: 支出機關分攤表
@@ -149,14 +149,15 @@ export const useFundingExport = (params: UseFundingExportParams) => {
             universityAmount: totalInternalAmount,
          };
       });
-      return {
-         computedData,
-         refData: ref({
-            fundingUnitNotes: pdf4FundingUnitNotes.value,
-            universityNotes: pdf4UniversityNotes.value,
-            universityDescription: pdf4UniversityDescription.value,
-         }),
-      };
+
+      // 彈性欄位 Map，預設值
+      const refData = new Map<string, Ref<string>>([
+         ["fundingUnitNotes", ref("無備註")], // 預設無備註
+         ["universityNotes", ref("無大學備註")], // 預設無大學備註
+         ["universityDescription", ref("無大學描述")], // 預設無大學描述
+      ]);
+
+      return { computedData, refData };
    };
 
    // PDF 5: 高雄大學支出分攤表
@@ -168,11 +169,8 @@ export const useFundingExport = (params: UseFundingExportParams) => {
                0,
             ) || 0;
          const adjustments = dataExported.value?.internalAccounting.map(
-            (adj, index) => ({
+            (adj) => ({
                targetName: adj.targetName,
-               subjectCode: pdf5SubjectDetails.value[index]?.subjectCode || "",
-               projectName: pdf5SubjectDetails.value[index]?.projectName || "",
-               subjectName: pdf5SubjectDetails.value[index]?.subjectName || "",
                amount: adj.amount,
                allocationMethod: adj.targetName.includes("發明人")
                   ? `${totalAmount} × 40% × 95% = ${adj.amount}元（發明人自行負擔）`
@@ -195,7 +193,12 @@ export const useFundingExport = (params: UseFundingExportParams) => {
                : "",
          };
       });
-      return { computedData, refData: pdf5SubjectDetails };
+
+      const refData = new Map<string, Ref<string>>([
+         ["subjectDetails", ref("無主題細節")], // 預設無主題細節
+      ]);
+
+      return { computedData, refData };
    };
 
    return {

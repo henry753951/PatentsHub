@@ -111,6 +111,8 @@ export default defineNuxtConfig({
             "radix-vue",
             "radix-ui",
             "lucide-vue-next",
+            "tailwind-variants",
+            "lodash-es",
          ],
       },
    },

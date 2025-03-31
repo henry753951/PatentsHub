@@ -7,6 +7,7 @@ export default defineNuxtModule({
          "~/server": ["dbZ"],
          "~/zod.dto": ["CustomZodType"],
          "overlayscrollbars-vue": ["OverlayScrollbarsComponent"],
+         "tailwind-variants": ["tv"],
       };
       const typeModules = {
          "vue-component-type-helpers": ["ComponentExposed"],

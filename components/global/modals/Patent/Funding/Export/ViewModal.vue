@@ -42,7 +42,10 @@
             </DialogDescription>
          </DialogHeader>
          <Divider />
-         <Tabs v-model:value="activeTab">
+         <Tabs
+            v-model:value="activeTab"
+            class="w-full flex-1"
+         >
             <TabList>
                <Tab value="view">
                   詳細資料
@@ -51,12 +54,22 @@
                   匯出
                </Tab>
             </TabList>
-            <TabPanels>
+            <TabPanels class="flex-1 flex flex-col">
                <TabPanel value="view">
                   <BlockPatentFundingExportView
                      v-if="activeTab === 'view'"
                      :data-exported="dataExported"
                      :funding-service="fundingService"
+                  />
+               </TabPanel>
+               <TabPanel
+                  value="export"
+                  class="flex-1 flex"
+               >
+                  <BlockPatentFundingExportFile
+                     v-if="activeTab === 'export'"
+                     :funding-service="fundingService"
+                     :data-exported="dataExported"
                   />
                </TabPanel>
             </TabPanels>
