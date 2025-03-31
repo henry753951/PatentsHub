@@ -23,7 +23,8 @@ export const prisma
      ?? new PrismaClient({
         log: isProduction
            ? [{ emit: "event", level: "error" }]
-           : process.env.PRISMA_LOG
+        //   : process.env.PRISMA_LOG
+           : false
               ? [
                  {
                     emit: "event",

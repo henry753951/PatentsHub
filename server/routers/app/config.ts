@@ -4,7 +4,6 @@ import { app } from "electron";
 import path from "path";
 import fs from "fs/promises";
 import { ConfigFile } from "../../../zod.dto";
-import { dir } from "console";
 
 const configPath = `${path.join(app.getPath("userData"), "config.json")}`;
 export default router({
@@ -19,8 +18,8 @@ export default router({
          }
          catch (error) {
             console.error("Error reading config file:", error);
-            //  Generate default config if file doesn't exist or is invalid
-            const defaultConfig = ConfigFile.parse({});
+            const defaultConfig = ConfigFile.parse(undefined);
+            console.log("Default config file created:", defaultConfig);
             await fs.writeFile(
                configPath,
                JSON.stringify(defaultConfig, null, 2),

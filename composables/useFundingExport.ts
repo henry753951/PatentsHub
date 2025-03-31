@@ -1,3 +1,4 @@
+import { template } from "lodash-es";
 import { ref, computed, type Ref, type ComputedRef } from "vue";
 
 interface PdfData<T> {
@@ -77,7 +78,11 @@ export const useFundingExport = (params: UseFundingExportParams) => {
          paymentDate: formatTaiwanDate(new Date()), // 預設為當前日期
       });
 
-      return { computedData, refData };
+      return {
+         computedData,
+         refData,
+         template: ref(getTemplate("patentFeeNotice")),
+      };
    };
 
    // PDF 2: 國立高雄大學研發成果申請專利費用分攤協議書
@@ -102,7 +107,11 @@ export const useFundingExport = (params: UseFundingExportParams) => {
          coOwners: "無共同所有人", // 預設為空共同所有人
       });
 
-      return { computedData, refData };
+      return {
+         computedData,
+         refData,
+         template: ref(getTemplate("patentCostSharingAgreement")),
+      };
    };
 
    // PDF 3: 便函 MEMORANDUM
@@ -137,7 +146,11 @@ export const useFundingExport = (params: UseFundingExportParams) => {
          paymentDeadline: formatTaiwanDate(new Date()), // 預設為當前日期
       });
 
-      return { computedData, refData };
+      return {
+         computedData,
+         refData,
+         template: ref(getTemplate("departmentCostMemo")),
+      };
    };
 
    // PDF 4: 支出機關分攤表
@@ -183,7 +196,11 @@ export const useFundingExport = (params: UseFundingExportParams) => {
          universityDescription: "無大學描述", // 預設無大學描述
       });
 
-      return { computedData, refData };
+      return {
+         computedData,
+         refData,
+         template: ref(getTemplate("unitCostAllocationTable")),
+      };
    };
 
    // PDF 5: 高雄大學支出分攤表
@@ -224,7 +241,11 @@ export const useFundingExport = (params: UseFundingExportParams) => {
          subjectDetails: "無備註",
       });
 
-      return { computedData, refData };
+      return {
+         computedData,
+         refData,
+         template: ref(getTemplate("internalCostAllocationTable")),
+      };
    };
 
    return {
