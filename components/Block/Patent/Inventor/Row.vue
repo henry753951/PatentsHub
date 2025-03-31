@@ -18,28 +18,30 @@
 
             <!-- 文字資訊 -->
             <div :class="[compact ? 'text-sm' : 'text-base']">
-               <div class="flex items-center gap-2">
+               <div class="flex items-center gap-2 whitespace-nowrap">
                   <div :class="[compact ? 'text-xl' : 'text-2xl', 'font-bold']">
                      {{ props.name }}
                   </div>
-                  <div class="text-muted text-sm">
+                  <div class="text-zinc-500 text-sm">
                      {{ props.job }}
                   </div>
 
                   <template v-if="compact">
-                     <CustomBadgeWithText
-                        :text="props.belong.college"
-                        size="xs"
-                     />
-                     <div class="text-zinc-500 text-sm">
-                        {{ props.belong.department }}
+                     <div class="flex gap-2 items-center whitespace-nowrap">
+                        <CustomBadgeWithText
+                           :text="props.belong.college"
+                           size="xs"
+                        />
+                        <div class="text-zinc-500 text-sm">
+                           {{ props.belong.department }}
+                        </div>
                      </div>
                   </template>
                </div>
 
                <div
                   v-if="!compact"
-                  class="flex gap-2 items-center mt-1"
+                  class="flex gap-2 items-center mt-1 whitespace-nowrap"
                >
                   <CustomBadgeWithText
                      :text="props.belong.college"
@@ -57,7 +59,7 @@
             v-if="!compact && props.contributionInput"
             class="flex items-center gap-4 flex-1"
          >
-            <div class="flex flex-col gap-1 w-full pl-8">
+            <div class="flex flex-col gap-1 w-full pl-8 ">
                <div class="flex justify-between text-sm">
                   <div class="font-bold">
                      貢獻度
@@ -107,7 +109,7 @@
          </div>
          <CustomProgressSlider
             v-model="contribution"
-            class="hover:shadow-lg hover:h-5 transition-all duration-200 h-2"
+            class="hover:shadow-lg h-2"
             :max="props.max"
          />
       </div>

@@ -16,13 +16,14 @@
                {{ props.description }}
             </DialogDescription>
          </DialogHeader>
-         <OverlayScrollbarsComponent
-            :options="{ scrollbars: { autoHide: 'leave' } }"
-            class="max-h-96 overflow-auto px-4 py-4"
+
+         <form
+            class="space-y-2"
+            @submit.prevent="submitForm"
          >
-            <form
-               class="space-y-2"
-               @submit.prevent="submitForm"
+            <OverlayScrollbarsComponent
+               :options="{ scrollbars: { autoHide: 'leave' } }"
+               class="max-h-96 overflow-auto px-4 py-4"
             >
                <div>
                   <div class="flex justify-between items-center">
@@ -128,23 +129,22 @@
                      v-model="formData.note"
                   />
                </div>
-            </form>
-         </OverlayScrollbarsComponent>
-         <DialogFooter>
-            <Button
-               type="button"
-               variant="outline"
-               @click="closeModal"
-            >
-               取消
-            </Button>
-            <Button
-               type="submit"
-               @click="submitForm"
-            >
-               確認
-            </Button>
-         </DialogFooter>
+            </OverlayScrollbarsComponent>
+            <DialogFooter>
+               <Button
+                  type="button"
+                  variant="outline"
+                  @click="closeModal"
+               >
+                  取消
+               </Button>
+               <Button
+                  type="submit"
+               >
+                  確認
+               </Button>
+            </DialogFooter>
+         </form>
       </DialogContent>
    </Dialog>
 </template>

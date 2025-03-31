@@ -3,6 +3,64 @@ import { procedure, router } from "../../trpc";
 import { dbZ } from "~/server";
 
 export default router({
+   addManualStatus: procedure
+      .input(
+         z.object({
+            patentID: z.number(),
+            reason: z.string().min(1, "狀態名稱不可為空"),
+            date: z.date().optional(),
+            active: z.boolean().default(true),
+         }),
+      )
+      .mutation(async ({ input }) => {
+         const { patentID, reason, date, active } = input;
+
+         return await prisma.patentManualStatus.create({
+            data: {
+               PatentID: patentID,
+               Reason: reason,
+               Date: date ?? null,
+               Active: active,
+            },
+         });
+      }),
+
+   updateManualStatus: procedure
+      .input(
+         z.object({
+            manualStatusID: z.number(),
+            reason: z.string().min(1),
+            date: z.date().optional(),
+         }),
+      )
+      .mutation(async ({ input }) => {
+         const { manualStatusID, reason, date } = input;
+
+         return await prisma.patentManualStatus.update({
+            where: {
+               ManualStatusID: manualStatusID,
+            },
+            data: {
+               Reason: reason,
+               Date: date ?? null,
+            },
+         });
+      }),
+
+   removeManualStatus: procedure
+      .input(
+         z.object({
+            manualStatusID: z.number(),
+         }),
+      )
+      .mutation(async ({ input }) => {
+         return await prisma.patentManualStatus.delete({
+            where: {
+               ManualStatusID: input.manualStatusID,
+            },
+         });
+      }),
+
    getExpiringPatents: procedure
       .input(
          z.object({
