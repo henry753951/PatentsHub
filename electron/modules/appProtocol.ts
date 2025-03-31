@@ -13,16 +13,17 @@ export default (mainWindow: BrowserWindow) => {
             case "file": {
                const filePath = url.pathname;
                const fullPath = path.join(userData, filePath);
-               await fs.access(fullPath);
-               const fileContent = await fs.readFile(fullPath);
+               // decode the path to handle spaces and special characters
+               const decodedPath = decodeURIComponent(fullPath);
+               await fs.access(decodedPath);
+               const fileContent = await fs.readFile(decodedPath);
 
-               const ext = path.extname(fullPath).toLowerCase();
+               const ext = path.extname(decodedPath).toLowerCase();
                const mimeTypes: { [key: string]: string } = {
                   ".docx":
                      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                   ".pdf": "application/pdf",
                   ".txt": "text/plain",
-                  ".db": "application/octet-stream",
                };
                const mimeType = mimeTypes[ext] || "application/octet-stream";
 

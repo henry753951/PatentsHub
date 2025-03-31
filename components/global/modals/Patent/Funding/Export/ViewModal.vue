@@ -75,7 +75,7 @@
                </TabPanel>
                <TabPanel
                   value="export"
-                  class="flex-1 flex p-0"
+                  class="flex-1 flex p-0 min-h-[370px]"
                >
                   <BlockPatentFundingExportFile
                      v-if="activeTab === 'export'"
@@ -89,7 +89,6 @@
    </Dialog>
 </template>
 <script lang="ts" setup>
-import { ref, computed, onMounted, defineModel, defineProps } from "vue";
 import {
    Dialog,
    DialogContent,

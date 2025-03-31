@@ -2,6 +2,7 @@ import * as path from "path";
 import * as os from "os";
 import { consola } from "consola";
 import { app, BrowserWindow, protocol } from "electron";
+import fs from "fs/promises";
 import singleInstance from "./singleInstance";
 import dynamicRenderer from "./dynamicRenderer";
 import titleBarActionsModule from "./modules/titleBarActions";
@@ -15,12 +16,34 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 const isProduction = process.env.NODE_ENV !== "development";
 const platform = process.platform as "darwin" | "win32" | "linux";
 const architucture: "64" | "32" = os.arch() === "x64" ? "64" : "32";
+
 const modules = [
    titleBarActionsModule,
    updaterModule,
    trpcHandlerModule,
    appProtocolModule,
 ];
+
+// Create default user data folders
+// ==================================
+const defaultUserDataFolders = ["templates", "logs"];
+const userDataPath = app.getPath("userData");
+defaultUserDataFolders.forEach(async (folder) => {
+   const folderPath = path.join(userDataPath, folder);
+   try {
+      const folderExists = await fs
+         .stat(folderPath)
+         .then(() => true)
+         .catch(() => false);
+      if (!folderExists) {
+         await fs.mkdir(folderPath, { recursive: true });
+         consola.log(`Created folder: ${folderPath}`);
+      }
+   }
+   catch (err) {
+      consola.error(`Error handling folder: ${folderPath}`, err);
+   }
+});
 
 protocol.registerSchemesAsPrivileged([
    {

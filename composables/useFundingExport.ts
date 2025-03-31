@@ -1,4 +1,4 @@
-import { template } from "lodash-es";
+import { TemplateHandler } from "easy-template-x";
 import { ref, computed, type Ref, type ComputedRef } from "vue";
 
 interface PdfData<T> {
@@ -23,6 +23,22 @@ export const useFundingExport = (params: UseFundingExportParams) => {
    const { dataExported, patent, fundingPlan } = params;
    const { $trpc } = useNuxtApp();
 
+   const templateList = ref<{ name: string }[]>([]);
+
+   const loadTemplates = async () => {
+      const files = await getTemplates();
+      templateList.value = files
+         .filter((file) => !file.isDirectory)
+         .map((file) => ({
+            name: file.name,
+         }));
+   };
+   const openTemplateDirectory = async () => {
+      await $trpc.app.config.openDirectory.mutate({
+         directory: "templates",
+      });
+   };
+
    const getTemplates = async () => {
       const files = await $trpc.app.config.getUserDataFiles.query({
          directory: "templates",
@@ -41,16 +57,57 @@ export const useFundingExport = (params: UseFundingExportParams) => {
       return templates[documentName];
    };
 
-   const exportDocument = (
+   const updateTemplate = async (
+      documentName: keyof RouterOutput["app"]["config"]["readConfig"]["funding"]["templates"],
+      template: string,
+   ) => {
+      const config = await $trpc.app.config.readConfig.query();
+      const templates = config.funding.templates;
+      if (!(documentName in templates)) {
+         throw new Error(`Template ${documentName} not found`);
+      }
+      templates[documentName] = template;
+      await $trpc.app.config.writeConfig.mutate(config);
+   };
+
+   const exportDocument = async (
       data: {
          computedData: Record<string, any>
          refData: Record<string, string>
       },
       template: string,
-   ) => {};
+      name: string = "Test.docx",
+   ) => {
+      const response = await fetch("app://file/templates/" + template);
+      if (!response.ok) {
+         throw new Error(`找不到模板檔案: ${template}`);
+      }
+      const templateFile = await response.blob();
+      const mergedData = {
+         ...data.computedData,
+         ...data.refData,
+      };
+
+      const handler = new TemplateHandler();
+      const doc = await handler.process(templateFile, mergedData);
+
+      const downloadHandle = await window.showSaveFilePicker({
+         suggestedName: name,
+         types: [
+            {
+               description: "Word 文件",
+            },
+         ],
+      });
+      const writable = await downloadHandle.createWritable();
+      await writable.write(doc);
+      await writable.close();
+
+      console.log("檔案下載成功");
+   };
 
    // PDF 1: 專利費用繳款通知單
-   const patentFeeNotice = () => {
+   const patentFeeNotice = async () => {
       const computedData = computed(() => {
          const mainInventor = patent.value?.inventors.find((inv) => inv.Main);
          const totalAmount
@@ -62,15 +119,56 @@ export const useFundingExport = (params: UseFundingExportParams) => {
             = dataExported.value?.internalAccounting.find((adj) =>
                adj.targetName.includes("發明人"),
             )?.amount || 0;
+
+         const unitContribution = computed(() => {
+            if (!dataExported.value || !patent.value) return [];
+            const fundingUnits = patent.value.funding?.fundingUnits || [];
+            return fundingUnits.map((unit) => {
+               const totalContribution = dataExported
+                  .value!.fundingUnitAccounting.find((fua) =>
+                  fua.unitContributions.find(
+                     (uc) => uc.unitId === unit.fundingUnit.FundingUnitID,
+                  ),
+               )
+                  ?.unitContributions.reduce((sum, uc) => sum + uc.amount, 0);
+               return {
+                  name: unit.fundingUnit.Name,
+                  amount: totalContribution || 0,
+               };
+            });
+         });
+
+         const unitTotal = computed(() => {
+            if (!unitContribution.value) return 0;
+            return unitContribution.value.reduce(
+               (sum, item) => sum + item.amount,
+               0,
+            );
+         });
+
+         const inventorSharePercent = computed(() => {
+            return fundingPlan.value
+               ? fundingPlan.value.planAllocations.find(
+                  (a) => a.target.Name === "發明人",
+               )?.Percentage || 0
+               : 0;
+         });
+
          return {
             本校編號: patent.value?.internal?.InternalID,
             專利名稱: patent.value?.Title,
-            country: patent.value?.country?.CountryName,
-            expenseItem: `${dataExported.value?.name} (${formatTaiwanDate(dataExported.value?.date)})`,
-            totalAmount,
-            inventorShare,
-            inventor: `${mainInventor?.inventor.contactInfo.Name} ${mainInventor?.inventor.contactInfo.Role}`,
-            department: `${patent.value?.department.college.Name} ${patent.value?.department.Name}`,
+            國家: patent.value?.country?.CountryName,
+            費用項目: `${dataExported.value?.name} (${formatTaiwanDate(dataExported.value?.date, "YY.MM")})`,
+            費用總額: formatNumber(totalAmount),
+            發明人分攤費用: formatNumber(inventorShare),
+            發明人: `${mainInventor?.inventor.contactInfo.Name}`,
+            發明人職位: `${mainInventor?.inventor.contactInfo.Role}`,
+            單位: `${patent.value?.department.college.Name}${patent.value?.department.Name}`,
+            方案名稱: `${fundingPlan.value?.Name}`,
+            發明人分攤算式: `${formatNumber(totalAmount)} × ${Math.round((1 - unitTotal.value / totalAmount) * 100)}% × ${inventorSharePercent.value}% = ${formatNumber(inventorShare)}`,
+            資助單位補助: `${Math.round(
+               (unitTotal.value / totalAmount) * 100,
+            )}%`,
          };
       });
 
@@ -81,12 +179,12 @@ export const useFundingExport = (params: UseFundingExportParams) => {
       return {
          computedData,
          refData,
-         template: ref(getTemplate("patentFeeNotice")),
+         template: ref(await getTemplate("patentFeeNotice")),
       };
    };
 
    // PDF 2: 國立高雄大學研發成果申請專利費用分攤協議書
-   const patentCostSharingAgreement = () => {
+   const patentCostSharingAgreement = async () => {
       const computedData = computed(() => {
          const mainInventor = patent.value?.inventors.find((inv) => inv.Main);
          return {
@@ -110,12 +208,12 @@ export const useFundingExport = (params: UseFundingExportParams) => {
       return {
          computedData,
          refData,
-         template: ref(getTemplate("patentCostSharingAgreement")),
+         template: ref(await getTemplate("patentCostSharingAgreement")),
       };
    };
 
    // PDF 3: 便函 MEMORANDUM
-   const departmentCostMemo = () => {
+   const departmentCostMemo = async () => {
       const computedData = computed(() => {
          const mainInventor = patent.value?.inventors.find((inv) => inv.Main);
          const departmentShare
@@ -149,12 +247,12 @@ export const useFundingExport = (params: UseFundingExportParams) => {
       return {
          computedData,
          refData,
-         template: ref(getTemplate("departmentCostMemo")),
+         template: ref(await getTemplate("departmentCostMemo")),
       };
    };
 
    // PDF 4: 支出機關分攤表
-   const unitCostAllocationTable = () => {
+   const unitCostAllocationTable = async () => {
       const computedData = computed(() => {
          const totalAmount
             = dataExported.value?.records.reduce(
@@ -199,12 +297,12 @@ export const useFundingExport = (params: UseFundingExportParams) => {
       return {
          computedData,
          refData,
-         template: ref(getTemplate("unitCostAllocationTable")),
+         template: ref(await getTemplate("unitCostAllocationTable")),
       };
    };
 
    // PDF 5: 高雄大學支出分攤表
-   const internalCostAllocationTable = () => {
+   const internalCostAllocationTable = async () => {
       const computedData = computed(() => {
          const totalAmount
             = dataExported.value?.records.reduce(
@@ -244,15 +342,26 @@ export const useFundingExport = (params: UseFundingExportParams) => {
       return {
          computedData,
          refData,
-         template: ref(getTemplate("internalCostAllocationTable")),
+         template: ref(await getTemplate("internalCostAllocationTable")),
       };
    };
 
+   onMounted(() => {
+      loadTemplates();
+   });
+
    return {
-      patentFeeNotice,
-      patentCostSharingAgreement,
-      departmentCostMemo,
-      unitCostAllocationTable,
-      internalCostAllocationTable,
+      docs: {
+         patentFeeNotice,
+         patentCostSharingAgreement,
+         departmentCostMemo,
+         unitCostAllocationTable,
+         internalCostAllocationTable,
+      },
+      templateList,
+      openTemplateDirectory,
+      loadTemplates,
+      updateTemplate,
+      exportDocument,
    };
 };

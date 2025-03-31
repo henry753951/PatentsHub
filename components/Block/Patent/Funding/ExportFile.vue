@@ -32,28 +32,60 @@
          :value="t.title"
       >
          <UiThingTabs default-value="自動欄位">
-            <UiThingTabsList>
-               <UiThingTabsTrigger
-                  value="自動欄位"
-                  class="flex items-center gap-2"
-               >
-                  <Icon
-                     name="ic:round-hdr-auto"
-                     class="-ms-0.5 me-1.5 size-4 shrink-0 opacity-60"
+            <div class="flex justify-between w-full">
+               <div class="w-1/2 flex items-center gap-2">
+                  <Select
+                     v-model="t.service.template"
+                     :options="exportService.templateList.value"
+                     placeholder="選擇範本"
+                     empty-message="沒有範本"
+                     option-label="name"
+                     option-value="name"
+                     class="w-full"
+                     size="small"
+                     append-to="self"
+                     @change="
+                        exportService.updateTemplate(t.key, t.service.template)
+                     "
                   />
-                  自動欄位
-               </UiThingTabsTrigger>
-               <UiThingTabsTrigger
-                  value="手動欄位"
-                  class="flex items-center gap-2"
-               >
-                  <Icon
-                     name="ic:round-dashboard-customize"
-                     class="-ms-0.5 me-1.5 size-4 shrink-0 opacity-60"
-                  />
-                  彈性欄位
-               </UiThingTabsTrigger>
-            </UiThingTabsList>
+                  <Button
+                     variant="outline"
+                     size="icon"
+                     @click="exportService.openTemplateDirectory()"
+                  >
+                     <Icon name="ic:round-folder-open" />
+                  </Button>
+                  <Button
+                     variant="outline"
+                     size="icon"
+                     @click="exportService.loadTemplates()"
+                  >
+                     <Icon name="ic:round-refresh" />
+                  </Button>
+               </div>
+               <UiThingTabsList>
+                  <UiThingTabsTrigger
+                     value="自動欄位"
+                     class="flex items-center gap-2"
+                  >
+                     <Icon
+                        name="ic:round-hdr-auto"
+                        class="-ms-0.5 me-1.5 size-4 shrink-0 opacity-60"
+                     />
+                     自動欄位
+                  </UiThingTabsTrigger>
+                  <UiThingTabsTrigger
+                     value="手動欄位"
+                     class="flex items-center gap-2"
+                  >
+                     <Icon
+                        name="ic:round-dashboard-customize"
+                        class="-ms-0.5 me-1.5 size-4 shrink-0 opacity-60"
+                     />
+                     彈性欄位
+                  </UiThingTabsTrigger>
+               </UiThingTabsList>
+            </div>
 
             <UiThingTabsContent value="自動欄位">
                <div
@@ -97,12 +129,31 @@
                </div>
             </UiThingTabsContent>
          </UiThingTabs>
+         <!-- Actions -->
+         <div class="flex justify-end gap-2 mt-4">
+            <Button
+               :disabled="!canExport(t.key)"
+               @click="
+                  exportService.exportDocument(
+                     {
+                        computedData: t.service.computedData,
+                        refData: t.service.refData,
+                     },
+                     t.service.template,
+                  )
+               "
+            >
+               <Icon name="ic:round-download" /> 匯出
+            </Button>
+         </div>
       </UiThingTabsContent>
    </UiThingTabs>
 </template>
 
 <script lang="ts" setup>
 import { ScrollArea } from "~/components/ui/scroll-area";
+import Select from "primevue/select";
+import { Button } from "@/components/ui/button";
 const props = defineProps<{
    dataExported: {
       name: string
@@ -129,31 +180,49 @@ const exportService = useFundingExport({
 
 const tabs = ref([
    {
+      key: "patentFeeNotice",
       title: "專利費用繳款通知單",
-      service: exportService.patentFeeNotice(),
+      service: await exportService.docs.patentFeeNotice(),
    },
    {
+      key: "patentCostSharingAgreement",
       title: "費用分攤協議書",
-      service: exportService.patentCostSharingAgreement(),
+      service: await exportService.docs.patentCostSharingAgreement(),
    },
    {
+      key: "departmentCostMemo",
       title: "系所分攤便函",
-      service: exportService.departmentCostMemo(),
+      service: await exportService.docs.departmentCostMemo(),
    },
    {
+      key: "unitCostAllocationTable",
       title: "支出機關分攤表",
-      service: exportService.unitCostAllocationTable(),
+      service: await exportService.docs.unitCostAllocationTable(),
    },
    {
+      key: "internalCostAllocationTable",
       title: "支出科目分攤表",
-      service: exportService.internalCostAllocationTable(),
+      service: await exportService.docs.internalCostAllocationTable(),
    },
 ] as {
    title: string
+   key: keyof RouterOutput["app"]["config"]["readConfig"]["funding"]["templates"]
    service: {
       computedData: ComputedRef<Record<string, any>>
       refData: Ref<Record<string, any>>
+      template: Ref<string>
    }
    icon?: string
 }[]);
+
+const canExport = (key: string) => {
+   const service = tabs.value.find((t) => t.key === key)?.service;
+   if (!service) return false;
+   return (
+      service.template
+      && exportService.templateList.value.some(
+         (template) => template.name === service.template,
+      )
+   );
+};
 </script>

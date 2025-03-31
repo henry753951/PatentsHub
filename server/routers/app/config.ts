@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
-import { app } from "electron";
+import { app, shell } from "electron";
 import path from "path";
 import fs from "fs/promises";
 import { ConfigFile } from "../../../zod.dto";
@@ -17,9 +17,7 @@ export default router({
             return config;
          }
          catch (error) {
-            console.error("Error reading config file:", error);
             const defaultConfig = ConfigFile.parse(undefined);
-            console.log("Default config file created:", defaultConfig);
             await fs.writeFile(
                configPath,
                JSON.stringify(defaultConfig, null, 2),
@@ -43,6 +41,15 @@ export default router({
          return false;
       }
    }),
+
+   openDirectory: procedure
+      .input(z.object({ directory: z.string() }))
+      .mutation(async ({ input }) => {
+         const { directory } = input;
+         const userDataDir = app.getPath("userData");
+         const dirPath = path.join(userDataDir, directory);
+         await shell.openPath(dirPath);
+      }),
 
    getUserDataFiles: procedure
       .input(
