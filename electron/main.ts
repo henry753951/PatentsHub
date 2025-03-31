@@ -1,12 +1,13 @@
 import * as path from "path";
 import * as os from "os";
 import { consola } from "consola";
-import { app, BrowserWindow, session } from "electron";
+import { app, BrowserWindow, protocol } from "electron";
 import singleInstance from "./singleInstance";
 import dynamicRenderer from "./dynamicRenderer";
 import titleBarActionsModule from "./modules/titleBarActions";
 import updaterModule from "./modules/updater";
 import trpcHandlerModule from "./modules/trpcHandler";
+import appProtocolModule from "./modules/appProtocol";
 
 // Initilize
 // =========
@@ -14,12 +15,30 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 const isProduction = process.env.NODE_ENV !== "development";
 const platform = process.platform as "darwin" | "win32" | "linux";
 const architucture: "64" | "32" = os.arch() === "x64" ? "64" : "32";
-const modules = [titleBarActionsModule, updaterModule, trpcHandlerModule];
+const modules = [
+   titleBarActionsModule,
+   updaterModule,
+   trpcHandlerModule,
+   appProtocolModule,
+];
+
+protocol.registerSchemesAsPrivileged([
+   {
+      scheme: "app",
+      privileges: {
+         bypassCSP: true,
+         standard: true,
+         secure: true,
+         supportFetchAPI: true,
+      },
+   },
+]);
 
 // Initialize app window
 // =====================
 function createWindow() {
    consola.info("System info", { isProduction, platform, architucture });
+
    // Create the browser window.
    const mainWindow = new BrowserWindow({
       width: 1440,

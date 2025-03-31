@@ -68,6 +68,8 @@
                class="p-datatable-sm"
                :row-class="rowClass"
                :empty-message="'尚無帳目記錄'"
+               row-hover
+               @row-click="(e) => openEditRecordModal(e.data)"
             >
                <template #empty>
                   <div
@@ -100,10 +102,7 @@
                   header="名稱"
                >
                   <template #body="{ data }">
-                     <span
-                        class="font-medium text-gray-900 dark:text-white cursor-pointer"
-                        @click="openEditRecordModal(data)"
-                     >
+                     <span class="font-medium text-gray-900 dark:text-white">
                         {{ data.Name }}
                      </span>
                   </template>
@@ -254,6 +253,59 @@
                      <CardDescription> 帳目記錄的導出紀錄 </CardDescription>
                   </CardHeader>
                   <CardContent class="space-y-2">
+                     <DataTable
+                        :value="
+                           fundingsService.fundingData.value?.fundingExports
+                        "
+                        :row-class="(data) => ({
+                           'cursor-pointer': true,
+                        })"
+                        row-hover
+                        @row-click="(e) => openExportedModal(e.data.ExportID)"
+                     >
+                        <Column
+                           field="Name"
+                           header="名稱"
+                        >
+                           <template #body="{ data }">
+                              <span
+                                 class="font-medium text-gray-900 dark:text-white"
+                              >
+                                 {{ data.Name ? data.Name : "無" }}
+                              </span>
+                           </template>
+                        </Column>
+                        <Column
+                           field="exportRecords"
+                           header="項目"
+                        >
+                           <template #body="{ data }">
+                              <span
+                                 class="text-sm text-gray-500 dark:text-gray-400"
+                              >
+                                 {{
+                                    data.exportRecords.reduce(
+                                       (sum: any, record: any) =>
+                                          sum + record.Amount,
+                                       0,
+                                    )
+                                 }}
+                              </span>
+                           </template>
+                        </Column>
+                        <Column
+                           field="Date"
+                           header="日期"
+                        >
+                           <template #body="{ data }">
+                              <span
+                                 class="text-sm text-gray-500 dark:text-gray-400"
+                              >
+                                 {{ formatDate(data.ExportDate) }}
+                              </span>
+                           </template>
+                        </Column>
+                     </DataTable>
                   </CardContent>
                </Card>
             </TabsContent>
@@ -266,7 +318,6 @@
 import { format } from "date-fns";
 import { zhTW } from "date-fns/locale";
 import type { PatentFundingRecord } from "~/composables/database/patent/funding";
-import DataTable from "primevue/datatable";
 import {
    Card,
    CardContent,
@@ -276,7 +327,9 @@ import {
    CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import Row from "primevue/row";
 
 const { open } = useModals();
 const patent = defineModel<RouterOutput["data"]["patent"]["getPatent"]>({
@@ -297,10 +350,6 @@ const records = computed(() => ({
       (record) => record.ExportID === null,
    ),
 }));
-
-// 日期與數字格式化
-const formatNumber = (num: number) => num.toLocaleString("zh-TW");
-const formatDate = (date: Date) => format(date, "PPP", { locale: zhTW });
 
 // 統計資料
 const fundingUnits = fundingsService.fundingUnits;
@@ -339,7 +388,10 @@ const deleteSelectedRecords = () => {
 };
 // 根據匯出狀態設置行樣式
 const rowClass = (data: PatentFundingRecord) => {
-   return { "opacity-60": data.ExportID !== null };
+   return {
+      "opacity-40": data.ExportID !== null,
+      "cursor-pointer": data.ExportID === null,
+   };
 };
 
 const openNewRecordModal = () => {
@@ -368,6 +420,15 @@ const openExportModal = () => {
          ).length
             ? selectedRecords.value.filter((record) => record.ExportID === null)
             : records.value.unexported,
+      },
+   });
+};
+
+const openExportedModal = (exportId: number) => {
+   open("PatentFundingExportViewModal", {
+      props: {
+         fundingService: fundingsService,
+         exportId: exportId,
       },
    });
 };

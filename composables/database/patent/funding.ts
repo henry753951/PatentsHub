@@ -560,6 +560,7 @@ export const usePatentFundings = (patentService: {
             amount: Math.floor(alloc.Amount),
          }),
       );
+
       return {
          name: exportRecord.Name,
          description: exportRecord.Description,
@@ -669,6 +670,8 @@ export const usePatentFundings = (patentService: {
          exportableRecords,
       },
       useExportModal,
+      useDynamicFundingUnitRemaining,
+      useDynamicFundingUnitAccounting,
    };
 };
 

@@ -8,7 +8,17 @@
                出帳作業
             </DialogTitle>
             <DialogDescription class="text-gray-600 text-lg">
-               請依序完成以下步驟執行出帳作業
+               {{
+                  currentStep === 1
+                     ? "請確認匯出紀錄"
+                     : currentStep === 2
+                        ? "請調整資助單位金額"
+                        : currentStep === 3
+                           ? "請調整資助金額"
+                           : currentStep === 4
+                              ? "請調整校內分配"
+                              : "請確認出帳"
+               }}
             </DialogDescription>
          </DialogHeader>
 
@@ -94,98 +104,135 @@
                v-if="currentStep === 3"
                class="space-y-4"
             >
-               <h3 class="text-lg font-semibold text-gray-800">
-                  調整資助金額
-               </h3>
-               <div class="grid grid-cols-3 gap-8">
-                  <div class="col-span-2">
-                     <div
-                        v-for="account in fundingUnitAccounting"
-                        :key="account.record.FundingRecordID"
-                        class="space-y-2 mb-4 bg-gray-100/50 p-4 rounded-lg"
-                     >
-                        <div class="flex justify-between items-center">
-                           <div class="font-bold text-gray-700">
-                              {{ account.record.Name }}
-                           </div>
-                           <div>
-                              剩餘金額:
-                              {{ account.remainingAmount }}
-                           </div>
-                        </div>
-                        <Divider class="my-2" />
-                        <div class="space-y-2">
+               <div class="space-y-2">
+                  <div class="text-lg font-semibold text-gray-800">
+                     各單位配比
+                  </div>
+                  <MeterGroup :value="meterGroup.units" />
+               </div>
+               <div class="grid grid-cols-3 gap-4">
+                  <div class="col-span-2 flex flex-col gap-2">
+                     <div class="text-gray-700 font-semibold">
+                        調整資助金額
+                     </div>
+                     <ScrollArea class="h-72 pr-4">
+                        <div class="space-y-3">
                            <div
-                              v-for="contrib in account.unitContributions"
-                              :key="contrib.unitId"
-                              class="flex flex-col"
+                              v-for="account in fundingUnitAccounting"
+                              :key="account.record.FundingRecordID"
+                              class="space-y-2 mb-4 bg-gray-100/50 p-4 rounded-lg"
                            >
-                              <div class="flex gap-5 items-center">
-                                 <div class="w-full flex flex-col gap-2">
-                                    <div class="flex justify-between">
-                                       <label class="text-gray-700">
-                                          {{ contrib.name }}
-                                       </label>
-                                       <span class="text-gray-500">
-                                          {{ contrib.percent }} %
-                                       </span>
-                                    </div>
-                                    <CustomProgressSlider
-                                       v-model="contrib.amount"
-                                       class="w-full"
-                                       :min="0"
-                                       :max="
-                                          unitContributionMap[contrib.unitId]
-                                             .remainingAmount + contrib.amount
-                                       "
-                                       :range="[0, account.originalAmount]"
-                                    />
+                              <div class="flex justify-between items-center">
+                                 <div class="font-bold text-gray-700">
+                                    {{ account.record.Name }}
                                  </div>
-                                 <InputNumber
-                                    v-model="contrib.amount"
-                                    :max="
-                                       contrib.amount +
-                                          unitContributionMap[contrib.unitId]
-                                             .remainingAmount
-                                    "
-                                    suffix="元"
-                                    :min="0"
-                                    show-buttons
-                                 />
+                                 <div>
+                                    剩餘金額:
+                                    {{ account.remainingAmount }}
+                                 </div>
+                              </div>
+                              <Divider class="my-2" />
+                              <div class="space-y-2">
+                                 <div
+                                    v-for="contrib in account.unitContributions"
+                                    :key="contrib.unitId"
+                                    class="flex flex-col"
+                                 >
+                                    <div class="flex gap-5 items-center">
+                                       <div class="w-full flex flex-col gap-2">
+                                          <div class="flex justify-between">
+                                             <label class="text-gray-700">
+                                                {{ contrib.name }}
+                                                {{
+                                                   unitContributionMap[
+                                                      contrib.unitId
+                                                   ].remainingAmount +
+                                                      contrib.amount
+                                                }}
+                                             </label>
+                                             <span class="text-gray-500">
+                                                {{ contrib.percent }} %
+                                             </span>
+                                          </div>
+                                          <CustomProgressSlider
+                                             v-model="contrib.amount"
+                                             class="w-full"
+                                             :min="0"
+                                             :max="
+                                                Math.min(
+                                                   unitContributionMap[
+                                                      contrib.unitId
+                                                   ].remainingAmount +
+                                                      contrib.amount,
+                                                   account.remainingAmount +
+                                                      contrib.amount,
+                                                )
+                                             "
+                                             :range="[
+                                                0,
+                                                account.originalAmount,
+                                             ]"
+                                          />
+                                       </div>
+                                       <InputNumber
+                                          v-model="contrib.amount"
+                                          :max="
+                                             contrib.amount +
+                                                unitContributionMap[contrib.unitId]
+                                                   .remainingAmount
+                                          "
+                                          suffix="元"
+                                          :min="0"
+                                          show-buttons
+                                       />
+                                    </div>
+                                 </div>
                               </div>
                            </div>
                         </div>
-                     </div>
+                     </ScrollArea>
                   </div>
-                  <div class="col-span-1 flex flex-col gap-4">
+                  <div class="col-span-1 flex flex-col gap-2">
                      <div class="text-gray-700 font-semibold">
                         剩餘資助金額
                      </div>
                      <div
-                        v-for="unit in unitContribution"
-                        :key="unit.unitId"
+                        class="flex-1 bg-gray-100/50 rounded-lg p-4 flex flex-col gap-3"
                      >
-                        <div class="flex flex-col">
-                           <div class="flex justify-between">
-                              <label class="text-gray-700">
-                                 {{ unit.name }}
-                              </label>
-                              <span class="text-gray-500">
-                                 {{ unit.remainingAmount }} /
-                                 {{ unit.amount }}
-                              </span>
+                        <div
+                           v-for="unit in unitContribution"
+                           :key="unit.unitId"
+                        >
+                           <div class="flex flex-col">
+                              <div class="flex justify-between items-center">
+                                 <label class="text-gray-700">
+                                    {{ unit.name }}
+                                 </label>
+                                 <div
+                                    class="text-gray-500 flex flex-col gap-1 items-end text-xs"
+                                 >
+                                    <div>
+                                       已使用 {{ unit.remainingAmount }} 元
+                                    </div>
+                                    <div>總共{{ unit.amount }} 元</div>
+                                 </div>
+                              </div>
+                              <div
+                                 class="h-2 flex-1 bg-gray-200 rounded-full mt-1"
+                              >
+                                 <div
+                                    :style="{
+                                       width: `${Math.round(
+                                          ((unit.amount -
+                                             unit.remainingAmount) /
+                                             unit.amount) *
+                                             100,
+                                       )}%`,
+                                    }"
+                                    class="!h-[5px] bg-gray-500 rounded-full"
+                                 ></div>
+                              </div>
                            </div>
-                           <ProgressBar
-                              :value="
-                                 Math.round(
-                                    ((unit.amount - unit.remainingAmount) /
-                                       unit.amount) *
-                                       100,
-                                 )
-                              "
-                              class="w-full"
-                           >
-                           </ProgressBar>
                         </div>
                      </div>
                   </div>
@@ -196,12 +243,13 @@
                v-if="currentStep === 4"
                class="space-y-4"
             >
-               <h3 class="text-lg font-semibold text-gray-800">
-                  調整校內分配
-               </h3>
-
                <div class="space-y-2">
+                  <div class="text-lg font-semibold text-gray-800">
+                     校內分配
+                  </div>
                   <MeterGroup :value="meterGroup.internal" />
+               </div>
+               <div class="space-y-2">
                   <div
                      v-for="target in internalAccountingAdjustment"
                      :key="target.targetId"

@@ -96,6 +96,9 @@
    * {
       @apply border-border;
    }
+   *:focus-visible {
+      @apply ring-ring outline-none;
+   }
    body {
       @apply bg-background text-foreground;
       pointer-events: all !important;

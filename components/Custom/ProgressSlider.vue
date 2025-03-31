@@ -7,7 +7,7 @@
       @selectstart.prevent
    >
       <div
-         class="h-full rounded-xl flex justify-end py-1 transition-all duration-200"
+         class="h-full rounded-xl flex justify-end py-1 transition-transform duration-200 ease-in-out"
          :class="{
             'animate-bg-red-500': isOutofRange,
             'bg-zinc-800 dark:bg-zinc-400': !isOutofRange,

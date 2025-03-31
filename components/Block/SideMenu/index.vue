@@ -93,7 +93,10 @@ const navActions = [
    {
       title: "備份",
       icon: "basil:save-outline",
-      action: () => {},
+      action: async () => {
+         const { downloadDb } = useBackup();
+         await downloadDb();
+      },
    },
    {
       title: "設定",

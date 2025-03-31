@@ -1,6 +1,6 @@
 <template>
    <Dialog v-model:open="isOpen">
-      <DialogContent class="max-w-[80vw]">
+      <DialogContent class="max-w-[80vw] gap-1 min-h-[70vh] flex flex-col">
          <DialogHeader>
             <DialogTitle
                class="text-2xl font-bold text-gray-900 bg-gradient-to-r from-gray-700 to-gray-500 bg-clip-text text-transparent"
@@ -8,12 +8,74 @@
                查看匯出紀錄
             </DialogTitle>
             <DialogDescription class="text-gray-600 text-lg">
-               查看匯出紀錄的詳細資訊
+               <div class="grid grid-cols-3 gap-4">
+                  <div
+                     v-if="dataExported"
+                     class="col-span-2 flex items-center gap-3"
+                  >
+                     <div class="w-full">
+                        <CustomContentBlockRow
+                           v-model="dataExported.name"
+                           title="匯出名稱"
+                        />
+                     </div>
+                     <div class="w-full">
+                        <CustomContentBlockRow
+                           v-model="dataExported.description"
+                           title="匯出說明"
+                        />
+                     </div>
+                  </div>
+                  <div class="col-span-1 flex gap-2">
+                     <CustomContentBlockRow
+                        :model-value="formatTaiwanDate(dataExported?.date)"
+                        disabled
+                        title="匯出日期"
+                     />
+                     <CustomContentBlockRow
+                        :model-value="`$ ${formatNumber(total)}`"
+                        disabled
+                        title="總金額"
+                     />
+                  </div>
+               </div>
             </DialogDescription>
          </DialogHeader>
-         <div></div>
-         <DialogFooter>
+         <Divider />
+         <Tabs v-model:value="activeTab">
+            <TabList>
+               <Tab value="view">
+                  詳細資料
+               </Tab>
+               <Tab value="export">
+                  匯出
+               </Tab>
+            </TabList>
+            <TabPanels>
+               <TabPanel value="view">
+                  <BlockPatentFundingExportView
+                     v-if="activeTab === 'view'"
+                     :data-exported="dataExported"
+                     :funding-service="fundingService"
+                  />
+               </TabPanel>
+            </TabPanels>
+         </Tabs>
+
+         <DialogFooter class="mt-auto">
             <div class="flex justify-end">
+               <Button
+                  variant="destructive"
+                  class="mr-2"
+                  @click="
+                     () => {
+                        fundingService.exports.actions.deleteExport(exportId);
+                        isOpen = false;
+                     }
+                  "
+               >
+                  移除此匯出
+               </Button>
                <Button
                   variant="secondary"
                   class="mr-2"
@@ -36,13 +98,22 @@ import {
    DialogDescription,
    DialogFooter,
 } from "@/components/ui/dialog";
-
+import Tabs from "primevue/tabs";
+import TabList from "primevue/tablist";
+import Tab from "primevue/tab";
+import TabPanels from "primevue/tabpanels";
+import TabPanel from "primevue/tabpanel";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import Divider from "primevue/divider";
 // Props 和 Model
 const isOpen = defineModel("open", { type: Boolean, default: false });
 const { fundingService, exportId } = defineProps<{
    fundingService: UsePatentFundings
    exportId: number
 }>();
+const activeTab = ref("view");
+
+const { fundingData, patentData } = toRefs(fundingService);
 
 // Reactive Data
 const dataExported = ref<{
@@ -56,207 +127,45 @@ const dataExported = ref<{
 const fundingPlan = ref<FundingPlan | null>(null);
 const patent = ref<RouterOutput["data"]["patent"]["getPatent"]>(null);
 
-// 獨立的彈性欄位 Ref
-const pdf1PaymentDate = ref(new Date());
-const pdf2CoOwners = ref<string[]>([]);
-const pdf3PaymentDeadline = ref(new Date());
-const pdf4FundingUnitNotes = ref<{ notes: string, description: string }[]>([]);
-const pdf4UniversityNotes = ref("");
-const pdf4UniversityDescription = ref("");
-const pdf5SubjectDetails = ref<
-   { subjectCode: string, projectName: string, subjectName: string }[]
->([]);
+const unitContribution = computed(() => {
+   if (!dataExported.value || !patent.value) return [];
+   const fundingUnits = patent.value.funding?.fundingUnits || [];
+   return fundingUnits.map((unit) => {
+      const totalContribution = dataExported
+         .value!.fundingUnitAccounting.find((fua) =>
+         fua.unitContributions.find(
+            (uc) => uc.unitId === unit.fundingUnit.FundingUnitID,
+         ),
+      )
+         ?.unitContributions.reduce((sum, uc) => sum + uc.amount, 0);
+      return {
+         name: unit.fundingUnit.Name,
+         amount: totalContribution || 0,
+      };
+   });
+});
+const total = computed(() => {
+   if (!dataExported.value) return 0;
+   return dataExported.value.records.reduce(
+      (sum, item) => sum + item.Amount,
+      0,
+   );
+});
+const unitTotal = computed(() => {
+   if (!unitContribution.value) return 0;
+   return unitContribution.value.reduce((sum, item) => sum + item.amount, 0);
+});
 
 // 加載資料
 onMounted(() => {
    dataExported.value = fundingService.exports.actions.getExport(exportId);
-   fundingPlan.value = fundingService.fundingData.value!.plan;
-   patent.value = fundingService.patentData.value;
-   if (dataExported.value?.date) {
-      pdf1PaymentDate.value = dataExported.value.date;
-      pdf3PaymentDeadline.value = dataExported.value.date;
-   }
+   fundingPlan.value = fundingData.value?.plan || null;
+   patent.value = patentData.value;
 });
-
-// Helper Functions
-function formatTaiwanDate(date?: Date) {
-   if (!date) return "未設定";
-   const year = date.getFullYear() - 1911; // Republic of China year
-   const month = date.getMonth() + 1;
-   const day = date.getDate();
-   return `${year}年${month}月${day}日`;
-}
-
-// PDF 1: 專利費用繳款通知單
-const pdf1 = {
-   computedData: computed(() => {
-      const mainInventor = patent.value?.inventors.find((inv) => inv.Main);
-      const totalAmount
-         = dataExported.value?.records.reduce(
-            (sum, rec) => sum + rec.Amount,
-            0,
-         ) || 0;
-      const inventorShare
-         = dataExported.value?.internalAccounting.find((adj) =>
-            adj.targetName.includes("發明人"),
-         )?.amount || 0;
-      return {
-         internalId: patent.value?.internal?.InternalID,
-         title: patent.value?.Title,
-         country: patent.value?.country?.CountryName,
-         expenseItem: `${dataExported.value?.name} (${formatTaiwanDate(dataExported.value?.date)})`,
-         totalAmount,
-         inventorShare,
-         inventor: `${mainInventor?.inventor.contactInfo.Name} ${mainInventor?.inventor.contactInfo.Role}`,
-         department: `${patent.value?.department.college.Name} ${patent.value?.department.Name}`,
-         date: formatTaiwanDate(pdf1PaymentDate.value),
-      };
-   }),
-   refData: pdf1PaymentDate, // 直接使用獨立的 ref
-};
-
-// PDF 2: 國立高雄大學研發成果申請專利費用分攤協議書
-const pdf2 = {
-   computedData: computed(() => {
-      const mainInventor = patent.value?.inventors.find((inv) => inv.Main);
-      return {
-         internalId: patent.value?.internal?.InternalID,
-         title: patent.value?.Title,
-         country: patent.value?.country?.CountryName,
-         applicant: mainInventor?.inventor.contactInfo.Name,
-         fundingUnits: patent.value?.funding?.fundingUnits.map((unit) => ({
-            name: unit.fundingUnit.Name,
-            projectCode: unit.ProjectCode,
-         })),
-         hasCoOwners: pdf2CoOwners.value.length > 0,
-         coOwners: pdf2CoOwners.value,
-         scheme: "C",
-      };
-   }),
-   refData: pdf2CoOwners,
-};
-
-// PDF 3: 便函 MEMORANDUM
-const pdf3 = {
-   computedData: computed(() => {
-      const mainInventor = patent.value?.inventors.find((inv) => inv.Main);
-      const departmentShare
-         = dataExported.value?.internalAccounting.find((adj) =>
-            adj.targetName.includes("系所"),
-         )?.amount || 0;
-      const patentType
-         = patent.value?.PatentType === "INVENTION"
-            ? "發明專利"
-            : patent.value?.PatentType === "UTILITY_MODEL"
-               ? "新型專利"
-               : "設計專利";
-      return {
-         recipient: patent.value?.department.Name,
-         date: formatTaiwanDate(pdf3PaymentDeadline.value),
-         subject: `有關貴系分攤 ${mainInventor?.inventor.contactInfo.Name} 老師 ${patent.value?.country?.CountryName} ${patentType} 申請及實審費用 新臺幣 ${departmentShare} 元整`,
-         title: `${patent.value?.Title} (校內編號: ${patent.value?.internal?.InternalID})`,
-         expenseItem: dataExported.value?.name,
-         totalAmount:
-            dataExported.value?.records.reduce(
-               (sum, rec) => sum + rec.Amount,
-               0,
-            ) || 0,
-         departmentShare,
-      };
-   }),
-   refData: pdf3PaymentDeadline,
-};
-
-// PDF 4: 支出機關分攤表
-const pdf4 = {
-   computedData: computed(() => {
-      const totalAmount
-         = dataExported.value?.records.reduce(
-            (sum, rec) => sum + rec.Amount,
-            0,
-         ) || 0;
-      const fundingUnitsContributions
-         = dataExported.value?.fundingUnitAccounting.flatMap((fua) =>
-            fua.unitContributions.map((uc) => {
-               const unit = patent.value?.funding?.fundingUnits.find(
-                  (u) => u.fundingUnit.FundingUnitID === uc.unitId,
-               );
-               return { name: unit?.fundingUnit.Name, amount: uc.amount };
-            }),
-         ) || [];
-      const totalInternalAmount
-         = dataExported.value?.internalAccounting.reduce(
-            (sum, adj) => sum + adj.amount,
-            0,
-         ) || 0;
-      return {
-         totalAmount,
-         host: patent.value?.inventors.find((inv) => inv.Main)?.inventor
-            .contactInfo.Name,
-         projectCodes: patent.value?.funding?.fundingUnits.map(
-            (unit) => unit.ProjectCode,
-         ),
-         date: formatTaiwanDate(dataExported.value?.date),
-         title: `${patent.value?.Title} [${patent.value?.internal?.InternalID}]`,
-         contributions: fundingUnitsContributions,
-         universityAmount: totalInternalAmount,
-      };
-   }),
-   refData: ref({
-      fundingUnitNotes: pdf4FundingUnitNotes.value,
-      universityNotes: pdf4UniversityNotes.value,
-      universityDescription: pdf4UniversityDescription.value,
-   }),
-};
-
-// PDF 5: 高雄大學支出分攤表
-const pdf5 = {
-   computedData: computed(() => {
-      const totalAmount
-         = dataExported.value?.records.reduce(
-            (sum, rec) => sum + rec.Amount,
-            0,
-         ) || 0;
-      const adjustments = dataExported.value?.internalAccounting.map(
-         (adj, index) => ({
-            targetName: adj.targetName,
-            subjectCode: pdf5SubjectDetails.value[index]?.subjectCode || "",
-            projectName: pdf5SubjectDetails.value[index]?.projectName || "",
-            subjectName: pdf5SubjectDetails.value[index]?.subjectName || "",
-            amount: adj.amount,
-            allocationMethod: adj.targetName.includes("發明人")
-               ? `${totalAmount} × 40% × 95% = ${adj.amount}元（發明人自行負擔）`
-               : `${totalAmount} × 40% × 5% = ${adj.amount}元`,
-         }),
-      );
-      return {
-         fullDate: formatTaiwanDate(dataExported.value?.date),
-         yearMonth: dataExported.value
-            ? `${dataExported.value?.date.getFullYear() - 1911}年度 ${dataExported.value?.date.getMonth() + 1}月份`
-            : "",
-         totalAmount:
-            dataExported.value?.internalAccounting.reduce(
-               (sum, adj) => sum + adj.amount,
-               0,
-            ) || 0,
-         adjustments,
-         scheme: scheme.value,
-      };
-   }),
-   refData: pdf5SubjectDetails,
-};
-
-// Computed Properties
-const scheme = computed(() => {
-   const plan = fundingPlan.value;
-   const allocations = plan?.planAllocations
-      .map((allocation) => {
-         return `${allocation?.target.Name} (${allocation?.Percentage}%)`;
-      })
-      .join(", ");
-   return `${plan?.Name} (${allocations})`;
-});
-
 </script>
 
-<style scoped></style>
+<style scoped>
+* {
+   --p-tabs-tab-padding: 0.2rem 1rem;
+}
+</style>

@@ -1,12 +1,15 @@
 <template>
    <div class="flex flex-col items-center gap-3 pb-6 pt-3">
-      <BlockSideMenuActionsButton
+      <div
          v-for="item in items"
          :key="item.title"
-         :icon="item.icon"
-         :tooltip="item.title"
          @click="onItemClick(item)"
-      />
+      >
+         <BlockSideMenuActionsButton
+            :icon="item.icon"
+            :tooltip="item.title"
+         />
+      </div>
    </div>
 </template>
 

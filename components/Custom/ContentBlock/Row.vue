@@ -22,8 +22,9 @@
          :class="{
             'px-2 bg-white dark:bg-zinc-700 w-full': isFocus,
             'cursor-pointer': !isFocus,
+            'dark:hover:bg-zinc-700 hover:px-2 hover:w-full': !disabled,
          }"
-         class="font-bold hover:w-full hover:bg-white hover:px-2 rounded-lg transition-all duration-300 dark:hover:bg-zinc-700 w-[100%] py-1.5 hover:shadow-sm"
+         class="font-bold hover:bg-white rounded-lg transition-all duration-300 w-[100%] py-1.5"
          @dblclick="focus()"
       >
          <div
@@ -83,11 +84,13 @@ const {
    isSynced = true,
    icon = undefined,
    placeholder = "點兩下開始編輯",
+   disabled = false,
 } = defineProps({
    title: String,
    isSynced: Boolean,
    icon: String,
    placeholder: String,
+   disabled: Boolean,
 });
 const isFocus = ref(false);
 const str = defineModel({
@@ -100,6 +103,7 @@ const number = defineModel("number", {
 });
 
 const focus = () => {
+   if (disabled) return;
    isFocus.value = true;
    nextTick(() => {
       const input = target.value?.querySelector("textarea");
