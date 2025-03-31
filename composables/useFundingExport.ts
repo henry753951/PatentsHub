@@ -225,15 +225,15 @@ export const useFundingExport = (params: UseFundingExportParams) => {
          const departmentShare = getShare("院系所").value;
          const departmentSharePercent = getSharePercent("院系所").value;
          const patentType
-         = patent.value?.PatentType === "INVENTION"
-            ? "發明"
-            : patent.value?.PatentType === "UTILITY_MODEL"
-               ? "新型"
-               : patent.value?.PatentType === "DESIGN"
-                  ? "設計"
-                  : patent.value?.PatentType === "PLANT"
-                     ? "植物"
-                     : "其他";
+            = patent.value?.PatentType === "INVENTION"
+               ? "發明"
+               : patent.value?.PatentType === "UTILITY_MODEL"
+                  ? "新型"
+                  : patent.value?.PatentType === "DESIGN"
+                     ? "設計"
+                     : patent.value?.PatentType === "PLANT"
+                        ? "植物"
+                        : "其他";
 
          return {
             受文者: patent.value?.department.Name,
@@ -247,9 +247,10 @@ export const useFundingExport = (params: UseFundingExportParams) => {
                名稱: a.target.Name,
                百分比: `${a.Percentage}%`,
                end:
-               index === (fundingPlan.value?.planAllocations?.length ?? 0) - 1
-                  ? ""
-                  : "、",
+                  index
+                  === (fundingPlan.value?.planAllocations?.length ?? 0) - 1
+                     ? ""
+                     : "、",
             })),
             專利類型: `${patentType}`,
             費用項目: dataExported.value?.name,
@@ -272,7 +273,7 @@ export const useFundingExport = (params: UseFundingExportParams) => {
       };
    };
 
-   // PDF 4: 支出機關分攤表
+   // PDF 4: 支出機關分攤表 TODO:鍾秉翰
    const unitCostAllocationTable = async () => {
       const computedData = computed(() => {
          const totalAmount
@@ -322,7 +323,7 @@ export const useFundingExport = (params: UseFundingExportParams) => {
       };
    };
 
-   // PDF 5: 高雄大學支出分攤表
+   // PDF 5: 高雄大學支出分攤表 TODO:鍾秉翰
    const internalCostAllocationTable = async () => {
       const computedData = computed(() => {
          const totalAmount
