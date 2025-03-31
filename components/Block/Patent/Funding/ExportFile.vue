@@ -59,7 +59,7 @@
                <div
                   class="grow rounded border border-border text-start bg-zinc-50 dark:bg-zinc-800"
                >
-                  <ScrollArea class="w-full p-4 h-[300px]">
+                  <ScrollArea class="w-full p-4 h-[260px]">
                      <UiThingDescriptionList>
                         <template
                            v-for="(value, key) in t.service.computedData"
@@ -80,7 +80,7 @@
                <div
                   class="grow rounded border border-border text-start bg-zinc-50 dark:bg-zinc-800"
                >
-                  <ScrollArea class="w-full p-4 h-[300px]">
+                  <ScrollArea class="w-full p-4 h-[260px]">
                      <div class="space-y-4">
                         <template
                            v-for="(value, key) in t.service.refData"

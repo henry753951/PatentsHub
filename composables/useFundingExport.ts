@@ -20,6 +20,33 @@ interface UseFundingExportParams {
 
 export const useFundingExport = (params: UseFundingExportParams) => {
    const { dataExported, patent, fundingPlan } = params;
+   const { $trpc } = useNuxtApp();
+
+   const getTemplates = async () => {
+      const files = await $trpc.app.config.getUserDataFiles.query({
+         directory: "templates",
+      });
+      return files.filter((file) => file.isDirectory === false);
+   };
+
+   const getTemplate = async (
+      documentName: keyof RouterOutput["app"]["config"]["readConfig"]["funding"]["templates"],
+   ) => {
+      const config = await $trpc.app.config.readConfig.query();
+      const templates = config.funding.templates;
+      if (!(documentName in templates)) {
+         throw new Error(`Template ${documentName} not found`);
+      }
+      return templates[documentName];
+   };
+
+   const exportDocument = (
+      data: {
+         computedData: Record<string, any>
+         refData: Record<string, string>
+      },
+      template: string,
+   ) => {};
 
    // PDF 1: 專利費用繳款通知單
    const patentFeeNotice = () => {
@@ -35,8 +62,8 @@ export const useFundingExport = (params: UseFundingExportParams) => {
                adj.targetName.includes("發明人"),
             )?.amount || 0;
          return {
-            internalId: patent.value?.internal?.InternalID,
-            title: patent.value?.Title,
+            本校編號: patent.value?.internal?.InternalID,
+            專利名稱: patent.value?.Title,
             country: patent.value?.country?.CountryName,
             expenseItem: `${dataExported.value?.name} (${formatTaiwanDate(dataExported.value?.date)})`,
             totalAmount,

@@ -1,11 +1,22 @@
 <template>
    <Dialog v-model:open="isOpen">
-      <DialogContent class="max-w-[80vw] gap-1 max-h-[70vh] flex flex-col overflow-hidden min-h-0">
+      <DialogContent
+         class="max-w-[80vw] gap-1 max-h-[70vh] flex flex-col overflow-hidden min-h-0"
+      >
          <DialogHeader>
             <DialogTitle
-               class="text-2xl font-bold text-gray-900 bg-gradient-to-r from-gray-700 to-gray-500 bg-clip-text text-transparent"
+               class="text-xl font-bold text-gray-900 bg-gradient-to-r from-gray-700 to-gray-500 bg-clip-text text-transparent flex items-center gap-4 pr-5"
             >
-               查看匯出紀錄
+               <div>匯出紀錄</div>
+
+               <CustomIconButton
+                  secondary
+                  name="ic:round-delete"
+                  @click="
+                     fundingService.exports.actions.deleteExport(exportId);
+                     isOpen = false;
+                  "
+               />
             </DialogTitle>
             <DialogDescription class="text-gray-600 text-lg">
                <div class="grid grid-cols-3 gap-4">
@@ -74,30 +85,6 @@
                </TabPanel>
             </TabPanels>
          </Tabs>
-
-         <DialogFooter class="mt-auto">
-            <div class="flex justify-end">
-               <Button
-                  variant="destructive"
-                  class="mr-2"
-                  @click="
-                     () => {
-                        fundingService.exports.actions.deleteExport(exportId);
-                        isOpen = false;
-                     }
-                  "
-               >
-                  移除此匯出
-               </Button>
-               <Button
-                  variant="secondary"
-                  class="mr-2"
-                  @click="isOpen = false"
-               >
-                  關閉
-               </Button>
-            </div>
-         </DialogFooter>
       </DialogContent>
    </Dialog>
 </template>
