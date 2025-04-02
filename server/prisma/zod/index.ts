@@ -102,7 +102,7 @@ export const PatentInternalScalarFieldEnumSchema = z.enum(['PatentID','InternalI
 
 export const PatentExternalScalarFieldEnumSchema = z.enum(['PatentID','PatentNumber','PublicationDate','StartDate','EndDate','IPCNumber','PatentScope']);
 
-export const PatentManualStatusScalarFieldEnumSchema = z.enum(['ManualStatusID','PatentID','Reason','Date','Active','OnTop']);
+export const PatentManualStatusScalarFieldEnumSchema = z.enum(['ManualStatusID','PatentID','Reason','Date','Active','Override']);
 
 export const PatentMaintenanceScalarFieldEnumSchema = z.enum(['MaintenanceID','PatentID','MaintenanceDate','ExpireDate']);
 
@@ -441,7 +441,7 @@ export const PatentManualStatusSchema = z.object({
   Reason: z.string(),
   Date: z.coerce.date().nullish(),
   Active: z.boolean(),
-  OnTop: z.boolean(),
+  Override: z.boolean(),
 })
 
 export type PatentManualStatus = z.infer<typeof PatentManualStatusSchema>
@@ -1210,7 +1210,7 @@ export const PatentManualStatusSelectSchema: z.ZodType<Prisma.PatentManualStatus
   Reason: z.boolean().optional(),
   Date: z.boolean().optional(),
   Active: z.boolean().optional(),
-  OnTop: z.boolean().optional(),
+  Override: z.boolean().optional(),
   patent: z.union([z.boolean(),z.lazy(() => PatentArgsSchema)]).optional(),
 }).strict()
 
@@ -2819,7 +2819,7 @@ export const PatentManualStatusWhereInputSchema: z.ZodType<Prisma.PatentManualSt
   Reason: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   Date: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   Active: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  OnTop: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  Override: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
 }).strict();
 
@@ -2829,7 +2829,7 @@ export const PatentManualStatusOrderByWithRelationInputSchema: z.ZodType<Prisma.
   Reason: z.lazy(() => SortOrderSchema).optional(),
   Date: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   Active: z.lazy(() => SortOrderSchema).optional(),
-  OnTop: z.lazy(() => SortOrderSchema).optional(),
+  Override: z.lazy(() => SortOrderSchema).optional(),
   patent: z.lazy(() => PatentOrderByWithRelationInputSchema).optional()
 }).strict();
 
@@ -2845,7 +2845,7 @@ export const PatentManualStatusWhereUniqueInputSchema: z.ZodType<Prisma.PatentMa
   Reason: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   Date: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   Active: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  OnTop: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  Override: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
 }).strict());
 
@@ -2855,7 +2855,7 @@ export const PatentManualStatusOrderByWithAggregationInputSchema: z.ZodType<Pris
   Reason: z.lazy(() => SortOrderSchema).optional(),
   Date: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   Active: z.lazy(() => SortOrderSchema).optional(),
-  OnTop: z.lazy(() => SortOrderSchema).optional(),
+  Override: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => PatentManualStatusCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => PatentManualStatusAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => PatentManualStatusMaxOrderByAggregateInputSchema).optional(),
@@ -2872,7 +2872,7 @@ export const PatentManualStatusScalarWhereWithAggregatesInputSchema: z.ZodType<P
   Reason: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   Date: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
   Active: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
-  OnTop: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
+  Override: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
 }).strict();
 
 export const PatentMaintenanceWhereInputSchema: z.ZodType<Prisma.PatentMaintenanceWhereInput> = z.object({
@@ -4438,7 +4438,7 @@ export const PatentManualStatusCreateInputSchema: z.ZodType<Prisma.PatentManualS
   Reason: z.string(),
   Date: z.coerce.date().optional().nullable(),
   Active: z.boolean(),
-  OnTop: z.boolean(),
+  Override: z.boolean(),
   patent: z.lazy(() => PatentCreateNestedOneWithoutManualStatusInputSchema)
 }).strict();
 
@@ -4448,14 +4448,14 @@ export const PatentManualStatusUncheckedCreateInputSchema: z.ZodType<Prisma.Pate
   Reason: z.string(),
   Date: z.coerce.date().optional().nullable(),
   Active: z.boolean(),
-  OnTop: z.boolean()
+  Override: z.boolean()
 }).strict();
 
 export const PatentManualStatusUpdateInputSchema: z.ZodType<Prisma.PatentManualStatusUpdateInput> = z.object({
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  Override: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   patent: z.lazy(() => PatentUpdateOneRequiredWithoutManualStatusNestedInputSchema).optional()
 }).strict();
 
@@ -4465,7 +4465,7 @@ export const PatentManualStatusUncheckedUpdateInputSchema: z.ZodType<Prisma.Pate
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  Override: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentManualStatusCreateManyInputSchema: z.ZodType<Prisma.PatentManualStatusCreateManyInput> = z.object({
@@ -4474,14 +4474,14 @@ export const PatentManualStatusCreateManyInputSchema: z.ZodType<Prisma.PatentMan
   Reason: z.string(),
   Date: z.coerce.date().optional().nullable(),
   Active: z.boolean(),
-  OnTop: z.boolean()
+  Override: z.boolean()
 }).strict();
 
 export const PatentManualStatusUpdateManyMutationInputSchema: z.ZodType<Prisma.PatentManualStatusUpdateManyMutationInput> = z.object({
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  Override: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentManualStatusUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PatentManualStatusUncheckedUpdateManyInput> = z.object({
@@ -4490,7 +4490,7 @@ export const PatentManualStatusUncheckedUpdateManyInputSchema: z.ZodType<Prisma.
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  Override: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentMaintenanceCreateInputSchema: z.ZodType<Prisma.PatentMaintenanceCreateInput> = z.object({
@@ -6069,7 +6069,7 @@ export const PatentManualStatusCountOrderByAggregateInputSchema: z.ZodType<Prism
   Reason: z.lazy(() => SortOrderSchema).optional(),
   Date: z.lazy(() => SortOrderSchema).optional(),
   Active: z.lazy(() => SortOrderSchema).optional(),
-  OnTop: z.lazy(() => SortOrderSchema).optional()
+  Override: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentManualStatusAvgOrderByAggregateInputSchema: z.ZodType<Prisma.PatentManualStatusAvgOrderByAggregateInput> = z.object({
@@ -6083,7 +6083,7 @@ export const PatentManualStatusMaxOrderByAggregateInputSchema: z.ZodType<Prisma.
   Reason: z.lazy(() => SortOrderSchema).optional(),
   Date: z.lazy(() => SortOrderSchema).optional(),
   Active: z.lazy(() => SortOrderSchema).optional(),
-  OnTop: z.lazy(() => SortOrderSchema).optional()
+  Override: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentManualStatusMinOrderByAggregateInputSchema: z.ZodType<Prisma.PatentManualStatusMinOrderByAggregateInput> = z.object({
@@ -6092,7 +6092,7 @@ export const PatentManualStatusMinOrderByAggregateInputSchema: z.ZodType<Prisma.
   Reason: z.lazy(() => SortOrderSchema).optional(),
   Date: z.lazy(() => SortOrderSchema).optional(),
   Active: z.lazy(() => SortOrderSchema).optional(),
-  OnTop: z.lazy(() => SortOrderSchema).optional()
+  Override: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentManualStatusSumOrderByAggregateInputSchema: z.ZodType<Prisma.PatentManualStatusSumOrderByAggregateInput> = z.object({
@@ -10781,7 +10781,7 @@ export const PatentManualStatusCreateWithoutPatentInputSchema: z.ZodType<Prisma.
   Reason: z.string(),
   Date: z.coerce.date().optional().nullable(),
   Active: z.boolean(),
-  OnTop: z.boolean()
+  Override: z.boolean()
 }).strict();
 
 export const PatentManualStatusUncheckedCreateWithoutPatentInputSchema: z.ZodType<Prisma.PatentManualStatusUncheckedCreateWithoutPatentInput> = z.object({
@@ -10789,7 +10789,7 @@ export const PatentManualStatusUncheckedCreateWithoutPatentInputSchema: z.ZodTyp
   Reason: z.string(),
   Date: z.coerce.date().optional().nullable(),
   Active: z.boolean(),
-  OnTop: z.boolean()
+  Override: z.boolean()
 }).strict();
 
 export const PatentManualStatusCreateOrConnectWithoutPatentInputSchema: z.ZodType<Prisma.PatentManualStatusCreateOrConnectWithoutPatentInput> = z.object({
@@ -11039,7 +11039,7 @@ export const PatentManualStatusScalarWhereInputSchema: z.ZodType<Prisma.PatentMa
   Reason: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   Date: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   Active: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  OnTop: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  Override: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
 }).strict();
 
 export const PatentMaintenanceUpsertWithWhereUniqueWithoutPatentInputSchema: z.ZodType<Prisma.PatentMaintenanceUpsertWithWhereUniqueWithoutPatentInput> = z.object({
@@ -12846,7 +12846,7 @@ export const PatentManualStatusCreateManyPatentInputSchema: z.ZodType<Prisma.Pat
   Reason: z.string(),
   Date: z.coerce.date().optional().nullable(),
   Active: z.boolean(),
-  OnTop: z.boolean()
+  Override: z.boolean()
 }).strict();
 
 export const PatentMaintenanceCreateManyPatentInputSchema: z.ZodType<Prisma.PatentMaintenanceCreateManyPatentInput> = z.object({
@@ -12883,7 +12883,7 @@ export const PatentManualStatusUpdateWithoutPatentInputSchema: z.ZodType<Prisma.
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  Override: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentManualStatusUncheckedUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentManualStatusUncheckedUpdateWithoutPatentInput> = z.object({
@@ -12891,7 +12891,7 @@ export const PatentManualStatusUncheckedUpdateWithoutPatentInputSchema: z.ZodTyp
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  Override: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentManualStatusUncheckedUpdateManyWithoutPatentInputSchema: z.ZodType<Prisma.PatentManualStatusUncheckedUpdateManyWithoutPatentInput> = z.object({
@@ -12899,7 +12899,7 @@ export const PatentManualStatusUncheckedUpdateManyWithoutPatentInputSchema: z.Zo
   Reason: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  OnTop: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  Override: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PatentMaintenanceUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentMaintenanceUpdateWithoutPatentInput> = z.object({

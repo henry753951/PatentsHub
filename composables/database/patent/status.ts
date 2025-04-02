@@ -34,12 +34,12 @@ export const usePatentStatus = (patentService: {
             break;
          case "REVIEWED":
             data.date = patent.value.internal?.InitialReviewDate ?? null;
-            data.active = active ?? data.date !== null;
+            data.active = active ?? !!data.date;
             data.reason = reason ?? (data.active ? "已初評" : "初評");
             break;
          case "CERTIFIED":
             data.date = patent.value.external?.StartDate ?? null;
-            data.active = active ?? data.date !== null;
+            data.active = active ?? !!data.date;
             data.reason = reason ?? (data.active ? "已獲證" : "獲證");
             break;
          case "EXPIRED": {
@@ -65,34 +65,54 @@ export const usePatentStatus = (patentService: {
    };
 
    const status = computed(() => {
-      const base = [
-         createStatus("SIGNED"),
-         createStatus("REVIEWED"),
-         createStatus("CERTIFIED"),
-         createStatus("EXPIRED"),
-      ];
+      const signed = createStatus("SIGNED");
+      const reviewed = createStatus("REVIEWED");
+      const certified = createStatus("CERTIFIED");
 
-      const manual = DbManualStatus.value.map((m) => ({
+      const base = [signed, reviewed, certified];
+
+      if (certified.active) {
+         base.push(createStatus("EXPIRED"));
+      }
+
+      const manualStatuses = DbManualStatus.value.map((m) => ({
          ...createStatus("MANUAL", m.Reason, m.Date ?? null, m.Active),
          ManualStatusID: m.ManualStatusID,
+         Override: m.Override,
       }));
 
-      manual.sort((a, b) => {
-         const dateA = a.date instanceof Date ? a.date.getTime() : Infinity;
-         const dateB = b.date instanceof Date ? b.date.getTime() : Infinity;
-         return dateA - dateB;
+      // 分成插入流程中與流程之後
+      const inlineManuals = manualStatuses.filter((m) => !m.Override);
+      const overrideManuals = manualStatuses.filter((m) => m.Override);
+
+      // 都依照時間排序
+      inlineManuals.sort((a, b) => {
+         const timeA = a.date instanceof Date ? a.date.getTime() : Infinity;
+         const timeB = b.date instanceof Date ? b.date.getTime() : Infinity;
+         return timeA - timeB;
       });
 
-      return [...base, ...manual];
+      overrideManuals.sort((a, b) => {
+         const timeA = a.date instanceof Date ? a.date.getTime() : Infinity;
+         const timeB = b.date instanceof Date ? b.date.getTime() : Infinity;
+         return timeA - timeB;
+      });
+
+      return [...base, ...inlineManuals, ...overrideManuals];
    });
 
-   const addManualStatus = async (manual: { reason: string, date?: Date }) => {
+   const addManualStatus = async (manual: {
+      reason: string
+      date?: Date
+      override?: boolean
+   }) => {
       if (!patent.value) return;
       await $trpc.data.patentStatus.addManualStatus.mutate({
          patentID: patent.value.PatentID,
          reason: manual.reason,
          date: manual.date ?? undefined,
          active: true,
+         override: manual.override ?? false,
       });
    };
 
@@ -100,12 +120,14 @@ export const usePatentStatus = (patentService: {
       ManualStatusID: number
       reason: string
       date?: Date
+      override?: boolean
    }) => {
       if (!patent.value) return;
       await $trpc.data.patentStatus.updateManualStatus.mutate({
          manualStatusID: manual.ManualStatusID,
          reason: manual.reason,
          date: manual.date ?? undefined,
+         override: manual.override ?? false,
       });
    };
 
