@@ -10,10 +10,11 @@ export default router({
             reason: z.string().min(1, "狀態名稱不可為空"),
             date: z.date().optional(),
             active: z.boolean().default(true),
+            override: z.boolean().default(false),
          }),
       )
       .mutation(async ({ input }) => {
-         const { patentID, reason, date, active } = input;
+         const { patentID, reason, date, active, override } = input;
 
          return await prisma.patentManualStatus.create({
             data: {
@@ -21,6 +22,7 @@ export default router({
                Reason: reason,
                Date: date ?? null,
                Active: active,
+               Override: override,
             },
          });
       }),
@@ -31,10 +33,11 @@ export default router({
             manualStatusID: z.number(),
             reason: z.string().min(1),
             date: z.date().optional(),
+            override: z.boolean().optional(),
          }),
       )
       .mutation(async ({ input }) => {
-         const { manualStatusID, reason, date } = input;
+         const { manualStatusID, reason, date, override } = input;
 
          return await prisma.patentManualStatus.update({
             where: {
@@ -43,6 +46,7 @@ export default router({
             data: {
                Reason: reason,
                Date: date ?? null,
+               ...(override !== undefined && { Override: override }),
             },
          });
       }),
