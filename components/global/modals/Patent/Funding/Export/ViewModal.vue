@@ -131,12 +131,20 @@ const unitContribution = computed(() => {
    const fundingUnits = patent.value.funding?.fundingUnits || [];
    return fundingUnits.map((unit) => {
       const totalContribution = dataExported
-         .value!.fundingUnitAccounting.find((fua) =>
-         fua.unitContributions.find(
+         .value!.fundingUnitAccounting.filter((fua) =>
+         fua.unitContributions.some(
             (uc) => uc.unitId === unit.fundingUnit.FundingUnitID,
          ),
       )
-         ?.unitContributions.reduce((sum, uc) => sum + uc.amount, 0);
+         .reduce((sum, fua) => {
+            return (
+               sum
+               + fua.unitContributions
+                  .filter((uc) => uc.unitId === unit.fundingUnit.FundingUnitID)
+                  .reduce((subSum, uc) => subSum + uc.amount, 0)
+            );
+         }, 0);
+
       return {
          name: unit.fundingUnit.Name,
          amount: totalContribution || 0,
