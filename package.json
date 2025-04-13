@@ -59,6 +59,7 @@
       "prisma": "^6.5.0",
       "radix-vue": "^1.9.12",
       "reka-ui": "^2.1.0",
+      "semantic-release-gha-output": "^1.1.1",
       "shadcn-nuxt": "0.11.3",
       "shadcn-vue": "^1.0.2",
       "superjson": "^1.13.3",
