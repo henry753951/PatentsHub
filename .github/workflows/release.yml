@@ -12,6 +12,7 @@ jobs:
            uses: actions/checkout@v4
            with:
               fetch-depth: 0
+              token: ${{ secrets.PERSONAL_GH_TOKEN }}
 
          - name: Install pnpm
            uses: pnpm/action-setup@v4
@@ -34,7 +35,7 @@ jobs:
               GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
 
          - name: Setup semantic-release
-           run: pnpm install semantic-release @semantic-release/github @semantic-release/exec -g
+           run: pnpm add semantic-release @semantic-release/github @semantic-release/exec
 
          - name: Run semantic-release
            id: semantic-release
