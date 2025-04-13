@@ -31,14 +31,14 @@ jobs:
 
          - name: Get next version
            id: semantic-release-dry-run
-           run: pnpm exec semantic-release --dry-run --no-ci
+           run: pnpm exec semantic-release --dry-run
            env:
               GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
 
          - name: Overwrite version in package.json
            run: |
               echo "Updating version in package.json to ${{ steps.semantic-release-dry-run.outputs.version }}"
-              pnpm exec json5 -I -f package.json -e "this.version='${{ steps.semantic-release-dry-run.outputs.version }}'"
+              pnpm exec json5 --in-place --file package.json --edit "this.version='${{ steps.semantic-release-dry-run.outputs.version }}'"
 
          - name: Build Nuxt
            run: pnpm run build
