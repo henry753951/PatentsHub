@@ -23,16 +23,16 @@ jobs:
               node-version: 20
               cache: "pnpm"
 
-         #  - name: Install dependencies
-         #    run: pnpm install
+         - name: Install dependencies
+           run: pnpm install
 
-         #  - name: Build Nuxt
-         #    run: pnpm run build
+         - name: Build Nuxt
+           run: pnpm run build
 
-         #  - name: Build Electron App
-         #    run: pnpm run build:app
-         #    env:
-         #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         - name: Build Electron App
+           run: pnpm run build:app
+           env:
+              GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
 
          - name: Setup semantic-release
            run: pnpm install semantic-release @semantic-release/github @semantic-release/exec -g
