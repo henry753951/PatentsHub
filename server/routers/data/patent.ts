@@ -123,6 +123,7 @@ export default router({
          return await prisma.patent.findUnique({
             where: input as Prisma.PatentWhereUniqueInput,
             include: {
+               owners: true,
                manualStatus: true,
                maintenances: true,
                patentRecords: true,
