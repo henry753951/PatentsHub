@@ -24,6 +24,7 @@ model Patent {
   patentRecords PatentRecord[]
   createdAt     DateTime                   @default(now())
   pinned        Boolean                    @default(false)
+  owners        PatentOwner[]              // 新增的所有權人關聯
 }
 
 // ========================
@@ -137,4 +138,11 @@ model PatentRecord {
   Record   String? // 紀錄
   Date     DateTime? // 日期
   patent   Patent    @relation(fields: [PatentID], references: [PatentID])
+}
+model PatentOwner {
+  OwnerID             Int       @id @default(autoincrement())
+  PatentID            Int
+  Name                String    // 所有權人名字
+  OwnershipPercentage Float   @default(0.0) // 持有度（百分比，例如 50.5 表示 50.5%）
+  patent              Patent    @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
 }

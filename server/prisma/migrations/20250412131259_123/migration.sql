@@ -1,0 +1,8 @@
+-- CreateTable
+CREATE TABLE "PatentOwner" (
+    "OwnerID" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "PatentID" INTEGER NOT NULL,
+    "Name" TEXT NOT NULL,
+    "OwnershipPercentage" DECIMAL NOT NULL DEFAULT 0.0,
+    CONSTRAINT "PatentOwner_PatentID_fkey" FOREIGN KEY ("PatentID") REFERENCES "Patent" ("PatentID") ON DELETE CASCADE ON UPDATE CASCADE
+);

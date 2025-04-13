@@ -10,6 +10,7 @@ import patentRecord from "./patentRecord";
 import patentStatus from "./patentStatus";
 import fundingUnit from "./fundingUnit";
 import fundingPlan from "./fundingPlan";
+import patentOwner from "./patentOwner";
 export default router({
    country: country,
    patent: patent,
@@ -20,6 +21,7 @@ export default router({
    note: note,
    patentStatus: patentStatus,
    patentRecord: patentRecord,
+   patentOwner: patentOwner,
    fundingUnit: fundingUnit,
    fundingPlan: fundingPlan,
 });
