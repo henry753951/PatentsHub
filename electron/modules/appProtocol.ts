@@ -2,7 +2,7 @@ import type { BrowserWindow } from "electron";
 import { app, protocol } from "electron";
 import fs from "fs/promises";
 import * as path from "path";
-import log from "electron-log";
+import logger from "../logger";
 export default (mainWindow: BrowserWindow) => {
    const userData = app.getPath("userData");
    protocol.handle("app", async (req) => {
@@ -55,12 +55,12 @@ export default (mainWindow: BrowserWindow) => {
          }
       }
       catch (error) {
-         log.error("Error handling request:", error);
+         logger.error("[❌] Error handling request:", error);
          return new Response("Error", {
             status: 404,
             headers: { "Content-Type": "text/plain" },
          });
       }
    });
-   log.log("[-] MODULE::file Initialized");
+   logger.log("[⭐] MODULE::file Initialized");
 };

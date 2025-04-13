@@ -9,7 +9,7 @@ import titleBarActionsModule from "./modules/titleBarActions";
 import updaterModule from "./modules/updater";
 import appProtocolModule from "./modules/appProtocol";
 import trpcHandlerModule from "./modules/trpcHandler";
-import log from "electron-log";
+import logger from "./logger";
 
 // Initilize
 // =========
@@ -40,11 +40,11 @@ defaultUserDataFolders.forEach(async (folder) => {
          .catch(() => false);
       if (!folderExists) {
          await fs.mkdir(folderPath, { recursive: true });
-         log.log(`[📦] Created folder: ${folderPath}`);
+         logger.log(`[📦] Created folder: ${folderPath}`);
       }
    }
    catch (err) {
-      log.error(`[❌] Error handling folder: ${folderPath}`, err);
+      logger.error(`[❌] Error handling folder: ${folderPath}`, err);
    }
 });
 
@@ -60,16 +60,10 @@ protocol.registerSchemesAsPrivileged([
    },
 ]);
 
-// Log settings
-// ============
-const time = new Date().toISOString().replace(/:/g, "-").slice(0, 19);
-log.transports.file.level = "info";
-log.transports.file.fileName = `patent-${platform}-${architucture}-${time}.log`;
-
 // Initialize app window
 // =====================
 function createWindow() {
-   log.info("[💻] System info", { isProduction, platform, architucture });
+   logger.info("[💻] System info", { isProduction, platform, architucture });
 
    // Create the browser window.
    const mainWindow = new BrowserWindow({
@@ -108,25 +102,25 @@ app.whenReady().then(async () => {
    const mainWindow = createWindow();
    if (!mainWindow) return;
    mainWindow.webContents.on("render-process-gone", (event, details) => {
-      log.error("[❌] Renderer crashed:", details);
+      logger.error("[❌] Renderer crashed:", details);
    });
 
    mainWindow.webContents.on("preload-error", (event, preloadPath, error) => {
-      log.error("[❌] Preload error:", preloadPath, error);
+      logger.error("[❌] Preload error:", preloadPath, error);
    });
    dynamicRenderer(mainWindow);
    // Initialize modules
-   log.log("[⏳] Loading modules...");
+   logger.log("[⏳] Loading modules...");
    modules.forEach((module) => {
       try {
          module(mainWindow);
       }
       catch (err: any) {
-         log.log("[❌] Module error: ", err.message || err);
+         logger.log("[❌] Module error: ", err.message || err);
       }
    });
 
-   log.log("[⌛] Loading modules: Done.");
+   logger.log("[⌛] Loading modules: Done.");
 
    app.on("activate", function () {
       mainWindow.show();
@@ -140,9 +134,9 @@ app.on("window-all-closed", () => {
 });
 
 process.on("uncaughtException", (err) => {
-   log.error("[❌] Uncaught Exception:", err);
+   logger.error("[❌] Uncaught Exception:", err);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
-   log.error("[❌] Unhandled Rejection at:", promise, "reason:", reason);
+   logger.error("[❌] Unhandled Rejection at:", promise, "reason:", reason);
 });
