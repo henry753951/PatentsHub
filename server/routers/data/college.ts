@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
 import { CustomZodType } from "~/zod.dto";
+import { dbZ, prisma } from "../..";
+
 export default router({
    // Create
    createCollege: procedure

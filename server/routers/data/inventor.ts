@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
 import { CustomZodType } from "~/zod.dto";
-import { dbZ } from "~/server";
+import { dbZ, prisma } from "../..";
 import type { Prisma } from "@prisma/client";
 export default router({
    // Create

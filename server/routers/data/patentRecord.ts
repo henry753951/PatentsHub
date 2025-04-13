@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
-import { dbZ } from "~/server";
+import { dbZ, prisma } from "../..";
 
 export default router({
    // 獲取 PatentRecords（多條紀錄）
