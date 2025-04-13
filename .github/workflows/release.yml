@@ -34,7 +34,7 @@ jobs:
         #       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
          - name: Setup semantic-release
-           run: pnpm install --no-save semantic-release @semantic-release/github @semantic-release/exec
+           run: pnpm install semantic-release @semantic-release/github @semantic-release/exec -g
 
          - name: Run semantic-release
            id: semantic-release
