@@ -19,6 +19,9 @@ const platform = process.platform as "darwin" | "win32" | "linux";
 const architucture: "64" | "32" = os.arch() === "x64" ? "64" : "32";
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const appName = app.getName();
+const appVersion = app.getVersion();
+const appPath = app.getAppPath();
 
 const modules = [
    titleBarActionsModule,
@@ -63,7 +66,21 @@ protocol.registerSchemesAsPrivileged([
 // Initialize app window
 // =====================
 function createWindow() {
-   logger.info("[💻] System info", { isProduction, platform, architucture });
+   logger.info(
+      "[💻] System info",
+      JSON.stringify(
+         {
+            isProduction,
+            platform,
+            architucture,
+            appName,
+            appPath,
+            appVersion,
+         },
+         null,
+         2,
+      ),
+   );
 
    // Create the browser window.
    const mainWindow = new BrowserWindow({
