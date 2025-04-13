@@ -1,0 +1,52 @@
+name: Build and Release Windows Electron App
+
+on:
+   push:
+      branches:
+         - release
+
+jobs:
+   build-and-release:
+      runs-on: windows-latest
+
+      steps:
+         - name: Checkout code
+           uses: actions/checkout@v4
+           with:
+              fetch-depth: 0
+
+         - name: Setup Node.js
+           uses: actions/setup-node@v4
+           with:
+              node-version: "19"
+              cache: "pnpm"
+
+         - name: Install pnpm
+           run: npm install -g pnpm
+
+         - name: Install dependencies
+           run: pnpm install --frozen-lockfile
+
+         - name: Build Nuxt
+           run: pnpm run build
+
+         - name: Build Electron App
+           run: pnpm run build:app
+
+         - name: Setup semantic-release
+           run: pnpm add -D semantic-release @semantic-release/github @semantic-release/exec
+
+         - name: Run semantic-release
+           id: semantic-release
+           env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           run: pnpm exec semantic-release
+
+
+         - name: Upload Artifact to Release
+           uses: softprops/action-gh-release@v1
+           with:
+              files: .output/electron/*.exe
+              tag_name: ${{ env.RELEASE_TAG }}
+           env:
+              RELEASE_TAG: v${{ steps.semantic-release.outputs.version }}
