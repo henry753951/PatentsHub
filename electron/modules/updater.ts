@@ -2,7 +2,6 @@ import type { BrowserWindow } from "electron";
 import { ipcMain } from "electron";
 import pkg from "electron-updater";
 import log from "electron-log";
-import { consola } from "consola";
 const { autoUpdater } = pkg;
 // Logger
 autoUpdater.logger = log;
@@ -66,5 +65,5 @@ export default (mainWindow: BrowserWindow) => {
       1000 * 60 * 60 * 2,
    );
 
-   consola.log("[-] MODULE::updater Initialized");
+   log.log("[-] MODULE::updater Initialized");
 };

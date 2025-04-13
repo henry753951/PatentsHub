@@ -13,8 +13,12 @@ const builderConfig = {
          to: "public",
       },
       {
-         from: "node_modules/.prisma",
+         from: "node_modules/@prisma/client/node_modules/.prisma",
          to: "node_modules/.prisma",
+      },
+      {
+         from: "node_modules/@prisma",
+         to: "node_modules/@prisma",
       },
       "dist-electron/**/*",
       "package.json",

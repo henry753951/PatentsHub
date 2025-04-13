@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
 import { CustomZodType } from "~/zod.dto";
-import { dbZ } from "~/server";
+import { dbZ, prisma } from "../../";
 import type { Prisma } from "@prisma/client";
+import Logger from "electron-log";
 
 export default router({
    // [Other]
@@ -15,6 +16,7 @@ export default router({
             .default({ year: new Date().getFullYear() - 1911 }),
       )
       .query(async ({ input }) => {
+         Logger.info("getLastInternalID", prisma);
          const offset = 4;
          const lastPatent = await prisma.patent.findFirst({
             where: {
@@ -327,5 +329,4 @@ export default router({
             },
          });
       }),
-
 });

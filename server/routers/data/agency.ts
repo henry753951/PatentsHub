@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
 import { Prisma } from "@prisma/client";
+import { dbZ, prisma } from "../..";
 
 export default router({
    // === Agency CRUD ===
