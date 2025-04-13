@@ -12,6 +12,7 @@ jobs:
            uses: actions/checkout@v4
            with:
               fetch-depth: 0
+              token: ${{ secrets.PERSONAL_GH_TOKEN }}
 
          - name: Install pnpm
            uses: pnpm/action-setup@v4
@@ -22,16 +23,16 @@ jobs:
               node-version: 20
               cache: "pnpm"
 
-        #  - name: Install dependencies
-        #    run: pnpm install
+         #  - name: Install dependencies
+         #    run: pnpm install
 
-        #  - name: Build Nuxt
-        #    run: pnpm run build
+         #  - name: Build Nuxt
+         #    run: pnpm run build
 
-        #  - name: Build Electron App
-        #    run: pnpm run build:app
-        #    env:
-        #       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         #  - name: Build Electron App
+         #    run: pnpm run build:app
+         #    env:
+         #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
          - name: Setup semantic-release
            run: pnpm install semantic-release @semantic-release/github @semantic-release/exec -g
@@ -40,7 +41,7 @@ jobs:
            id: semantic-release
            run: pnpm exec semantic-release
            env:
-              GH_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
+              GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
 
          - name: Upload Artifact to Release
            if: steps.semantic-release.outputs.new-release-published == 'true'
