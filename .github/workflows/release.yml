@@ -4,49 +4,48 @@ on:
    push:
       branches:
          - release
-
 jobs:
    build-and-release:
       runs-on: windows-latest
-
       steps:
          - name: Checkout code
            uses: actions/checkout@v4
            with:
               fetch-depth: 0
 
+         - name: Install pnpm
+           uses: pnpm/action-setup@v4
+
          - name: Setup Node.js
            uses: actions/setup-node@v4
            with:
-              node-version: "20"
+              node-version: 20
               cache: "pnpm"
 
-         - name: Install pnpm
-           run: npm install -g pnpm
+        #  - name: Install dependencies
+        #    run: pnpm install
 
-         - name: Install dependencies
-           run: pnpm install --frozen-lockfile
+        #  - name: Build Nuxt
+        #    run: pnpm run build
 
-         - name: Build Nuxt
-           run: pnpm run build
-
-         - name: Build Electron App
-           run: pnpm run build:app
+        #  - name: Build Electron App
+        #    run: pnpm run build:app
+        #    env:
+        #       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
          - name: Setup semantic-release
-           run: pnpm add -D semantic-release @semantic-release/github @semantic-release/exec
+           run: pnpm install --no-save semantic-release @semantic-release/github @semantic-release/exec
 
          - name: Run semantic-release
            id: semantic-release
-           env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
            run: pnpm exec semantic-release
-
+           env:
+              GH_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
 
          - name: Upload Artifact to Release
-           uses: softprops/action-gh-release@v1
+           if: steps.semantic-release.outputs.new-release-published == 'true'
+           uses: softprops/action-gh-release@v2
            with:
               files: .output/electron/*.exe
-              tag_name: ${{ env.RELEASE_TAG }}
-           env:
-              RELEASE_TAG: v${{ steps.semantic-release.outputs.version }}
+              tag_name: v${{ steps.semantic-release.outputs.new-release-version }}
+              fail_on_unmatched_files: true

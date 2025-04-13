@@ -5,6 +5,10 @@
    "author": "JYBK",
    "description": "高雄大學專利維護系統",
    "main": "dist-electron/main.js",
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/henry753951/PatentsHub.git"
+   },
    "scripts": {
       "build:all": "nuxt build && electron-builder build --config electron-builder.cjs",
       "build:app": "electron-builder build --config electron-builder.cjs",
