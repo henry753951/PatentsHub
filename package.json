@@ -19,7 +19,7 @@
       "postinstall": "pnpm dlx prisma generate && nuxt prepare"
    },
    "prisma": {
-      "schema": "./server/prisma/schema/"
+      "schema": "./server/prisma/schema"
    },
    "dependencies": {
       "@formkit/auto-animate": "^0.8.2",
@@ -29,7 +29,7 @@
       "@primevue/forms": "^4.3.2",
       "@primevue/nuxt-module": "^4.2.5",
       "@primevue/themes": "^4.2.5",
-      "@prisma/client": "6.5.0",
+      "@prisma/client": "6.6.0",
       "@trpc/client": "^10.45.2",
       "@trpc/server": "^10.45.2",
       "@vee-validate/zod": "^4.15.0",
@@ -56,17 +56,18 @@
       "pinia-plugin-persistedstate": "^4.2.0",
       "primeicons": "^7.0.0",
       "primevue": "^4.3.2",
-      "prisma": "^6.5.0",
+      "prisma": "^6.6.0",
+      "prisma-client-31f69b632fa6ed6066aa9dd20934d989a777cb3581992887a11781ddb3d654e2": "link:node_modules\\@prisma\\client\\node_modules\\.prisma\\client",
       "radix-vue": "^1.9.12",
       "reka-ui": "^2.1.0",
       "semantic-release-gha-output": "^1.1.1",
       "shadcn-nuxt": "0.11.3",
       "shadcn-vue": "^1.0.2",
-      "superjson": "^1.13.3",
       "tailwind-merge": "^2.6.0",
       "tailwind-variants": "^1.0.0",
       "tailwindcss": "^3.4.17",
       "tailwindcss-animate": "^1.0.7",
+      "trpc-transformer": "^3.2.2",
       "vee-validate": "^4.15.0",
       "vue": "latest",
       "vue-router": "latest",

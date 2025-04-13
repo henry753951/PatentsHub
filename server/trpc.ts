@@ -1,7 +1,9 @@
 import { initTRPC } from "@trpc/server";
-import superjson from "superjson";
-
-const t = initTRPC.create({ isServer: true, transformer: superjson });
+// import transformer from "trpc-transformer";
+const t = initTRPC.create({
+   isServer: true,
+   // transformer
+});
 
 const { router, middleware, procedure } = t;
 
