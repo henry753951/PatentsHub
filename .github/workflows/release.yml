@@ -12,7 +12,6 @@ jobs:
            uses: actions/checkout@v4
            with:
               fetch-depth: 0
-              token: ${{ secrets.PERSONAL_GH_TOKEN }}
 
          - name: Install pnpm
            uses: pnpm/action-setup@v4
@@ -44,8 +43,10 @@ jobs:
               GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
 
          - name: Upload Artifact to Release
+           if: steps.semantic-release.outputs.new-release-published == 'true'
            uses: softprops/action-gh-release@v2
            with:
               files: .output/electron/*.exe
               tag_name: v${{ steps.semantic-release.outputs.new-release-version }}
               fail_on_unmatched_files: true
+              token: ${{ secrets.GITHUB_TOKEN }}
