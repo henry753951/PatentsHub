@@ -49,4 +49,4 @@ jobs:
               files: .output/electron/*.exe
               tag_name: v${{ steps.semantic-release.outputs.new-release-version }}
               fail_on_unmatched_files: true
-              token: ${{ secrets.GITHUB_TOKEN }}
+              token: ${{ secrets.PERSONAL_GH_TOKEN }}
