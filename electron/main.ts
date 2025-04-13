@@ -10,6 +10,7 @@ import updaterModule from "./modules/updater";
 import appProtocolModule from "./modules/appProtocol";
 import trpcHandlerModule from "./modules/trpcHandler";
 import logger from "./logger";
+// Test
 
 // Initilize
 // =========
