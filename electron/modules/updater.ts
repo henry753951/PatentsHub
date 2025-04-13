@@ -1,16 +1,15 @@
-import type { BrowserWindow } from "electron";
+import { app, type BrowserWindow } from "electron";
 import { ipcMain } from "electron";
 import pkg from "electron-updater";
-import log from "electron-log";
+import logger from "../logger";
 const { autoUpdater } = pkg;
-// Logger
-autoUpdater.logger = log;
-(autoUpdater.logger as typeof log).transports.file.level = "info";
-
 // Config
+const server = "https://patent-hub-hazel.vercel.app";
+const url = `${server}/update/${process.platform}/${app.getVersion()}`;
+
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
-
+autoUpdater.setFeedURL({ url, provider: "custom" });
 export default (mainWindow: BrowserWindow) => {
    const isMac = process.platform === "darwin";
    if (isMac) {
@@ -65,5 +64,5 @@ export default (mainWindow: BrowserWindow) => {
       1000 * 60 * 60 * 2,
    );
 
-   log.log("[-] MODULE::updater Initialized");
+   logger.log("[⭐] MODULE::updater Initialized");
 };

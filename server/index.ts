@@ -4,8 +4,6 @@ import { app } from "electron";
 import * as dbZod from "./prisma/zod";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import type { MainRouter } from "./mainRouter";
-import log from "electron-log";
-
 // Prevent multiple instances of Prisma Client in development
 // https://www.prisma.io/docs/guides/performance-and-optimization/connection-management#prevent-hot-reloading-from-creating-new-instances-of-prismaclient
 // Add prisma to the global type
@@ -24,8 +22,7 @@ export const prisma
      || new PrismaClient({
         log: isProduction
            ? [{ emit: "event", level: "error" }]
-           : //   : process.env.PRISMA_LOG
-           false
+           : process.env.PRISMA_LOG
               ? [
                  {
                     emit: "event",
@@ -54,10 +51,8 @@ export const prisma
 
 if (!isProduction) global.prisma = prisma;
 
-log.info("Prisma Client initialized with path:", dbPath);
-log.info("Prisma Client : ", prisma);
-
-prisma.$on("query",
+prisma.$on(
+   "query",
    (e: { query: string, params: string, duration: number }) => {
       console.log("Query:", e.query);
       console.log("Params:", e.params);
