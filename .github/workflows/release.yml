@@ -47,6 +47,6 @@ jobs:
            uses: softprops/action-gh-release@v2
            with:
               files: .output/electron/*.exe
-              tag_name: v${{ steps.semantic-release.outputs.new-release-version }}
+              tag_name: v${{ steps.semantic-release.outputs.version }}
               fail_on_unmatched_files: true
               token: ${{ secrets.PERSONAL_GH_TOKEN }}
