@@ -143,9 +143,6 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.17)
-      trpc-transformer:
-        specifier: ^3.2.2
-        version: 3.2.2(decimal.js@10.5.0)(superjson@2.2.2)
       vee-validate:
         specifier: ^4.15.0
         version: 4.15.0(vue@3.5.13(typescript@5.8.2))
@@ -3018,9 +3015,6 @@ packages:
     peerDependenciesMeta:
       supports-color:
         optional: true
-
-  decimal.js@10.5.0:
-    resolution: {integrity: sha512-8vDa8Qxvr/+d94hSh5P3IJwI5t8/c0KsMp+g8bNw9cY2icONa5aPfvKeieW1WlG0WQYwwhJ7mjui2xtiePQSXw==}
 
   decode-uri-component@0.2.2:
     resolution: {integrity: sha512-FqUYQ+8o158GyGTrMFJms9qh3CqTKvAqgqsTnkLI8sKu0028orqBhxNMFkFen0zGyg6epACD32pjVk58ngIErQ==}
@@ -6496,12 +6490,6 @@ packages:
   traverse@0.6.8:
     resolution: {integrity: sha512-aXJDbk6SnumuaZSANd21XAo15ucCDE38H4fkqiGsc3MhCK+wOlZvLP9cB/TvpHT0mOyWgC4Z8EwRlzqYSUzdsA==}
     engines: {node: '>= 0.4'}
-
-  trpc-transformer@3.2.2:
-    resolution: {integrity: sha512-Q8r6uvUv42OwTsCtG797qQIOt2v7YXf+J8Q9TpUSBWcgFxtZm8OAduPK5Byadna3pgWxfuZflbM8ZiwPIB+3YQ==}
-    peerDependencies:
-      decimal.js: ^10.4.3
-      superjson: ^2.2.1
 
   truncate-utf8-bytes@1.0.2:
     resolution: {integrity: sha512-95Pu1QXQvruGEhv62XCMO3Mm90GscOCClvrIUwCM0PYOXK3kaF3l3sIHxx71ThJfcbM2O5Au6SO3AWCSEfW4mQ==}
@@ -10502,8 +10490,6 @@ snapshots:
       ms: 2.1.3
     optionalDependencies:
       supports-color: 9.4.0
-
-  decimal.js@10.5.0: {}
 
   decode-uri-component@0.2.2: {}
 
@@ -14615,11 +14601,6 @@ snapshots:
   tr46@0.0.3: {}
 
   traverse@0.6.8: {}
-
-  trpc-transformer@3.2.2(decimal.js@10.5.0)(superjson@2.2.2):
-    dependencies:
-      decimal.js: 10.5.0
-      superjson: 2.2.2
 
   truncate-utf8-bytes@1.0.2:
     dependencies:
