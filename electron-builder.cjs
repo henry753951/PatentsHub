@@ -30,9 +30,7 @@ const builderConfig = {
       target: [
          {
             target: "nsis", // Windows 使用 NSIS 安裝程式
-         },
-         {
-            target: "msi", // Windows 使用 MSI 安裝程式
+            allowToChangeInstallationDirectory: true, // 允許用戶更改安裝目錄
          },
       ],
    },

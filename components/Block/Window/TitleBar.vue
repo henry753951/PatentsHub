@@ -4,7 +4,7 @@
          <div class="flex-1 flex items-center justify-center">
             <div class="flex items-center gap-2 h-full">
                <div class="w-5 h-5">
-                  <NuxtImg
+                  <img
                      src="/images/logo.jpg"
                      class="w-full h-full rounded-sm"
                      width="100"
