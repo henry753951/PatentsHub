@@ -31,6 +31,9 @@ const builderConfig = {
          {
             target: "nsis", // Windows 使用 NSIS 安裝程式
          },
+         {
+            target: "msi", // Windows 使用 MSI 安裝程式
+         },
       ],
    },
    mac: {

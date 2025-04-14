@@ -29,28 +29,22 @@ jobs:
          - name: Setup semantic-release
            run: pnpm add semantic-release @semantic-release/github @semantic-release/exec semantic-release-gha-output
 
-         - name: Get next version
-           id: semantic-release-dry-run
-           run: pnpm exec semantic-release --dry-run --no-ci
+         - name: Run semantic-release
+           id: semantic-release
+           run: pnpm exec semantic-release
            env:
               GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
 
          - name: Overwrite version in package.json
            run: |
-              echo "Updating version in package.json to ${{ steps.semantic-release-dry-run.outputs.version }}"
-              pnpm exec json5 -I -f package.json -e "this.version='${{ steps.semantic-release-dry-run.outputs.version }}'"
+              echo "Updating version in package.json to ${{ steps.semantic-release.outputs.version }}"
+              node -e "const fs = require('fs'); const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8')); pkg.version = '${{ steps.semantic-release.outputs.version }}'; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
 
          - name: Build Nuxt
            run: pnpm run build
 
          - name: Build Electron App
            run: pnpm run build:app
-           env:
-              GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
-
-         - name: Run semantic-release
-           id: semantic-release
-           run: pnpm exec semantic-release
            env:
               GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
 

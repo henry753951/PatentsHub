@@ -9,7 +9,7 @@ const url = `${server}/update/${process.platform}/${app.getVersion()}`;
 
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
-autoUpdater.setFeedURL({ url, provider: "generic" });
+autoUpdater.setFeedURL(url);
 export default (mainWindow: BrowserWindow) => {
    const isMac = process.platform === "darwin";
    if (isMac) {

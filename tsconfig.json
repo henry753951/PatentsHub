@@ -6,6 +6,7 @@
    "strictNullChecks": true,
    "compilerOptions": {
       "types": ["@types/wicg-file-system-access"],
-      "noErrorTruncation": true
+      "noErrorTruncation": true,
+      "target": "ESNext"
    }
 }

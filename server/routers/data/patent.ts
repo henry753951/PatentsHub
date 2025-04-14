@@ -16,7 +16,6 @@ export default router({
             .default({ year: new Date().getFullYear() - 1911 }),
       )
       .query(async ({ input }) => {
-         Logger.info("getLastInternalID", prisma);
          const offset = 4;
          const lastPatent = await prisma.patent.findFirst({
             where: {

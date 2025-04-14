@@ -1,12 +1,12 @@
 import { createTRPCProxyClient } from "@trpc/client";
 import type { MainRouter } from "~/server/mainRouter";
 import { ipcLink } from "electron-trpc/renderer";
-// import transformer from "trpc-transformer";
+import supejson from "superjson";
 export default defineNuxtPlugin(() => {
    try {
       const trpc = createTRPCProxyClient<MainRouter>({
          links: [ipcLink()],
-         // transformer,
+         transformer: supejson,
       });
       return {
          provide: {

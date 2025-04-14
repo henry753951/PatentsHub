@@ -21,6 +21,9 @@ const viteElectronBuildConfig = (type: "es" | "cjs", ext: string) => {
             "~": __dirname,
          },
       },
+      optimizeDeps: {
+         exclude: ["supejson"],
+      },
    } as InlineConfig;
 };
 
