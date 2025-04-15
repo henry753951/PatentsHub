@@ -7,6 +7,12 @@ const PatentCreate = z.object({
       })
       .min(1, "專利編號不得為空")
       .default(""),
+   initialReviewDate: z
+      .union([z.date(), z.string().transform((val) => new Date(val))])
+      .nullable()
+      .optional(),
+
+   initialReviewNumber: z.number().nullable().optional(),
    year: z.number().default(new Date().getFullYear() - 1911),
    draftTitle: z
       .string({
