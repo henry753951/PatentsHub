@@ -16,24 +16,20 @@ export default router({
             .default({ year: new Date().getFullYear() - 1911 }),
       )
       .query(async ({ input }) => {
+         Logger.info("getLastInternalID", prisma);
          const offset = 4;
          const lastPatent = await prisma.patent.findFirst({
             where: {
                Year: input.year,
             },
             orderBy: {
-               internal: {
-                  InternalID: "desc",
-               },
-            },
-            include: {
-               internal: true,
+               InternalID: "desc",
             },
          });
-         if (!(lastPatent && lastPatent.internal)) {
+         if (!lastPatent?.InternalID) {
             return `${input.year}${(1).toString().padStart(offset, "0")}`;
          }
-         const nextInteralId = `${input.year}${(parseInt(lastPatent.internal.InternalID.slice(-offset)) + 1).toString().padStart(offset, "0")}`;
+         const nextInteralId = `${input.year}${(parseInt(lastPatent.InternalID.slice(-offset)) + 1).toString().padStart(offset, "0")}`;
          return nextInteralId;
       }),
    getKeywords: procedure.input(z.object({})).query(async () => {
@@ -77,6 +73,9 @@ export default router({
                Year: input.year,
                DepartmentID: input.belongs.departmentID,
                PatentType: input.type,
+               InternalID: input.internalID,
+               InitialReviewDate: input.initialReviewDate,
+               InitialReviewNumber: input.initialReviewNumber,
                technical: {
                   create: {
                      MaturityLevel: input.technical.maturityLevel,
@@ -91,9 +90,7 @@ export default router({
                   },
                },
                internal: {
-                  create: {
-                     InternalID: input.internalID,
-                  },
+                  create: {},
                },
                external: {
                   create: {},

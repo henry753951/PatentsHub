@@ -166,7 +166,7 @@ export const useFundingExport = (params: UseFundingExportParams) => {
          const inventorSharePercent = getSharePercent("發明人").value;
 
          return {
-            本校編號: patent.value?.internal?.InternalID,
+            本校編號: patent.value?.InternalID,
             專利名稱: patent.value?.Title,
             國家: patent.value?.country?.CountryName,
             費用項目: `${dataExported.value?.name} (${formatTaiwanDate(dataExported.value?.date, "YY.MM")})`,
@@ -196,7 +196,7 @@ export const useFundingExport = (params: UseFundingExportParams) => {
    const patentCostSharingAgreement = async () => {
       const computedData = computed(() => {
          return {
-            本校編號: patent.value?.internal?.InternalID,
+            本校編號: patent.value?.InternalID,
             專利名稱: patent.value?.Title,
             專利國別: patent.value?.country?.CountryName,
             申請人: mainInventor.value?.inventor.contactInfo.Name,
@@ -240,7 +240,7 @@ export const useFundingExport = (params: UseFundingExportParams) => {
             發明人: `${mainInventor.value?.inventor.contactInfo.Name} ${mainInventor.value?.inventor.contactInfo.Role}`,
             完整項目名稱: `${patent.value?.country?.CountryName}${patentType}${dataExported.value?.name}`,
             專利名稱: `${patent.value?.Title}`,
-            校內編號: `${patent.value?.internal?.InternalID}`,
+            校內編號: `${patent.value?.InternalID}`,
             國別: `${patent.value?.country?.CountryName}`,
             方案: `${fundingPlan.value?.Name}`,
             分攤: fundingPlan.value?.planAllocations.map((a, index) => ({
@@ -303,7 +303,7 @@ export const useFundingExport = (params: UseFundingExportParams) => {
                (unit) => unit.ProjectCode,
             ),
             date: formatTaiwanDate(dataExported.value?.date),
-            title: `${patent.value?.Title} [${patent.value?.internal?.InternalID}]`,
+            title: `${patent.value?.Title} [${patent.value?.InternalID}]`,
             contributions: fundingUnitsContributions,
             universityAmount: totalInternalAmount,
          };

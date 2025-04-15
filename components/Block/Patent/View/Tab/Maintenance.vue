@@ -311,8 +311,27 @@ const editMaintenanceData = ref<{
 
 const form = ref({
    maintenanceDate: new Date() as Date,
-   expireDate: null as Date | null,
+   expireDate: (() => {
+      const date = new Date();
+      date.setFullYear(date.getFullYear() + 3); // 加三年
+      date.setDate(date.getDate() - 1); // 減一天
+      return date;
+   })(),
 });
+
+// 監聽維護日期變化，更新到期日期
+watch(
+   () => form.value.maintenanceDate,
+   (newDate) => {
+      if (newDate) {
+         const newExpire = new Date(newDate);
+         newExpire.setFullYear(newExpire.getFullYear() + 3);
+         newExpire.setDate(newExpire.getDate() - 1);
+         form.value.expireDate = newExpire;
+      }
+   },
+   { immediate: true },
+);
 
 // Computed properties
 const isSubmitDisabled = computed(() => {

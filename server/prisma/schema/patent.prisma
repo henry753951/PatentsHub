@@ -25,6 +25,11 @@ model Patent {
   createdAt     DateTime                   @default(now())
   pinned        Boolean                    @default(false)
   owners        PatentOwner[]              // 新增的所有權人關聯
+
+  // ⬇️ 校內編號與技推資訊搬到這裡
+  InternalID          String                   @unique// 校內編號
+  InitialReviewDate   DateTime?
+  InitialReviewNumber Int?
 }
 
 // ========================
@@ -79,9 +84,6 @@ model TechnicalKeyword {
 
 model PatentInternal {
   PatentID              Int                         @id
-  InternalID            String                      @unique // 校內編號
-  InitialReviewDate     DateTime?
-  InitialReviewNumber   Int?
   InitialReviewAgencies PatentInitiatorAgencyUnit[] // 初評事務所
   TakerAgencies         PatentTakerAgencyUnit[] // 承辦事務所
   Patent                Patent                      @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)

@@ -18,11 +18,11 @@
                class="grid grid-cols-1 gap-3"
             >
                <div class="flex flex-col gap-2">
-                  <label for="record-name">帳款名稱</label>
+                  <label for="record-name">費用名稱</label>
                   <InputText
                      id="record-name"
                      v-model="tempRecord.name"
-                     placeholder="輸入帳款名稱"
+                     placeholder="輸入費用名稱"
                   />
                </div>
 

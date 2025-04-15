@@ -140,7 +140,7 @@
                         refData: t.service.refData,
                      },
                      t.service.template,
-                     `[${patent.internal?.InternalID}] ${mainInventor?.inventor.contactInfo.Name}${patent.Title}-${t.title} (${formatTaiwanDate(
+                     `[${patent.InternalID}] ${mainInventor?.inventor.contactInfo.Name}${patent.Title}-${t.title} (${formatTaiwanDate(
                         dataExported?.date,'YY.MM.DD',
                      )})`,
                   )

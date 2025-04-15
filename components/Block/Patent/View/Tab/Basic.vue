@@ -5,68 +5,6 @@
    >
       <div class="col-span-3">
          <CustomContentBlock
-            v-if="internalData.data.value && internalData.data.value.internal"
-            :note-key="`${patent.PatentID}:internal`"
-            title="校內資訊"
-            tclass="sticky top-[87px]"
-            :save-button="!internalData.isSynced.value"
-            @save="internalData.save"
-         >
-            <CustomContentBlockRow
-               v-model="internalData.data.value.internal.InternalID"
-               title="校內編號"
-               :is-synced="
-                  internalData.data.value?.internal?.InternalID ===
-                     internalData.refData.value?.internal?.InternalID
-               "
-            />
-            <CustomContentBlockRow
-               title="技推資訊"
-               :is-synced="
-                  format(
-                     internalData.data.value.internal.InitialReviewDate!,
-                     'yyyy-MM-dd',
-                  ) ===
-                     format(
-                        internalData.refData.value?.internal
-                           ?.InitialReviewDate!,
-                        'yyyy-MM-dd',
-                     ) &&
-                     internalData.data.value?.internal?.InitialReviewNumber ===
-                     internalData.refData.value?.internal?.InitialReviewNumber
-               "
-            >
-               <FormPatentReviewInfo
-                  v-model:review-date="
-                     internalData.data.value.internal.InitialReviewDate
-                  "
-                  v-model:review-number="
-                     internalData.data.value.internal.InitialReviewNumber
-                  "
-               />
-            </CustomContentBlockRow>
-            <CustomContentBlockRow
-               title="初評事務所"
-               :is-synced="isSynced.initialReviewAgencies.value"
-            >
-               <FormPatentAgencyList
-                  v-model="
-                     internalData.data.value.internal.InitialReviewAgencies
-                  "
-                  :is-taker-agency-unit="false"
-               />
-            </CustomContentBlockRow>
-            <CustomContentBlockRow
-               title="承辦事務所"
-               :is-synced="isSynced.takerAgencies.value"
-            >
-               <FormPatentAgencyList
-                  v-model="internalData.data.value.internal.TakerAgencies"
-                  :is-taker-agency-unit="true"
-               />
-            </CustomContentBlockRow>
-         </CustomContentBlock>
-         <CustomContentBlock
             v-if="
                applicationData.data.value &&
                   applicationData.data.value.application
@@ -138,8 +76,12 @@
             <CustomContentBlockRow
                title="資助單位"
                :is-synced="
-                  JSON.stringify(fundingData.data.value.funding.fundingUnits) ===
-                     JSON.stringify(fundingData.refData.value?.funding?.fundingUnits)
+                  JSON.stringify(
+                     fundingData.data.value.funding.fundingUnits,
+                  ) ===
+                     JSON.stringify(
+                        fundingData.refData.value?.funding?.fundingUnits,
+                     )
                "
             >
                <FormPatentFundingUnitEditList
@@ -159,15 +101,15 @@
                      v-model="fundingData.data.value.funding.plan"
                      class="col-span-1"
                   />
-                  <div
-                     class="flex gap-2 items-center col-span-2"
-                  >
+                  <div class="flex gap-2 items-center col-span-2">
                      <div
-                        v-for="allocation in fundingData.data.value.funding.plan?.planAllocations"
+                        v-for="allocation in fundingData.data.value.funding.plan
+                           ?.planAllocations"
                         :key="allocation.FundingPlanAllocationID"
                         class="flex items-center gap-1"
                      >
-                        <Badge>{{ allocation.target.Name }}</Badge>  {{ allocation.Percentage }}%
+                        <Badge>{{ allocation.target.Name }}</Badge>
+                        {{ allocation.Percentage }}%
                      </div>
                   </div>
                </div>
@@ -248,6 +190,35 @@
                "
             />
          </CustomContentBlock>
+         <CustomContentBlock
+            v-if="internalData.data.value && internalData.data.value.internal"
+            :note-key="`${patent.PatentID}:internal`"
+            title="事務所資訊"
+            tclass="sticky top-[87px]"
+            :save-button="!internalData.isSynced.value"
+            @save="internalData.save"
+         >
+            <CustomContentBlockRow
+               title="初評事務所"
+               :is-synced="isSynced.initialReviewAgencies.value"
+            >
+               <FormPatentAgencyList
+                  v-model="
+                     internalData.data.value.internal.InitialReviewAgencies
+                  "
+                  :is-taker-agency-unit="false"
+               />
+            </CustomContentBlockRow>
+            <CustomContentBlockRow
+               title="承辦事務所"
+               :is-synced="isSynced.takerAgencies.value"
+            >
+               <FormPatentAgencyList
+                  v-model="internalData.data.value.internal.TakerAgencies"
+                  :is-taker-agency-unit="true"
+               />
+            </CustomContentBlockRow>
+         </CustomContentBlock>
       </div>
       <div class="col-span-2 self-start sticky top-[87px]">
          <CustomContentBlock
@@ -257,6 +228,14 @@
             :save-button="!basicData.isSynced.value"
             @save="basicData.save"
          >
+            <CustomContentBlockRow
+               v-model="basicData.data.value.InternalID"
+               title="校內編號"
+               :is-synced="
+                  basicData.data.value?.InternalID ===
+                     basicData.refData.value?.InternalID
+               "
+            />
             <div class="grid grid-cols-5 gap-4">
                <CustomContentBlockRow
                   v-model:number="basicData.data.value.Year"
@@ -301,7 +280,28 @@
                   />
                </CustomContentBlockRow>
             </div>
-
+            <CustomContentBlockRow
+               title="技推資訊"
+               :is-synced="
+                  format(
+                     basicData.data.value.InitialReviewDate!,
+                     'yyyy-MM-dd',
+                  ) ===
+                     format(
+                        basicData.refData.value?.InitialReviewDate!,
+                        'yyyy-MM-dd',
+                     ) &&
+                     basicData.data.value?.InitialReviewNumber ===
+                     basicData.refData.value?.InitialReviewNumber
+               "
+            >
+               <FormPatentReviewInfo
+                  v-model:review-date="basicData.data.value.InitialReviewDate"
+                  v-model:review-number="
+                     basicData.data.value.InitialReviewNumber
+                  "
+               />
+            </CustomContentBlockRow>
             <CustomContentBlockRow
                v-model="basicData.data.value.Title"
                title="發明名稱"
@@ -385,6 +385,9 @@ const basicData = useSyncData(patent, async (newData) => {
          Title: newData.Title,
          TitleEnglish: newData.TitleEnglish,
          PatentType: newData.PatentType,
+         InternalID: newData.InternalID,
+         InitialReviewDate: newData.InitialReviewDate,
+         InitialReviewNumber: newData.InitialReviewNumber,
          country: newData.country
             ? {
                connect: {
@@ -402,7 +405,7 @@ const basicData = useSyncData(patent, async (newData) => {
       },
    ]);
 });
-// 校內資訊
+// 事務所資訊
 const internalData = useSyncData(patent, async (newData) => {
    if (!newData) return;
    await crud.updatePatent([
@@ -410,9 +413,6 @@ const internalData = useSyncData(patent, async (newData) => {
          internal: {
             update: {
                data: {
-                  InternalID: newData.internal?.InternalID,
-                  InitialReviewDate: newData.internal?.InitialReviewDate,
-                  InitialReviewNumber: newData.internal?.InitialReviewNumber,
                   InitialReviewAgencies: {
                      deleteMany: {},
                   },
