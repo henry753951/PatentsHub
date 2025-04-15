@@ -109,7 +109,7 @@
                         title="校內編號"
                         icon="tabler:hash"
                      >
-                        {{ patent.internal ? patent.internal.InternalID : "" }}
+                        {{ patent.InternalID ?? "" }}
                      </CustomStatusBlock>
                      <CustomStatusBlock
                         title="專利編號"

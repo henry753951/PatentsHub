@@ -33,7 +33,7 @@ export const usePatentStatus = (patentService: {
             data.reason = "教師登錄";
             break;
          case "REVIEWED":
-            data.date = patent.value.internal?.InitialReviewDate ?? null;
+            data.date = patent.value.InitialReviewDate ?? null;
             data.active = active ?? !!data.date;
             data.reason = reason ?? (data.active ? "已初評" : "初評");
             break;

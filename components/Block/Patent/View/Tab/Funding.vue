@@ -13,7 +13,7 @@
                   帳目列表
                </h2>
                <p class="text-muted-foreground">
-                  管理專利的帳目記錄
+                  管理專利的匯出紀錄
                </p>
             </div>
             <div class="flex gap-2">
@@ -67,7 +67,7 @@
                data-key="FundingRecordID"
                class="p-datatable-sm"
                :row-class="rowClass"
-               :empty-message="'尚無帳目記錄'"
+               :empty-message="'尚無匯出紀錄'"
                row-hover
                @row-click="(e) => openEditRecordModal(e.data)"
             >
@@ -80,7 +80,7 @@
                         class="h-12 w-12 text-gray-400 mb-3"
                      />
                      <p class="text-gray-500 dark:text-gray-400">
-                        尚無帳目記錄
+                        尚無匯出紀錄
                      </p>
                      <Button
                         variant="ghost"
@@ -162,7 +162,7 @@
                <Card>
                   <CardHeader class="p-4">
                      <CardTitle>統計資料</CardTitle>
-                     <CardDescription> 帳目記錄的統計資料</CardDescription>
+                     <CardDescription> 匯出紀錄的統計資料</CardDescription>
                   </CardHeader>
                   <CardContent class="space-y-1 px-4 pb-4">
                      <div class="grid grid-cols-2 gap-2">
@@ -250,7 +250,7 @@
                <Card>
                   <CardHeader>
                      <CardTitle>導出紀錄</CardTitle>
-                     <CardDescription> 帳目記錄的導出紀錄 </CardDescription>
+                     <CardDescription> 匯出紀錄的導出紀錄 </CardDescription>
                   </CardHeader>
                   <CardContent class="space-y-2">
                      <DataTable
