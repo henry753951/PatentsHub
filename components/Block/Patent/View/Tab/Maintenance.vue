@@ -119,7 +119,9 @@
                         <div>
                            <div class="space-y-1">
                               <!-- 維護標題 -->
-                              <h4 class="text-base font-semibold">
+                              <h4
+                                 class="text-base font-semibold max-w-3xl h-6 truncate"
+                              >
                                  {{ maintenance.Title || `維護記錄 #${index + 1}` }}
                               </h4>
 
