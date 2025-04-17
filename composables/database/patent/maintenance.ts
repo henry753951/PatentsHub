@@ -18,6 +18,7 @@ export const usePatentMaintenances = (patentService: {
    const addMaintenance = async (maintenance: {
       MaintenanceDate: Date
       ExpireDate: Date
+      Title?: string
    }) => {
       if (!patent.value) return;
       await $trpc.data.patent.updatePatent.mutate([
@@ -27,6 +28,7 @@ export const usePatentMaintenances = (patentService: {
                   create: {
                      MaintenanceDate: maintenance.MaintenanceDate,
                      ExpireDate: maintenance.ExpireDate,
+                     Title: maintenance.Title ?? "",
                   },
                },
             },
@@ -41,6 +43,7 @@ export const usePatentMaintenances = (patentService: {
       maintenance: {
          MaintenanceDate: Date
          ExpireDate: Date
+         Title?: string
       },
    ) => {
       if (!patent.value) return;
@@ -52,6 +55,7 @@ export const usePatentMaintenances = (patentService: {
                      data: {
                         MaintenanceDate: maintenance.MaintenanceDate,
                         ExpireDate: maintenance.ExpireDate,
+                        Title: maintenance.Title ?? "",
                      },
                      where: {
                         MaintenanceID: maintenanceID,
