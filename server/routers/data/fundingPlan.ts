@@ -16,6 +16,22 @@ export default router({
             },
          });
       }),
+   getFundingPlanByID: procedure
+      .input(z.object({ fundingPlanID: z.number() }))
+      .query(({ input }) => {
+         return prisma.fundingPlan.findUnique({
+            where: {
+               FundingPlanID: input.fundingPlanID,
+            },
+            include: {
+               planAllocations: {
+                  include: {
+                     target: true,
+                  },
+               },
+            },
+         });
+      }),
    createFundingPlan: procedure
       .input(
          z.object({

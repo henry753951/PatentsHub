@@ -1,6 +1,6 @@
 <template>
    <div
-      class="grid grid-cols-1 md:grid-cols-2 gap-4 container mx-auto p-6 h-full"
+      class="grid grid-cols-1 md:grid-cols-2 gap-4 container mx-auto p-6 h-[var(--content-area-height)]"
    >
       <!-- 左側：代理機構管理 -->
       <div

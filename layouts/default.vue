@@ -3,10 +3,11 @@
       <BlockWindowTitleBar class="bg-white dark:bg-zinc-900" />
       <div class="flex flex-1 min-h-0">
          <BlockSideMenu class="bg-white dark:bg-zinc-900" />
-         <div class="inner-page w-full h-full">
-            <ScrollArea
-               class="h-full w-full"
-            >
+         <div
+            ref="el"
+            class="inner-page w-full h-full"
+         >
+            <ScrollArea class="h-full w-full scrollarea">
                <slot />
             </ScrollArea>
          </div>
@@ -22,6 +23,20 @@
 import { Toaster } from "@/components/ui/sonner";
 import { ModalsService } from "#components";
 import { ScrollArea } from "@/components/ui/scroll-area";
+const el = useTemplateRef("el");
+const { width, height } = useElementSize(el);
+watch([width, height], ([w, h]) => {
+   if (w > 0 && h > 0) {
+      document.documentElement.style.setProperty(
+         "--content-area-width",
+         `${w}px`,
+      );
+      document.documentElement.style.setProperty(
+         "--content-area-height",
+         `${h}px`,
+      );
+   }
+});
 </script>
 
 <style scoped>

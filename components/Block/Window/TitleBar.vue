@@ -20,7 +20,7 @@
                   style="width: 1px; height: 20px"
                ></div>
                <div class="text-xs">
-                  v1.0.0
+                  {{ version }}
                </div>
             </div>
          </div>
@@ -67,6 +67,17 @@
 <script setup lang="ts">
 const { options, loopSwitchTheme } = useTheme();
 const { close, maximize, minimize } = useElectronWindow();
+const { $trpc } = useNuxtApp();
+const { data: version } = useAsyncData(
+   "getVersion",
+   async () => {
+      const version = await $trpc.app.version.query();
+      return `v${version}`;
+   },
+   {
+      immediate: true,
+   },
+);
 </script>
 
 <style lang="css" scoped>

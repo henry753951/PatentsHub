@@ -104,10 +104,34 @@ export const useModals = () => {
       return id;
    };
 
+   const openAutoModalV2 = <T extends ZodObjectOrWrapped>(args: {
+      title: string
+      description: string
+      schema: T
+      callback: (data: z.infer<T>, passthrough?: any) => Promise<void>
+      fieldConfig?: Config<z.infer<T>>
+      passthrough?: any
+      defaultValues?: z.infer<T>
+   }) => {
+      const id = open("AutoModal", {
+         props: {
+            title: args.title,
+            description: args.description,
+            schema: args.schema,
+            fieldConfig: args.fieldConfig,
+            callback: args.callback,
+            passthrough: args.passthrough,
+            defaultValues: args.defaultValues,
+         },
+      });
+      return id;
+   };
+
    return {
       modals,
       open,
       close,
       openAutoModal,
+      openAutoModalV2,
    };
 };

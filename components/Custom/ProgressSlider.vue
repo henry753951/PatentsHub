@@ -7,7 +7,7 @@
       @selectstart.prevent
    >
       <div
-         class="h-full rounded-xl flex justify-end py-1 transition-transform duration-200 ease-in-out"
+         class="h-full rounded-xl flex justify-end py-1 transition-transform duration-300 ease-in-out"
          :class="{
             'animate-bg-red-500': isOutofRange,
             'bg-zinc-800 dark:bg-zinc-400': !isOutofRange,
@@ -35,9 +35,9 @@ const modelValue = defineModel<number>({
    default: 80,
 });
 
-const percent = computed(() => {
-   return ((modelValue.value - range[0]) / (range[1] - range[0])) * 100;
-});
+const percent = computed(
+   () => ((modelValue.value - range[0]) / (range[1] - range[0])) * 100,
+);
 
 const {
    max = 40,
@@ -59,17 +59,23 @@ const handle = useTemplateRef<HTMLElement>("handle");
 const { pressed } = useMousePressed({ target: container });
 const { elementX, elementWidth } = useMouseInElement(container);
 const isDragging = ref(false);
-watch(pressed, (value) => {
-   if (!value) isDragging.value = false;
-});
 
-watch([elementX, isDragging], (value) => {
-   if (isDragging.value) {
+watch(pressed, (value) => {
+   if (!value) {
+      isDragging.value = false;
+      document.body.style.userSelect = "auto";
+      document.body.style.cursor = "auto";
+   }
+   else {
       document.body.style.userSelect = "none";
       document.body.style.cursor = "grabbing";
+   }
+});
 
+watch([elementX, isDragging], ([currentElementX, currentIsDragging]) => {
+   if (currentIsDragging) {
       const clampedValue = Math.round(
-         (elementX.value / elementWidth.value) * (range[1] - range[0])
+         (currentElementX / elementWidth.value) * (range[1] - range[0])
          + range[0],
       );
 
