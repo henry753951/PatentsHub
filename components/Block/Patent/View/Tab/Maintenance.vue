@@ -117,25 +117,28 @@
                         class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 group"
                      >
                         <div>
-                           <h4
-                              class="text-base font-semibold flex items-center"
-                           >
-                              第 {{ index + 1 }} 次維護
-                              <Badge
-                                 :variant="
-                                    isExpired(maintenance.ExpireDate)
-                                       ? 'destructive'
-                                       : new Date(
-                                          maintenance.MaintenanceDate,
-                                       ) <= new Date()
-                                          ? 'default'
-                                          : 'outline'
-                                 "
-                                 class="ml-2"
+                           <div class="space-y-1">
+                              <!-- 維護標題 -->
+                              <h4
+                                 class="text-base font-semibold max-w-3xl h-6 truncate"
                               >
-                                 {{ getMaintenanceStatus(maintenance) }}
-                              </Badge>
-                           </h4>
+                                 {{ maintenance.Title || `維護記錄 #${index + 1}` }}
+                              </h4>
+
+                              <!-- 維護次數 -->
+                              <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                                 <span>第 {{ index + 1 }} 次維護</span>
+                                 <Badge
+                                    :variant="isExpired(maintenance.ExpireDate)
+                                       ? 'destructive'
+                                       : new Date(maintenance.MaintenanceDate) <= new Date()
+                                          ? 'default'
+                                          : 'outline'"
+                                 >
+                                    {{ getMaintenanceStatus(maintenance) }}
+                                 </Badge>
+                              </div>
+                           </div>
                            <div
                               class="flex flex-col sm:flex-row sm:items-center gap-x-4 text-muted-foreground text-sm mt-1"
                            >
@@ -224,7 +227,6 @@
          <DialogContent
             class="sm:max-w-md"
             @pointer-down-outside.prevent
-            @open-auto-focus.prevent
          >
             <DialogHeader>
                <DialogTitle>
@@ -238,6 +240,19 @@
                class="space-y-4"
                @submit.prevent="handleSubmit"
             >
+               <div>
+                  <Label
+                     for="title"
+                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
+                  >
+                     維護標題
+                  </Label>
+                  <Input
+                     id="title"
+                     v-model="form.title"
+                     placeholder="輸入維護標題"
+                  />
+               </div>
                <FormDatePicker
                   v-model="form.maintenanceDate"
                   label="維護日期"
@@ -316,6 +331,7 @@ const form = ref({
       date!.setDate(date!.getDate() - 1); // 減一天
       return date;
    })(),
+   title: "",
 });
 
 // 監聽維護日期變化，更新到期日期
@@ -390,10 +406,12 @@ const editMaintenanceRecord = (maintenance: {
    MaintenanceID: number
    MaintenanceDate: string | number | Date
    ExpireDate: string | number | Date
+   Title: string | null
 }) => {
    editMaintenanceData.value = maintenance;
    form.value.maintenanceDate = new Date(maintenance.MaintenanceDate);
    form.value.expireDate = new Date(maintenance.ExpireDate);
+   form.value.title = maintenance.Title ?? "";
 };
 
 const deleteMaintenanceRecord = async (maintenanceId: number) => {
@@ -407,7 +425,13 @@ const closeDialog = () => {
    editMaintenanceData.value = null;
    form.value = {
       maintenanceDate: new Date(),
-      expireDate: null,
+      expireDate: (() => {
+         const date = new Date();
+         date.setFullYear(date.getFullYear() + 3); // 加三年
+         date.setDate(date.getDate() - 1); // 減一天
+         return date;
+      })(),
+      title: "",
    };
 };
 
@@ -417,6 +441,7 @@ const handleSubmit = async () => {
    const maintenanceData = {
       MaintenanceDate: form.value.maintenanceDate,
       ExpireDate: form.value.expireDate,
+      Title: form.value.title,
    };
 
    if (editMaintenanceData.value) {
@@ -431,4 +456,5 @@ const handleSubmit = async () => {
 
    closeDialog();
 };
+
 </script>

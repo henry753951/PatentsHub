@@ -1,5 +1,8 @@
 <template>
-   <div class="flex items-center w-full gap-4 window-control">
+   <div
+      class="flex items-center w-full gap-4 window-control"
+      :style="draggableStyle"
+   >
       <div class="flex gap-1 h-full pl-4">
          <div class="flex-1 flex items-center justify-center">
             <div class="flex items-center gap-2 h-full">
@@ -67,9 +70,20 @@
 <script setup lang="ts">
 const { options, loopSwitchTheme } = useTheme();
 const { close, maximize, minimize } = useElectronWindow();
+const modalService = useModals();
+const draggableStyle = computed(() => {
+   if (modalService.modals.value.length > 0) {
+      return {
+         "app-region": "no-drag",
+      };
+   }
+   return {
+      "app-region": "drag",
+   };
+});
 </script>
 
-<style lang="css" scoped>
+<style lang="css">
 * {
    -webkit-user-select: none;
    -moz-user-select: none;
@@ -79,12 +93,11 @@ const { close, maximize, minimize } = useElectronWindow();
 
 .window-control {
    padding: 0.3rem;
-   -webkit-app-region: no-drag;
    user-select: none;
-   app-region: drag;
 }
 
-.window-control > * {
+.window-control > *{
+   -webkit-app-region: no-drag;
    app-region: no-drag;
 }
 
