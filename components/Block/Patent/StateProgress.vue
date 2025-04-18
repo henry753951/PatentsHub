@@ -1,7 +1,9 @@
 <template>
-   <div class="bg-white rounded-lg p-4 space-y-2 mt-7 border border-gray-200 dark:bg-zinc-900 dark:border-zinc-800">
+   <div
+      class="bg-white rounded-lg p-4 space-y-2 mt-7 border border-gray-200 dark:bg-zinc-900 dark:border-zinc-800"
+   >
       <div class="flex justify-between">
-         <div class="font-bold ">
+         <div class="font-bold">
             狀態
          </div>
          <div
@@ -16,28 +18,26 @@
          </div>
       </div>
 
-      <div
-         class="w-full flex gap-1"
-         @mouseover="tooltipEnable = true"
-         @mouseleave="tooltipEnable = false"
-      >
+      <div class="w-full flex gap-1">
          <!-- 狀態項目 -->
          <div class="flex flex-1 gap-1 pt-7">
             <TooltipProvider
                v-for="(item, index) in stateProgress"
                :key="item.status + '-' + index"
-               :delay-duration="100"
-               :disabled="!tooltipEnable"
+               :delay-duration="50"
             >
                <Tooltip>
                   <TooltipTrigger
-                     class="status-block flex-1 flex flex-col items-center gap-2 cursor-pointer"
+                     class="status-block flex flex-col gap-2 cursor-pointer"
                      :class="{
                         success: item.type === 'success',
                         none: item.type === 'none',
                         warning: item.type === 'warning',
                      }"
-                     @click.stop="item.status === 'MANUAL' && handleEditCustomStatus(item.raw)"
+                     @click="
+                        item.status === 'MANUAL' &&
+                           handleEditCustomStatus(item.raw)
+                     "
                   >
                      <span
                         class="font-bold text-sm"
@@ -45,7 +45,7 @@
                      >{{ item.title }}</span>
                   </TooltipTrigger>
                   <TooltipContent v-if="item.date">
-                     <p>{{ format(item.date, 'yyyy-MM-dd') }}</p>
+                     <p>{{ format(item.date, "yyyy-MM-dd") }}</p>
                      <CustomTimeAgo :time="item.date" />
                      <div
                         v-if="item.status === 'MANUAL'"
@@ -69,10 +69,7 @@
             </TooltipProvider>
          </div>
          <!-- + 按鈕 -->
-         <TooltipProvider
-            :delay-duration="100"
-            :disabled="!tooltipEnable"
-         >
+         <TooltipProvider :delay-duration="50">
             <Tooltip>
                <TooltipTrigger
                   class="flex items-center justify-center px-1"
@@ -81,8 +78,7 @@
                   <Button
                      variant="ghost"
                      size="icon"
-                     class="w-10 h-10 rounded-full border border-gray-200 bg-white shadow-sm hover:shadow-md
-               dark:bg-zinc-800 dark:border-zinc-700"
+                     class="w-10 h-10 rounded-full border border-gray-200 bg-white shadow-sm hover:shadow-md dark:bg-zinc-800 dark:border-zinc-700"
                   >
                      <Icon
                         name="material-symbols:add-2-rounded"
@@ -110,9 +106,6 @@ import {
 } from "@/components/ui/tooltip";
 import { z } from "zod";
 import type { Config } from "~/components/ui/auto-form/interface";
-import { CalendarDateTime, getLocalTimeZone } from "@internationalized/date";
-
-const tooltipEnable = ref(false);
 
 const { statusService } = defineProps<{
    statusService: ReturnType<typeof usePatentStatus>
@@ -179,7 +172,7 @@ const isStopped = computed(() => {
 const currentState = computed(() => {
    const reversed = [...stateProgress.value].reverse();
    return reversed.find((item) => item.active) || null;
-});// 最後一個 active 的狀態
+}); // 最後一個 active 的狀態
 
 const customStatusSchema = z.object({
    reason: z.string().min(1, "狀態名稱不可為空"),
@@ -279,50 +272,49 @@ const handleDeleteCustomStatus = async (manual: any) => {
 
 <style scoped>
 .status-block {
-  flex: 1 1 0%;
-  min-width: 0;
+   flex: 1 1 0%;
+   min-width: 0;
 }
 
 .status-block > span {
-  font-size: 0.9rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+   font-size: 0.9rem;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   max-width: 100%;
 }
 
 .status-block::before {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 10px;
-  border-radius: 4px;
+   content: "";
+   display: block;
+   width: 100%;
+   height: 10px;
+   border-radius: 4px;
 }
 .status-block:hover::before {
-  box-shadow: 0px 0px 5px var(--progress-color);
+   box-shadow: 0px 0px 5px var(--progress-color);
 }
 
 .status-block.success::before {
-  --progress-color: #34d399;
-  background-color: var(--progress-color);
+   --progress-color: #34d399;
+   background-color: var(--progress-color);
 }
 .status-block.none::before {
-  --progress-color: #d1d5db;
-  background-color: var(--progress-color);
+   --progress-color: #d1d5db;
+   background-color: var(--progress-color);
 }
 .status-block.warning::before {
-  --progress-color: #f59e0b;
-  background-color: var(--progress-color);
+   --progress-color: #f59e0b;
+   background-color: var(--progress-color);
 }
 
 .text-success {
-  color: #29b17f;
+   color: #29b17f;
 }
 .text-warning {
-  color: #f59e0b;
+   color: #f59e0b;
 }
 .text-none {
-  color: #d1d5db;
+   color: #d1d5db;
 }
-
 </style>

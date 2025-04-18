@@ -3,7 +3,7 @@
       <div
          v-if="patent"
          ref="viewRef"
-         class="pt-[200px] transition-all duration-500 pb-[230px]"
+         class="pt-[200px] transition-all duration-500 pb-[230px] h-fit"
       >
          <div
             class="bg-[#f5f5f5] dark:bg-[#1a1a1a] fixed top-0 self-start z-[4] max-h-[230px] min-h-0 transition-all duration-500 w-full overflow-hidden"
