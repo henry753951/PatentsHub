@@ -95,8 +95,8 @@ function createWindow() {
          preload: path.join(__dirname, "preload.js"),
       },
       frame: false,
-      maximizable: false,
-      backgroundMaterial: "acrylic",
+      maximizable: true,
+      // backgroundMaterial: "acrylic",
       title: "高雄大學專利維護系統",
    });
 
