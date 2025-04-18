@@ -287,147 +287,53 @@
                               </div>
                            </div>
 
-                           <!-- Patents Lists -->
-                           <Accordion
-                              v-if="
-                                 period.expireds.length > 0 ||
-                                    period.maintaineds.length > 0 ||
-                                    period.expirings.length > 0
-                              "
-                              type="multiple"
-                              class="space-y-2"
-                           >
-                              <!-- Expired Patents -->
-                              <AccordionItem
-                                 v-if="period.expireds.length > 0"
-                                 value="expired"
-                                 class="border border-zinc-200 dark:border-zinc-800 rounded-lg"
+                           <div class="space-y-2">
+                              <div
+                                 v-for="patent in period.expireds"
+                                 :key="patent.patent.PatentID"
                               >
-                                 <AccordionTrigger
-                                    class="px-3 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 rounded-t-lg"
-                                 >
-                                    <div
-                                       class="flex items-center text-red-600 dark:text-red-400"
-                                    >
-                                       <AlertTriangle class="h-4 w-4 mr-2" />
-                                       <span>已過期專利 ({{
-                                          period.expireds.length
-                                       }})</span>
-                                    </div>
-                                 </AccordionTrigger>
-                                 <AccordionContent class="px-3 pt-2">
-                                    <div class="space-y-2">
-                                       <div
-                                          v-for="patent in period.expireds"
-                                          :key="patent.patent.PatentID"
-                                       >
-                                          <BlockPatentRow
-                                             :patent="patent.patent"
-                                             @click="
-                                                open('PatentModal', {
-                                                   props: {
-                                                      patentId:
-                                                         patent.patent.PatentID,
-                                                   },
-                                                })
-                                             "
-                                          />
-                                       </div>
-                                    </div>
-                                 </AccordionContent>
-                              </AccordionItem>
-                              <!-- Maintained Patents -->
-                              <AccordionItem
-                                 v-if="period.maintaineds.length > 0"
-                                 value="maintained"
-                                 class="border border-zinc-200 dark:border-zinc-800 rounded-lg"
+                                 <BlockPatentRow
+                                    :patent="patent.patent"
+                                    @click="
+                                       open('PatentModal', {
+                                          props: {
+                                             patentId: patent.patent.PatentID,
+                                          },
+                                       })
+                                    "
+                                 />
+                              </div>
+                              <div
+                                 v-for="patent in period.maintaineds"
+                                 :key="patent.patent.PatentID"
                               >
-                                 <AccordionTrigger
-                                    class="px-3 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 rounded-t-lg"
-                                 >
-                                    <div
-                                       class="flex items-center text-emerald-600 dark:text-emerald-400"
-                                    >
-                                       <CheckCircle2 class="h-4 w-4 mr-2" />
-                                       <span>{{
-                                          period.type === "before"
-                                             ? "已完成維護"
-                                             : "有效專利"
-                                       }}
-                                          ({{
-                                             period.maintaineds.length
-                                          }})</span>
-                                    </div>
-                                 </AccordionTrigger>
-                                 <AccordionContent class="px-3 pt-2">
-                                    <div class="space-y-2">
-                                       <div
-                                          v-for="patent in period.maintaineds"
-                                          :key="patent.patent.PatentID"
-                                       >
-                                          <BlockPatentRow
-                                             :patent="patent.patent"
-                                             @click="
-                                                open('PatentModal', {
-                                                   props: {
-                                                      patentId:
-                                                         patent.patent.PatentID,
-                                                   },
-                                                })
-                                             "
-                                          />
-                                       </div>
-                                    </div>
-                                 </AccordionContent>
-                              </AccordionItem>
-                              <!-- Expiring Patents -->
-                              <AccordionItem
-                                 v-if="period.expirings.length > 0"
-                                 value="expiring"
-                                 class="border border-zinc-200 dark:border-zinc-800 rounded-lg"
+                                 <BlockPatentRow
+                                    :patent="patent.patent"
+                                    @click="
+                                       open('PatentModal', {
+                                          props: {
+                                             patentId: patent.patent.PatentID,
+                                          },
+                                       })
+                                    "
+                                 />
+                              </div>
+                              <div
+                                 v-for="patent in period.expirings"
+                                 :key="patent.patent.PatentID"
                               >
-                                 <AccordionTrigger
-                                    class="px-3 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 rounded-t-lg"
-                                 >
-                                    <div
-                                       class="flex items-center text-amber-600 dark:text-amber-400"
-                                    >
-                                       <Clock class="h-4 w-4 mr-2" />
-                                       <span>即將到期專利 ({{
-                                          period.expirings.length
-                                       }})</span>
-                                    </div>
-                                 </AccordionTrigger>
-                                 <AccordionContent class="px-3 pt-2">
-                                    <div class="space-y-2">
-                                       <div
-                                          v-for="patent in period.expirings"
-                                          :key="patent.patent.PatentID"
-                                       >
-                                          <BlockPatentRow
-                                             :patent="patent.patent"
-                                             @click="
-                                                open('PatentModal', {
-                                                   props: {
-                                                      patentId:
-                                                         patent.patent.PatentID,
-                                                   },
-                                                })
-                                             "
-                                          />
-                                       </div>
-                                    </div>
-                                 </AccordionContent>
-                              </AccordionItem>
-                           </Accordion>
-
-                           <!-- Empty State -->
-                           <p
-                              v-else
-                              class="text-sm text-zinc-500 italic"
-                           >
-                              該時段無專利到期
-                           </p>
+                                 <BlockPatentRow
+                                    :patent="patent.patent"
+                                    @click="
+                                       open('PatentModal', {
+                                          props: {
+                                             patentId: patent.patent.PatentID,
+                                          },
+                                       })
+                                    "
+                                 />
+                              </div>
+                           </div>
                         </div>
                      </div>
                   </template>
