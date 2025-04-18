@@ -264,7 +264,6 @@
 
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { ref, computed, defineModel, defineProps } from "vue";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -306,15 +305,15 @@ const showAddDialog = ref(false);
 const editMaintenanceData = ref<{
    MaintenanceID: number
    MaintenanceDate: string | number | Date
-   ExpireDate: string | number | Date
+   ExpireDate: string | number | Date | null
 } | null>(null);
 
 const form = ref({
    maintenanceDate: new Date() as Date,
    expireDate: (() => {
-      const date = new Date();
-      date.setFullYear(date.getFullYear() + 3); // 加三年
-      date.setDate(date.getDate() - 1); // 減一天
+      const date = new Date() as Date | null;
+      date!.setFullYear(date!.getFullYear() + 3); // 加三年
+      date!.setDate(date!.getDate() - 1); // 減一天
       return date;
    })(),
 });
