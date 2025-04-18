@@ -104,7 +104,7 @@ export const PatentExternalScalarFieldEnumSchema = z.enum(['PatentID','PatentNum
 
 export const PatentManualStatusScalarFieldEnumSchema = z.enum(['ManualStatusID','PatentID','Reason','Date','Active','Override']);
 
-export const PatentMaintenanceScalarFieldEnumSchema = z.enum(['MaintenanceID','PatentID','MaintenanceDate','ExpireDate']);
+export const PatentMaintenanceScalarFieldEnumSchema = z.enum(['MaintenanceID','PatentID','MaintenanceDate','ExpireDate','Title']);
 
 export const PatentRecordScalarFieldEnumSchema = z.enum(['id','PatentID','Record','Date']);
 
@@ -457,6 +457,7 @@ export const PatentMaintenanceSchema = z.object({
   PatentID: z.number().int(),
   MaintenanceDate: z.coerce.date(),
   ExpireDate: z.coerce.date(),
+  Title: z.string().nullish(),
 })
 
 export type PatentMaintenance = z.infer<typeof PatentMaintenanceSchema>
@@ -1249,6 +1250,7 @@ export const PatentMaintenanceSelectSchema: z.ZodType<Prisma.PatentMaintenanceSe
   PatentID: z.boolean().optional(),
   MaintenanceDate: z.boolean().optional(),
   ExpireDate: z.boolean().optional(),
+  Title: z.boolean().optional(),
   patent: z.union([z.boolean(),z.lazy(() => PatentArgsSchema)]).optional(),
 }).strict()
 
@@ -2924,6 +2926,7 @@ export const PatentMaintenanceWhereInputSchema: z.ZodType<Prisma.PatentMaintenan
   PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   MaintenanceDate: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   ExpireDate: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  Title: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
 }).strict();
 
@@ -2932,6 +2935,7 @@ export const PatentMaintenanceOrderByWithRelationInputSchema: z.ZodType<Prisma.P
   PatentID: z.lazy(() => SortOrderSchema).optional(),
   MaintenanceDate: z.lazy(() => SortOrderSchema).optional(),
   ExpireDate: z.lazy(() => SortOrderSchema).optional(),
+  Title: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   patent: z.lazy(() => PatentOrderByWithRelationInputSchema).optional()
 }).strict();
 
@@ -2946,6 +2950,7 @@ export const PatentMaintenanceWhereUniqueInputSchema: z.ZodType<Prisma.PatentMai
   PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   MaintenanceDate: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   ExpireDate: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  Title: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   patent: z.union([ z.lazy(() => PatentScalarRelationFilterSchema),z.lazy(() => PatentWhereInputSchema) ]).optional(),
 }).strict());
 
@@ -2954,6 +2959,7 @@ export const PatentMaintenanceOrderByWithAggregationInputSchema: z.ZodType<Prism
   PatentID: z.lazy(() => SortOrderSchema).optional(),
   MaintenanceDate: z.lazy(() => SortOrderSchema).optional(),
   ExpireDate: z.lazy(() => SortOrderSchema).optional(),
+  Title: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   _count: z.lazy(() => PatentMaintenanceCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => PatentMaintenanceAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => PatentMaintenanceMaxOrderByAggregateInputSchema).optional(),
@@ -2969,6 +2975,7 @@ export const PatentMaintenanceScalarWhereWithAggregatesInputSchema: z.ZodType<Pr
   PatentID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   MaintenanceDate: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   ExpireDate: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  Title: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
 }).strict();
 
 export const PatentRecordWhereInputSchema: z.ZodType<Prisma.PatentRecordWhereInput> = z.object({
@@ -4596,6 +4603,7 @@ export const PatentManualStatusUncheckedUpdateManyInputSchema: z.ZodType<Prisma.
 export const PatentMaintenanceCreateInputSchema: z.ZodType<Prisma.PatentMaintenanceCreateInput> = z.object({
   MaintenanceDate: z.coerce.date(),
   ExpireDate: z.coerce.date(),
+  Title: z.string().optional().nullable(),
   patent: z.lazy(() => PatentCreateNestedOneWithoutMaintenancesInputSchema)
 }).strict();
 
@@ -4603,12 +4611,14 @@ export const PatentMaintenanceUncheckedCreateInputSchema: z.ZodType<Prisma.Paten
   MaintenanceID: z.number().int().optional(),
   PatentID: z.number().int(),
   MaintenanceDate: z.coerce.date(),
-  ExpireDate: z.coerce.date()
+  ExpireDate: z.coerce.date(),
+  Title: z.string().optional().nullable()
 }).strict();
 
 export const PatentMaintenanceUpdateInputSchema: z.ZodType<Prisma.PatentMaintenanceUpdateInput> = z.object({
   MaintenanceDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ExpireDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  Title: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   patent: z.lazy(() => PatentUpdateOneRequiredWithoutMaintenancesNestedInputSchema).optional()
 }).strict();
 
@@ -4617,18 +4627,21 @@ export const PatentMaintenanceUncheckedUpdateInputSchema: z.ZodType<Prisma.Paten
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   MaintenanceDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ExpireDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  Title: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const PatentMaintenanceCreateManyInputSchema: z.ZodType<Prisma.PatentMaintenanceCreateManyInput> = z.object({
   MaintenanceID: z.number().int().optional(),
   PatentID: z.number().int(),
   MaintenanceDate: z.coerce.date(),
-  ExpireDate: z.coerce.date()
+  ExpireDate: z.coerce.date(),
+  Title: z.string().optional().nullable()
 }).strict();
 
 export const PatentMaintenanceUpdateManyMutationInputSchema: z.ZodType<Prisma.PatentMaintenanceUpdateManyMutationInput> = z.object({
   MaintenanceDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ExpireDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  Title: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const PatentMaintenanceUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PatentMaintenanceUncheckedUpdateManyInput> = z.object({
@@ -4636,6 +4649,7 @@ export const PatentMaintenanceUncheckedUpdateManyInputSchema: z.ZodType<Prisma.P
   PatentID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   MaintenanceDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ExpireDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  Title: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const PatentRecordCreateInputSchema: z.ZodType<Prisma.PatentRecordCreateInput> = z.object({
@@ -6259,7 +6273,8 @@ export const PatentMaintenanceCountOrderByAggregateInputSchema: z.ZodType<Prisma
   MaintenanceID: z.lazy(() => SortOrderSchema).optional(),
   PatentID: z.lazy(() => SortOrderSchema).optional(),
   MaintenanceDate: z.lazy(() => SortOrderSchema).optional(),
-  ExpireDate: z.lazy(() => SortOrderSchema).optional()
+  ExpireDate: z.lazy(() => SortOrderSchema).optional(),
+  Title: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentMaintenanceAvgOrderByAggregateInputSchema: z.ZodType<Prisma.PatentMaintenanceAvgOrderByAggregateInput> = z.object({
@@ -6271,14 +6286,16 @@ export const PatentMaintenanceMaxOrderByAggregateInputSchema: z.ZodType<Prisma.P
   MaintenanceID: z.lazy(() => SortOrderSchema).optional(),
   PatentID: z.lazy(() => SortOrderSchema).optional(),
   MaintenanceDate: z.lazy(() => SortOrderSchema).optional(),
-  ExpireDate: z.lazy(() => SortOrderSchema).optional()
+  ExpireDate: z.lazy(() => SortOrderSchema).optional(),
+  Title: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentMaintenanceMinOrderByAggregateInputSchema: z.ZodType<Prisma.PatentMaintenanceMinOrderByAggregateInput> = z.object({
   MaintenanceID: z.lazy(() => SortOrderSchema).optional(),
   PatentID: z.lazy(() => SortOrderSchema).optional(),
   MaintenanceDate: z.lazy(() => SortOrderSchema).optional(),
-  ExpireDate: z.lazy(() => SortOrderSchema).optional()
+  ExpireDate: z.lazy(() => SortOrderSchema).optional(),
+  Title: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PatentMaintenanceSumOrderByAggregateInputSchema: z.ZodType<Prisma.PatentMaintenanceSumOrderByAggregateInput> = z.object({
@@ -11055,13 +11072,15 @@ export const PatentManualStatusCreateManyPatentInputEnvelopeSchema: z.ZodType<Pr
 
 export const PatentMaintenanceCreateWithoutPatentInputSchema: z.ZodType<Prisma.PatentMaintenanceCreateWithoutPatentInput> = z.object({
   MaintenanceDate: z.coerce.date(),
-  ExpireDate: z.coerce.date()
+  ExpireDate: z.coerce.date(),
+  Title: z.string().optional().nullable()
 }).strict();
 
 export const PatentMaintenanceUncheckedCreateWithoutPatentInputSchema: z.ZodType<Prisma.PatentMaintenanceUncheckedCreateWithoutPatentInput> = z.object({
   MaintenanceID: z.number().int().optional(),
   MaintenanceDate: z.coerce.date(),
-  ExpireDate: z.coerce.date()
+  ExpireDate: z.coerce.date(),
+  Title: z.string().optional().nullable()
 }).strict();
 
 export const PatentMaintenanceCreateOrConnectWithoutPatentInputSchema: z.ZodType<Prisma.PatentMaintenanceCreateOrConnectWithoutPatentInput> = z.object({
@@ -11332,6 +11351,7 @@ export const PatentMaintenanceScalarWhereInputSchema: z.ZodType<Prisma.PatentMai
   PatentID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   MaintenanceDate: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   ExpireDate: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  Title: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
 }).strict();
 
 export const PatentTechnicalAttributesUpsertWithoutPatentInputSchema: z.ZodType<Prisma.PatentTechnicalAttributesUpsertWithoutPatentInput> = z.object({
@@ -13383,7 +13403,8 @@ export const PatentManualStatusCreateManyPatentInputSchema: z.ZodType<Prisma.Pat
 export const PatentMaintenanceCreateManyPatentInputSchema: z.ZodType<Prisma.PatentMaintenanceCreateManyPatentInput> = z.object({
   MaintenanceID: z.number().int().optional(),
   MaintenanceDate: z.coerce.date(),
-  ExpireDate: z.coerce.date()
+  ExpireDate: z.coerce.date(),
+  Title: z.string().optional().nullable()
 }).strict();
 
 export const PatentRecordCreateManyPatentInputSchema: z.ZodType<Prisma.PatentRecordCreateManyPatentInput> = z.object({
@@ -13442,18 +13463,21 @@ export const PatentManualStatusUncheckedUpdateManyWithoutPatentInputSchema: z.Zo
 export const PatentMaintenanceUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentMaintenanceUpdateWithoutPatentInput> = z.object({
   MaintenanceDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ExpireDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  Title: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const PatentMaintenanceUncheckedUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentMaintenanceUncheckedUpdateWithoutPatentInput> = z.object({
   MaintenanceID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   MaintenanceDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ExpireDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  Title: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const PatentMaintenanceUncheckedUpdateManyWithoutPatentInputSchema: z.ZodType<Prisma.PatentMaintenanceUncheckedUpdateManyWithoutPatentInput> = z.object({
   MaintenanceID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   MaintenanceDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ExpireDate: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  Title: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const PatentRecordUpdateWithoutPatentInputSchema: z.ZodType<Prisma.PatentRecordUpdateWithoutPatentInput> = z.object({

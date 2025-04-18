@@ -127,6 +127,7 @@ model PatentMaintenance {
   PatentID        Int
   MaintenanceDate DateTime
   ExpireDate      DateTime
+  Title           String?
 
   patent Patent @relation(fields: [PatentID], references: [PatentID], onDelete: Cascade, onUpdate: Cascade)
 }

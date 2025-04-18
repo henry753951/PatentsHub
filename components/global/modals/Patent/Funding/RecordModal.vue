@@ -84,6 +84,8 @@
                   @click="isOpen = false"
                >
                   取消
+                  <template #header>
+                  </template>
                </Button>
                <Button
                   variant="default"
