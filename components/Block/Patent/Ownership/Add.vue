@@ -27,11 +27,12 @@
          >
             <div>
                <label class="block text-sm font-medium mb-1">所有權人名字</label>
-               <Input
+               <InputText
                   v-model="newOwnerName"
                   placeholder="輸入名字"
                   required
                   class="w-full"
+                  autocomplete="off"
                />
             </div>
             <button
@@ -51,6 +52,7 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
+import InputText from "primevue/inputtext"; // 引入 PrimeVue 的 InputText 組件
 
 // Props
 const { chooseText, patentID } = defineProps<{
@@ -58,11 +60,11 @@ const { chooseText, patentID } = defineProps<{
    patentID: number
 }>();
 
-// 型別定義
+// 型別定義，與 BlockPatentOwnershipEditList 和 Prisma 模型對齊
 interface Owner {
-   ownerID: number
-   name: string
-   ownershipPercentage: number
+   OwnerID: number
+   Name: string
+   OwnershipPercentage: number
 }
 
 // Emits
@@ -80,9 +82,9 @@ const submitOwner = () => {
       return;
    }
    emits("select", {
-      ownerID: 0, // 表示新增
-      name: newOwnerName.value.trim(),
-      ownershipPercentage: 0, // 預設為 0
+      OwnerID: 0, // 表示新增
+      Name: newOwnerName.value.trim(),
+      OwnershipPercentage: 0, // 預設為 0
    });
    newOwnerName.value = ""; // 重置輸入框
 };
