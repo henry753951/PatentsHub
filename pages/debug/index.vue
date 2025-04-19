@@ -52,7 +52,10 @@
          <BlockPatentInventorEditList />
       </div>
       <div>
-         <BlockPatentReminderMonthly />
+         <Button @click="open('ReminderRecentlyModal', { props: {} })">
+            近期維護的專利
+         </Button>
+         <BlockPatentReminderStatus />
       </div>
    </div>
 </template>
@@ -64,7 +67,6 @@ definePageMeta({
 
 const { open, modals } = useModals();
 const { $trpc } = useNuxtApp();
-
 </script>
 
 <style></style>
