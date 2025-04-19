@@ -19,7 +19,10 @@
             <!-- 文字資訊 -->
             <div :class="[compact ? 'text-sm' : 'text-base']">
                <div class="flex items-center gap-2 whitespace-nowrap">
-                  <div :class="[compact ? 'text-xl' : 'text-2xl', 'font-bold']">
+                  <div
+                     :class="[compact ? 'text-xl' : 'text-2xl', 'font-bold']"
+                     class="truncate max-w-[100px]"
+                  >
                      {{ props.name }}
                   </div>
                   <div class="text-zinc-500 text-sm">
