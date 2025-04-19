@@ -29,13 +29,15 @@
       >
          <div
             v-if="!isFocus"
-            class="border-b border-t-transparent min-h-[30px] flex items-center border-box"
+            class="border-b border-t-transparent min-h-[30px] flex items-center border-box "
             :class="{
                'border-red-300 dark:border-red-500': !isSynced,
                'border-transparent': isSynced,
             }"
          >
-            {{ str }} {{ number }}
+            <div class="truncate">
+               {{ str ?? number }}
+            </div>
             <span
                v-if="!str && !number"
                class="text-gray-300 dark:text-gray-500 font-thin text-sm"

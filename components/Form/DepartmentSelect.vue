@@ -12,13 +12,15 @@
                         currentCollegeAndDepartment.department
                   "
                >
-                  <div
-                     class="font-semibold color-slate-800 dark:color-zinc-100"
-                  >
-                     {{ currentCollegeAndDepartment.college.Name }}
-                  </div>
-                  <div class="color-slate-600 dark:color-zinc-400">
-                     {{ currentCollegeAndDepartment.department.Name }}
+                  <div class="flex flex-col gap-1 min-w-0 max-w-[400px]">
+                     <div
+                        class="font-semibold color-slate-800 dark:color-zinc-100 truncate"
+                     >
+                        {{ currentCollegeAndDepartment.college.Name }}
+                     </div>
+                     <div class="color-slate-600 dark:color-zinc-400 truncate">
+                        {{ currentCollegeAndDepartment.department.Name }}
+                     </div>
                   </div>
                </template>
                <template v-else>
@@ -47,7 +49,7 @@
                         <div
                            v-for="department in college.departments"
                            :key="department.DepartmentID"
-                           class="department-option letter-vertical"
+                           class="department-option letter-vertical truncate max-h-[160px]"
                            :class="{
                               'bg-blue-100 dark:bg-blue-950':
                                  belongs?.departmentID ===

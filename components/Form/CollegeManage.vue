@@ -82,7 +82,7 @@
                         v-for="department in college.departments"
                         :key="department.DepartmentID"
                         :class="[
-                           'rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow flex items-center justify-between',
+                           'rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow flex items-center justify-between min-w-0',
                            selectable && isSelected(department)
                               ? 'bg-blue-100 border-blue-300 dark:bg-blue-900 dark:border-blue-700'
                               : 'bg-white dark:bg-zinc-800',
@@ -91,7 +91,7 @@
                            selectable ? selectDepartment(department) : null
                         "
                      >
-                        <span class="font-medium">
+                        <span class="font-medium truncate max-w-[420px]">
                            {{ department.Name }}
                         </span>
                         <DropdownMenu>
