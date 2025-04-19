@@ -8,6 +8,7 @@ generator zod {
   provider                 = "zod-prisma-types"
   output                   = "../zod"
   writeNullishInModelTypes = true
+
 }
 
 datasource db {

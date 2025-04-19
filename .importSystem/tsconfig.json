@@ -1,0 +1,12 @@
+{
+   "includes": ["types/*.d.ts"],
+   "strict": true,
+   "strictNullChecks": true,
+   "compilerOptions": {
+      "noErrorTruncation": true,
+      "esModuleInterop": true,
+      "module": "NodeNext",
+      "moduleResolution": "nodenext",
+      "target": "ESNext"
+   }
+}

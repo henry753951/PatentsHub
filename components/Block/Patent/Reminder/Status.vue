@@ -4,11 +4,15 @@ import { Calendar } from "lucide-vue-next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-// Define data types
 interface MonthData {
    year: number
    month: number
    expireCount: number
+}
+
+interface SelectedMonth {
+   year: number
+   month: number
 }
 
 interface Divider {
@@ -19,7 +23,7 @@ interface Divider {
 type DisplayItem = MonthData | Divider;
 
 interface MonthlyExpireChartProps {
-   data: MonthData[]
+   data?: MonthData[]
 }
 
 // Set default props
@@ -38,6 +42,13 @@ const props = withDefaults(defineProps<MonthlyExpireChartProps>(), {
       { year: 2026, month: 2, expireCount: 0 },
       { year: 2026, month: 3, expireCount: 0 },
    ],
+});
+
+// Props for selected months
+const currentSelected = defineModel("currentSelected", {
+   type: Array as () => SelectedMonth[],
+   required: false,
+   default: () => [],
 });
 
 // Month names mapping
@@ -71,10 +82,31 @@ const isCurrentMonth = (year: number, month: number): boolean => {
    return year === currentYear && month === currentMonth;
 };
 
-// Calculate total expires
-const totalExpires = computed((): number => {
-   return props.data.reduce((sum, item) => sum + item.expireCount, 0);
-});
+// Check if the month is selected
+const isSelected = (year: number, month: number): boolean => {
+   if (currentSelected.value.length === 0) {
+      return true;
+   }
+   return currentSelected.value?.some(
+      (item) => item.year === year && item.month === month,
+   );
+};
+
+// Handle click event
+const click = (year: number, month: number): void => {
+   const selectedIndex = currentSelected.value.findIndex(
+      (item) => item.year === year && item.month === month,
+   );
+
+   if (selectedIndex !== -1) {
+      currentSelected.value = currentSelected.value.filter(
+         (item) => item.year !== year || item.month !== month,
+      );
+   }
+   else {
+      currentSelected.value = [{ year, month }];
+   }
+};
 
 // Type guard to check if an item is a Divider
 const isDivider = (item: DisplayItem): item is Divider => {
@@ -116,13 +148,12 @@ const sortedDataWithDividers = computed((): DisplayItem[] => {
                >
                   近期到期提醒
                </div>
+               <div class="w-px h-3 bg-zinc-300 dark:bg-zinc-600 mx-2">
+               </div>
+               <div class="text-xs text-zinc-500 dark:text-zinc-400">
+                  點選月份可只顯示該月份的專利
+               </div>
             </div>
-            <Badge
-               variant="secondary"
-               class="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 font-medium px-3 py-1 rounded-full"
-            >
-               總到期: {{ totalExpires }}
-            </Badge>
          </div>
       </CardHeader>
       <CardContent>
@@ -149,11 +180,15 @@ const sortedDataWithDividers = computed((): DisplayItem[] => {
                <div
                   v-else
                   :class="[
-                     'flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 col-span-2',
+                     'flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 col-span-2 cursor-pointer',
                      isCurrentMonth(item.year, item.month)
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 shadow-md'
                         : 'border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800',
+                     isSelected(item.year, item.month)
+                        ? ''
+                        : 'opacity-30 hover:opacity-80',
                   ]"
+                  @click="click(item.year, item.month)"
                >
                   <span
                      :class="[
