@@ -1,20 +1,20 @@
-import { PatentTransformed, PatentRaw } from "../types/patent";
-class PatentTransformer {
-   static transform(raw: PatentRaw): PatentTransformed {
+import type { PatentTransformed, PatentRaw } from "../types/patent";
+const PatentTransformer = {
+   transform(raw: PatentRaw): PatentTransformed {
       return {
          ...raw,
          共同發明人: PatentTransformer.parseCoInventors(raw.共同發明人),
       };
-   }
+   },
 
-   static parseCoInventors(
+   parseCoInventors(
       coInventors: string,
-   ): { name: string; contribution: number }[] {
+   ): { name: string, contribution: number }[] {
       if (!coInventors || coInventors.trim() === "") {
          return [];
       }
       const regex = /([^、\d]+?)(\d+)(?:、|$)/g;
-      const result: { name: string; contribution: number }[] = [];
+      const result: { name: string, contribution: number }[] = [];
       let match;
       while ((match = regex.exec(coInventors)) !== null) {
          const name = match[1].trim();
@@ -22,7 +22,7 @@ class PatentTransformer {
          result.push({ name, contribution });
       }
       return result;
-   }
-}
+   },
+};
 
 export { PatentTransformer };

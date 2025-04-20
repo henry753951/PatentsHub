@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
 import consola from "consola";
 
 const fundingPlans = [
@@ -24,6 +24,14 @@ const fundingPlans = [
          ["校方", 0],
          ["發明人", 95],
          ["院系所", 5],
+      ]),
+   },
+   {
+      Name: "D",
+      allocations: new Map<string, number>([
+         ["校方", 0],
+         ["發明人", 100],
+         ["院系所", 0],
       ]),
    },
 ];

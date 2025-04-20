@@ -5,7 +5,7 @@ model Patent {
   PatentID      Int                        @id @default(autoincrement())
   DepartmentID  Int
   // 專利資料
-  Year          Int
+  Year          Int?
   DraftTitle    String                     @default("")
   Title         String                     @default("")
   TitleEnglish  String                     @default("")

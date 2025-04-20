@@ -6,6 +6,7 @@ import { execSync } from "child_process";
 import { PrismaClient } from "@prisma/client";
 import initialFundingPlans from "./initial-data/fundingPlans";
 import { parseCSV } from "./csv-import/parse";
+import { insertData } from "./csv-import/insert";
 const program = new Command();
 program
    .option("--import-csv <path>", "Import data from a CSV file")
@@ -31,7 +32,8 @@ const ENTRY_POINT = async () => {
    try {
       fs.accessSync(path.join(process.cwd(), ".importSystem", "app.db"));
       consola.info("Database exists.");
-   } catch (error) {
+   }
+   catch (error) {
       consola.warn("Database does not exist. Generating database...");
       generateDatabase();
    }
@@ -53,8 +55,10 @@ const ENTRY_POINT = async () => {
             path.join(process.cwd(), ".importSystem", "patents.json"),
             JSON.stringify(data, null, 2),
          );
+         insertData(data, prisma);
          consola.success("CSV file successfully processed.");
-      } else {
+      }
+      else {
          consola.error(`CSV file not found at ${csvPath}`);
       }
    }
@@ -78,7 +82,8 @@ const generateDatabase = async () => {
          },
       });
       consola.success("Database generated.");
-   } catch (error) {
+   }
+   catch (error) {
       consola.error("Error generating database:", error);
    }
 };
@@ -107,7 +112,8 @@ const initializeDatabase = async (prisma: PrismaClient) => {
          consola.log(` |  Initializing ${step.name}...`);
          await step.function(prisma);
          consola.log(` |  ${step.name} initialized.`);
-      } catch (error) {
+      }
+      catch (error) {
          consola.error(`Error initializing ${step.name}:`, error);
       }
    }

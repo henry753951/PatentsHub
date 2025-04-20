@@ -2,11 +2,10 @@ import consola from "consola";
 import csv from "csv-parser";
 import fs from "fs";
 import * as dbZ from "../../server/prisma/zod";
-import { PatentRaw, PatentTransformed } from "../types/patent";
+import type { PatentRaw, PatentTransformed } from "../types/patent";
 import { PatentTransformer } from "./patentTransformer";
 import { z } from "zod";
 import { columnMapping } from "./utils";
-
 
 const parseCSV = async (filePath: string): Promise<PatentTransformed[]> => {
    return new Promise((resolve, reject) => {
@@ -29,7 +28,8 @@ const parseCSV = async (filePath: string): Promise<PatentTransformed[]> => {
                // Transform to Patent
                const transformedPatent = PatentTransformer.transform(raw);
                patents.push(transformedPatent);
-            } catch (error) {
+            }
+            catch (error) {
                consola.error("Error transforming row:", row, error);
             }
          })
@@ -45,6 +45,5 @@ const parseCSV = async (filePath: string): Promise<PatentTransformed[]> => {
          });
    });
 };
-
 
 export { parseCSV };
