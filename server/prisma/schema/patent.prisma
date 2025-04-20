@@ -23,7 +23,7 @@ model Patent {
   external      PatentExternal?
   patentRecords PatentRecord[]
   createdAt     DateTime                   @default(now())
-  pinned        Boolean                    @default(false)
+  Pinned        Boolean                    @default(false)
   owners        PatentOwner[] // 新增的所有權人關聯
 
   // ⬇️ 校內編號與技推資訊搬到這裡

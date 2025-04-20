@@ -30,7 +30,7 @@ const { data: allPatents, forceRefresh } = useDatabasePatents();
 
 // 篩選出 pinned 為 true 的專利
 const pinnedPatents = computed(() => {
-   return allPatents.value?.filter((patent) => patent.pinned) || [];
+   return allPatents.value?.filter((patent) => patent.Pinned) || [];
 });
 </script>
 

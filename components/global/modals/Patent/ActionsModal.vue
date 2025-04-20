@@ -80,7 +80,7 @@ const {
 
 // 動態設置「置頂/取消置頂」按鈕的屬性
 const pinAction = computed(() => {
-   const isPinned = patentInfo.value?.pinned ?? false;
+   const isPinned = patentInfo.value?.Pinned ?? false;
    return {
       title: isPinned ? "取消置頂" : "置頂",
       description: isPinned ? "此動作將取消此專利的置頂狀態。" : "此動作將把此專利置頂。",
@@ -91,7 +91,7 @@ const pinAction = computed(() => {
             onClick: async () => {
                try {
                   // 根據當前狀態切換 pinned 值
-                  await crud.updatePatent([{ pinned: !isPinned }]);
+                  await crud.updatePatent([{ Pinned: !isPinned }]);
                   console.log(`專利已${isPinned ? "取消置頂" : "置頂"}，pinned: ${!isPinned}`);
                   isOpen.value = false; // 關閉對話框
                }
