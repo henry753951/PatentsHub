@@ -14,7 +14,9 @@
          </div>
       </PopoverTrigger>
 
-      <PopoverContent class="max-w-[var(--radix-popper-anchor-width)] rounded-xl min-w-[350px]">
+      <PopoverContent
+         class="max-w-[var(--radix-popper-anchor-width)] rounded-xl min-w-[350px]"
+      >
          <div class="pb-4 font-bold">
             選擇發明人
          </div>
@@ -23,19 +25,20 @@
             placeholder="搜尋發明人"
             class="w-full mb-4"
          />
-
          <OverlayScrollbarsComponent class="max-h-[300px]">
             <BlockPatentInventorRow
                v-for="inventor in inventors"
                :key="inventor.InventorID"
-               class="h-[88px] mb-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700"
+               tabindex="0"
+               class="h-[88px] mb-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700 focus-visible:bg-zinc-100 dark:focus-visible:bg-zinc-700"
                :name="inventor.contactInfo?.Name ?? ''"
                :job="inventor.contactInfo?.Role ?? ''"
                :belong="{
                   college: inventor.department?.college?.Name ?? '',
                   department: inventor.department?.Name ?? '',
                }"
-               @click="emits('select', inventor)"
+               @click="selectInventor(inventor)"
+               @keydown.enter="selectInventor(inventor)"
             />
          </OverlayScrollbarsComponent>
       </PopoverContent>
@@ -48,7 +51,6 @@ import {
    PopoverTrigger,
 } from "@/components/ui/popover";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
-
 const { chooseText } = defineProps<{
    chooseText?: string
 }>();
@@ -74,6 +76,10 @@ interface Inventor {
 const emits = defineEmits<{
    (e: "select", inventor: Inventor): void
 }>();
+
+const selectInventor = (inventor: any) => {
+   emits("select", inventor as Inventor);
+};
 
 const search = ref("");
 

@@ -59,7 +59,7 @@
       "prisma": "^6.6.0",
       "prisma-client-31f69b632fa6ed6066aa9dd20934d989a777cb3581992887a11781ddb3d654e2": "link:node_modules\\@prisma\\client\\node_modules\\.prisma\\client",
       "radix-vue": "^1.9.12",
-      "reka-ui": "^2.1.0",
+      "reka-ui": "^2.2.0",
       "semantic-release-gha-output": "^1.1.1",
       "shadcn-nuxt": "0.11.3",
       "shadcn-vue": "^1.0.2",

@@ -50,6 +50,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
                props.class,
             )
          "
+         @open-auto-focus.prevent
       >
          <slot />
 

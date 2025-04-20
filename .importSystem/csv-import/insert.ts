@@ -2,11 +2,12 @@ import consola from "consola";
 import csv from "csv-parser";
 import fs from "fs";
 import * as dbZ from "../../server/prisma/zod";
-import { PatentRaw, PatentTransformed } from "../types/patent";
+import type { PatentTransformed } from "../types/patent";
+import { PatentRaw } from "../types/patent";
 import { PatentTransformer } from "./patentTransformer";
 import { z } from "zod";
-import { PrismaClient } from "@prisma/client";
-import type { Prisma } from "@prisma/client";
+import type { PrismaClient, Prisma } from "@prisma/client";
+
 import { departments } from "./utils";
 
 const insertData = async (
@@ -137,8 +138,8 @@ const insertCountry = async (
                patent.專利國家 === "中華民國"
                   ? "TW"
                   : patent.專利國家 === "美國"
-                    ? "US"
-                    : patent.專利國家 + "_iso",
+                     ? "US"
+                     : patent.專利國家 + "_iso",
          },
       }) as Prisma.PrismaPromise<any>;
       query.push(q);
@@ -149,8 +150,6 @@ const insertCountry = async (
 const insertAgency = async (
    data: PatentTransformed[],
    prisma: PrismaClient,
-) => {
-
-}
+) => {};
 
 export { insertData };
