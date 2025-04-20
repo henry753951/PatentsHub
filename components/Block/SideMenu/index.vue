@@ -87,6 +87,14 @@ const moreNavItems = [
       },
       to: { name: "common-agencyManage" },
    },
+   {
+      title: "方案管理",
+      icon: {
+         normal: "basil:chart-pie-alt-outline",
+         active: "basil:chart-pie-alt-solid",
+      },
+      to: { name: "common-fundingPlanManage" },
+   },
 ] as INavItem[];
 
 const navActions = [
