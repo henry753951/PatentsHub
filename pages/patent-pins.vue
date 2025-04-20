@@ -1,17 +1,22 @@
 <template>
-   <div class="container mx-auto py-3">
-      <h2 class="text-2xl font-bold">
-         置頂專利
-      </h2>
-
-      <div class="grid grid-cols-1 gap-4">
-         <BlockPatentRow
-            v-for="patent in pinnedPatents"
-            :key="patent.PatentID"
-            :patent="patent"
-            class="rounded-lg"
-            @click="open('PatentModal', { props: { patentId: patent.PatentID } })"
+   <div class="w-full text-zinc-800 mx-auto container dark:text-zinc-100 min-h-full py-5">
+      <div class="flex gap-6 flex-col">
+         <BlockHeader
+            title="至頂專利"
+            description="查看釘選的專利資料"
          />
+
+         <div class="grid grid-cols-1 gap-4">
+            <BlockPatentRow
+               v-for="patent in pinnedPatents"
+               :key="patent.PatentID"
+               :patent="patent"
+               class="rounded-lg"
+               @click="
+                  open('PatentModal', { props: { patentId: patent.PatentID } })
+               "
+            />
+         </div>
       </div>
    </div>
 </template>

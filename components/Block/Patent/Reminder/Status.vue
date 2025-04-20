@@ -137,7 +137,7 @@ const sortedDataWithDividers = computed((): DisplayItem[] => {
 
 <template>
    <Card
-      class="w-full bg-gradient-to-br from-white to-gray-50 dark:from-zinc-900 dark:to-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl"
+      class="w-full bg-white/70 dark:bg-zinc-900/70 border border-zinc-200 dark:border-zinc-900 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl"
    >
       <CardHeader class="flex flex-row items-center justify-between pb-3">
          <div class="flex items-center justify-between w-full">
@@ -146,7 +146,7 @@ const sortedDataWithDividers = computed((): DisplayItem[] => {
                <div
                   class="text-lg font-semibold text-zinc-800 dark:text-zinc-100"
                >
-                  近期到期提醒
+                  將來月份檢視
                </div>
                <div class="w-px h-3 bg-zinc-300 dark:bg-zinc-600 mx-2">
                </div>

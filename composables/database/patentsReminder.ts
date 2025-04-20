@@ -112,10 +112,6 @@ export const useDatabasePatentsReminder = () => {
             patent: RouterOutput["data"]["patentStatus"]["getExpiringPatents"][number]["patent"]
             expireDate: Date
          }[]
-         maintaineds: {
-            patent: RouterOutput["data"]["patentStatus"]["getExpiringPatents"][number]["patent"]
-            expireDate: Date
-         }[]
          type: "before" | "after" | "current"
       }[];
 
@@ -136,7 +132,6 @@ export const useDatabasePatentsReminder = () => {
       const periods = getPeriods(settings.value.period, startDate, endDate);
       for (const period of periods) {
          const expireds: (typeof array)[number]["expireds"] = [];
-         const maintaineds: (typeof array)[number]["maintaineds"] = [];
          const expirings: (typeof array)[number]["expirings"] = [];
          for (const item of data.value) {
             const patent = item.patent;
@@ -152,33 +147,18 @@ export const useDatabasePatentsReminder = () => {
                   new Date(0),
                );
                if (maxExpireDate < currentDate) {
+                  // 已經過期的
                   expireds.push({
                      patent,
                      expireDate: maxExpireDateInPeriod,
                   });
                }
                else {
-                  if (maxExpireDate <= maxExpireDateInPeriod) {
-                     // 30 天 用 addDays(currentDate, 30)
-                     if (maxExpireDate < addDays(currentDate, 30)) {
-                        expirings.push({
-                           patent,
-                           expireDate: maxExpireDateInPeriod,
-                        });
-                     }
-                     else {
-                        maintaineds.push({
-                           patent,
-                           expireDate: maxExpireDateInPeriod,
-                        });
-                     }
-                  }
-                  else {
-                     maintaineds.push({
-                        patent,
-                        expireDate: maxExpireDateInPeriod,
-                     });
-                  }
+                  // 查詢周期內即將到期的
+                  expirings.push({
+                     patent,
+                     expireDate: maxExpireDateInPeriod,
+                  });
                }
             }
          }
@@ -191,7 +171,6 @@ export const useDatabasePatentsReminder = () => {
          array.push({
             date: period.start,
             expireds,
-            maintaineds,
             expirings,
             type,
          });

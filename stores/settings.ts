@@ -6,10 +6,12 @@ export const useSettingsStore = defineStore("settingsStore", {
       return {
          reminderSettings: {
             dateRange: { daysBefore: 7, daysAfter: 180 },
-            period: "weeks",
+            period: "months",
+            displayEmptyPeriods: false,
          } as {
             dateRange: { daysBefore: number, daysAfter: number }
             period: "days" | "weeks" | "months" | "years"
+            displayEmptyPeriods: boolean
          },
       };
    },
