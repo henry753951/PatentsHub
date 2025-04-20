@@ -344,6 +344,18 @@
                v-model="inventorData.data.value.inventors"
             />
          </CustomContentBlock>
+         <CustomContentBlock
+            v-if="patentOwnersData.data.value && Array.isArray(patentOwnersData.data.value.owners)"
+            title="專利所有權人"
+            :note-key="`${patent.PatentID}:owners`"
+            :save-button="!patentOwnersData.isSynced.value"
+            @save="patentOwnersData.save"
+         >
+            <BlockPatentOwnershipEditList
+               v-model="patentOwnersData.data.value.owners"
+               :patent-i-d="patent.PatentID"
+            />
+         </CustomContentBlock>
       </div>
    </div>
 </template>
@@ -603,6 +615,37 @@ const fundingData = useSyncData(patent, async (newData) => {
                   },
                },
             },
+         },
+      },
+   ]);
+});
+// 專利所有權人資訊
+const patentOwnersData = useSyncData(patent, async (newData) => {
+   if (!newData || !Array.isArray(newData.owners)) return;
+
+   // 檢查總持有度
+   const totalOwnership = newData.owners.reduce(
+      (sum, owner) => sum + owner.OwnershipPercentage,
+      0,
+   );
+   if (totalOwnership > 100) {
+      alert("總持有度超過 100%，請調整");
+      return;
+   }
+
+   await crud.updatePatent([
+      {
+         owners: {
+            deleteMany: {}, // 先清空專利所有權人關聯
+         },
+      },
+      {
+         owners: {
+            create: newData.owners.map((owner) => ({
+               OwnerID: owner.OwnerID !== 0 ? owner.OwnerID : undefined, // 映射 id 到 OwnerID
+               Name: owner.Name, // 已使用大寫 Name
+               OwnershipPercentage: owner.OwnershipPercentage,
+            })),
          },
       },
    ]);
