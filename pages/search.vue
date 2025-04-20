@@ -58,7 +58,10 @@
                         v-if="slotProps.data.country?.CountryName"
                         class=""
                      >
-                        <img :src="`https://flagsapi.com/${ slotProps.data.country?.CountryName.toUpperCase()}/flat/64.png`" />
+                        <img
+                           :src="`https://flagcdn.com/w80/${ slotProps.data.country?.ISOCode.toLowerCase() }.png`"
+                           class="h-3 w-5 rounded shadow-sm"
+                        />
                      </div>
                      <div
                         v-else

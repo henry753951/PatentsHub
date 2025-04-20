@@ -19,7 +19,10 @@ const PatentTransformer = {
       while ((match = regex.exec(coInventors)) !== null) {
          const name = match[1].trim();
          const contribution = parseInt(match[2], 10);
-         result.push({ name, contribution });
+         const existing = result.find((item) => item.name === name);
+         if (!existing) {
+            result.push({ name, contribution });
+         }
       }
       return result;
    },

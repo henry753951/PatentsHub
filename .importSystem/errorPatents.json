@@ -1,486 +1,6 @@
 [
   {
     "patent": {
-      "狀態": "國科會同意終止\n智慧局已查無案件",
-      "年度": "94",
-      "校內編號": "09403",
-      "學院": "理",
-      "單位系所": "應用物理學系",
-      "發明人": "黃建榮",
-      "共同發明人": [],
-      "發明名稱": "用於製備概呈立方體之金奈米粒子的方法及其製得之膠體溶液",
-      "發明名稱_英": "",
-      "專利號碼": "I321125",
-      "專利權期間": "2010.03.01-2026.03.29",
-      "公告_獲證日期": "99.03.01",
-      "維護期程": "112.02.28",
-      "公告_獲證時間_西元": "2010/3/1",
-      "維護期程_西元": "2023/2/28",
-      "維護年度計": "13 ",
-      "領證年度": "99",
-      "到期月份": "02",
-      "申請日期": "95.03.30",
-      "申請年度": "095",
-      "申請案號": "95111197",
-      "專利類別": "發明",
-      "專利國家": "中華民國",
-      "方案": "A",
-      "資助單位": "國科會\n經濟部技術處",
-      "計畫編號": "NSC94-2215-E-390-001",
-      "承辦事務所": "聖島",
-      "事務所聯絡人": "",
-      "事務所檔號": "",
-      "研發成果編號_STRIKE": "095HFA140003",
-      "國科會編號_STRIKE": "",
-      "專利已登錄": "",
-      "國際專利分類號_IPC": "",
-      "專利範圍": "19",
-      "技術成熟度_TRL": "",
-      "技推委員會審理日期": "94.11.18",
-      "發明名稱_稿": "以電化學方法製作金奈米立方體",
-      "初評事務所": "",
-      "申請專利範圍": "19",
-      "技術關鍵字": "",
-      "進度": "◎98.08事務所來函詢問是否申覆。◎98.09進行申覆。◎99.01請事務所領證+1-3年費(9100)。◎99.07申請國科會專利補助(申覆、領證)。◎101.12事務所來函詢問是否續繳4-5年年費@5000元*2。◎101.12.12請事務所繳4-5年費。◎103.請事務所繳第6年年費。◎107.02 請事務所繳第9年年費。◎107.11.27 請老師至研發處開會討論所屬專利維護事宜。◎108.02.22 11/27會議紀錄簽核通過（編號：1080002517)會議決議，如超過六年技轉會不維護，則由老師自行負擔費用，經濟部終止作業，老師說不處理。◎108.03.05第10-11年費用收據轉送黃老師，請他自行支付費用，學校不分攤。◎111.11.07黃師學生林柏辰來電表示都不維護了，之後他要畢業，有問題直接找老師。◎111.12.08發文至國科會申請終止。◎112.04.13國科會來文同意終止維護（科會產字第1120021196號）。◎112.12聖島通知專利權消滅（消滅日期：2023/3/1）◎◎",
-      "費用": ""
-    },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
-  },
-  {
-    "patent": {
-      "狀態": "撤案",
-      "年度": "95",
-      "校內編號": "9501",
-      "學院": "工",
-      "單位系所": "電機工程學系",
-      "發明人": "葉文冠",
-      "共同發明人": [],
-      "發明名稱": "一種快速衡量封裝製程參數之方法且理論基礎是應用穩定性分析技術",
-      "發明名稱_英": "",
-      "專利號碼": "",
-      "專利權期間": "",
-      "公告_獲證日期": "",
-      "維護期程": "",
-      "公告_獲證時間_西元": "",
-      "維護期程_西元": "",
-      "維護年度計": "0 ",
-      "領證年度": "0",
-      "到期月份": "00",
-      "申請日期": "",
-      "申請年度": "00",
-      "申請案號": "",
-      "專利類別": "發明",
-      "專利國家": "中華民國",
-      "方案": "",
-      "資助單位": "",
-      "計畫編號": "",
-      "承辦事務所": "聖島",
-      "事務所聯絡人": "",
-      "事務所檔號": "",
-      "研發成果編號_STRIKE": "",
-      "國科會編號_STRIKE": "",
-      "專利已登錄": "",
-      "國際專利分類號_IPC": "",
-      "專利範圍": "",
-      "技術成熟度_TRL": "",
-      "技推委員會審理日期": "95.02.12",
-      "發明名稱_稿": "",
-      "初評事務所": "",
-      "申請專利範圍": "",
-      "技術關鍵字": "",
-      "進度": "計劃主持人請求延後\n980306取消申請",
-      "費用": ""
-    },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
-  },
-  {
-    "patent": {
-      "狀態": "國科會同意終止\n智慧局已查無案件",
-      "年度": "99",
-      "校內編號": "09905",
-      "學院": "理",
-      "單位系所": "應用物理學系",
-      "發明人": "黃建榮",
-      "共同發明人": [],
-      "發明名稱": "核-殼結構複合粒子的製備方法",
-      "發明名稱_英": "",
-      "專利號碼": "I403464",
-      "專利權期間": "2013/08/01- 2030/08/18",
-      "公告_獲證日期": "102.08.01",
-      "維護期程": "111.07.31",
-      "公告_獲證時間_西元": "2013/08/01",
-      "維護期程_西元": "2022/07/31",
-      "維護年度計": "9 ",
-      "領證年度": "102",
-      "到期月份": "07",
-      "申請日期": "99.08.19",
-      "申請年度": "099",
-      "申請案號": "99127760",
-      "專利類別": "發明",
-      "專利國家": "中華民國",
-      "方案": "A",
-      "資助單位": "國科會\n經濟部技術處",
-      "計畫編號": "NSC98-2811-E-390-003",
-      "承辦事務所": "聖島",
-      "事務所聯絡人": "",
-      "事務所檔號": "",
-      "研發成果編號_STRIKE": "",
-      "國科會編號_STRIKE": "",
-      "專利已登錄": "",
-      "國際專利分類號_IPC": "",
-      "專利範圍": "4",
-      "技術成熟度_TRL": "",
-      "技推委員會審理日期": "99.07.22(12)",
-      "發明名稱_稿": "一種氧化矽/銀核殼結構的奈米複合粒子製備方法",
-      "初評事務所": "聖島/台一",
-      "申請專利範圍": "7",
-      "技術關鍵字": "",
-      "進度": "◎99.04通知聖島。◎99.08送智財局。◎100.01申請國科會專利補助。◎102.06申覆(9000元)。◎102.07領證+3年年費(9100元)。◎107.11.27 請老師至研發處開會討論所屬專利維護事宜。◎108.02.22 11/27會議紀錄簽核通過（編號：1080002517)會議決議，如超過六年技轉會不維護，則由老師自行負擔費用，經濟部終止作業，老師說不處理。◎108.05.23回復事務所老師續7-9年費用。◎111.05.03mail請老師填寫科技部終止專利申請表。◎111.07.26發文至科技部申請終止（高大研發字第1111400173號函）。◎112.01.04國科會來函同意終止，並於科技研發成果資訊系統完成註記作業（科會產字第1120000901號）。◎◎",
-      "費用": ""
-    },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
-  },
-  {
-    "patent": {
-      "狀態": "國科會同意終止\n智慧局已查無案件",
-      "年度": "102",
-      "校內編號": "10209",
-      "學院": "理",
-      "單位系所": "應用物理學系",
-      "發明人": "黃建榮",
-      "共同發明人": [],
-      "發明名稱": "聚乙烯二氧噻吩－聚苯乙烯磺酸鹽導電膜及其製備方法",
-      "發明名稱_英": "",
-      "專利號碼": "I512037",
-      "專利權期間": "2015.12.11-2034.01.02",
-      "公告_獲證日期": "104.12.11",
-      "維護期程": "111.12.10",
-      "公告_獲證時間_西元": "2015/12/11",
-      "維護期程_西元": "2022/12/10",
-      "維護年度計": "7 ",
-      "領證年度": "104",
-      "到期月份": "12",
-      "申請日期": "103.01.03",
-      "申請年度": "103",
-      "申請案號": "103100193",
-      "專利類別": "發明",
-      "專利國家": "中華民國",
-      "方案": "B",
-      "資助單位": "國科會\n經濟部能源局",
-      "計畫編號": "NSC102-2221-E-390-019-MY2",
-      "承辦事務所": "聖島",
-      "事務所聯絡人": "",
-      "事務所檔號": "KP11677",
-      "研發成果編號_STRIKE": "103HFA140121",
-      "國科會編號_STRIKE": "",
-      "專利已登錄": "",
-      "國際專利分類號_IPC": "",
-      "專利範圍": "7",
-      "技術成熟度_TRL": "",
-      "技推委員會審理日期": "102.10.29(19)",
-      "發明名稱_稿": "一種降低水溶性聚二氧乙基噻吩-聚苯乙烯磺酸複合物的片電阻值之製備方法",
-      "初評事務所": "聖島/五洲",
-      "申請專利範圍": "7",
-      "技術關鍵字": "",
-      "進度": "◎102.11通知聖島。◎103.01送智財局。◎107.11.27 請老師至研發處開會討論所屬專利維護事宜。◎108.02.22 11/27會議紀錄簽核通過（編號：1080002517)會議決議，如超過六年技轉會不維護，則由老師自行負擔費用，經濟部終止作業，老師說不處理。◎109.12 經第35次技轉會決議不維護，第7年起費用由老師自付。◎111.07.14◎紀錄黃老師已報第7年年費10000請購核銷（申請單號1110109164）。◎111.11.07黃師學生來電表示都不維護了，之後他要畢業，有問題直接找老師。◎111.12.08發文至國科會申請終止。◎112.04.13國科會來文同意終止維護（科會產字第1120021196號）。◎112.09.06事務所通知專利權已消滅（消滅日期2022/12/11）。◎◎◎",
-      "費用": ""
-    },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
-  },
-  {
-    "patent": {
-      "狀態": "待申請終止",
-      "年度": "106",
-      "校內編號": "10608",
-      "學院": "工",
-      "單位系所": "土木與環境工程學系",
-      "發明人": "袁菁",
-      "共同發明人": [
-        {
-          "name": "陳彥圻",
-          "contribution": 30
-        }
-      ],
-      "發明名稱": "二價金屬－鐵／鋁複合金屬氧化電極構造及其製造方法",
-      "發明名稱_英": "",
-      "專利號碼": "I653139 ",
-      "專利權期間": "2019/03/11-2038/02/04",
-      "公告_獲證日期": "108.03.11 ",
-      "維護期程": "114.03.10",
-      "公告_獲證時間_西元": "2019/03/11",
-      "維護期程_西元": "2025/03/10",
-      "維護年度計": "6 ",
-      "領證年度": "108",
-      "到期月份": "03",
-      "申請日期": "107.02.05",
-      "申請年度": "107",
-      "申請案號": "107104032",
-      "專利類別": "發明",
-      "專利國家": "中華民國",
-      "方案": "A",
-      "資助單位": "科技部\n環保署",
-      "計畫編號": "102-2221-E-390-001-MY3",
-      "承辦事務所": "世豐",
-      "事務所聯絡人": "",
-      "事務所檔號": "",
-      "研發成果編號_STRIKE": "110HFA140038",
-      "國科會編號_STRIKE": "112-390-019",
-      "專利已登錄": "○",
-      "國際專利分類號_IPC": "B32B 15/01(2006.01); B09C 1/00(2006.01); C02F 1/46(2006.01); C02F 101/36(2006.01); E02D 3/11(2006.01); H01B 1/02(2006.01); H01B 5/00(2006.01); H01B 13/00(2006.01)",
-      "專利範圍": "10",
-      "技術成熟度_TRL": "",
-      "技推委員會審理日期": "106.11.15(28)",
-      "發明名稱_稿": "鈷-鐵/鋁複合金屬氧化電極構造及其製造方法",
-      "初評事務所": "世豐/南一",
-      "申請專利範圍": "10",
-      "技術關鍵字": "",
-      "進度": "◎107.02申請。◎經第36次技推會議通過補助第四~六年維護費用。◎111.05.30袁師助理戴永惇回覆要繼續維護。◎111.10.04事務所回覆目前已繳到第4年，2023/03/10需繳第5年。◎112.02.03袁師簽回要繳第5~6年費8600。◎113.04.22永惇回信不繼續維護。◎◎◎◎◎",
-      "費用": "◎112.12.07費用：第4~6年年費12,400=0+6,820+4,960+620。"
-    },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
-  },
-  {
-    "patent": {
-      "狀態": "",
-      "年度": "111",
-      "校內編號": "11107",
-      "學院": "工",
-      "單位系所": "化學工程及材料工程學系",
-      "發明人": "鍾宜璋",
-      "共同發明人": [
-        {
-          "name": ".",
-          "contribution": 5
-        },
-        {
-          "name": ".",
-          "contribution": 5
-        },
-        {
-          "name": ".",
-          "contribution": 5
-        },
-        {
-          "name": "李旻宸",
-          "contribution": 50
-        }
-      ],
-      "發明名稱": "增益熱解黏膠材料、其結構及其製造方法",
-      "發明名稱_英": "ENHANCED THERMAL RELEASE ADHESIVE MATERIAL, STRUCTURE THEREOF AND MANUFACTURING METHOD THEREOF",
-      "專利號碼": "",
-      "專利權期間": "",
-      "公告_獲證日期": "",
-      "維護期程": "",
-      "公告_獲證時間_西元": "",
-      "維護期程_西元": "",
-      "維護年度計": "0 ",
-      "領證年度": "",
-      "到期月份": "",
-      "申請日期": "111.09.19",
-      "申請年度": "111",
-      "申請案號": "111135269",
-      "專利類別": "發明",
-      "專利國家": "中華民國",
-      "方案": "B",
-      "資助單位": "無",
-      "計畫編號": "",
-      "承辦事務所": "世豐專利商標事務所",
-      "事務所聯絡人": "",
-      "事務所檔號": "",
-      "研發成果編號_STRIKE": "",
-      "國科會編號_STRIKE": "",
-      "專利已登錄": "",
-      "國際專利分類號_IPC": "",
-      "專利範圍": "",
-      "技術成熟度_TRL": "3、4",
-      "技推委員會審理日期": "111.11.24(39)",
-      "發明名稱_稿": "增益熱解黏膠材料、其結構及其製造方法",
-      "初評事務所": "世豐",
-      "申請專利範圍": "",
-      "技術關鍵字": "",
-      "進度": "與仿生生醫有限公司共有\n◎111.09.07簽呈會辦本處要提前申請專利。◎111.11.24技轉會議通過可申請。◎113.07.20事務所通知已核准。◎◎◎◎◎",
-      "費用": ""
-    },
-    "error": {
-      "code": "P2002",
-      "meta": {
-        "modelName": "Patent",
-        "target": [
-          "PatentID",
-          "InventorID"
-        ]
-      },
-      "clientVersion": "6.6.0",
-      "name": "PrismaClientKnownRequestError"
-    }
-  },
-  {
-    "patent": {
-      "狀態": "放棄",
-      "年度": "111",
-      "校內編號": "11113",
-      "學院": "工",
-      "單位系所": "化學工程及材料工程學系",
-      "發明人": "鍾宜璋",
-      "共同發明人": [
-        {
-          "name": ".",
-          "contribution": 5
-        },
-        {
-          "name": ".",
-          "contribution": 5
-        },
-        {
-          "name": ".",
-          "contribution": 5
-        },
-        {
-          "name": "李旻宸",
-          "contribution": 50
-        }
-      ],
-      "發明名稱": "",
-      "發明名稱_英": "",
-      "專利號碼": "",
-      "專利權期間": "",
-      "公告_獲證日期": "",
-      "維護期程": "",
-      "公告_獲證時間_西元": "",
-      "維護期程_西元": "",
-      "維護年度計": "0 ",
-      "領證年度": "",
-      "到期月份": "",
-      "申請日期": "",
-      "申請年度": "00",
-      "申請案號": "",
-      "專利類別": "發明",
-      "專利國家": "美國",
-      "方案": "B",
-      "資助單位": "無",
-      "計畫編號": "",
-      "承辦事務所": "世豐專利商標事務所",
-      "事務所聯絡人": "",
-      "事務所檔號": "",
-      "研發成果編號_STRIKE": "",
-      "國科會編號_STRIKE": "",
-      "專利已登錄": "",
-      "國際專利分類號_IPC": "",
-      "專利範圍": "",
-      "技術成熟度_TRL": "",
-      "技推委員會審理日期": "111.11.24(39)",
-      "發明名稱_稿": "增益熱解黏膠材料、其結構及其製造方法",
-      "初評事務所": "聖島/世豐",
-      "申請專利範圍": "",
-      "技術關鍵字": "",
-      "進度": "與仿生生醫有限公司共有\n◎111.11.04國際專利申請表上寫要申請美國、日本、韓國專利。◎111.11.24技轉會議通過可申請。◎112.05旻宸表示事務所誤以為這是臺灣專利，故來不及於6/8提出申請，請之提供便函，於會議中重新決議，本案算是取消，另申請。◎◎◎◎◎",
-      "費用": ""
-    },
-    "error": {
-      "code": "P2002",
-      "meta": {
-        "modelName": "Patent",
-        "target": [
-          "PatentID",
-          "InventorID"
-        ]
-      },
-      "clientVersion": "6.6.0",
-      "name": "PrismaClientKnownRequestError"
-    }
-  },
-  {
-    "patent": {
-      "狀態": "放棄\n113年1月5日（星期五）前",
-      "年度": "112",
-      "校內編號": "11215",
-      "學院": "工",
-      "單位系所": "化學工程及材料工程學系",
-      "發明人": "鍾宜璋",
-      "共同發明人": [
-        {
-          "name": ".",
-          "contribution": 5
-        },
-        {
-          "name": ".",
-          "contribution": 5
-        },
-        {
-          "name": ".",
-          "contribution": 5
-        },
-        {
-          "name": "李旻宸",
-          "contribution": 50
-        }
-      ],
-      "發明名稱": "",
-      "發明名稱_英": "",
-      "專利號碼": "",
-      "專利權期間": "",
-      "公告_獲證日期": "",
-      "維護期程": "",
-      "公告_獲證時間_西元": "",
-      "維護期程_西元": "",
-      "維護年度計": "0 ",
-      "領證年度": "",
-      "到期月份": "",
-      "申請日期": "",
-      "申請年度": "00",
-      "申請案號": "",
-      "專利類別": "發明",
-      "專利國家": "美國",
-      "方案": "B",
-      "資助單位": "無",
-      "計畫編號": "",
-      "承辦事務所": "世豐專利商標事務所",
-      "事務所聯絡人": "",
-      "事務所檔號": "",
-      "研發成果編號_STRIKE": "",
-      "國科會編號_STRIKE": "",
-      "專利已登錄": "",
-      "國際專利分類號_IPC": "",
-      "專利範圍": "",
-      "技術成熟度_TRL": "",
-      "技推委員會審理日期": "112.06.12(40)",
-      "發明名稱_稿": "增益熱解黏膠材料、其結構及其製造方法",
-      "初評事務所": "聖島/世豐",
-      "申請專利範圍": "",
-      "技術關鍵字": "",
-      "進度": "與仿生生醫有限公司共有\n◎112.06.12第40次技轉會議通過可申請。◎113.01.18旻宸來信表示老師評估後暫不申請。◎◎◎◎◎",
-      "費用": ""
-    },
-    "error": {
-      "code": "P2002",
-      "meta": {
-        "modelName": "Patent",
-        "target": [
-          "PatentID",
-          "InventorID"
-        ]
-      },
-      "clientVersion": "6.6.0",
-      "name": "PrismaClientKnownRequestError"
-    }
-  },
-  {
-    "patent": {
       "狀態": "",
       "年度": "",
       "校內編號": "",
@@ -529,10 +49,189 @@
       "進度": "◎◎◎◎◎◎◎",
       "費用": ""
     },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
+    "dataInserted": {
+      "DraftTitle": "高速黏晶偏移預測方法",
+      "PatentType": "INVENTION",
+      "country": {
+        "connect": {
+          "CountryID": 1
+        }
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 21
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": [
+            {
+              "Contribution": 60,
+              "Main": true,
+              "InventorID": 40
+            },
+            {
+              "Contribution": 40,
+              "Main": false,
+              "InventorID": 114
+            }
+          ]
+        }
+      },
+      "technical": {
+        "create": {
+          "keywords": {
+            "connect": [
+              {
+                "KeywordID": 1
+              },
+              {
+                "KeywordID": 2
+              },
+              {
+                "KeywordID": 3
+              },
+              {
+                "KeywordID": 4
+              }
+            ]
+          }
+        }
+      },
+      "funding": {
+        "create": {
+          "plan": {
+            "connect": {
+              "FundingPlanID": 1
+            }
+          }
+        }
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {
+          "IPCNumber": "張保榮"
+        }
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:193:47",
+      "",
+      "  190    },",
+      "  191 };",
+      "  192 ",
+      "→ 193 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: \"高速黏晶偏移預測方法\",",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: \"INVENTION\",",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: 1",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 21",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: [",
+      "                {",
+      "                  Contribution: 60,",
+      "                  Main: true,",
+      "                  InventorID: 40",
+      "                },",
+      "                {",
+      "                  Contribution: 40,",
+      "                  Main: false,",
+      "                  InventorID: 114",
+      "                }",
+      "              ]",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: {",
+      "                connect: [",
+      "                  {",
+      "                    KeywordID: 1",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 2",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 3",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 4",
+      "                  }",
+      "                ]",
+      "              }",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: {",
+      "                connect: {",
+      "                  FundingPlanID: 1",
+      "                }",
+      "              }",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: \"張保榮\",",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
   },
   {
     "patent": {
@@ -592,10 +291,255 @@
       "進度": "◎與清大共有，清大10%+高大90%。◎113.11.14清大寄共有協議書，◎◎◎◎◎",
       "費用": ""
     },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
+    "dataInserted": {
+      "DraftTitle": "建立兒童癲癇性腦病變鈉離子通道α2亞基（SCN2A） 平台的感測系統",
+      "PatentType": "INVENTION",
+      "country": {
+        "connect": {
+          "CountryID": 1
+        }
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 22
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": [
+            {
+              "Contribution": 55,
+              "Main": true,
+              "InventorID": 30
+            },
+            {
+              "Contribution": 30,
+              "Main": false,
+              "InventorID": 44
+            },
+            {
+              "Contribution": 10,
+              "Main": false,
+              "InventorID": 115
+            },
+            {
+              "Contribution": 5,
+              "Main": false,
+              "InventorID": 109
+            }
+          ]
+        }
+      },
+      "technical": {
+        "create": {
+          "keywords": {
+            "connect": [
+              {
+                "KeywordID": 5
+              },
+              {
+                "KeywordID": 6
+              },
+              {
+                "KeywordID": 7
+              },
+              {
+                "KeywordID": 8
+              },
+              {
+                "KeywordID": 9
+              },
+              {
+                "KeywordID": 10
+              },
+              {
+                "KeywordID": 11
+              },
+              {
+                "KeywordID": 12
+              },
+              {
+                "KeywordID": 13
+              },
+              {
+                "KeywordID": 14
+              }
+            ]
+          }
+        }
+      },
+      "funding": {
+        "create": {
+          "plan": {
+            "connect": {
+              "FundingPlanID": 2
+            }
+          }
+        }
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {
+          "IPCNumber": "林宏殷"
+        }
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": [
+            {
+              "Date": "2024-11-13T16:00:00.000Z",
+              "Record": "清大寄共有協議書，"
+            }
+          ]
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:193:47",
+      "",
+      "  190    },",
+      "  191 };",
+      "  192 ",
+      "→ 193 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: \"建立兒童癲癇性腦病變鈉離子通道α2亞基（SCN2A） 平台的感測系統\",",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: \"INVENTION\",",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: 1",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 22",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: [",
+      "                {",
+      "                  Contribution: 55,",
+      "                  Main: true,",
+      "                  InventorID: 30",
+      "                },",
+      "                {",
+      "                  Contribution: 30,",
+      "                  Main: false,",
+      "                  InventorID: 44",
+      "                },",
+      "                {",
+      "                  Contribution: 10,",
+      "                  Main: false,",
+      "                  InventorID: 115",
+      "                },",
+      "                {",
+      "                  Contribution: 5,",
+      "                  Main: false,",
+      "                  InventorID: 109",
+      "                }",
+      "              ]",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: {",
+      "                connect: [",
+      "                  {",
+      "                    KeywordID: 5",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 6",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 7",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 8",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 9",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 10",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 11",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 12",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 13",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 14",
+      "                  }",
+      "                ]",
+      "              }",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: {",
+      "                connect: {",
+      "                  FundingPlanID: 2",
+      "                }",
+      "              }",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: \"林宏殷\",",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: [",
+      "                {",
+      "                  Date: new Date(\"2024-11-13T16:00:00.000Z\"),",
+      "                  Record: \"清大寄共有協議書，\"",
+      "                }",
+      "              ]",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
   },
   {
     "patent": {
@@ -655,10 +599,263 @@
       "進度": "◎◎◎◎◎◎◎",
       "費用": ""
     },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
+    "dataInserted": {
+      "DraftTitle": "摻雜量子點與二維材料TGF-β1的生物螢光感測技術",
+      "PatentType": "INVENTION",
+      "country": {
+        "connect": {
+          "CountryID": 1
+        }
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 22
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": [
+            {
+              "Contribution": 55,
+              "Main": true,
+              "InventorID": 30
+            },
+            {
+              "Contribution": 30,
+              "Main": false,
+              "InventorID": 44
+            },
+            {
+              "Contribution": 10,
+              "Main": false,
+              "InventorID": 26
+            },
+            {
+              "Contribution": 5,
+              "Main": false,
+              "InventorID": 116
+            }
+          ]
+        }
+      },
+      "technical": {
+        "create": {
+          "keywords": {
+            "connect": [
+              {
+                "KeywordID": 15
+              },
+              {
+                "KeywordID": 16
+              },
+              {
+                "KeywordID": 17
+              },
+              {
+                "KeywordID": 18
+              },
+              {
+                "KeywordID": 19
+              },
+              {
+                "KeywordID": 20
+              },
+              {
+                "KeywordID": 21
+              },
+              {
+                "KeywordID": 22
+              },
+              {
+                "KeywordID": 23
+              },
+              {
+                "KeywordID": 24
+              },
+              {
+                "KeywordID": 13
+              },
+              {
+                "KeywordID": 25
+              },
+              {
+                "KeywordID": 26
+              }
+            ]
+          }
+        }
+      },
+      "funding": {
+        "create": {
+          "plan": {
+            "connect": {
+              "FundingPlanID": 2
+            }
+          }
+        }
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {
+          "IPCNumber": "林宏殷"
+        }
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:193:47",
+      "",
+      "  190    },",
+      "  191 };",
+      "  192 ",
+      "→ 193 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: \"摻雜量子點與二維材料TGF-β1的生物螢光感測技術\",",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: \"INVENTION\",",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: 1",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 22",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: [",
+      "                {",
+      "                  Contribution: 55,",
+      "                  Main: true,",
+      "                  InventorID: 30",
+      "                },",
+      "                {",
+      "                  Contribution: 30,",
+      "                  Main: false,",
+      "                  InventorID: 44",
+      "                },",
+      "                {",
+      "                  Contribution: 10,",
+      "                  Main: false,",
+      "                  InventorID: 26",
+      "                },",
+      "                {",
+      "                  Contribution: 5,",
+      "                  Main: false,",
+      "                  InventorID: 116",
+      "                }",
+      "              ]",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: {",
+      "                connect: [",
+      "                  {",
+      "                    KeywordID: 15",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 16",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 17",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 18",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 19",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 20",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 21",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 22",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 23",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 24",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 13",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 25",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 26",
+      "                  }",
+      "                ]",
+      "              }",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: {",
+      "                connect: {",
+      "                  FundingPlanID: 2",
+      "                }",
+      "              }",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: \"林宏殷\",",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
   },
   {
     "patent": {
@@ -718,10 +915,215 @@
       "進度": "◎◎◎◎◎◎◎",
       "費用": ""
     },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
+    "dataInserted": {
+      "DraftTitle": "鐵鋁複合金屬材料結合DMSO去除PFAS類污染物的方法",
+      "PatentType": "INVENTION",
+      "country": {
+        "connect": {
+          "CountryID": 1
+        }
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 20
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": [
+            {
+              "Contribution": 30,
+              "Main": true,
+              "InventorID": 11
+            },
+            {
+              "Contribution": 30,
+              "Main": false,
+              "InventorID": 117
+            },
+            {
+              "Contribution": 30,
+              "Main": false,
+              "InventorID": 118
+            },
+            {
+              "Contribution": 10,
+              "Main": false,
+              "InventorID": 119
+            }
+          ]
+        }
+      },
+      "technical": {
+        "create": {
+          "keywords": {
+            "connect": [
+              {
+                "KeywordID": 27
+              },
+              {
+                "KeywordID": 28
+              },
+              {
+                "KeywordID": 29
+              },
+              {
+                "KeywordID": 30
+              },
+              {
+                "KeywordID": 31
+              }
+            ]
+          }
+        }
+      },
+      "funding": {
+        "create": {
+          "plan": {
+            "connect": {
+              "FundingPlanID": 2
+            }
+          }
+        }
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {
+          "IPCNumber": "連興隆"
+        }
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:193:47",
+      "",
+      "  190    },",
+      "  191 };",
+      "  192 ",
+      "→ 193 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: \"鐵鋁複合金屬材料結合DMSO去除PFAS類污染物的方法\",",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: \"INVENTION\",",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: 1",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 20",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: [",
+      "                {",
+      "                  Contribution: 30,",
+      "                  Main: true,",
+      "                  InventorID: 11",
+      "                },",
+      "                {",
+      "                  Contribution: 30,",
+      "                  Main: false,",
+      "                  InventorID: 117",
+      "                },",
+      "                {",
+      "                  Contribution: 30,",
+      "                  Main: false,",
+      "                  InventorID: 118",
+      "                },",
+      "                {",
+      "                  Contribution: 10,",
+      "                  Main: false,",
+      "                  InventorID: 119",
+      "                }",
+      "              ]",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: {",
+      "                connect: [",
+      "                  {",
+      "                    KeywordID: 27",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 28",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 29",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 30",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 31",
+      "                  }",
+      "                ]",
+      "              }",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: {",
+      "                connect: {",
+      "                  FundingPlanID: 2",
+      "                }",
+      "              }",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: \"連興隆\",",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
   },
   {
     "patent": {
@@ -777,10 +1179,205 @@
       "進度": "◎◎◎◎◎◎◎",
       "費用": ""
     },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
+    "dataInserted": {
+      "DraftTitle": "氧化劑緩釋錠構造及其製造方法",
+      "PatentType": "INVENTION",
+      "country": {
+        "connect": {
+          "CountryID": 1
+        }
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 20
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": [
+            {
+              "Contribution": 60,
+              "Main": true,
+              "InventorID": 8
+            },
+            {
+              "Contribution": 25,
+              "Main": false,
+              "InventorID": 76
+            },
+            {
+              "Contribution": 15,
+              "Main": false,
+              "InventorID": 120
+            }
+          ]
+        }
+      },
+      "technical": {
+        "create": {
+          "keywords": {
+            "connect": [
+              {
+                "KeywordID": 32
+              },
+              {
+                "KeywordID": 33
+              },
+              {
+                "KeywordID": 34
+              },
+              {
+                "KeywordID": 35
+              },
+              {
+                "KeywordID": 36
+              }
+            ]
+          }
+        }
+      },
+      "funding": {
+        "create": {
+          "plan": {
+            "connect": {
+              "FundingPlanID": 1
+            }
+          }
+        }
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {
+          "IPCNumber": "袁菁"
+        }
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:193:47",
+      "",
+      "  190    },",
+      "  191 };",
+      "  192 ",
+      "→ 193 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: \"氧化劑緩釋錠構造及其製造方法\",",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: \"INVENTION\",",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: 1",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 20",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: [",
+      "                {",
+      "                  Contribution: 60,",
+      "                  Main: true,",
+      "                  InventorID: 8",
+      "                },",
+      "                {",
+      "                  Contribution: 25,",
+      "                  Main: false,",
+      "                  InventorID: 76",
+      "                },",
+      "                {",
+      "                  Contribution: 15,",
+      "                  Main: false,",
+      "                  InventorID: 120",
+      "                }",
+      "              ]",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: {",
+      "                connect: [",
+      "                  {",
+      "                    KeywordID: 32",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 33",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 34",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 35",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 36",
+      "                  }",
+      "                ]",
+      "              }",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: {",
+      "                connect: {",
+      "                  FundingPlanID: 1",
+      "                }",
+      "              }",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: \"袁菁\",",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
   },
   {
     "patent": {
@@ -840,10 +1437,215 @@
       "進度": "◎◎◎◎◎◎◎",
       "費用": ""
     },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
+    "dataInserted": {
+      "DraftTitle": "一種利用高分子粉末與超音波裝置降解有機物染料",
+      "PatentType": "INVENTION",
+      "country": {
+        "connect": {
+          "CountryID": 1
+        }
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 22
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": [
+            {
+              "Contribution": 35,
+              "Main": true,
+              "InventorID": 20
+            },
+            {
+              "Contribution": 30,
+              "Main": false,
+              "InventorID": 96
+            },
+            {
+              "Contribution": 25,
+              "Main": false,
+              "InventorID": 95
+            },
+            {
+              "Contribution": 10,
+              "Main": false,
+              "InventorID": 121
+            }
+          ]
+        }
+      },
+      "technical": {
+        "create": {
+          "keywords": {
+            "connect": [
+              {
+                "KeywordID": 37
+              },
+              {
+                "KeywordID": 38
+              },
+              {
+                "KeywordID": 39
+              },
+              {
+                "KeywordID": 40
+              },
+              {
+                "KeywordID": 41
+              }
+            ]
+          }
+        }
+      },
+      "funding": {
+        "create": {
+          "plan": {
+            "connect": {
+              "FundingPlanID": 1
+            }
+          }
+        }
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {
+          "IPCNumber": "王瑞琪"
+        }
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:193:47",
+      "",
+      "  190    },",
+      "  191 };",
+      "  192 ",
+      "→ 193 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: \"一種利用高分子粉末與超音波裝置降解有機物染料\",",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: \"INVENTION\",",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: 1",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 22",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: [",
+      "                {",
+      "                  Contribution: 35,",
+      "                  Main: true,",
+      "                  InventorID: 20",
+      "                },",
+      "                {",
+      "                  Contribution: 30,",
+      "                  Main: false,",
+      "                  InventorID: 96",
+      "                },",
+      "                {",
+      "                  Contribution: 25,",
+      "                  Main: false,",
+      "                  InventorID: 95",
+      "                },",
+      "                {",
+      "                  Contribution: 10,",
+      "                  Main: false,",
+      "                  InventorID: 121",
+      "                }",
+      "              ]",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: {",
+      "                connect: [",
+      "                  {",
+      "                    KeywordID: 37",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 38",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 39",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 40",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 41",
+      "                  }",
+      "                ]",
+      "              }",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: {",
+      "                connect: {",
+      "                  FundingPlanID: 1",
+      "                }",
+      "              }",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: \"王瑞琪\",",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
   },
   {
     "patent": {
@@ -903,10 +1705,233 @@
       "進度": "◎◎◎◎◎◎◎",
       "費用": ""
     },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
+    "dataInserted": {
+      "DraftTitle": "快速轉變廢棄蛋殼形成氧化鈣光觸媒的方法",
+      "PatentType": "INVENTION",
+      "country": {
+        "connect": {
+          "CountryID": 1
+        }
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 22
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": [
+            {
+              "Contribution": 25,
+              "Main": true,
+              "InventorID": 27
+            },
+            {
+              "Contribution": 25,
+              "Main": false,
+              "InventorID": 83
+            },
+            {
+              "Contribution": 25,
+              "Main": false,
+              "InventorID": 122
+            },
+            {
+              "Contribution": 25,
+              "Main": false,
+              "InventorID": 123
+            }
+          ]
+        }
+      },
+      "technical": {
+        "create": {
+          "keywords": {
+            "connect": [
+              {
+                "KeywordID": 42
+              },
+              {
+                "KeywordID": 43
+              },
+              {
+                "KeywordID": 44
+              },
+              {
+                "KeywordID": 45
+              },
+              {
+                "KeywordID": 46
+              },
+              {
+                "KeywordID": 47
+              },
+              {
+                "KeywordID": 48
+              },
+              {
+                "KeywordID": 49
+              }
+            ]
+          }
+        }
+      },
+      "funding": {
+        "create": {
+          "plan": {
+            "connect": {
+              "FundingPlanID": 2
+            }
+          }
+        }
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {
+          "IPCNumber": "鍾宜璋"
+        }
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:193:47",
+      "",
+      "  190    },",
+      "  191 };",
+      "  192 ",
+      "→ 193 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: \"快速轉變廢棄蛋殼形成氧化鈣光觸媒的方法\",",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: \"INVENTION\",",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: 1",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 22",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: [",
+      "                {",
+      "                  Contribution: 25,",
+      "                  Main: true,",
+      "                  InventorID: 27",
+      "                },",
+      "                {",
+      "                  Contribution: 25,",
+      "                  Main: false,",
+      "                  InventorID: 83",
+      "                },",
+      "                {",
+      "                  Contribution: 25,",
+      "                  Main: false,",
+      "                  InventorID: 122",
+      "                },",
+      "                {",
+      "                  Contribution: 25,",
+      "                  Main: false,",
+      "                  InventorID: 123",
+      "                }",
+      "              ]",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: {",
+      "                connect: [",
+      "                  {",
+      "                    KeywordID: 42",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 43",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 44",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 45",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 46",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 47",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 48",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 49",
+      "                  }",
+      "                ]",
+      "              }",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: {",
+      "                connect: {",
+      "                  FundingPlanID: 2",
+      "                }",
+      "              }",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: \"鍾宜璋\",",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
   },
   {
     "patent": {
@@ -953,10 +1978,197 @@
       "進度": "◎◎◎◎◎◎◎",
       "費用": ""
     },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
+    "dataInserted": {
+      "DraftTitle": "山胡椒精油驅蚊忌避配方",
+      "PatentType": "INVENTION",
+      "country": {
+        "connect": {
+          "CountryID": 1
+        }
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 2
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": [
+            {
+              "Contribution": 100,
+              "Main": true,
+              "InventorID": 50
+            }
+          ]
+        }
+      },
+      "technical": {
+        "create": {
+          "keywords": {
+            "connect": [
+              {
+                "KeywordID": 50
+              },
+              {
+                "KeywordID": 51
+              },
+              {
+                "KeywordID": 52
+              },
+              {
+                "KeywordID": 53
+              },
+              {
+                "KeywordID": 54
+              },
+              {
+                "KeywordID": 55
+              },
+              {
+                "KeywordID": 56
+              }
+            ]
+          }
+        }
+      },
+      "funding": {
+        "create": {
+          "plan": {
+            "connect": {
+              "FundingPlanID": 1
+            }
+          }
+        }
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {
+          "IPCNumber": "白秀華"
+        }
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:193:47",
+      "",
+      "  190    },",
+      "  191 };",
+      "  192 ",
+      "→ 193 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: \"山胡椒精油驅蚊忌避配方\",",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: \"INVENTION\",",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: 1",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 2",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: [",
+      "                {",
+      "                  Contribution: 100,",
+      "                  Main: true,",
+      "                  InventorID: 50",
+      "                }",
+      "              ]",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: {",
+      "                connect: [",
+      "                  {",
+      "                    KeywordID: 50",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 51",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 52",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 53",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 54",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 55",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 56",
+      "                  }",
+      "                ]",
+      "              }",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: {",
+      "                connect: {",
+      "                  FundingPlanID: 1",
+      "                }",
+      "              }",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: \"白秀華\",",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
   },
   {
     "patent": {
@@ -1003,10 +2215,197 @@
       "進度": "◎◎◎◎◎◎◎",
       "費用": ""
     },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
+    "dataInserted": {
+      "DraftTitle": "丁香酚精油防蚊忌避配方",
+      "PatentType": "INVENTION",
+      "country": {
+        "connect": {
+          "CountryID": 1
+        }
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 2
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": [
+            {
+              "Contribution": 100,
+              "Main": true,
+              "InventorID": 50
+            }
+          ]
+        }
+      },
+      "technical": {
+        "create": {
+          "keywords": {
+            "connect": [
+              {
+                "KeywordID": 50
+              },
+              {
+                "KeywordID": 51
+              },
+              {
+                "KeywordID": 52
+              },
+              {
+                "KeywordID": 55
+              },
+              {
+                "KeywordID": 57
+              },
+              {
+                "KeywordID": 53
+              },
+              {
+                "KeywordID": 54
+              }
+            ]
+          }
+        }
+      },
+      "funding": {
+        "create": {
+          "plan": {
+            "connect": {
+              "FundingPlanID": 1
+            }
+          }
+        }
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {
+          "IPCNumber": "白秀華"
+        }
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:193:47",
+      "",
+      "  190    },",
+      "  191 };",
+      "  192 ",
+      "→ 193 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: \"丁香酚精油防蚊忌避配方\",",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: \"INVENTION\",",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: 1",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 2",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: [",
+      "                {",
+      "                  Contribution: 100,",
+      "                  Main: true,",
+      "                  InventorID: 50",
+      "                }",
+      "              ]",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: {",
+      "                connect: [",
+      "                  {",
+      "                    KeywordID: 50",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 51",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 52",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 55",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 57",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 53",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 54",
+      "                  }",
+      "                ]",
+      "              }",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: {",
+      "                connect: {",
+      "                  FundingPlanID: 1",
+      "                }",
+      "              }",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: \"白秀華\",",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
   },
   {
     "patent": {
@@ -1053,9 +2452,118 @@
       "進度": "◎◎◎◎◎◎◎",
       "費用": ""
     },
-    "error": {
-      "name": "PrismaClientValidationError",
-      "clientVersion": "6.6.0"
-    }
+    "dataInserted": {
+      "country": {
+        "connect": {}
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 0
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": []
+        }
+      },
+      "technical": {
+        "create": {}
+      },
+      "funding": {
+        "create": {}
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {}
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:193:47",
+      "",
+      "  190    },",
+      "  191 };",
+      "  192 ",
+      "→ 193 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: undefined,",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: undefined,",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: undefined",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 0",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: undefined",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: undefined",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: undefined,",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
   }
 ]

@@ -10,6 +10,8 @@ model Patent {
   Title         String                     @default("")
   TitleEnglish  String                     @default("")
   CountryID     Int?
+  createdAt     DateTime                   @default(now())
+  Pinned        Boolean                    @default(false)
   PatentType    EnumPatentType?
   country       Country?                   @relation(fields: [CountryID], references: [CountryID])
   department    Department                 @relation(fields: [DepartmentID], references: [DepartmentID])
@@ -22,8 +24,6 @@ model Patent {
   internal      PatentInternal?
   external      PatentExternal?
   patentRecords PatentRecord[]
-  createdAt     DateTime                   @default(now())
-  Pinned        Boolean                    @default(false)
   owners        PatentOwner[] // 新增的所有權人關聯
 
   // ⬇️ 校內編號與技推資訊搬到這裡

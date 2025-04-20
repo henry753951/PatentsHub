@@ -74,7 +74,7 @@
                <div class="flex items-center gap-1 mb-1 min-w-0">
                   <NuxtImg
                      v-if="patent.country"
-                     :src="`https://flagcdn.com/w160/${patent.country.ISOCode.toLowerCase()}.png`"
+                     :src="`https://flagcdn.com/w80/${patent.country.ISOCode.toLowerCase()}.png`"
                      class="h-3 w-5 rounded shadow-sm"
                      :alt="patent.country.CountryName"
                   />
