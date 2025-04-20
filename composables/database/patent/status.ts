@@ -1,7 +1,7 @@
 import { useNow } from "@vueuse/core";
 
 export const usePatentStatus = (patentService: {
-   data: Ref<RouterOutput["data"]["patent"]["getPatent"]>
+   data: Ref<RouterOutput["data"]["patent"]["getPatent"] | RouterOutput["data"]["patent"]["getPatents"][number]>
    refreshCallback?: () => Promise<void>
 }) => {
    const now = useNow({ interval: 10 * 1000 });

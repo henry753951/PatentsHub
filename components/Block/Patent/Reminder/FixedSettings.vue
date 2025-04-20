@@ -23,31 +23,20 @@
          <Tabs
             v-model="patentsReminder.settings.value.period"
             class="w-full"
+            @update:model-value="selectedMonths = []"
          >
             <TabsList
-               class="bg-zinc-100 dark:bg-zinc-800/70 border border-zinc-300/50 dark:border-zinc-700/50"
+               class="bg-zinc-100 dark:bg-zinc-800/70 border border-zinc-300/50 dark:border-zinc-700/50 w-full"
             >
                <TabsTrigger
-                  value="days"
-                  class="data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-700 data-[state=active]:text-zinc-800 dark:data-[state=active]:text-zinc-100"
-               >
-                  每日
-               </TabsTrigger>
-               <TabsTrigger
-                  value="weeks"
-                  class="data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-700 data-[state=active]:text-zinc-800 dark:data-[state=active]:text-zinc-100"
-               >
-                  每週
-               </TabsTrigger>
-               <TabsTrigger
                   value="months"
-                  class="data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-700 data-[state=active]:text-zinc-800 dark:data-[state=active]:text-zinc-100"
+                  class="data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-700 data-[state=active]:text-zinc-800 dark:data-[state=active]:text-zinc-100 w-full"
                >
                   每月
                </TabsTrigger>
                <TabsTrigger
                   value="years"
-                  class="data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-700 data-[state=active]:text-zinc-800 dark:data-[state=active]:text-zinc-100"
+                  class="data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-700 data-[state=active]:text-zinc-800 dark:data-[state=active]:text-zinc-100 w-full"
                >
                   每年
                </TabsTrigger>
@@ -56,9 +45,16 @@
          <Button
             variant="outline"
             class="w-full"
-            @click="patentsReminder.settings.value.displayEmptyPeriods = !patentsReminder.settings.value.displayEmptyPeriods"
+            @click="
+               patentsReminder.settings.value.displayEmptyPeriods =
+                  !patentsReminder.settings.value.displayEmptyPeriods
+            "
          >
-            {{ patentsReminder.settings.value.displayEmptyPeriods ? '隱藏' : '顯示' }}空白區間
+            {{
+               patentsReminder.settings.value.displayEmptyPeriods
+                  ? "隱藏"
+                  : "顯示"
+            }}空白區間
          </Button>
       </div>
    </div>
@@ -69,6 +65,14 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Inject the patentsReminder from the parent context
 const patentsReminder = inject("patentsReminder") as ReturnType<
-  typeof useDatabasePatentsReminder
+   typeof useDatabasePatentsReminder
 >;
+
+const selectedMonths = inject("selectedMonths") as Ref<
+   {
+      year: number
+      month: number
+   }[]
+>;
+
 </script>

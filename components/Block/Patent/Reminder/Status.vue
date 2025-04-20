@@ -106,6 +106,7 @@ const click = (year: number, month: number): void => {
    else {
       currentSelected.value = [{ year, month }];
    }
+   emits("clickMonth", year, month);
 };
 
 // Type guard to check if an item is a Divider
@@ -133,6 +134,10 @@ const sortedDataWithDividers = computed((): DisplayItem[] => {
 
    return result;
 });
+
+const emits = defineEmits<{
+   (e: "clickMonth", year: number, month: number): void
+}>();
 </script>
 
 <template>

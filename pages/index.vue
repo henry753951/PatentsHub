@@ -93,7 +93,11 @@
          </div>
 
          <!-- Months view -->
-         <BlockPatentReminderStatus />
+         <BlockPatentReminderStatus
+            v-model:current-selected="selectedMonths"
+            :data="monthData"
+            @click-month="patentsReminder.settings.value.period = 'months'"
+         />
 
          <div>
             <!-- Error State -->
@@ -132,9 +136,19 @@
                      >
                         <div
                            v-if="
-                              patentsReminder.settings.value.displayEmptyPeriods ||
-                                 ( period.expireds.length > 0 ||
-                                    period.expirings.length > 0)
+                              selectedMonths.length > 0
+                                 ? selectedMonths.some(
+                                    (month) =>
+                                       month.year === period.date.getFullYear() &&
+                                       month.month === period.date.getMonth() + 1
+                                 )
+                                 : (
+                                    period.type === 'current' ||
+                                    patentsReminder.settings.value
+                                       .displayEmptyPeriods ||
+                                    period.expireds.length > 0 ||
+                                    period.expirings.length > 0
+                                 )
                            "
                            class="relative flex items-start gap-4"
                            :class="{
@@ -144,17 +158,24 @@
                            <!-- Period Content -->
                            <div class="flex-1 pb-6">
                               <!-- Date Header -->
-                              <div class="mb-2 flex justify-between items-center">
+                              <div
+                                 class="mb-2 flex justify-between items-center"
+                              >
                                  <div class="flex items-center gap-2">
                                     <div
                                        class="w-3 h-3 rounded-full"
                                        :class="{
-                                          'bg-zinc-400 dark:bg-zinc-600': period.type === 'before',
-                                          'bg-blue-500': period.type === 'current',
-                                          'bg-zinc-500': period.type === 'after',
+                                          'bg-zinc-400 dark:bg-zinc-600':
+                                             period.type === 'before',
+                                          'bg-blue-500':
+                                             period.type === 'current',
+                                          'bg-zinc-500':
+                                             period.type === 'after',
                                        }"
                                     ></div>
-                                    <h3 class="font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
+                                    <h3
+                                       class="font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2"
+                                    >
                                        {{ formatPeriodDate(period.date) }}
                                        <span
                                           v-if="period.type === 'current'"
@@ -162,13 +183,6 @@
                                        >當前</span>
                                     </h3>
                                  </div>
-                                 <span
-                                    v-if="period.expireds.length > 0"
-                                    class="text-red-600 dark:text-red-400 flex items-center gap-1 text-sm"
-                                 >
-                                    <AlertTriangle class="h-3 w-3" />
-                                    {{ period.expireds.length }}
-                                 </span>
                               </div>
 
                               <div class="space-y-2">
@@ -205,6 +219,11 @@
                                     />
                                  </div>
                               </div>
+                              <div v-if="period.expireds.length === 0 && period.expirings.length === 0">
+                                 <p class="text-zinc-500 dark:text-zinc-400 text-sm text-center">
+                                    無專利數據
+                                 </p>
+                              </div>
                            </div>
                         </div>
                      </template>
@@ -231,6 +250,16 @@ import FloatLabel from "primevue/floatlabel";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { RefreshCcw, Plus, AlertTriangle, AlertCircle } from "lucide-vue-next";
 import { format, addDays, endOfWeek, differenceInDays } from "date-fns";
+interface SelectedMonth {
+   year: number
+   month: number
+}
+
+interface MonthData {
+   year: number
+   month: number
+   expireCount: number
+}
 
 definePageMeta({
    name: "home",
@@ -243,6 +272,8 @@ provide("patentsReminder", patentsReminder);
 // 處理日期輸入
 const startDateStr = ref<string>("");
 const endDateStr = ref<string>("");
+const selectedMonths = ref<SelectedMonth[]>([]);
+provide("selectedMonths", selectedMonths);
 
 // 在組件載入時設置初始日期值
 onMounted(() => {
@@ -295,5 +326,25 @@ const expiringCount = computed(() => {
    return patentsReminder.dateArray.value.result.reduce((acc, period) => {
       return acc + period.expirings.length;
    }, 0);
+});
+
+const monthData = computed(() => {
+   const currentMonth = new Date().getMonth() + 1;
+   // Generate month data for the next 12 months
+   const data: MonthData[] = [];
+   for (let i = 0; i < 12; i++) {
+      const month = (currentMonth + i) % 12 || 12; // Handle wrap-around for December
+      const year
+         = Math.floor((currentMonth + i - 1) / 12) + new Date().getFullYear();
+      const expireCount = patentsReminder.data.value?.filter((patent) => {
+         const patentDate = new Date(patent.expireDates.toSorted()[0]);
+         return (
+            patentDate.getFullYear() === year
+            && patentDate.getMonth() + 1 === month
+         );
+      }).length;
+      data.push({ year, month, expireCount: expireCount || 0 });
+   }
+   return data;
 });
 </script>
