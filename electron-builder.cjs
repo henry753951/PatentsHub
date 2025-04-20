@@ -20,6 +20,10 @@ const builderConfig = {
          from: "node_modules/@prisma",
          to: "node_modules/@prisma",
       },
+      {
+         from: ".importSystem/app.db",
+         to: "app.db",
+      },
       "dist-electron/**/*",
       "package.json",
    ],

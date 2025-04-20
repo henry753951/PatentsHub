@@ -50,6 +50,24 @@ defaultUserDataFolders.forEach(async (folder) => {
       logger.error(`[❌] Error handling folder: ${folderPath}`, err);
    }
 });
+// Create database file, if not exists
+const dbFilePath = path.join(userDataPath, "app.db");
+fs.stat(dbFilePath)
+   .then(async () => {
+      try {
+         await fs.writeFile(
+            dbFilePath,
+            await fs.readFile(app.getAppPath() + "/app.db"),
+         );
+         logger.log(`[📦] Created database file: ${dbFilePath}`);
+      }
+      catch (err) {
+         logger.error(`[❌] Error creating database file: ${dbFilePath}`, err);
+      }
+   })
+   .catch(() => {
+      logger.log(`[📦] Database file already exists: ${dbFilePath}`);
+   });
 
 protocol.registerSchemesAsPrivileged([
    {
