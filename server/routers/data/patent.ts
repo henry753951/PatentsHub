@@ -16,7 +16,7 @@ export default router({
             .default({ year: new Date().getFullYear() - 1911 }),
       )
       .query(async ({ input }) => {
-         const offset = 4;
+         const offset = 3;
          const lastPatent = await prisma.patent.findFirst({
             where: {
                Year: input.year,
