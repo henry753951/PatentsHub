@@ -7,6 +7,7 @@ const builderConfig = {
    directories: {
       output: ".output/electron",
    },
+   icon: "assets/electron/icon-512x512.png",
    files: [
       {
          from: ".output/public",
@@ -20,17 +21,24 @@ const builderConfig = {
          from: "node_modules/@prisma",
          to: "node_modules/@prisma",
       },
+      "dist-electron/**/*",
+      "package.json",
+   ],
+   extraResources: [
       {
          from: ".importSystem/app.db",
          to: "app.db",
       },
-      "dist-electron/**/*",
-      "package.json",
+      {
+         from: "assets/electron",
+         to: "assets",
+      },
    ],
    removePackageScripts: true,
    compression: "maximum",
    asar: true, // 啟用 ASAR 壓縮
    win: {
+      icon: "assets/electron/icon-512x512.png",
       target: [
          {
             target: "nsis", // Windows 使用 NSIS 安裝程式

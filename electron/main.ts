@@ -45,29 +45,10 @@ defaultUserDataFolders.forEach(async (folder) => {
          await fs.mkdir(folderPath, { recursive: true });
          logger.log(`[📦] Created folder: ${folderPath}`);
       }
-   }
-   catch (err) {
+   } catch (err) {
       logger.error(`[❌] Error handling folder: ${folderPath}`, err);
    }
 });
-// Create database file, if not exists
-const dbFilePath = path.join(userDataPath, "app.db");
-fs.stat(dbFilePath)
-   .then(async () => {
-      try {
-         await fs.writeFile(
-            dbFilePath,
-            await fs.readFile(app.getAppPath() + "/app.db"),
-         );
-         logger.log(`[📦] Created database file: ${dbFilePath}`);
-      }
-      catch (err) {
-         logger.error(`[❌] Error creating database file: ${dbFilePath}`, err);
-      }
-   })
-   .catch(() => {
-      logger.log(`[📦] Database file already exists: ${dbFilePath}`);
-   });
 
 protocol.registerSchemesAsPrivileged([
    {
@@ -106,6 +87,9 @@ function createWindow() {
       height: 1024,
       minWidth: 1024,
       minHeight: 676,
+      icon: isProduction
+         ? path.join(__dirname, "../assets/icon-32x32.png")
+         : path.join(__dirname, "../assets/electron/,icon-32x32.png"),
       roundedCorners: true,
       webPreferences: {
          devTools: true,
@@ -134,6 +118,7 @@ function createWindow() {
 // App events
 // ==========
 app.whenReady().then(async () => {
+   await initializeDatabase();
    const mainWindow = createWindow();
    if (!mainWindow) return;
    mainWindow.webContents.on("render-process-gone", (event, details) => {
@@ -143,14 +128,14 @@ app.whenReady().then(async () => {
    mainWindow.webContents.on("preload-error", (event, preloadPath, error) => {
       logger.error("[❌] Preload error:", preloadPath, error);
    });
+
    dynamicRenderer(mainWindow);
    // Initialize modules
    logger.log("[⏳] Loading modules...");
    modules.forEach((module) => {
       try {
          module(mainWindow);
-      }
-      catch (err: any) {
+      } catch (err: any) {
          logger.log("[❌] Module error: ", err.message || err);
       }
    });
@@ -175,3 +160,38 @@ process.on("uncaughtException", (err) => {
 process.on("unhandledRejection", (reason, promise) => {
    logger.error("[❌] Unhandled Rejection at:", promise, "reason:", reason);
 });
+
+// 動態解析 app.db 的路徑
+function getSourceDbPath() {
+   const isPackaged = app.isPackaged;
+   if (isPackaged) {
+      // 打包後，app.db 在 resources 目錄
+      return path.join(process.resourcesPath, "app.db");
+   } else {
+      // 開發環境，app.db 在 .importSystem 目錄
+      return path.join(__dirname, "../.importSystem/app.db");
+   }
+}
+
+async function initializeDatabase() {
+   const userDataPath = app.getPath("userData");
+   const dbFilePath = path.join(userDataPath, "app.db");
+
+   try {
+      // 檢查 dbFilePath 是否存在
+      await fs.stat(dbFilePath);
+      logger.log(`[📦] Database file already exists: ${dbFilePath}`);
+   } catch (err) {
+      // 如果檔案不存在，複製 app.db
+      try {
+         const sourceDbPath = getSourceDbPath();
+         await fs.copyFile(sourceDbPath, dbFilePath);
+         logger.log(`[📦] Created database file: ${dbFilePath}`);
+      } catch (copyErr) {
+         logger.error(
+            `[❌] Error creating database file: ${dbFilePath}`,
+            copyErr,
+         );
+      }
+   }
+}
