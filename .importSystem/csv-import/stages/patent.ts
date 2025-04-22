@@ -136,7 +136,7 @@ export const insertPatent = async (
             internal: {
                create: {
                   InitialReviewAgencies:
-                     patent.初評事務所 && patent.初評事務所 !== "無"
+                     patent.初評事務所 && !patent.初評事務所.includes("無")
                         ? {
                            createMany: {
                               data: patent.初評事務所
@@ -157,7 +157,7 @@ export const insertPatent = async (
                         }
                         : undefined,
                   TakerAgencies:
-                     patent.承辦事務所 && patent.承辦事務所 !== "無"
+                     patent.承辦事務所 && !patent.初評事務所.includes("無")
                         ? {
                            createMany: {
                               data: patent.承辦事務所
@@ -186,6 +186,21 @@ export const insertPatent = async (
                      Date: record.data,
                      Record: record.content,
                   })),
+               },
+            },
+            maintenances: {
+               createMany: {
+                  data:
+                     patent.公告_獲證時間_西元 && patent.維護期程_西元
+                        ? [
+                           {
+                              MaintenanceDate: formatDate(
+                                 patent.公告_獲證時間_西元,
+                              ),
+                              ExpireDate: formatDate(patent.維護期程_西元),
+                           },
+                        ]
+                        : [],
                },
             },
          };

@@ -19,7 +19,7 @@ const parseCSV = async (filePath: string): Promise<PatentTransformed[]> => {
                const raw: PatentRaw = Object.keys(columnMapping).reduce(
                   (acc, csvColumn) => {
                      const prop = columnMapping[csvColumn];
-                     acc[prop] = row[csvColumn] || ""; // Default to empty string if undefined
+                     acc[prop] = (row[csvColumn] || "").trim(); // Default to empty string if undefined
                      return acc;
                   },
                   {} as PatentRaw,

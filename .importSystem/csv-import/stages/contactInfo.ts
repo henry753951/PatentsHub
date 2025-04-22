@@ -16,9 +16,7 @@ export const insertContactInfo = async (data: PatentTransformed[], prisma: Prism
    for (const patent of data) {
       if (patent.發明人) uniqueNames.add(patent.發明人);
       patent.共同發明人.forEach((coInventor) => uniqueNames.add(coInventor.name));
-      if (patent.事務所聯絡人) uniqueNames.add("agency-" + patent.事務所聯絡人);
    }
-   uniqueNames.delete("agency-");
 
    // 批量創建聯絡資訊記錄
    const query: Prisma.PrismaPromise<any>[] = [];

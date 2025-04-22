@@ -107,4 +107,19 @@ const formatDate = (date: string): Date => {
    consola.warn(`Invalid date format: ${date}`);
    return undefined;
 };
-export { columnMapping, departments, getFundingPlanIdMap, formatDate };
+
+const remaping = (data: string, mapping: { [key: string]: string }): string => {
+   for (const key in mapping) {
+      if (data.includes(key)) {
+         return mapping[key];
+      }
+   }
+   return data;
+};
+export {
+   columnMapping,
+   departments,
+   getFundingPlanIdMap,
+   formatDate,
+   remaping,
+};

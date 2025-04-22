@@ -1,6 +1,7 @@
 import consola from "consola";
 import type { PrismaClient, Prisma } from "@prisma/client";
 import type { PatentTransformed } from "../../types/patent";
+import { remaping } from "../utils";
 
 /**
  * 插入國家數據並創建國家名稱到 ID 的映射。
@@ -16,24 +17,31 @@ export const insertCountry = async (
 
    // 收集所有唯一的國家名稱
    const uniqueCountries = new Set<string>();
-   data.forEach(
-      (patent) => patent.專利國家 && uniqueCountries.add(patent.專利國家),
-   );
+   data.forEach((patent) => {
+      if (patent.專利國家) {
+         patent.專利國家 = remaping(patent.專利國家, {
+            歐洲: "歐盟",
+         });
+         uniqueCountries.add(patent.專利國家);
+      }
+   });
    uniqueCountries.delete("");
 
    // 批量創建國家記錄
+   const isoMap = {
+      中華民國: "TW",
+      美國: "US",
+      日本: "JP",
+      中國: "CN",
+      歐盟: "EU",
+   };
    const query: Prisma.PrismaPromise<any>[] = [];
    uniqueCountries.forEach((country) => {
       query.push(
          prisma.country.create({
             data: {
                CountryName: country,
-               ISOCode:
-                  country === "中華民國"
-                     ? "TW"
-                     : country === "美國"
-                        ? "US"
-                        : country + "_iso",
+               ISOCode: isoMap[country] || country,
             },
          }),
       );
