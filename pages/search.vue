@@ -6,24 +6,34 @@
          </template>
          <template #header>
             <div
+               dir="rtl"
                style="text-align:left"
-               class="flex justify-between mt-4 ml-4"
+               class="flex mt-4 ml-4 relative "
             >
+               <div class="text-black  pb-4 mt-2 mr-4 left-12">
+                  <Button
+                     icon="pi pi-external-link"
+                     label="匯出CSV"
+                     @click="exportCSV"
+                  />
+               </div>
+               <div class="text-black  pb-4 mr-4 mt-2">
+                  <Button
+                     icon="pi pi-external-link"
+                     label="匯出部分CSV"
+                     @click="exportCSVpartition"
+                  />
+               </div>
                <MultiSelect
                   :model-value="selectedColumns"
                   :options="columns"
                   option-label="header"
                   display="chip"
                   placeholder="選擇欄位"
+                  :max-selected-labels="8"
+                  class="absolute left-4"
                   @update:model-value="onToggle"
                />
-               <div class="text-black  pb-4 mr-8">
-                  <Button
-                     icon="pi pi-external-link"
-                     label="Export"
-                     @click="exportCSV"
-                  />
-               </div>
             </div>
          </template>
          <template #content>
@@ -48,6 +58,7 @@
                   filter
                   :filter-placeholder="'搜尋' + col.header"
                   sortable
+                  :class="'max-w-[300px] truncate text-ellipsis whitespace-nowrap overflow-hidden'"
                >
                   <!-- 自訂 country.CountryName 欄位 -->
                   <template
@@ -95,7 +106,9 @@
                      v-else
                      #body="slotProps"
                   >
-                     {{ getNestedValue(slotProps.data, col.field) }}
+                     <span
+                        :title="formatValue(getNestedValue(slotProps.data, col.field))"
+                     >{{ formatValue(getNestedValue(slotProps.data, col.field)) }}</span>
                   </template>
 
                   <!-- 篩選器 -->
@@ -106,6 +119,8 @@
                         :placeholder="'搜尋' + col.header"
                         @input="filterCallback()"
                      />
+                  </template>
+                  <template #filterapply="slotProps">
                   </template>
                </Column>
             </DataTable>
@@ -132,17 +147,53 @@ const onRowClick = (event) => {
 
 const filters = ref({
    "global": { value: null, matchMode: FilterMatchMode.CONTAINS },
-   "PatentID": { value: null, matchMode: FilterMatchMode.CONTAINS },
-   "DraftTitle": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-   "department.Name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-   "department.college.Name": {
-      value: null,
-      matchMode: FilterMatchMode.STARTS_WITH,
-   },
-   "inventors": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-   "country.CountryName": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "maintenances.manualStatus": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
    "Year": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-   "MaintenanceInfo": { value: null, matchMode: FilterMatchMode.CONTAINS }, // 合併的維護資訊篩選
+   "internal.InternalID": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "department.college.Name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "department.Name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "inventors": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "DraftTitle": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "external.PatentNumber": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "external.PublicationDate": { value: null, matchMode: FilterMatchMode.DATE_IS },
+   "MaintenanceInfo": { value: null, matchMode: FilterMatchMode.CONTAINS },
+   "PublicationDateWestern": { value: null, matchMode: FilterMatchMode.DATE_IS },
+   "application.ApplicationNumber": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "PatentType": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "country.CountryName": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "internal.InitialReviewAgencies": { value: null, matchMode: FilterMatchMode.CONTAINS },
+   //
+   "application.RDResultNumber": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "application.NSCNumber": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "external.IPCNumber": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "external.PatentScope": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "technical.MaturityLevel": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "InitialReviewDate": { value: null, matchMode: FilterMatchMode.DATE_IS },
+   "technical.keywords": { value: null, matchMode: FilterMatchMode.CONTAINS },
+});
+
+const filters2 = ref({
+   "global": { value: null, matchMode: FilterMatchMode.CONTAINS },
+   "maintenances.manualStatus": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "Year": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "internal.InternalID": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "department.college.Name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "department.Name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "inventors": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "DraftTitle": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "external.PatentNumber": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "external.PublicationDate": { value: null, matchMode: FilterMatchMode.DATE_IS },
+   "MaintenanceInfo": { value: null, matchMode: FilterMatchMode.CONTAINS },
+   "PublicationDateWestern": { value: null, matchMode: FilterMatchMode.DATE_IS },
+   "application.ApplicationNumber": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "PatentType": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "country.CountryName": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "application.NSCNumber": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "internal.InitialReviewAgencies": { value: null, matchMode: FilterMatchMode.CONTAINS },
+   "external.IPCNumber": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "external.PatentScope": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "technical.MaturityLevel": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   "InitialReviewDate": { value: null, matchMode: FilterMatchMode.DATE_IS },
 });
 
 const transformedData = computed(() => {
@@ -189,16 +240,50 @@ const transformedData = computed(() => {
 const { data, forceRefresh, fillter } = useDatabasePatents();
 
 const columns = ref([
-   { field: "PatentID", header: "專利編號" },
-   { field: "DraftTitle", header: "專利名稱" },
-   { field: "Year", header: "年份" },
-   { field: "department.Name", header: "系所名稱" },
-   { field: "department.college.Name", header: "學院名稱" },
-   { field: "inventors", header: "發明人名稱" },
-   { field: "country.CountryName", header: "國家" },
-   { field: "MaintenanceInfo", header: "維護期程/年度" },
+   { field: "maintenances.manualStatus", header: "狀態" },
+   { field: "Year", header: "年度" },
+   { field: "internal.InternalID", header: "校內編號" },
+   { field: "department.college.Name", header: "學院" },
+   { field: "department.Name", header: "系所" },
+   { field: "inventors", header: "發明人" },
+   // { field: "coInventors", header: "共同發明人" }, // 需處理共同發明人邏輯
+   { field: "DraftTitle", header: "發明名稱" },
+   { field: "external.PatentNumber", header: "專利號碼" },
+   // { field: "PatentPeriod", header: "專利權期間" }, // 需處理專利權期間邏輯
+   { field: "external.PublicationDate", header: "公告/獲證日期" }, // 轉成民國
+   // { field: "MaintenanceYearCount", header: "維護年度計" }, // 需處理維護年度計邏輯 好像預設是3
+   // { field: "CertificateYear", header: "領證年度" }, // 需處理領證年度邏輯
+   // { field: "ExpireMonth", header: "到期月份" }, // 需處理到期月份邏輯  這個好像可刪除
+   { field: "MaintenanceInfo", header: "維護期程" },
+   { field: "PublicationDateWestern", header: "公告/獲證時間（西元）" },
+   { field: "application.ApplicationNumber", header: "申請案號" },
+   { field: "PatentType", header: "專利類別" },
+   { field: "country.CountryName", header: "專利國家" },
+   // { field: "Plan", header: "方案" }, // 需處理方案邏輯 尚未有相關的資料結構  !!!但須保留
+   // { field: "FundingAgency", header: "資助單位" }, // 需處理資助單位邏輯  尚未有相關的資料結構  !!!但須保留
+   // { field: "application.NSCNumber", header: "計畫編號" }, 找不到資料庫相關屬性
+   { field: "internal.InitialReviewAgencies", header: "事務所相關資訊" }, // 需要調整顯示結構
+   { field: "application.RDResultNumber", header: "研發成果編號（STRIKE）" },
+   { field: "application.NSCNumber", header: "國科會編號（STRIKE）" },
+   { field: "external.IPCNumber", header: "國際專利分類號IPC" },
+   { field: "external.PatentScope", header: "專利範圍" },
+   { field: "technical.MaturityLevel", header: "技術成熟度TRL" },
+   { field: "InitialReviewDate", header: "技推委員會審理日期" },
+   { field: "technical.keywords", header: "技術關鍵字" },
+   // 感覺要刪除，未在資料庫的屬性中找到 { field: "external.PatentScope", header: "申請專利範圍" },
 ]);
+
 const selectedColumns = ref(columns.value);
+
+function formatValue(value: any, defaultValue: string = "N/A"): string {
+   if (value === null || value === undefined || value === "") {
+      return defaultValue;
+   }
+   if (Array.isArray(value) && value.length === 0) {
+      return defaultValue; // 處理空陣列
+   }
+   return value;
+}
 
 function getNestedValue<T>(obj: T, path: string, defaultValue: string = "N/A"): string {
    return path.split(".").reduce((acc: any, key: string) => {
@@ -212,9 +297,21 @@ const onToggle = (val: { field: string, header: string }[]) => {
 
 const dt = ref();
 const exportCSV = () => {
+   // 暫時儲存目前的 selectedColumns
+   const originalSelectedColumns = selectedColumns.value;
+
+   // 將 selectedColumns 設為所有欄位
+   selectedColumns.value = columns.value;
+
+   // 匯出 CSV
+   dt.value.exportCSV();
+
+   // 恢復原本的 selectedColumns
+   selectedColumns.value = originalSelectedColumns;
+};
+const exportCSVpartition = () => { // 匯出部分
    dt.value.exportCSV();
 };
-
 const { open } = useModals();
 definePageMeta({
    name: "search",
