@@ -111,6 +111,14 @@ export default router({
                application: {
                   create: {},
                },
+               owners: {
+                  create: [
+                     {
+                        Name: "高雄大學", // 預設所有權人
+                        OwnershipPercentage: 100, // 預設 100%
+                     },
+                  ],
+               },
             },
          });
       }),
