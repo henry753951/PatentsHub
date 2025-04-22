@@ -9,7 +9,7 @@ export default router({
       .query(async ({ input }) => {
          return await prisma.patentRecord.findMany({
             where: { PatentID: input.patentID },
-            orderBy: { Date: "asc" }, // 按日期排序
+            orderBy: { Date: "desc" }, // 按日期排序
          });
       }),
 

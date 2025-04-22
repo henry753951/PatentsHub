@@ -45,7 +45,7 @@ export const usePatentRecords = (patentService: {
       return mappedEvents.sort((a, b) => {
          if (!a.rawDate) return 1; // null 值放在最後
          if (!b.rawDate) return -1; // null 值放在最後
-         return new Date(a.rawDate).getTime() - new Date(b.rawDate).getTime();
+         return new Date(b.rawDate).getTime() - new Date(a.rawDate).getTime(); // 降序排序
       });
    });
 
