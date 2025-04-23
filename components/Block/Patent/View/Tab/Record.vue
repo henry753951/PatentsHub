@@ -1,7 +1,7 @@
 <template>
-   <div class="p-8 flex flex-col md:flex-row gap-6 relative">
-      <!-- 左邊：時間線 (加入 OverlayScrollbars) -->
-      <div class="w-full md:w-2/3 bg-white dark:bg-zinc-800 rounded-lg shadow-sm p-4">
+   <div class="p-8 flex flex-col gap-6 relative">
+      <!-- 時間線：佔據整個寬度 -->
+      <div class="w-full bg-white dark:bg-zinc-800 rounded-lg shadow-sm p-4">
          <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">
             專利記錄
          </h2>
@@ -15,13 +15,12 @@
                },
                overflow: {
                   x: 'hidden',
-                  y: 'scroll', // 強制顯示垂直滾動條
+                  y: 'scroll',
                },
             }"
             defer
          >
             <div class="pb-8">
-               <!-- 添加底部間距，確保有足夠的滾動空間 -->
                <Timeline
                   :value="patentRecordsService.events.value"
                   class="timeline-custom"
@@ -49,7 +48,7 @@
                   </template>
                   <template #content="slotProps">
                      <div
-                        class="bg-white dark:bg-zinc-800 border-l-4 border-l-gray-300 dark:border-l-gray-600 pl-3 hover:border-l-blue-500 transition-colors duration-200 mb-8"
+                        class="bg-white dark:bg-zinc-800 border-l-4 border-l-gray-300 dark:border-l-gray-600 pl-3 hover:border-l-blue-500 transition-colors duration-200 mb-4"
                      >
                         <div
                            class="flex flex-col md:flex-row md:items-center justify-between space-y-2 md:space-y-0"
@@ -89,96 +88,103 @@
          </OverlayScrollbarsComponent>
       </div>
 
-      <!-- 右邊：表單 -->
-      <div
-         class="w-full md:w-1/3 flex flex-col justify-start gap-4 md:sticky md:top-24"
+      <Button
+         class="fixed bottom-6 right-6 rounded-full w-14 h-14 flex items-center justify-center shadow-xl bg-gray-200/80 hover:bg-gray-300/90 dark:bg-zinc-500/80 dark:hover:bg-zinc-400/90 text-gray-900 dark:text-gray-100 transition-all duration-300 hover:scale-110 hover:shadow-2xl backdrop-blur-sm z-50"
+         @click="showDialog = true"
       >
-         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
-            <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">
-               {{ newRecord.id ? "更新記錄" : "新增記錄" }}
-            </h2>
+         <Icon
+            name="ic:round-add"
+            class="h-8 w-8"
+         />
+      </Button>
 
-            <div class="space-y-4">
-               <FloatLabel
-                  variant="in"
+      <Dialog
+         v-model:visible="showDialog"
+         :header="newRecord.id ? '更新記錄' : '新增記錄'"
+         :modal="true"
+         :style="{ width: '400px' }"
+         class="dark:bg-zinc-800 dark:text-white z-50"
+         :pt="{
+            content: { class: 'p-4' },
+            header: { class: 'text-gray-800 dark:text-gray-200' }
+         }"
+      >
+         <div class="space-y-4">
+            <FloatLabel
+               variant="in"
+               class="w-full"
+            >
+               <DatePicker
+                  v-model="newRecord.date"
+                  show-icon
+                  fluid
+                  date-format="yy/mm/dd"
+                  icon-display="input"
+                  show-button-bar
+                  manual-input
+                  input-id="review-date_input"
                   class="w-full"
+                  :class="{
+                     'border-rose-500': !newRecord.date && formSubmitted,
+                     'dark:bg-zinc-700 dark:text-white dark:border-gray-600': true,
+                  }"
+               />
+               <label
+                  for="review-date_input"
+                  class="text-gray-600 dark:text-gray-300"
+               >紀錄日期</label>
+            </FloatLabel>
+
+            <div>
+               <Textarea
+                  v-model="newRecord.record"
+                  placeholder="輸入新的紀錄，例如 '初審開始'"
+                  class="w-full h-32 resize-none border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:text-white"
+                  :class="{
+                     'border-rose-500': !newRecord.record && formSubmitted,
+                  }"
+               />
+               <p
+                  v-if="!newRecord.record && formSubmitted"
+                  class="text-rose-500 text-sm mt-1"
                >
-                  <DatePicker
-                     v-model="newRecord.date"
-                     show-icon
-                     fluid
-                     date-format="yy/mm/dd"
-                     icon-display="input"
-                     show-button-bar
-                     input-id="review-date_input"
-                     class="w-full"
-                     :class="{
-                        'border-rose-500': !newRecord.date && formSubmitted,
-                        'dark:bg-zinc-700 dark:text-white dark:border-gray-600': true
-                     }"
-                  />
-                  <label
-                     for="review-date_input"
-                     class="text-gray-600 dark:text-gray-300"
-                  >紀錄日期</label>
-               </FloatLabel>
+                  請輸入紀錄内容
+               </p>
+            </div>
 
-               <div>
-                  <Textarea
-                     v-model="newRecord.record"
-                     placeholder="輸入新的紀錄，例如 '初審開始'"
-                     class="w-full h-32 resize-none border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:text-white"
-                     :class="{
-                        'border-rose-500': !newRecord.record && formSubmitted,
-                     }"
-                  />
-                  <p
-                     v-if="!newRecord.record && formSubmitted"
-                     class="text-rose-500 text-sm mt-1"
-                  >
-                     請輸入紀錄内容
-                  </p>
-               </div>
-
-               <div class="flex gap-3 pt-2">
-                  <Button
-                     class="w-full flex items-center justify-center gap-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white"
-                     variant="default"
-                     @click="submitForm"
-                  >
-                     <i class="pi pi-save"></i>
-                     {{ newRecord.id ? "更新紀錄" : "提交紀錄" }}
-                  </Button>
-                  <Button
-                     v-if="newRecord.id"
-                     class="w-full flex items-center justify-center gap-1 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-zinc-700"
-                     variant="outline"
-                     @click="resetForm"
-                  >
-                     <i class="pi pi-times"></i>
-                     取消
-                  </Button>
-               </div>
+            <div class="flex gap-3 pt-2">
+               <Button
+                  class="w-full flex items-center justify-center gap-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white"
+                  variant="default"
+                  @click="submitForm"
+               >
+                  <i class="pi pi-save"></i>
+                  {{ newRecord.id ? "更新記錄" : "提交記錄" }}
+               </Button>
+               <Button
+                  v-if="newRecord.id"
+                  class="w-full flex items-center justify-center gap-1 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-zinc-700"
+                  variant="outline"
+                  @click="resetForm"
+               >
+                  <i class="pi pi-times"></i>
+                  取消
+               </Button>
             </div>
          </div>
-      </div>
+      </Dialog>
    </div>
 </template>
 
 <script lang="ts" setup>
 import { Button } from "@/components/ui/button";
 import Timeline from "primevue/timeline";
+import Dialog from "primevue/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import type { RouterOutput } from "~/server";
 import DatePicker from "primevue/datepicker";
 import FloatLabel from "primevue/floatlabel";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
-import { onMounted } from "vue";
-
-const patent = defineModel({
-   type: Object as PropType<RouterOutput["data"]["patent"]["getPatent"]>,
-   required: true,
-});
+import { ref } from "vue";
 
 const { patentRecordsService } = defineProps<{
    patentRecordsService: ReturnType<typeof usePatentRecords>
@@ -195,6 +201,7 @@ const newRecord = ref<{
 });
 
 const formSubmitted = ref(false);
+const showDialog = ref(false);
 
 const submitForm = async () => {
    formSubmitted.value = true;
@@ -205,6 +212,7 @@ const submitForm = async () => {
 
    await createOrUpdateRecord();
    formSubmitted.value = false;
+   showDialog.value = false;
 };
 
 const createOrUpdateRecord = async () => {
@@ -219,6 +227,7 @@ const createOrUpdateRecord = async () => {
 const resetForm = () => {
    newRecord.value = { id: undefined, record: "", date: null };
    formSubmitted.value = false;
+   showDialog.value = false;
 };
 
 const editRecord = (id: number) => {
@@ -229,25 +238,24 @@ const editRecord = (id: number) => {
       record: record.status,
       date: new Date(record.date),
    };
+   showDialog.value = true;
 };
 </script>
 
 <style scoped>
 .timeline-container {
-   height: 400px; /* 固定高度，確保有滾動效果 */
+   height: 400px;
    min-height: 300px;
-   position: relative; /* 確保滾動條位置正確 */
+   position: relative;
 }
 
-/* OverlayScrollbars 樣式 */
 :deep(.os-theme-dark) {
    --os-handle-bg: rgba(255, 255, 255, 0.3) !important;
    --os-handle-bg-hover: rgba(255, 255, 255, 0.5) !important;
    --os-handle-bg-active: rgba(255, 255, 255, 0.7) !important;
-   --os-size: 8px !important; /* 增加滾動條寬度 */
+   --os-size: 8px !important;
 }
 
-/* 確保滾動條顯示 */
 :deep(.os-scrollbar) {
    opacity: 1 !important;
    visibility: visible !important;
@@ -257,7 +265,6 @@ const editRecord = (id: number) => {
    border-radius: 4px !important;
 }
 
-/* 亮色模式滾動條 */
 .os-theme-light {
    --os-handle-bg: rgba(0, 0, 0, 0.2);
    --os-handle-bg-hover: rgba(0, 0, 0, 0.3);
@@ -278,20 +285,17 @@ const editRecord = (id: number) => {
 
 .timeline-custom :deep(.p-timeline-event-connector) {
    background-color: #e5e7eb;
-   height: 3rem; /* 增加連接線長度，拉開節點間距 */
+   height: 1.5rem;
 }
 
-/* 黑暗模式下的連接線顏色 */
 .dark .timeline-custom :deep(.p-timeline-event-connector) {
    background-color: #4b5563;
 }
 
-/* 確保在小螢幕上仍然有良好的排版 */
 @media (max-width: 768px) {
    .timeline-custom :deep(.p-timeline-event) {
       flex-direction: column;
       align-items: flex-start;
-      margin-bottom: 1.5rem;
    }
 
    .timeline-custom :deep(.p-timeline-event-opposite) {
@@ -303,7 +307,7 @@ const editRecord = (id: number) => {
    }
 
    .timeline-custom :deep(.p-timeline-event-connector) {
-      height: 2.5rem;
+      height: 1rem;
    }
 
    .timeline-container {
