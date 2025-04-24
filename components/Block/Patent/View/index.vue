@@ -131,7 +131,7 @@
          </div>
          <div class="relative mb-[6rem] w-full">
             <div
-               class="transform -translate-y-1/2 z-[5] absolute transition-all duration-300 flex gap-2 justify-between container mx-auto left-0 right-0"
+               class="transform z-[5] absolute transition-all duration-300 flex gap-2 justify-between container mx-auto left-0 right-0 top-[-50px]"
                :class="{
                   'opacity-0 pointer-events-none top-[-50px]':
                      !state?.arrivedState.top,

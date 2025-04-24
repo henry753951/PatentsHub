@@ -1,6 +1,6 @@
 <template>
    <div
-      class="bg-white rounded-lg p-4 space-y-2 mt-7 border border-gray-200 dark:bg-zinc-900 dark:border-zinc-800"
+      class="bg-white rounded-lg p-4 space-y-2 border border-gray-200 dark:bg-zinc-900 dark:border-zinc-800"
    >
       <div class="flex justify-between">
          <div class="font-bold">

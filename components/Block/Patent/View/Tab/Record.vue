@@ -53,7 +53,9 @@
                         <div
                            class="flex flex-col md:flex-row md:items-center justify-between space-y-2 md:space-y-0"
                         >
-                           <p class="font-medium text-base text-gray-800 dark:text-gray-200">
+                           <p
+                              class="font-medium text-base text-gray-800 dark:text-gray-200"
+                           >
                               {{ slotProps.item.status }}
                            </p>
                            <div class="flex gap-2">
@@ -87,91 +89,92 @@
             </div>
          </OverlayScrollbarsComponent>
       </div>
-
-      <Button
-         class="fixed bottom-6 right-6 rounded-full w-14 h-14 flex items-center justify-center shadow-xl bg-gray-200/80 hover:bg-gray-300/90 dark:bg-zinc-500/80 dark:hover:bg-zinc-400/90 text-gray-900 dark:text-gray-100 transition-all duration-300 hover:scale-110 hover:shadow-2xl backdrop-blur-sm z-50"
-         @click="showDialog = true"
-      >
-         <Icon
-            name="ic:round-add"
-            class="h-8 w-8"
-         />
-      </Button>
-
-      <Dialog
-         v-model:visible="showDialog"
-         :header="newRecord.id ? '更新記錄' : '新增記錄'"
-         :modal="true"
-         :style="{ width: '400px' }"
-         class="dark:bg-zinc-800 dark:text-white z-50"
-         :pt="{
-            content: { class: 'p-4' },
-            header: { class: 'text-gray-800 dark:text-gray-200' }
-         }"
-      >
-         <div class="space-y-4">
-            <FloatLabel
-               variant="in"
-               class="w-full"
-            >
-               <DatePicker
-                  v-model="newRecord.date"
-                  show-icon
-                  fluid
-                  date-format="yy/mm/dd"
-                  icon-display="input"
-                  show-button-bar
-                  manual-input
-                  input-id="review-date_input"
+      <Dialog v-model:open="showDialog">
+         <DialogTrigger
+            class="fixed bottom-6 right-6 rounded-full w-14 h-14 flex items-center justify-center shadow-xl bg-gray-200/80 hover:bg-gray-300/90 dark:bg-zinc-500/80 dark:hover:bg-zinc-400/90 text-gray-900 dark:text-gray-100 transition-all duration-300 hover:scale-110 hover:shadow-2xl backdrop-blur-sm z-50"
+            @click="
+               resetForm();
+               showDialog = true;
+            "
+         >
+            <Icon
+               name="ic:round-add"
+               class="h-8 w-8"
+            />
+         </DialogTrigger>
+         <DialogContent
+            :style="{ width: '400px' }"
+            class="dark:bg-zinc-800 dark:text-white z-50"
+         >
+            <DialogHeader>
+               <div class="font-bold text-lg text-gray-800 dark:text-gray-200">
+                  {{ newRecord.id ? "更新記錄" : "新增記錄" }}
+               </div>
+            </DialogHeader>
+            <div class="space-y-4">
+               <FloatLabel
+                  variant="in"
                   class="w-full"
-                  :class="{
-                     'border-rose-500': !newRecord.date && formSubmitted,
-                     'dark:bg-zinc-700 dark:text-white dark:border-gray-600': true,
-                  }"
-               />
-               <label
-                  for="review-date_input"
-                  class="text-gray-600 dark:text-gray-300"
-               >紀錄日期</label>
-            </FloatLabel>
+               >
+                  <DatePicker
+                     v-model="newRecord.date"
+                     show-icon
+                     fluid
+                     date-format="yy/mm/dd"
+                     icon-display="input"
+                     show-button-bar
+                     manual-input
+                     input-id="review-date_input"
+                     class="w-full"
+                     :class="{
+                        'border-rose-500': !newRecord.date && formSubmitted,
+                        'dark:bg-zinc-700 dark:text-white dark:border-gray-600': true,
+                     }"
+                  />
+                  <label
+                     for="review-date_input"
+                     class="text-gray-600 dark:text-gray-300"
+                  >紀錄日期</label>
+               </FloatLabel>
 
-            <div>
-               <Textarea
-                  v-model="newRecord.record"
-                  placeholder="輸入新的紀錄，例如 '初審開始'"
-                  class="w-full h-32 resize-none border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:text-white"
-                  :class="{
-                     'border-rose-500': !newRecord.record && formSubmitted,
-                  }"
-               />
-               <p
-                  v-if="!newRecord.record && formSubmitted"
-                  class="text-rose-500 text-sm mt-1"
-               >
-                  請輸入紀錄内容
-               </p>
-            </div>
+               <div>
+                  <Textarea
+                     v-model="newRecord.record"
+                     placeholder="輸入新的紀錄，例如 '初審開始'"
+                     class="w-full h-32 resize-none border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:text-white"
+                     :class="{
+                        'border-rose-500': !newRecord.record && formSubmitted,
+                     }"
+                  />
+                  <p
+                     v-if="!newRecord.record && formSubmitted"
+                     class="text-rose-500 text-sm mt-1"
+                  >
+                     請輸入紀錄内容
+                  </p>
+               </div>
 
-            <div class="flex gap-3 pt-2">
-               <Button
-                  class="w-full flex items-center justify-center gap-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white"
-                  variant="default"
-                  @click="submitForm"
-               >
-                  <i class="pi pi-save"></i>
-                  {{ newRecord.id ? "更新記錄" : "提交記錄" }}
-               </Button>
-               <Button
-                  v-if="newRecord.id"
-                  class="w-full flex items-center justify-center gap-1 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-zinc-700"
-                  variant="outline"
-                  @click="resetForm"
-               >
-                  <i class="pi pi-times"></i>
-                  取消
-               </Button>
+               <div class="flex gap-3 pt-2">
+                  <Button
+                     class="w-full flex items-center justify-center gap-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white"
+                     variant="default"
+                     @click="submitForm"
+                  >
+                     <i class="pi pi-save"></i>
+                     {{ newRecord.id ? "更新記錄" : "提交記錄" }}
+                  </Button>
+                  <Button
+                     v-if="newRecord.id"
+                     class="w-full flex items-center justify-center gap-1 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-zinc-700"
+                     variant="outline"
+                     @click="showDialog = false"
+                  >
+                     <i class="pi pi-times"></i>
+                     取消
+                  </Button>
+               </div>
             </div>
-         </div>
+         </DialogContent>
       </Dialog>
    </div>
 </template>
@@ -179,7 +182,15 @@
 <script lang="ts" setup>
 import { Button } from "@/components/ui/button";
 import Timeline from "primevue/timeline";
-import Dialog from "primevue/dialog";
+import {
+   Dialog,
+   DialogContent,
+   DialogDescription,
+   DialogFooter,
+   DialogHeader,
+   DialogTitle,
+   DialogTrigger,
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import DatePicker from "primevue/datepicker";
 import FloatLabel from "primevue/floatlabel";
