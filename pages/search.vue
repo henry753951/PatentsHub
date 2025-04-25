@@ -159,7 +159,7 @@
             </DataTable>
          </template>
       </Card>
-      {{ data[0] }}
+      <pre>{{ transformedData[0] }}</pre>
    </div>
 </template>
 
@@ -175,6 +175,16 @@ import MultiSelect from "primevue/multiselect";
 import { FilterMatchMode } from "@primevue/core/api";
 import Accordion from "primevue/accordion";
 import AccordionTab from "primevue/accordiontab";
+
+const agenciesStore = useAgenciesStore();
+const { agencies: agenciesInStore } = storeToRefs(agenciesStore);
+
+const getPersonsByIds = (ids: number[]) => {
+   // 找到所有符合 id 的聯絡人
+   return agenciesInStore.value
+      .flatMap((a) => a.Persons)
+      .filter((p) => ids.includes(p.ContactInfoID));
+};
 
 const { open } = useModals();
 definePageMeta({
@@ -295,7 +305,27 @@ const transformedData = computed(() => {
          const formattedInitialReviewDate = initialReviewDate
             ? `${initialReviewDate.getFullYear()}年${initialReviewDate.getMonth() + 1}月${initialReviewDate.getDate()}日 ${initialReviewDate.toLocaleDateString("zh-TW", { weekday: "long" })}`
             : "N/A";
-
+         // 事務所資料攤平
+         const initialAgency = item.internal?.InitialReviewAgencies?.[0];
+         const takerAgency = item.internal?.TakerAgencies?.[0];
+         const takerContacts = takerAgency
+            ? getPersonsByIds(
+               Array.isArray(takerAgency.agencyUnitPersonIds)
+                  ? takerAgency.agencyUnitPersonIds.map((id) => Number(id))
+                  : [],
+            )
+            : [];
+         const takerContactsStr = takerContacts
+            .map((p) =>
+               [
+                  `姓名: ${p.contactInfo?.Name ?? "無資料"}`,
+                  `電話: ${p.contactInfo?.PhoneNumber ?? "無資料"}`,
+                  `email: ${p.contactInfo?.Email ?? "無資料"}`,
+                  `職位: ${p.contactInfo?.Role ?? "無資料"}`,
+                  `備註: ${p.contactInfo?.Note ?? "無資料"}`,
+               ].join("\n"),
+            )
+            .join("\n---\n");
          return {
             ...item,
             inventors: item.inventors?.find((i) => i.Main)?.inventor?.contactInfo?.Name || "無資料",
@@ -304,6 +334,13 @@ const transformedData = computed(() => {
                ...item.internal,
                InitialReviewDate: formattedInitialReviewDate, // 格式化後的日期
             },
+            // 事務所攤平欄位
+            __InitialAgencyName: initialAgency?.agencyUnit?.Name || "",
+            __InitialAgencyContactIds: initialAgency?.agencyUnitPersonIds?.join(",") || "",
+            __TakerAgencyName: takerAgency?.agencyUnit?.Name || "",
+            __TakerAgencyContactIds: takerAgency?.agencyUnitPersonIds?.join(",") || "",
+            __TakerAgencyFileCode: takerAgency?.FileCode || "",
+            __TakerAgencyContacts: takerContactsStr,
          };
       })
       : [];
@@ -346,6 +383,18 @@ const columns = ref([
    // 感覺要刪除，未在資料庫的屬性中找到 { field: "external.PatentScope", header: "申請專利範圍" },
 ]);
 
+const exportColumns = [
+   ...columns.value.filter(
+      (col) =>
+         col.field !== "internal.InitialReviewAgencies"
+         && col.field !== "internal.TakerAgencies",
+   ),
+   { field: "__InitialAgencyName", header: "初評事務所" },
+   { field: "__TakerAgencyName", header: "承辦事務所" },
+   { field: "__TakerAgencyContacts", header: "承辦事務所聯絡人" },
+   { field: "__TakerAgencyFileCode", header: "事務所檔號" },
+];
+
 const selectedColumns = ref(columns.value);
 
 function formatValue(value: any, defaultValue: string = "N/A"): string {
@@ -380,7 +429,7 @@ const exportCSV = () => {
    const originalSelectedColumns = selectedColumns.value;
 
    // 將 selectedColumns 設為所有欄位
-   selectedColumns.value = columns.value;
+   selectedColumns.value = exportColumns;
 
    // 匯出 CSV
    dt.value.exportCSV();

@@ -45,7 +45,7 @@ const navItems = [
    },
 
    {
-      title: "搜尋",
+      title: "篩選",
       icon: {
          normal: "basil:search-outline",
          active: "basil:search-solid",
