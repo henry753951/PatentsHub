@@ -43,7 +43,7 @@
                :value="transformedData"
                filter-display="row"
                class="w-full datatable-small"
-               paginator
+
                show-gridlines
                :rows="10"
                resizable-columns
@@ -159,7 +159,6 @@
             </DataTable>
          </template>
       </Card>
-      <pre>{{ transformedData[0] }}</pre>
    </div>
 </template>
 
