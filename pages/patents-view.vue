@@ -50,6 +50,7 @@
                v-for="patent in data"
                :key="patent.PatentID"
                :patent="patent"
+               :flex-prop="patent.flexProp"
                class="rounded-lg"
                @click="
                   open('PatentModal', { props: { patentId: patent.PatentID } })

@@ -1,8 +1,8 @@
 <template>
    <div
-      class="w-full text-zinc-800 mx-auto container dark:text-zinc-100 min-h-full py-5"
+      class="text-zinc-800 mx-auto container dark:text-zinc-100 min-h-full py-5 max-w-[var(--content-area-width)] w-full overflow-hidden"
    >
-      <div class="flex gap-6 flex-col">
+      <div class="flex gap-6 flex-col w-full">
          <!-- Header Section with Glass Morphism -->
          <BlockHeader
             title="專利到期提醒"
@@ -133,7 +133,7 @@
             >
                <!-- Timeline View -->
                <div
-                  class="bg-white/70 dark:bg-zinc-900/60 border border-zinc-200/70 dark:border-zinc-800/50 rounded-xl p-6 shadow-xl max-w-full"
+                  class="bg-white/70 dark:bg-zinc-900/60 border border-zinc-200/70 dark:border-zinc-800/50 rounded-xl p-6 shadow-xl"
                >
                   <div class="space-y-4 h-fit">
                      <template

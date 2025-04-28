@@ -30,11 +30,11 @@ export const useDatabasePatents = (
       },
    );
 
-   const orderBy = ref<OrderBy>({ key: "InternalID", direction: "asc" });
+   const orderBy = ref<OrderBy>({ key: "InternalID", direction: "desc" });
    const dataOrdered = computed(() => {
       if (!data.value) return [];
 
-      return [...data.value].sort((a, b) => {
+      const dataSorted = [...data.value].sort((a, b) => {
          const key = orderBy.value.key;
          let valueA = getNestedProperty(a, key);
          let valueB = getNestedProperty(b, key);
@@ -55,6 +55,22 @@ export const useDatabasePatents = (
             return strA < strB ? 1 : strA > strB ? -1 : 0;
          }
       });
+      return dataSorted.map((item) => {
+         const option = orderOptions.find((o) => o.key === orderBy.value.key);
+         const value = getNestedProperty(item, orderBy.value.key);
+         const transformedValue = option?.transform
+            ? option.transform(value)
+            : value;
+         return {
+            ...item,
+            flexProp: option?.show
+               ? {
+                  key: option?.label ?? orderBy.value.key,
+                  value: transformedValue,
+               }
+               : undefined,
+         };
+      });
    });
 
    const orderOptions = [
@@ -65,7 +81,30 @@ export const useDatabasePatents = (
       { label: "系所", key: "department.Name" },
       { label: "專利狀態", key: "_status.status" },
       { label: "發明人", key: "_mainInventor.Name" },
-   ];
+      { label: "專利國家", key: "CountryID" },
+      { label: "年度", key: "Year", show: true },
+      {
+         label: "領證年度",
+         key: "external.PublicationDate",
+         show: true,
+         transform: (value: any) => {
+            return value ? new Date(value).getFullYear() - 1911 : null;
+         },
+      },
+      {
+         label: "申請年度",
+         key: "application.FilingDate",
+         show: true,
+         transform: (value: any) => {
+            return value ? new Date(value).getFullYear() - 1911 : null;
+         },
+      },
+   ] as {
+      label: string
+      key: string
+      show?: boolean
+      transform?: (value: any) => any
+   }[];
 
    // [Helpers]
    const getNestedProperty = (obj: any, path: string): any => {

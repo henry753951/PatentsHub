@@ -2,10 +2,12 @@
    <div class="flex flex-col max-h-screen h-screen overflow-hidden">
       <BlockWindowTitleBar class="bg-white dark:bg-zinc-900" />
       <div class="flex flex-1 min-h-0">
-         <BlockSideMenu class="bg-white dark:bg-zinc-900" />
+         <div>
+            <BlockSideMenu class="bg-white dark:bg-zinc-900" />
+         </div>
          <div
             ref="el"
-            class="inner-page w-full h-full"
+            class="inner-page flex-1 h-full w-full overflow-hidden"
          >
             <ScrollArea class="h-full w-full scrollarea">
                <slot />
