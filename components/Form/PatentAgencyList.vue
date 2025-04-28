@@ -44,7 +44,10 @@
                         {{ agency.agencyUnit.Description || "無" }}
                      </p>
                      <p
-                        v-if="isTakerAgencyUnitType(agencies[index]) && props.isTakerAgencyUnit"
+                        v-if="
+                           isTakerAgencyUnitType(agencies[index]) &&
+                              props.isTakerAgencyUnit
+                        "
                         class="text-sm text-foreground flex items-center gap-1"
                      >
                         <CustomContentBlockRow
@@ -177,7 +180,7 @@
             class="items-center gap-1"
             :class="{
                'group-hover:flex hidden': !agencies.length,
-               'flex': agencies.length,
+               flex: agencies.length,
             }"
          >
             <Icon
@@ -237,7 +240,10 @@ const agenciesViewData = computed(() => {
          isTakerAgencyUnitType: isTakerAgencyUnitType(agency),
          AgencyUnitID: agency.AgencyUnitID,
          agencyUnitPersons: allPersons.filter((person) => {
-            return (agency.agencyUnitPersonIds! as number[]).includes(
+            if (!agency.agencyUnitPersonIds) {
+               return false;
+            }
+            return (agency.agencyUnitPersonIds as number[]).includes(
                person.ContactInfoID,
             );
          }),
