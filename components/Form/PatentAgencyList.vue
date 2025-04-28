@@ -242,14 +242,11 @@ const agenciesViewData = computed(() => {
          AgencyUnitID: agency.AgencyUnitID,
          agencyUnitPersons: allPersons.filter((person) => {
             try {
-               return agency.agencyUnitPersonIds.includes(
+               return (agency.agencyUnitPersonIds as number[]).includes(
                   person.ContactInfoID,
                );
             }
             catch (e) {
-               consola.error(e);
-               console.error(JSON.stringify(agency.agencyUnitPersonIds, null, 2));
-
                return false;
             }
          }),
