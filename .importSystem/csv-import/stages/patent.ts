@@ -346,15 +346,30 @@ function parseRecord(input: string): { data: Date, content: string }[] {
          .map((part) => part.trim())
          .filter(Boolean);
       for (const part of parts) {
-         const dateMatch = part.match(dateRegex);
+         const dateMatch = dateRegex.exec(part);
          if (dateMatch) {
-            const dateStr = dateMatch[0];
-            const date = new Date(dateStr);
-            const content = part.replace(dateStr, "").trim();
-            result.push({ data: date, content });
+            // 同樣判斷民國年
+            let year = parseInt(dateMatch[1]);
+            const month = parseInt(dateMatch[2]);
+            const day = dateMatch[3] ? parseInt(dateMatch[3]) : 1;
+            if (year < 1000) {
+               year += 1911; // 轉換為西元年
+            }
+            const date = new Date(year, month - 1, day);
+
+            result.push({
+               data: date,
+               content: part.replace(dateRegex, "").trim(),
+            });
          }
          else {
-            result[result.length - 1].content += part.trim();
+            if (result.length > 0) {
+               result[result.length - 1].content += part.trim();
+            }
+            else {
+               const date = new Date();
+               result.push({ data: date, content: part.trim() });
+            }
          }
       }
    }
