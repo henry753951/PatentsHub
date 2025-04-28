@@ -33,7 +33,7 @@
             </template>
             <template #content="slotProps">
                <div
-                  class="bg-white dark:bg-zinc-800 border-l-4 border-l-gray-300 dark:border-l-gray-600 pl-3 hover:border-l-blue-500 transition-colors duration-200 mb-4"
+                  class="bg-white dark:bg-zinc-80"
                >
                   <div
                      class="flex flex-col md:flex-row md:items-center justify-between space-y-2 md:space-y-0"
@@ -47,24 +47,24 @@
                         <Button
                            size="sm"
                            variant="ghost"
-                           class="h-8 px-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                           class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                            @click="editRecord(slotProps.item.id)"
                         >
-                           <i class="pi pi-pencil text-xs mr-1"></i>
-                           編輯
+                           <Icon name="ic:round-edit" />
                         </Button>
                         <Button
                            variant="ghost"
                            size="sm"
-                           class="h-8 px-2 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400"
+                           class="text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400"
                            @click="
                               patentRecordsService.actions.deleteRecord(
                                  slotProps.item.id,
                               )
                            "
                         >
-                           <i class="pi pi-trash text-xs mr-1"></i>
-                           刪除
+                           <Icon
+                              name="ic:round-delete"
+                           />
                         </Button>
                      </div>
                   </div>
@@ -143,7 +143,7 @@
                      variant="default"
                      @click="submitForm"
                   >
-                     <i class="pi pi-save"></i>
+                     <Icon :name="newRecord.id ? 'ic:round-edit' : 'ic:round-add'" />
                      {{ newRecord.id ? "更新記錄" : "提交記錄" }}
                   </Button>
                   <Button
@@ -152,7 +152,7 @@
                      variant="outline"
                      @click="showDialog = false"
                   >
-                     <i class="pi pi-times"></i>
+                     <Icon name="ic:round-close" />
                      取消
                   </Button>
                </div>
