@@ -10,7 +10,7 @@
                v-model:contribution="mainInventor.Contribution"
                class="h-full"
                :name="mainInventor.inventor.contactInfo.Name"
-               :job="mainInventor.inventor.contactInfo.Role"
+               :job="mainInventor.inventor.contactInfo.Role || ''"
                :belong="{
                   college: mainInventor.inventor.department.college.Name,
                   department: mainInventor.inventor.department.Name
@@ -49,7 +49,7 @@
                v-model:contribution="inventor.Contribution"
                class="h-[88px]"
                :name="inventor.inventor.contactInfo.Name"
-               :job="inventor.inventor.contactInfo.Role"
+               :job="inventor.inventor.contactInfo.Role || ''"
                :belong="{
                   college: inventor.inventor.department.college.Name,
                   department: inventor.inventor.department.Name
@@ -88,7 +88,7 @@ interface Department {
 
 interface ContactInfo {
    Name: string
-   Role: string
+   Role: string | null
 }
 
 interface Inventor {

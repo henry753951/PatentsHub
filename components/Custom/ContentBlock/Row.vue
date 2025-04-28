@@ -22,7 +22,7 @@
          :class="{
             'px-2 bg-white dark:bg-zinc-700 w-full': isFocus,
             'cursor-pointer': !isFocus,
-            'dark:hover:bg-zinc-700 hover:px-2 hover:w-full': !disabled,
+            'dark:hover:bg-zinc-700 px-2 hover:w-full': !disabled,
          }"
          class="font-bold hover:bg-white rounded-lg transition-all duration-300 w-[100%] py-1.5"
          @dblclick="focus()"
@@ -35,7 +35,7 @@
                'border-transparent': isSynced,
             }"
          >
-            <div class="truncate">
+            <div :class="truncate ? 'truncate' : ''">
                {{ str ?? number }}
             </div>
             <span
@@ -87,12 +87,14 @@ const {
    icon = undefined,
    placeholder = "點兩下開始編輯",
    disabled = false,
+   truncate = false,
 } = defineProps({
    title: String,
    isSynced: Boolean,
    icon: String,
    placeholder: String,
    disabled: Boolean,
+   truncate: Boolean,
 });
 const isFocus = ref(false);
 const str = defineModel({
