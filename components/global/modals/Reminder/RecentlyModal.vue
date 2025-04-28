@@ -42,27 +42,10 @@ const isOpen = defineModel("open", {
    default: false,
 });
 
-const { days = 30 } = defineProps<{
-   days?: number
+const { patents = [], days } = defineProps<{
+   patents: RouterOutput["data"]["patent"]["getPatents"]
+   days: number
 }>();
-
-const { $trpc } = useNuxtApp();
-const { data: patents, refresh } = await useAsyncData(
-   "recently-patents-" + days,
-   async () => {
-      return await $trpc.data.patent.getPatents.query({
-         maintenances: {
-            some: {
-               MaintenanceDate: {
-                  gte: new Date(
-                     new Date().getTime() - days * 24 * 60 * 60 * 1000,
-                  ),
-               },
-            },
-         },
-      });
-   },
-);
 
 const getMaintenanceDate = (
    patent: RouterOutput["data"]["patent"]["getPatents"][0],
