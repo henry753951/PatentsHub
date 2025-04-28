@@ -214,11 +214,6 @@ const handleAddCustomStatus = async () => {
       },
       customStatusFields,
       undefined,
-      {
-         reason: "",
-         date: new Date(),
-         override: false,
-      },
    );
 };
 
