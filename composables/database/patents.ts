@@ -6,16 +6,17 @@ interface OrderBy {
 }
 
 export const useDatabasePatents = (
-   defaultFillter: z.infer<typeof dbZ.PatentWhereInputSchema> = {},
+   defaultFilter: z.infer<typeof dbZ.PatentWhereInputSchema> = {},
 ) => {
    const { $trpc } = useNuxtApp();
    // [State]
-   const fillter
-      = ref<z.infer<typeof dbZ.PatentWhereInputSchema>>(defaultFillter);
+   const filter
+      = ref<z.infer<typeof dbZ.PatentWhereInputSchema>>(defaultFilter);
+
    const { data, refresh, status } = useAsyncData(
       "patents",
       async () => {
-         const data = await getPatents(fillter.value);
+         const data = await getPatents(filter.value);
          return data.map((item) => {
             return {
                ...item,
@@ -25,7 +26,7 @@ export const useDatabasePatents = (
          });
       },
       {
-         watch: [fillter],
+         watch: [filter],
          lazy: true,
       },
    );
@@ -135,7 +136,7 @@ export const useDatabasePatents = (
 
    return {
       data: dataOrdered,
-      fillter,
+      filter,
       order: {
          orderBy,
          orderOptions,
