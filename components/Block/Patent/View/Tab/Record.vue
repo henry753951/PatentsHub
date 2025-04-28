@@ -1,93 +1,76 @@
 <template>
-   <div class="p-8 flex flex-col gap-6 relative">
+   <div class="flex flex-col gap-6 relative">
       <!-- 時間線：佔據整個寬度 -->
       <div class="w-full bg-white dark:bg-zinc-800 rounded-lg shadow-sm p-4">
          <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">
             專利記錄
          </h2>
-         <OverlayScrollbarsComponent
-            class="timeline-container"
-            :options="{
-               scrollbars: {
-                  autoHide: 'leave',
-                  autoHideDelay: 700,
-                  theme: 'os-theme-dark',
-               },
-               overflow: {
-                  x: 'hidden',
-                  y: 'scroll',
-               },
-            }"
-            defer
+
+         <Timeline
+            :value="patentRecordsService.events.value"
+            class="timeline-custom"
          >
-            <div class="pb-8">
-               <Timeline
-                  :value="patentRecordsService.events.value"
-                  class="timeline-custom"
+            <template #marker="slotProps">
+               <span
+                  class="flex h-6 w-6 items-center justify-center rounded-full"
+                  :style="{
+                     backgroundColor: slotProps.item.color + '20',
+                  }"
                >
-                  <template #marker="slotProps">
-                     <span
-                        class="flex h-6 w-6 items-center justify-center rounded-full"
-                        :style="{
-                           backgroundColor: slotProps.item.color + '20',
-                        }"
+                  <i
+                     :class="slotProps.item.icon"
+                     :style="{ color: slotProps.item.color }"
+                     class="text-xs"
+                  ></i>
+               </span>
+            </template>
+            <template #opposite="slotProps">
+               <div
+                  class="text-sm font-medium text-gray-500 bg-zinc-100 dark:bg-zinc-700 dark:text-gray-300 rounded-md px-3 py-1 inline-block"
+               >
+                  {{ slotProps.item.date }}
+               </div>
+            </template>
+            <template #content="slotProps">
+               <div
+                  class="bg-white dark:bg-zinc-800 border-l-4 border-l-gray-300 dark:border-l-gray-600 pl-3 hover:border-l-blue-500 transition-colors duration-200 mb-4"
+               >
+                  <div
+                     class="flex flex-col md:flex-row md:items-center justify-between space-y-2 md:space-y-0"
+                  >
+                     <p
+                        class="font-medium text-base text-gray-800 dark:text-gray-200"
                      >
-                        <i
-                           :class="slotProps.item.icon"
-                           :style="{ color: slotProps.item.color }"
-                           class="text-xs"
-                        ></i>
-                     </span>
-                  </template>
-                  <template #opposite="slotProps">
-                     <div
-                        class="text-sm font-medium text-gray-500 bg-zinc-100 dark:bg-zinc-700 dark:text-gray-300 rounded-md px-3 py-1 inline-block"
-                     >
-                        {{ slotProps.item.date }}
-                     </div>
-                  </template>
-                  <template #content="slotProps">
-                     <div
-                        class="bg-white dark:bg-zinc-800 border-l-4 border-l-gray-300 dark:border-l-gray-600 pl-3 hover:border-l-blue-500 transition-colors duration-200 mb-4"
-                     >
-                        <div
-                           class="flex flex-col md:flex-row md:items-center justify-between space-y-2 md:space-y-0"
+                        {{ slotProps.item.status }}
+                     </p>
+                     <div class="flex gap-2">
+                        <Button
+                           size="sm"
+                           variant="ghost"
+                           class="h-8 px-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                           @click="editRecord(slotProps.item.id)"
                         >
-                           <p
-                              class="font-medium text-base text-gray-800 dark:text-gray-200"
-                           >
-                              {{ slotProps.item.status }}
-                           </p>
-                           <div class="flex gap-2">
-                              <Button
-                                 size="sm"
-                                 variant="ghost"
-                                 class="h-8 px-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-                                 @click="editRecord(slotProps.item.id)"
-                              >
-                                 <i class="pi pi-pencil text-xs mr-1"></i>
-                                 編輯
-                              </Button>
-                              <Button
-                                 variant="ghost"
-                                 size="sm"
-                                 class="h-8 px-2 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400"
-                                 @click="
-                                    patentRecordsService.actions.deleteRecord(
-                                       slotProps.item.id,
-                                    )
-                                 "
-                              >
-                                 <i class="pi pi-trash text-xs mr-1"></i>
-                                 刪除
-                              </Button>
-                           </div>
-                        </div>
+                           <i class="pi pi-pencil text-xs mr-1"></i>
+                           編輯
+                        </Button>
+                        <Button
+                           variant="ghost"
+                           size="sm"
+                           class="h-8 px-2 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400"
+                           @click="
+                              patentRecordsService.actions.deleteRecord(
+                                 slotProps.item.id,
+                              )
+                           "
+                        >
+                           <i class="pi pi-trash text-xs mr-1"></i>
+                           刪除
+                        </Button>
                      </div>
-                  </template>
-               </Timeline>
-            </div>
-         </OverlayScrollbarsComponent>
+                  </div>
+               </div>
+            </template>
+         </Timeline>
       </div>
       <Dialog v-model:open="showDialog">
          <DialogTrigger
@@ -200,6 +183,10 @@ import { ref } from "vue";
 const { patentRecordsService } = defineProps<{
    patentRecordsService: ReturnType<typeof usePatentRecords>
 }>();
+
+onMounted(() => {
+   consola.log("Patent Records Service:", patentRecordsService.events.value);
+});
 
 const newRecord = ref<{
    id: number | undefined
