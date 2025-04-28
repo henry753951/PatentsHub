@@ -235,17 +235,23 @@ const agenciesViewData = computed(() => {
       const allPersons = agenciesInStore.value.flatMap(
          (agency) => agency.Persons,
       );
+      consola.log(agency.agencyUnitPersonIds);
       return {
          agencyUnit: agency.agencyUnit,
          isTakerAgencyUnitType: isTakerAgencyUnitType(agency),
          AgencyUnitID: agency.AgencyUnitID,
          agencyUnitPersons: allPersons.filter((person) => {
-            if (!agency.agencyUnitPersonIds) {
+            try {
+               return agency.agencyUnitPersonIds.includes(
+                  person.ContactInfoID,
+               );
+            }
+            catch (e) {
+               consola.error(e);
+               console.error(JSON.stringify(agency.agencyUnitPersonIds, null, 2));
+
                return false;
             }
-            return (agency.agencyUnitPersonIds as number[]).includes(
-               person.ContactInfoID,
-            );
          }),
       };
    });

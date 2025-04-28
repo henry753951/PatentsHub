@@ -45,10 +45,10 @@ const navItems = [
    },
 
    {
-      title: "搜尋",
+      title: "篩選專利",
       icon: {
-         normal: "basil:search-outline",
-         active: "basil:search-solid",
+         normal: "basil:filter-outline",
+         active: "basil:filter-solid",
       },
       to: { name: "search" },
    },

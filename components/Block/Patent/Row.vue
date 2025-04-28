@@ -44,7 +44,7 @@
          </div>
 
          <!-- 中間：發明名稱、學院、系所、資助單位 -->
-         <div class="flex flex-col px-4 flex-1 min-w-0">
+         <div class="flex flex-col px-4 flex-1 min-w-0 max-w-full">
             <div class="flex items-center space-x-2 min-w-0">
                <CustomBadgeWithText
                   :text="patent.department.college.Name"

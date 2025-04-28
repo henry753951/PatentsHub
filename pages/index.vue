@@ -129,11 +129,11 @@
                   patentsReminder.data.value &&
                      patentsReminder.dateArray.value.result.length > 0
                "
-               class="flex flex-col flex-1 gap-4"
+               class="flex flex-col flex-1 gap-4 overflow-hidden"
             >
                <!-- Timeline View -->
                <div
-                  class="bg-white/70 dark:bg-zinc-900/60 border border-zinc-200/70 dark:border-zinc-800/50 rounded-xl p-6 shadow-xl"
+                  class="bg-white/70 dark:bg-zinc-900/60 border border-zinc-200/70 dark:border-zinc-800/50 rounded-xl p-6 shadow-xl max-w-full"
                >
                   <div class="space-y-4 h-fit">
                      <template
@@ -163,7 +163,7 @@
                            }"
                         >
                            <!-- Period Content -->
-                           <div class="flex-1 pb-6">
+                           <div class="flex-1 pb-6 overflow-hidden">
                               <!-- Date Header -->
                               <div
                                  class="mb-2 flex justify-between items-center"

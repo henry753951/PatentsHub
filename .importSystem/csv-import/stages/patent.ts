@@ -145,12 +145,7 @@ export const insertPatent = async (
                                     AgencyUnitID:
                                          maps.agencyIdMap.get(agency),
                                     agencyUnitPersonIds: patent.事務所聯絡人
-                                       ? {
-                                          toJSON: [
-                                             "agency-"
-                                             + patent.事務所聯絡人,
-                                          ],
-                                       }
+                                       ? ["agency-" + patent.事務所聯絡人]
                                        : undefined,
                                  })),
                            },
