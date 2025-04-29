@@ -21,7 +21,6 @@ export default router({
    onStatusChange: procedure.subscription(() => {
       return observable<UpdaterStatus>((emit) => {
          const send = (status: UpdaterStatus) => emit.next(status);
-
          autoUpdater.on("checking-for-update", () => {
             send({ type: "checking-for-update" });
          });
@@ -49,18 +48,6 @@ export default router({
             readyToInstall = true;
             send({ type: "update-downloaded" });
          });
-
-         autoUpdater.checkForUpdates();
-         const interval = setInterval(
-            () => {
-               autoUpdater.checkForUpdates();
-            },
-            1000 * 60 * 60 * 2,
-         );
-
-         return () => {
-            clearInterval(interval);
-         };
       });
    }),
 });

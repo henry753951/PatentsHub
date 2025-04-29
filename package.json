@@ -10,6 +10,7 @@
       "url": "git+https://github.com/henry753951/PatentsHub.git"
    },
    "scripts": {
+      "cicd-build:all": "nuxt build && electron-builder build --config electron-builder.cjs -p always",
       "build:all": "nuxt build && electron-builder build --config electron-builder.cjs",
       "build:app": "electron-builder build --config electron-builder.cjs",
       "build": "nuxt build",
