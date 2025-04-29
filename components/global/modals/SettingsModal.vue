@@ -6,7 +6,7 @@
                <DialogTitle>設定</DialogTitle>
                <DialogDescription>專利管理系統的設定</DialogDescription>
             </DialogHeader>
-            <BlockSettings />
+            <BlockSettingsPanel />
          </DialogContent>
       </Dialog>
    </div>

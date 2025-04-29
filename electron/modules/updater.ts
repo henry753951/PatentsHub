@@ -9,50 +9,17 @@ const url = `${server}/update/${process.platform}/${app.getVersion()}`;
 
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
-autoUpdater.setFeedURL(url);
+autoUpdater.forceDevUpdateConfig = true;
+autoUpdater.setFeedURL({
+   url: url,
+   provider: "generic",
+});
 export default (mainWindow: BrowserWindow) => {
    const isMac = process.platform === "darwin";
    if (isMac) {
       autoUpdater.autoDownload = false;
       autoUpdater.autoInstallOnAppQuit = false;
    }
-
-   let readyToInstall = false;
-   function sendUpdaterStatus(...args: any[]) {
-      mainWindow.webContents.send("updater:statusChanged", args);
-   }
-
-   autoUpdater.on("checking-for-update", () => {
-      sendUpdaterStatus("check-for-update");
-   });
-   autoUpdater.on("update-available", (info) => {
-      sendUpdaterStatus("update-available", info);
-   });
-   autoUpdater.on("update-not-available", (info) => {
-      sendUpdaterStatus("update-not-available");
-   });
-   autoUpdater.on("error", (_err) => {
-      sendUpdaterStatus("update-error");
-   });
-   autoUpdater.on("download-progress", (progress) => {
-      sendUpdaterStatus("downloading", progress);
-   });
-   autoUpdater.on("update-downloaded", (_info) => {
-      sendUpdaterStatus("update-downloaded");
-      mainWindow.webContents.send("updater:readyToInstall");
-      readyToInstall = true;
-   });
-
-   // IPC Listeners
-   // =============
-   ipcMain.handle("updater:check", async (_event) => {
-      return await autoUpdater.checkForUpdates();
-   });
-
-   ipcMain.handle("updater:quitAndInstall", (_event) => {
-      if (!readyToInstall) return;
-      autoUpdater.quitAndInstall();
-   });
 
    autoUpdater.checkForUpdates();
 
