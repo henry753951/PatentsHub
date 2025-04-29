@@ -16,42 +16,34 @@ const isProduction = app.isPackaged;
 const dbPath = isProduction
    ? `file:${path.join(app.getPath("userData"), "app.db")}`
    : process.env.DATABASE_URL;
-console.log("DB Path:", dbPath);
+console.log("DB Path:", dbPath, process.env.PRISMA_LOG);
 export const prisma
    = global.prisma
      || new PrismaClient({
-        log: isProduction
-           ? [{ emit: "event", level: "error" }]
-           : process.env.PRISMA_LOG
-              ? [
-                 {
-                    emit: "event",
-                    level: "query",
-                 },
-                 {
-                    emit: "stdout",
-                    level: "error",
-                 },
-                 {
-                    emit: "stdout",
-                    level: "info",
-                 },
-                 {
-                    emit: "stdout",
-                    level: "warn",
-                 },
-              ]
-              : undefined,
+        log: (() => {
+           if (isProduction) {
+              return [{ emit: "event", level: "error" }];
+           }
+           if (JSON.parse(process.env.PRISMA_LOG || "false")) {
+              return [
+                 { emit: "event", level: "query" },
+                 { emit: "stdout", level: "error" },
+                 { emit: "stdout", level: "info" },
+                 { emit: "stdout", level: "warn" },
+              ];
+           }
+           return [];
+        })(),
         datasources: {
-           db: {
-              url: dbPath,
-           },
+           db: { url: dbPath },
         },
      });
 
 if (!isProduction) global.prisma = prisma;
 
 prisma.$on(
+   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   // @ts-expect-error
    "query",
    (e: { query: string, params: string, duration: number }) => {
       console.log("Query:", e.query);

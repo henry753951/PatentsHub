@@ -9,7 +9,7 @@ export const mainRouter = router({
          return "Hello World!";
       }),
    }),
-   // 在此底下添加新的 trpc router (位於 server/routers/ 目錄下)
+   // 在此底下新增新的 trpc router (位於 server/routers/ 目錄下)
    app: appRouter,
    data: data,
 });

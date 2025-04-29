@@ -62,7 +62,7 @@
                      "
                   >
                      <Plus class="w-4 h-4 mr-2" />
-                     添加專利
+                     新增專利
                   </Button>
                </div>
             </div>

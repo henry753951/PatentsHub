@@ -9,6 +9,7 @@ import titleBarActionsModule from "./modules/titleBarActions";
 import updaterModule from "./modules/updater";
 import appProtocolModule from "./modules/appProtocol";
 import trpcHandlerModule from "./modules/trpcHandler";
+import discord from "./modules/discord";
 import logger from "./logger";
 
 // Initilize
@@ -28,6 +29,7 @@ const modules = [
    updaterModule,
    trpcHandlerModule,
    appProtocolModule,
+   discord,
 ];
 
 // Create default user data folders

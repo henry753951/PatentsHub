@@ -62,5 +62,5 @@ export default (mainWindow: BrowserWindow) => {
          });
       }
    });
-   logger.log("[⭐] MODULE::file Initialized");
+   logger.log("[⭐] MODULE::AppProtocol Initialized");
 };

@@ -13,7 +13,7 @@ export const insertDepartment = async (data: PatentTransformed[], prisma: Prisma
    consola.info("開始插入部門數據...");
    const query: Prisma.PrismaPromise<any>[] = [];
 
-   // 添加“其他”學院及其“未分類系所”
+   // 新增“其他”學院及其“未分類系所”
    query.push(
       prisma.college.create({
          data: {

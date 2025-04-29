@@ -2,7 +2,7 @@
    <UiThingTabs
       default-value="Projects"
       orientation="vertical"
-      class="mx-auto flex w-full justify-center min-h-[340px] gap-2"
+      class="mx-auto flex w-full justify-center h-[440px] gap-2 overflow-hidden"
    >
       <UiThingTabsList
          :pill="false"
@@ -23,20 +23,22 @@
          </UiThingTabsTrigger>
       </UiThingTabsList>
 
-      <div className="grow rounded-lg border border-border text-start px-3">
-         <UiThingTabsContent
-            v-for="t in tabs"
-            :key="t.title"
-            :value="t.title"
-         >
-            <p class="text-pretty text-sm text-muted-foreground">
-               {{ t.content }}
-            </p>
-            <component
-               :is="t.component"
-               v-if="t.component"
-            />
-         </UiThingTabsContent>
+      <div className="grow flex-1 rounded-lg border border-border text-start">
+         <ScrollArea class="h-full w-full overflow-hidden px-3 py-2">
+            <UiThingTabsContent
+               v-for="t in tabs"
+               :key="t.title"
+               :value="t.title"
+            >
+               <p class="text-pretty text-sm text-muted-foreground">
+                  {{ t.content }}
+               </p>
+               <component
+                  :is="t.component"
+                  v-if="t.component"
+               />
+            </UiThingTabsContent>
+         </ScrollArea>
       </div>
    </UiThingTabs>
 </template>
@@ -44,6 +46,8 @@
 <script lang="ts" setup>
 import type { Component } from "vue";
 import Version from "./Tabs/Version.vue";
+import Backups from "./Tabs/Backups.vue";
+import General from "./Tabs/General.vue";
 
 interface Tab {
    title: string
@@ -51,17 +55,17 @@ interface Tab {
    component: Component | null
    content: string | null
 }
-const tabs = ref<Tab[]>([
+const tabs = shallowRef<Tab[]>([
    {
       title: "一般",
       icon: "lucide:settings",
-      component: null,
+      component: General,
       content: null,
    },
    {
       title: "資料與備份",
       icon: "lucide:database",
-      component: null,
+      component: Backups,
       content: null,
    },
    {
