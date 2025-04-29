@@ -25,6 +25,7 @@
                <div class="text-xs">
                   {{ version }}
                </div>
+               <BlockSettingsUpdateButton rounded />
             </div>
          </div>
       </div>

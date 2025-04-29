@@ -8,8 +8,7 @@ import { app, shell } from "electron";
 let readyToInstall = false;
 export default router({
    checkForUpdates: procedure.mutation(async () => {
-      const result = await autoUpdater.checkForUpdates();
-      return result?.updateInfo || null;
+      await autoUpdater.checkForUpdates();
    }),
 
    quitAndInstall: procedure.mutation(() => {
@@ -44,9 +43,9 @@ export default router({
                },
             });
          });
-         autoUpdater.on("update-downloaded", () => {
+         autoUpdater.on("update-downloaded", (data) => {
             readyToInstall = true;
-            send({ type: "update-downloaded" });
+            send({ type: "update-downloaded", data: data });
          });
       });
    }),
@@ -66,4 +65,4 @@ export type UpdaterStatus =
         total: number
      }
   }
-  | { type: "update-downloaded" };
+  | { type: "update-downloaded", data: UpdateInfo };

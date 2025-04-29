@@ -1,0 +1,8 @@
+version: 1.6.1
+files:
+  - url: PatentsHub-Setup-1.6.1.exe
+    sha512: vEOwGgdabuYIgX42HhURzGZK51rKXiSD31tdeu8tWcDIFsJnYXfWrD55qq8NbD/EWdhGgEE87cW1v4te3XBNPQ==
+    size: 146032763
+path: PatentsHub-Setup-1.6.1.exe
+sha512: vEOwGgdabuYIgX42HhURzGZK51rKXiSD31tdeu8tWcDIFsJnYXfWrD55qq8NbD/EWdhGgEE87cW1v4te3XBNPQ==
+releaseDate: '2025-04-29T10:41:56.458Z'
