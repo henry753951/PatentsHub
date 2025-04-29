@@ -1,6 +1,5 @@
 <template>
    <div>
-      <BlockSettingsUpdateButton rounded />
       <BlockSettingsUpdateButton />
    </div>
 </template>

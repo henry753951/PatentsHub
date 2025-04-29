@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as os from "os";
 import * as url from "url";
-import { app, BrowserWindow, protocol } from "electron";
+import { app, BrowserWindow, protocol, shell } from "electron";
 import fs from "fs/promises";
 import singleInstance from "./singleInstance";
 import dynamicRenderer from "./dynamicRenderer";
@@ -45,7 +45,8 @@ defaultUserDataFolders.forEach(async (folder) => {
          await fs.mkdir(folderPath, { recursive: true });
          logger.log(`[📦] Created folder: ${folderPath}`);
       }
-   } catch (err) {
+   }
+   catch (err) {
       logger.error(`[❌] Error handling folder: ${folderPath}`, err);
    }
 });
@@ -129,13 +130,22 @@ app.whenReady().then(async () => {
       logger.error("[❌] Preload error:", preloadPath, error);
    });
 
+   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+      if (url.startsWith("http:") || url.startsWith("https:")) {
+         shell.openExternal(url);
+         return { action: "deny" };
+      }
+      return { action: "allow" };
+   });
+
    dynamicRenderer(mainWindow);
    // Initialize modules
    logger.log("[⏳] Loading modules...");
    modules.forEach((module) => {
       try {
          module(mainWindow);
-      } catch (err: any) {
+      }
+      catch (err: any) {
          logger.log("[❌] Module error: ", err.message || err);
       }
    });
@@ -167,7 +177,8 @@ function getSourceDbPath() {
    if (isPackaged) {
       // 打包後，app.db 在 resources 目錄
       return path.join(process.resourcesPath, "app.db");
-   } else {
+   }
+   else {
       // 開發環境，app.db 在 .importSystem 目錄
       return path.join(__dirname, "../.importSystem/app.db");
    }
@@ -181,13 +192,15 @@ async function initializeDatabase() {
       // 檢查 dbFilePath 是否存在
       await fs.stat(dbFilePath);
       logger.log(`[📦] Database file already exists: ${dbFilePath}`);
-   } catch (err) {
+   }
+   catch (err) {
       // 如果檔案不存在，複製 app.db
       try {
          const sourceDbPath = getSourceDbPath();
          await fs.copyFile(sourceDbPath, dbFilePath);
          logger.log(`[📦] Created database file: ${dbFilePath}`);
-      } catch (copyErr) {
+      }
+      catch (copyErr) {
          logger.error(
             `[❌] Error creating database file: ${dbFilePath}`,
             copyErr,

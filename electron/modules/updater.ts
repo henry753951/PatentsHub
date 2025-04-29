@@ -4,15 +4,13 @@ import pkg from "electron-updater";
 import logger from "../logger";
 const { autoUpdater } = pkg;
 // Config
-const server = "https://patent-hub-hazel.vercel.app";
-const url = `${server}/update/${process.platform}/${app.getVersion()}`;
-
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
 autoUpdater.forceDevUpdateConfig = true;
 autoUpdater.setFeedURL({
-   url: url,
-   provider: "generic",
+   owner: "henry753951",
+   repo: "PatentsHub",
+   provider: "github",
 });
 export default (mainWindow: BrowserWindow) => {
    const isMac = process.platform === "darwin";
