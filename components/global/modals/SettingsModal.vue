@@ -1,10 +1,12 @@
 <template>
    <div>
-      <Dialog v-model:open="isOpen">
-         <DialogContent>
+      <Dialog
+         v-model:open="isOpen"
+      >
+         <DialogContent class="!max-w-screen-md">
             <DialogHeader class="select-none">
                <DialogTitle>設定</DialogTitle>
-               <DialogDescription>專利管理系統的設定</DialogDescription>
+               <DialogDescription></DialogDescription>
             </DialogHeader>
             <BlockSettingsPanel />
          </DialogContent>
