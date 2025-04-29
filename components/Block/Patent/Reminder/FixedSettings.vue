@@ -1,8 +1,7 @@
 <template>
    <div
-      class="group rounded-[100%] bg-white/70 dark:bg-zinc-900/60 border border-zinc-200/70 dark:border-zinc-800/50 p-4 shadow-xl flex flex-col gap-4 fixed right-5 bottom-5 transition-all duration-300 ease-in-out overflow-hidden w-[60px] h-[60px] hover:w-64 hover:h-32 focus:w-64 focus:h-32 hover:rounded-lg"
+      class="group rounded-[100%] bg-white/70 dark:bg-zinc-900/60 border border-zinc-200/70 dark:border-zinc-800/50 p-4 shadow-xl flex flex-col gap-4 fixed right-5 bottom-5 transition-all duration-300 ease-in-out overflow-hidden w-[60px] h-[60px] hover:w-64 hover:h-32 focus:w-64 focus:h-32 hover:rounded-lg backdrop:blur"
       role="region"
-      aria-label="Patents Reminder Settings"
       tabindex="0"
    >
       <!-- Gear Icon (visible when not hovered or focused) -->
@@ -74,5 +73,4 @@ const selectedMonths = inject("selectedMonths") as Ref<
       month: number
    }[]
 >;
-
 </script>

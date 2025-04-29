@@ -230,17 +230,21 @@ const agencies = defineModel({
    default: () => [],
 });
 
+onMounted(() => {
+   agenciesStore.refresh();
+});
+
+const allPersons = computed(() =>
+   agenciesInStore.value.map((agency) => agency.Persons).flat(),
+);
+
 const agenciesViewData = computed(() => {
    return agencies.value.map((agency) => {
-      const allPersons = agenciesInStore.value.flatMap(
-         (agency) => agency.Persons,
-      );
-      consola.log(agency.agencyUnitPersonIds);
       return {
          agencyUnit: agency.agencyUnit,
          isTakerAgencyUnitType: isTakerAgencyUnitType(agency),
          AgencyUnitID: agency.AgencyUnitID,
-         agencyUnitPersons: allPersons.filter((person) => {
+         agencyUnitPersons: allPersons.value.filter((person) => {
             try {
                return (agency.agencyUnitPersonIds as number[]).includes(
                   person.ContactInfoID,

@@ -46,7 +46,7 @@ export const insertAgency = async (
       // 事務所聯絡人
       if (patent.事務所聯絡人)
          uniqueContactNames.add({
-            name: patent.事務所聯絡人,
+            name: "agency-" + patent.事務所聯絡人,
             agency: patent.承辦事務所,
          });
    }
@@ -60,10 +60,10 @@ export const insertAgency = async (
    await prisma.$transaction(query);
 
    // 構建事務所 ID 映射
-   const idMap = new Map<string, number>();
+   const agencyIdMap = new Map<string, number>();
    const agencyUnits = await prisma.agencyUnit.findMany();
    for (const agencyUnit of agencyUnits) {
-      idMap.set(agencyUnit.Name, agencyUnit.AgencyUnitID);
+      agencyIdMap.set(agencyUnit.Name, agencyUnit.AgencyUnitID);
    }
 
    // 插入聯絡人數據
@@ -75,7 +75,7 @@ export const insertAgency = async (
                Name: name,
                AgencyUnitPerson: {
                   create: {
-                     AgencyUnitID: idMap.get(agency),
+                     AgencyUnitID: agencyIdMap.get(agency),
                   },
                },
             },
@@ -83,6 +83,14 @@ export const insertAgency = async (
       );
    });
    await prisma.$transaction(queryContact);
+
+   // 構建聯絡人 ID 映射
+   const contactInfos = await prisma.contactInfo.findMany();
+   const agencyContactInfoIdMap = new Map<string, number>();
+   for (const contactInfo of contactInfos) {
+      agencyContactInfoIdMap.set(contactInfo.Name, contactInfo.ContactInfoID);
+   }
+   consola.success(agencyContactInfoIdMap);
    consola.success("事務所數據插入成功。");
-   return idMap;
+   return { agencyIdMap, agencyContactInfoIdMap };
 };

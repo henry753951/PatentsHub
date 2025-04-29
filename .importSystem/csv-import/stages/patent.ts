@@ -15,6 +15,7 @@ export const insertPatent = async (
    prisma: PrismaClient,
    maps: {
       departmentIdMap: Map<string, number>
+      agencyContactInfoIdMap: Map<string, number>
       contactInfoIdMap: Map<string, number>
       inventorIdMap: Map<string, number>
       countryIdMap: Map<string, number>
@@ -145,7 +146,12 @@ export const insertPatent = async (
                                     AgencyUnitID:
                                          maps.agencyIdMap.get(agency),
                                     agencyUnitPersonIds: patent.事務所聯絡人
-                                       ? ["agency-" + patent.事務所聯絡人]
+                                       ? [
+                                          maps.agencyContactInfoIdMap.get(
+                                             "agency-"
+                                             + patent.事務所聯絡人,
+                                          ),
+                                       ]
                                        : undefined,
                                  })),
                            },
@@ -162,12 +168,12 @@ export const insertPatent = async (
                                          maps.agencyIdMap.get(agency),
                                     FileCode: patent.事務所檔號 || "",
                                     agencyUnitPersonIds: patent.事務所聯絡人
-                                       ? {
-                                          toJSON: [
+                                       ? [
+                                          maps.agencyContactInfoIdMap.get(
                                              "agency-"
                                              + patent.事務所聯絡人,
-                                          ],
-                                       }
+                                          ),
+                                       ]
                                        : undefined,
                                  })),
                            },

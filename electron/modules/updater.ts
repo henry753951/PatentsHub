@@ -25,10 +25,10 @@ export default (mainWindow: BrowserWindow) => {
    autoUpdater.on("checking-for-update", () => {
       sendUpdaterStatus("check-for-update");
    });
-   autoUpdater.on("update-available", (_info) => {
-      sendUpdaterStatus("update-available");
+   autoUpdater.on("update-available", (info) => {
+      sendUpdaterStatus("update-available", info);
    });
-   autoUpdater.on("update-not-available", (_info) => {
+   autoUpdater.on("update-not-available", (info) => {
       sendUpdaterStatus("update-not-available");
    });
    autoUpdater.on("error", (_err) => {
