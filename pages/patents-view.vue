@@ -8,6 +8,10 @@
             description="查看或篩選專利資料"
          >
             <div class="flex gap-6 items-center justify-between">
+               <BlockPatentFilter
+                  v-model:patent-filter="filter"
+                  class="flex-1"
+               />
                <div class="flex gap-1 items-center">
                   <Select v-model="orderBy.key">
                      <SelectTrigger class="mr-2 p-2 border rounded">
@@ -25,9 +29,7 @@
                         </SelectGroup>
                      </SelectContent>
                   </Select>
-                  <Button
-                     @click="toggleSortDirection"
-                  >
+                  <Button @click="toggleSortDirection">
                      {{ orderBy.direction === "asc" ? "↑" : "↓" }}
                   </Button>
                </div>
@@ -40,7 +42,7 @@
                   "
                >
                   <Plus class="w-4 h-4 mr-1" />
-                  添加專利
+                  新增專利
                </Button>
             </div>
          </BlockHeader>
@@ -50,6 +52,7 @@
                v-for="patent in data"
                :key="patent.PatentID"
                :patent="patent"
+               :flex-prop="patent.flexProp"
                class="rounded-lg"
                @click="
                   open('PatentModal', { props: { patentId: patent.PatentID } })
@@ -76,7 +79,7 @@ definePageMeta({
    name: "patents-view",
 });
 
-const { data, forceRefresh, fillter, order } = useDatabasePatents();
+const { data, forceRefresh, filter, order } = useDatabasePatents();
 const { toggleSortDirection, orderBy, orderOptions } = order;
 </script>
 

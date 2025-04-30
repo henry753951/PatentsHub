@@ -237,7 +237,7 @@ const transformedData = computed(() => {
       : [];
 });
 
-const { data, forceRefresh, fillter } = useDatabasePatents();
+const { data, forceRefresh, filter } = useDatabasePatents();
 
 const columns = ref([
    { field: "maintenances.manualStatus", header: "狀態" },

@@ -206,7 +206,7 @@
                尚無維護記錄
             </h3>
             <p class="text-muted-foreground mb-4">
-               添加第一個維護期程來開始管理您的專利維護
+               新增第一個維護期程來開始管理您的專利維護
             </p>
             <Button
                variant="default"

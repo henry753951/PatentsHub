@@ -68,6 +68,14 @@ export const ConfigFile = z
             internalCostAllocationTable: z.string(),
          }),
       }),
+      discord: z.object({
+         token: z.string(),
+         guildId: z.string(),
+         channelIds: z.object({
+            log: z.string(),
+            databaseBackup: z.string(),
+         }),
+      }),
    })
    .optional()
    .default({
@@ -79,6 +87,14 @@ export const ConfigFile = z
             departmentCostMemo: "系所分擔便函.docx",
             unitCostAllocationTable: "支出機關分攤表.docx",
             internalCostAllocationTable: "支出科目分攤表.docx",
+         },
+      },
+      discord: {
+         token: "",
+         guildId: "",
+         channelIds: {
+            log: "",
+            databaseBackup: "",
          },
       },
    });

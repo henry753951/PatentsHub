@@ -4,23 +4,7 @@ export const useAgenciesStore = defineStore("agenciesStore", {
    state: () => {
       const initialState = {
          agencies: [] as RouterOutput["data"]["agency"]["getAgencies"],
-         isInitialized: false,
       };
-
-      if (!initialState.isInitialized) {
-         (async () => {
-            try {
-               const { $trpc } = useNuxtApp();
-               const data = await $trpc.data.agency.getAgencies.query();
-               initialState.agencies = data;
-               initialState.isInitialized = true;
-            }
-            catch (error) {
-               console.error("Failed to initialize agencies:", error);
-            }
-         })();
-      }
-
       return initialState;
    },
 
@@ -28,7 +12,6 @@ export const useAgenciesStore = defineStore("agenciesStore", {
       async refresh() {
          const { $trpc } = useNuxtApp();
          this.agencies = await $trpc.data.agency.getAgencies.query();
-         console.log("refresh", this.agencies);
          return this.agencies;
       },
 

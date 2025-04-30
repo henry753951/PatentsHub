@@ -1,8 +1,8 @@
 <template>
    <div
-      class="w-full text-zinc-800 mx-auto container dark:text-zinc-100 min-h-full py-5"
+      class="text-zinc-800 mx-auto container dark:text-zinc-100 min-h-full py-5 max-w-[var(--content-area-width)] w-full overflow-hidden"
    >
-      <div class="flex gap-6 flex-col">
+      <div class="flex gap-6 flex-col w-full">
          <!-- Header Section with Glass Morphism -->
          <BlockHeader
             title="專利到期提醒"
@@ -62,7 +62,7 @@
                      "
                   >
                      <Plus class="w-4 h-4 mr-2" />
-                     添加專利
+                     新增專利
                   </Button>
                </div>
             </div>
@@ -84,11 +84,18 @@
             />
             <BlockPatentReminderSummaryCard
                title="近期維護的專利"
-               :value="0"
+               :value="recentlyPatents?.length || 0"
                description="近30天內維護的專利"
                type="info"
                class="cursor-pointer"
-               @click="open('ReminderRecentlyModal')"
+               @click="
+                  open('ReminderRecentlyModal', {
+                     props: {
+                        patents: recentlyPatents || [],
+                        days: 30,
+                     },
+                  })
+               "
             />
          </div>
 
@@ -122,7 +129,7 @@
                   patentsReminder.data.value &&
                      patentsReminder.dateArray.value.result.length > 0
                "
-               class="flex flex-col flex-1 gap-4"
+               class="flex flex-col flex-1 gap-4 overflow-hidden"
             >
                <!-- Timeline View -->
                <div
@@ -139,16 +146,16 @@
                               selectedMonths.length > 0
                                  ? selectedMonths.some(
                                     (month) =>
-                                       month.year === period.date.getFullYear() &&
-                                       month.month === period.date.getMonth() + 1
+                                       month.year ===
+                                       period.date.getFullYear() &&
+                                       month.month ===
+                                       period.date.getMonth() + 1,
                                  )
-                                 : (
-                                    period.type === 'current' ||
+                                 : period.type === 'current' ||
                                     patentsReminder.settings.value
                                        .displayEmptyPeriods ||
                                     period.expireds.length > 0 ||
                                     period.expirings.length > 0
-                                 )
                            "
                            class="relative flex items-start gap-4"
                            :class="{
@@ -156,7 +163,7 @@
                            }"
                         >
                            <!-- Period Content -->
-                           <div class="flex-1 pb-6">
+                           <div class="flex-1 pb-6 overflow-hidden">
                               <!-- Date Header -->
                               <div
                                  class="mb-2 flex justify-between items-center"
@@ -219,8 +226,15 @@
                                     />
                                  </div>
                               </div>
-                              <div v-if="period.expireds.length === 0 && period.expirings.length === 0">
-                                 <p class="text-zinc-500 dark:text-zinc-400 text-sm text-center">
+                              <div
+                                 v-if="
+                                    period.expireds.length === 0 &&
+                                       period.expirings.length === 0
+                                 "
+                              >
+                                 <p
+                                    class="text-zinc-500 dark:text-zinc-400 text-sm text-center"
+                                 >
                                     無專利數據
                                  </p>
                               </div>
@@ -265,6 +279,7 @@ definePageMeta({
    name: "home",
 });
 
+const { $trpc } = useNuxtApp();
 const { open } = useModals();
 const patentsReminder = useDatabasePatentsReminder();
 provide("patentsReminder", patentsReminder);
@@ -315,6 +330,19 @@ const formatPeriodDate = (date: Date) => {
       return format(date, "yyyy 年");
    }
 };
+
+const { data: recentlyPatents } = useAsyncData("recently-patents", async () => {
+   const days = 30;
+   return await $trpc.data.patent.getPatents.query({
+      maintenances: {
+         some: {
+            MaintenanceDate: {
+               gte: new Date(new Date().getTime() - days * 24 * 60 * 60 * 1000),
+            },
+         },
+      },
+   });
+});
 
 const expiredCount = computed(() => {
    return patentsReminder.dateArray.value.result.reduce((acc, period) => {

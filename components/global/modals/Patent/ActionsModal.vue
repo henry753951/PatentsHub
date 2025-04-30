@@ -141,7 +141,7 @@ const actionItems = computed(() => [
          },
       ],
    },
-   pinAction.value, // 動態添加置頂/取消置頂選項
+   pinAction.value, // 動態新增置頂/取消置頂選項
 ]);
 </script>
 

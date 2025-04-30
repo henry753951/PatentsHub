@@ -26,6 +26,7 @@ div
 </template>
 
 <script lang="ts" setup>
+const { open } = useModals();
 const navItems = [
    {
       title: "首頁",
@@ -45,10 +46,10 @@ const navItems = [
    },
 
    {
-      title: "搜尋",
+      title: "篩選專利",
       icon: {
-         normal: "basil:search-outline",
-         active: "basil:search-solid",
+         normal: "basil:filter-outline",
+         active: "basil:filter-solid",
       },
       to: { name: "search" },
    },
@@ -109,7 +110,9 @@ const navActions = [
    {
       title: "設定",
       icon: "basil:settings-outline",
-      action: () => {},
+      action: () => {
+         open("SettingsModal");
+      },
    },
 ];
 </script>

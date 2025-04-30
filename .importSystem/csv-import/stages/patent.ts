@@ -15,6 +15,7 @@ export const insertPatent = async (
    prisma: PrismaClient,
    maps: {
       departmentIdMap: Map<string, number>
+      agencyContactInfoIdMap: Map<string, number>
       contactInfoIdMap: Map<string, number>
       inventorIdMap: Map<string, number>
       countryIdMap: Map<string, number>
@@ -145,12 +146,12 @@ export const insertPatent = async (
                                     AgencyUnitID:
                                          maps.agencyIdMap.get(agency),
                                     agencyUnitPersonIds: patent.事務所聯絡人
-                                       ? {
-                                          toJSON: [
+                                       ? [
+                                          maps.agencyContactInfoIdMap.get(
                                              "agency-"
                                              + patent.事務所聯絡人,
-                                          ],
-                                       }
+                                          ),
+                                       ]
                                        : undefined,
                                  })),
                            },
@@ -167,12 +168,12 @@ export const insertPatent = async (
                                          maps.agencyIdMap.get(agency),
                                     FileCode: patent.事務所檔號 || "",
                                     agencyUnitPersonIds: patent.事務所聯絡人
-                                       ? {
-                                          toJSON: [
+                                       ? [
+                                          maps.agencyContactInfoIdMap.get(
                                              "agency-"
                                              + patent.事務所聯絡人,
-                                          ],
-                                       }
+                                          ),
+                                       ]
                                        : undefined,
                                  })),
                            },
@@ -287,98 +288,100 @@ const getReviewData = (str: string) => {
 };
 
 function parseRecord(input: string): { data: Date, content: string }[] {
-   // 定義日期格式的正規表達式
-   // 匹配：YY.MM, YYYY.MM, YY.MM.DD, YYYY.MM.DD, 以及分隔符 . 或 - 或 /
+   const result: { data: Date, content: string }[] = [];
    const dateRegex = /(\d{2,4})[./-](\d{1,2})(?:[./-](\d{1,2}))?/g;
+   if (!input.includes("◎")) {
+      let currentRecord: { data: Date, content: string } | null = null;
+      let lastIndex = 0;
+      const cleanInput = input.replace(/◎/g, "");
 
-   // 移除所有 ◎
-   const cleanInput = input.replace(/◎/g, "");
+      // 遍歷所有匹配的日期模式
+      let match;
+      while ((match = dateRegex.exec(cleanInput)) !== null) {
+         const dateStart = match.index;
+         const dateEnd = dateRegex.lastIndex;
 
-   // 使用正規表達式分割資料
-   const parts = [];
-   let lastIndex = 0;
-   let match;
+         // 檢查日期前一個字符是否為「：」或「:」
+         const prevChar = dateStart > 0 ? cleanInput[dateStart - 1] : null;
+         const isColonBefore = prevChar === "：" || prevChar === ":";
 
-   // 手動迭代正規表達式，保留日期和內容
-   while ((match = dateRegex.exec(cleanInput)) !== null) {
-      // 提取日期前的內容（如果有）
-      if (match.index > lastIndex) {
-         parts.push(cleanInput.slice(lastIndex, match.index).trim());
-      }
-      // 加入日期部分
-      parts.push(match[1], match[2], match[3] || null);
-      lastIndex = dateRegex.lastIndex;
-   }
-   // 加入最後的內容（如果有）
-   if (lastIndex < cleanInput.length) {
-      parts.push(cleanInput.slice(lastIndex).trim());
-   }
-
-   // 過濾空字符串並整理成 { data, content } 物件陣列
-   const result = [];
-   let i = 0;
-
-   while (i < parts.length) {
-      // 跳過空字符串
-      if (!parts[i] || parts[i] === "null") {
-         i++;
-         continue;
-      }
-
-      // 檢查是否為日期（年份）
-      if (/^\d{2,4}$/.test(parts[i])) {
-         let year = parseInt(parts[i]);
-         const month = parseInt(parts[i + 1]);
-         const day
-            = parts[i + 2] && parts[i + 2] !== "null"
-               ? parseInt(parts[i + 2])
-               : null;
+         // 提取日期部分
+         let year = parseInt(match[1]);
+         const month = parseInt(match[2]);
+         const day = match[3] ? parseInt(match[3]) : 1;
 
          // 處理民國年（2-3位年份）
          if (year < 1000) {
             year += 1911; // 轉換為西元年
          }
 
-         // 建立日期物件
-         const date = day
-            ? new Date(year, month - 1, day) // 完整日期
-            : new Date(year, month - 1, 1); // 只有年月，日期設為1
+         // 創建日期物件
+         const date = new Date(year, month - 1, day);
 
-         // 提取內容（下一個非日期部分）
-         let content = "";
-         let j = i + (day ? 3 : 2);
-         while (j < parts.length && !/^\d{2,4}$/.test(parts[j])) {
-            content += (content ? " " : "") + (parts[j] || "");
-            j++;
+         // 判斷是否為合理日期且無「：」或「:」在前
+         if (!isColonBefore && date.getFullYear() >= 2000) {
+            // 如果有前一個記錄，設置其內容並加入結果
+            if (currentRecord) {
+               currentRecord.content = cleanInput
+                  .slice(lastIndex, dateStart)
+                  .trim();
+               result.push(currentRecord);
+            }
+            // 創建新的記錄
+            currentRecord = { data: date, content: "" };
+            lastIndex = dateEnd;
          }
-
-         // 加入結果陣列
-         result.push({
-            data: date,
-            content: content.trim(),
-         });
-
-         // 移動到下一個日期
-         i = j;
+         else {
+            // 如果日期前有「：」或「:」，或日期不合理，視為前一個記錄的內容
+            if (currentRecord) {
+               currentRecord.content += cleanInput.slice(lastIndex, dateEnd);
+               lastIndex = dateEnd;
+            }
+         }
       }
-      else {
-         i++;
+      // 處理最後的內容
+      if (currentRecord) {
+         currentRecord.content += cleanInput.slice(lastIndex).trim();
+         result.push(currentRecord);
+      }
+   }
+   else {
+      // 如果有「◎」，則將其視為分隔符號，並處理每個部分
+      const parts = input
+         .split("◎")
+         .map((part) => part.trim())
+         .filter(Boolean);
+      for (const part of parts) {
+         const dateMatch = dateRegex.exec(part);
+         if (dateMatch) {
+            // 同樣判斷民國年
+            let year = parseInt(dateMatch[1]);
+            const month = parseInt(dateMatch[2]);
+            const day = dateMatch[3] ? parseInt(dateMatch[3]) : 1;
+            if (year < 1000) {
+               year += 1911; // 轉換為西元年
+            }
+            const date = new Date(year, month - 1, day);
+
+            result.push({
+               data: date,
+               content: part.replace(dateRegex, "").trim(),
+            });
+         }
+         else {
+            if (result.length > 0) {
+               result[result.length - 1].content += part.trim();
+            }
+            else {
+               const date = new Date();
+               result.push({ data: date, content: part.trim() });
+            }
+         }
       }
    }
 
+   // 按日期排序
+   result.sort((a, b) => a.data.getTime() - b.data.getTime());
+
    return result;
 }
-
-const data = parseRecord(`◎98.08事務所來函詢問是否申覆。
-◎98.09進行申覆。
-◎99.01請事務所領證+1-3年費(9100)。
-◎99.07申請國科會專利補助(申覆、領證)。
-◎101.12事務所來函詢問是否續繳4-5年年費@5000元*2。◎101.12.12請事務所繳4-5年費。◎103.請事務所繳第6年年費。◎107.02 請事務所繳第9年年費。
-◎107.11.27 請老師至研發處開會討論所屬專利維護事宜。
-◎108.02.22 11/27會議紀錄簽核通過（編號：1080002517)會議決議，如超過六年技轉會不維護，則由老師自行負擔費用，經濟部終止作業，老師說不處理。
-◎108.03.05第10-11年費用收據轉送黃老師，請他自行支付費用，學校不分攤。
-◎111.11.07黃師學生林柏辰來電表示都不維護了，之後他要畢業，有問題直接找老師。
-◎111.12.08發文至國科會申請終止。◎112.04.13國科會來文同意終止維護（科會產字第1120021196號）。
-◎112.12聖島通知專利權消滅（消滅日期：2023/3/1）`);
-
-console.log(data);

@@ -53,7 +53,7 @@ const safeOwners = computed({
    set: (value) => { owners.value = value; },
 });
 
-// 計算總持有度，添加防護
+// 計算總持有度，新增防護
 const totalOwnership = computed(() =>
    safeOwners.value.reduce((acc, o) => acc + (o.OwnershipPercentage || 0), 0),
 );

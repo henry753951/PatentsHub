@@ -32,7 +32,7 @@ export const insertData = async (
          contactInfoIdMap,
       );
       const countryIdMap = await insertCountry(data, prisma);
-      const agencyIdMap = await insertAgency(data, prisma);
+      const { agencyIdMap, agencyContactInfoIdMap } = await insertAgency(data, prisma);
       const technicalKeywordIdMap = await insertTechnicalKeywords(data, prisma);
       const fundingUnitIdMap = await insertFundingUnit(data, prisma);
       const fundingPlanIdMap = await getFundingPlanIdMap(prisma);
@@ -41,6 +41,7 @@ export const insertData = async (
       await insertPatent(data, prisma, {
          departmentIdMap,
          contactInfoIdMap,
+         agencyContactInfoIdMap,
          inventorIdMap,
          countryIdMap,
          agencyIdMap,

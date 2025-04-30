@@ -9,31 +9,31 @@ export const useDatabasePatent = (
 ) => {
    const { $trpc } = useNuxtApp();
    // [State]
-   const fillter = ref(defaultPatentId);
+   const filter = ref(defaultPatentId);
    const { data, status } = useAsyncData<
       RouterOutput["data"]["patent"]["getPatent"]
    >(
-      `patent-${fillter.value}`,
+      `patent-${filter.value}`,
       async () => {
-         if (fillter.value == undefined) {
+         if (filter.value == undefined) {
             return null;
          }
          const data = await getPatent({
             where: {
-               PatentID: fillter.value,
+               PatentID: filter.value,
             },
          });
-         consola.info("Fetching patent with fillter", fillter.value, data);
+         consola.info("Fetching patent with filter", filter.value, data);
          return data;
       },
       {
-         watch: [fillter],
+         watch: [filter],
          lazy: options.lazy,
       },
    );
 
    const refresh = async () => {
-      await refreshNuxtData(["patents", `patent-${fillter.value}`]);
+      await refreshNuxtData(["patents", `patent-${filter.value}`]);
    };
 
    // ==================================================
@@ -54,10 +54,10 @@ export const useDatabasePatent = (
    const updatePatent = async (
       updateInputs: z.infer<typeof dbZ.PatentUpdateInputSchema>[],
    ) => {
-      if (!updateInputs || !fillter.value) return;
+      if (!updateInputs || !filter.value) return;
       const data = await $trpc.data.patent.updatePatent.mutate(
          updateInputs.map((data) => ({
-            patentID: fillter.value!,
+            patentID: filter.value!,
             data,
          })),
       );
@@ -66,7 +66,7 @@ export const useDatabasePatent = (
    // Delete
    const deletePatent = async () => {
       const data = await $trpc.data.patent.deletePatent.mutate({
-         PatentID: fillter.value,
+         PatentID: filter.value,
       });
       await refresh();
    };
@@ -88,7 +88,7 @@ export const useDatabasePatent = (
          refreshCallback: refresh,
       }),
       patentRecords: usePatentRecords({ data, refreshCallback: refresh }),
-      fillter,
+      filter,
       status,
       refresh,
       crud,
