@@ -1,7 +1,7 @@
 import * as path from "path";
 import type { BrowserWindow } from "electron";
 import express, { static as serveStatic } from "express";
-import { consola } from "consola";
+import logger from "./logger";
 
 // Internals
 // =========
@@ -22,7 +22,7 @@ export default function (mainWindow: BrowserWindow) {
    app.use("/", serveStatic(path.join(__dirname, "../public")));
    const listener = app.listen(8079, "127.0.0.1", () => {
       const port = (listener.address() as any).port;
-      consola.log("Dynamic-Renderer Listening on", port);
+      logger.log("Dynamic-Renderer Listening on", port);
       mainWindow.loadURL(`http://127.0.0.1:${port}`);
    });
 }

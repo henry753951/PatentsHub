@@ -56,69 +56,77 @@ function parseHex(hex: string): [number, number, number] {
 
 // 主解析函數
 export function useParseColor(colorInput: string) {
-   return computed(() => {
-      let h: number, s: number, l: number;
-      const color = colorInput.trim().toLowerCase();
+   let h: number, s: number, l: number;
+   const color = colorInput.trim().toLowerCase();
 
-      // 1. 解析顏色名稱
-      if (colorNames[color]) {
-         const [r, g, b] = parseHex(colorNames[color]);
+   // 1. 解析顏色名稱
+   if (colorNames[color]) {
+      const [r, g, b] = parseHex(colorNames[color]);
+      [h, s, l] = rgbToHsl(r, g, b);
+   }
+   // 2. 解析 HEX
+   else if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(color)) {
+      const [r, g, b] = parseHex(color);
+      [h, s, l] = rgbToHsl(r, g, b);
+   }
+   // 3. 解析 RGB / RGBA
+   else if (
+      /^rgb(a)?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/i.test(color)
+   ) {
+      const match = color.match(
+         /^rgb(a)?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/i,
+      );
+      if (match) {
+         const r = Math.min(255, Math.max(0, parseInt(match[2])));
+         const g = Math.min(255, Math.max(0, parseInt(match[3])));
+         const b = Math.min(255, Math.max(0, parseInt(match[4])));
          [h, s, l] = rgbToHsl(r, g, b);
       }
-      // 2. 解析 HEX
-      else if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(color)) {
-         const [r, g, b] = parseHex(color);
-         [h, s, l] = rgbToHsl(r, g, b);
-      }
-      // 3. 解析 RGB / RGBA
-      else if (
-         /^rgb(a)?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/i.test(color)
-      ) {
-         const match = color.match(
-            /^rgb(a)?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/i,
-         );
-         if (match) {
-            const r = Math.min(255, Math.max(0, parseInt(match[2])));
-            const g = Math.min(255, Math.max(0, parseInt(match[3])));
-            const b = Math.min(255, Math.max(0, parseInt(match[4])));
-            [h, s, l] = rgbToHsl(r, g, b);
-         }
-         else {
-            h = 0;
-            s = 0;
-            l = 0;
-         }
-      }
-      // 4. 解析 HSL / HSLA
-      else if (
-         /^hsl(a)?\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)$/i.test(color)
-      ) {
-         const match = color.match(
-            /^hsl(a)?\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)$/i,
-         );
-         if (match) {
-            h = Math.min(360, Math.max(0, parseInt(match[2]))) % 360;
-            s = Math.min(100, Math.max(0, parseInt(match[3])));
-            l = Math.min(100, Math.max(0, parseInt(match[4])));
-         }
-         else {
-            h = 0;
-            s = 0;
-            l = 0;
-         }
-      }
-      // 5. 無效輸入，預設黑色
       else {
          h = 0;
          s = 0;
          l = 0;
       }
+   }
+   // 4. 解析 HSL / HSLA
+   else if (
+      /^hsl(a)?\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)$/i.test(color)
+   ) {
+      const match = color.match(
+         /^hsl(a)?\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)$/i,
+      );
+      if (match) {
+         h = Math.min(360, Math.max(0, parseInt(match[2]))) % 360;
+         s = Math.min(100, Math.max(0, parseInt(match[3])));
+         l = Math.min(100, Math.max(0, parseInt(match[4])));
+      }
+      else {
+         h = 0;
+         s = 0;
+         l = 0;
+      }
+   }
+   // 5. 無效輸入，預設黑色
+   else {
+      h = 0;
+      s = 0;
+      l = 0;
+   }
 
-      return {
-         hsl: `hsl(${h}, ${s}%, ${l}%)`,
-         hue: h.toString(),
-         saturation: `${s}%`,
-         lightness: `${l}%`,
-      };
-   });
+   const hex = `#${(
+      (1 << 24)
+      + (Math.round((h / 360) * 255) << 16)
+      + (Math.round((s / 100) * 255) << 8)
+      + Math.round((l / 100) * 255)
+   )
+      .toString(16)
+      .slice(1)}`;
+
+   return {
+      hsl: `hsl(${h}, ${s}%, ${l}%)`,
+      hue: h.toString(),
+      saturation: `${s}%`,
+      lightness: `${l}%`,
+      hex,
+   };
 }

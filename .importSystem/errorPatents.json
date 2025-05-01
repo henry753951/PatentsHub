@@ -1,0 +1,1172 @@
+[
+  {
+    "patent": {
+      "狀態": "",
+      "年度": "",
+      "校內編號": "",
+      "學院": "人",
+      "單位系所": "運動健康與休閒學系",
+      "發明人": "白秀華",
+      "共同發明人": [],
+      "發明名稱": "",
+      "發明名稱_英": "",
+      "專利號碼": "",
+      "專利權期間": "",
+      "公告_獲證日期": "",
+      "維護期程": "",
+      "公告_獲證時間_西元": "",
+      "維護期程_西元": "",
+      "維護年度計": "",
+      "領證年度": "",
+      "到期月份": "",
+      "申請日期": "",
+      "申請年度": "",
+      "申請案號": "",
+      "專利類別": "發明",
+      "專利國家": "中華民國",
+      "方案": "A",
+      "資助單位": "環境部化學物質管理署",
+      "計畫編號": "113DB001",
+      "承辦事務所": "",
+      "事務所聯絡人": "",
+      "事務所檔號": "",
+      "研發成果編號_STRIKE": "",
+      "國科會編號_STRIKE": "",
+      "專利已登錄": "",
+      "國際專利分類號_IPC": "白秀華",
+      "專利範圍": "",
+      "技術成熟度_TRL": "",
+      "技推委員會審理日期": "",
+      "發明名稱_稿": "山胡椒精油驅蚊忌避配方",
+      "初評事務所": "",
+      "申請專利範圍": "",
+      "技術關鍵字": "病媒、蚊、綠色環藥、埃及斑蚊、白線斑蚊、忌避、山胡椒精油",
+      "進度": "◎◎◎◎◎◎◎",
+      "費用": ""
+    },
+    "dataInserted": {
+      "DraftTitle": "山胡椒精油驅蚊忌避配方",
+      "PatentType": "INVENTION",
+      "country": {
+        "connect": {
+          "CountryID": 1
+        }
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 2
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": [
+            {
+              "Contribution": 100,
+              "Main": true,
+              "InventorID": 52
+            }
+          ]
+        }
+      },
+      "technical": {
+        "create": {
+          "keywords": {
+            "connect": [
+              {
+                "KeywordID": 50
+              },
+              {
+                "KeywordID": 51
+              },
+              {
+                "KeywordID": 52
+              },
+              {
+                "KeywordID": 53
+              },
+              {
+                "KeywordID": 54
+              },
+              {
+                "KeywordID": 55
+              },
+              {
+                "KeywordID": 56
+              }
+            ]
+          }
+        }
+      },
+      "funding": {
+        "create": {
+          "plan": {
+            "connect": {
+              "FundingPlanID": 1
+            }
+          }
+        }
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {
+          "IPCNumber": "白秀華"
+        }
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      },
+      "maintenances": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:209:47",
+      "",
+      "  206    },",
+      "  207 };",
+      "  208 ",
+      "→ 209 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: \"山胡椒精油驅蚊忌避配方\",",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: \"INVENTION\",",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: 1",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 2",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: [",
+      "                {",
+      "                  Contribution: 100,",
+      "                  Main: true,",
+      "                  InventorID: 52",
+      "                }",
+      "              ]",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: {",
+      "                connect: [",
+      "                  {",
+      "                    KeywordID: 50",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 51",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 52",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 53",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 54",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 55",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 56",
+      "                  }",
+      "                ]",
+      "              }",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: {",
+      "                connect: {",
+      "                  FundingPlanID: 1",
+      "                }",
+      "              }",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: \"白秀華\",",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "          maintenances: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
+  },
+  {
+    "patent": {
+      "狀態": "",
+      "年度": "",
+      "校內編號": "",
+      "學院": "人",
+      "單位系所": "運動健康與休閒學系",
+      "發明人": "白秀華",
+      "共同發明人": [],
+      "發明名稱": "",
+      "發明名稱_英": "",
+      "專利號碼": "",
+      "專利權期間": "",
+      "公告_獲證日期": "",
+      "維護期程": "",
+      "公告_獲證時間_西元": "",
+      "維護期程_西元": "",
+      "維護年度計": "",
+      "領證年度": "",
+      "到期月份": "",
+      "申請日期": "",
+      "申請年度": "",
+      "申請案號": "",
+      "專利類別": "發明",
+      "專利國家": "中華民國",
+      "方案": "A",
+      "資助單位": "環境部化學物質管理署",
+      "計畫編號": "113DB001",
+      "承辦事務所": "",
+      "事務所聯絡人": "",
+      "事務所檔號": "",
+      "研發成果編號_STRIKE": "",
+      "國科會編號_STRIKE": "",
+      "專利已登錄": "",
+      "國際專利分類號_IPC": "白秀華",
+      "專利範圍": "",
+      "技術成熟度_TRL": "",
+      "技推委員會審理日期": "",
+      "發明名稱_稿": "丁香酚精油防蚊忌避配方",
+      "初評事務所": "",
+      "申請專利範圍": "",
+      "技術關鍵字": "病媒、蚊、綠色環藥、忌避、丁香酚、埃及斑蚊、白線斑蚊",
+      "進度": "◎◎◎◎◎◎◎",
+      "費用": ""
+    },
+    "dataInserted": {
+      "DraftTitle": "丁香酚精油防蚊忌避配方",
+      "PatentType": "INVENTION",
+      "country": {
+        "connect": {
+          "CountryID": 1
+        }
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 2
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": [
+            {
+              "Contribution": 100,
+              "Main": true,
+              "InventorID": 52
+            }
+          ]
+        }
+      },
+      "technical": {
+        "create": {
+          "keywords": {
+            "connect": [
+              {
+                "KeywordID": 50
+              },
+              {
+                "KeywordID": 51
+              },
+              {
+                "KeywordID": 52
+              },
+              {
+                "KeywordID": 55
+              },
+              {
+                "KeywordID": 57
+              },
+              {
+                "KeywordID": 53
+              },
+              {
+                "KeywordID": 54
+              }
+            ]
+          }
+        }
+      },
+      "funding": {
+        "create": {
+          "plan": {
+            "connect": {
+              "FundingPlanID": 1
+            }
+          }
+        }
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {
+          "IPCNumber": "白秀華"
+        }
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      },
+      "maintenances": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:209:47",
+      "",
+      "  206    },",
+      "  207 };",
+      "  208 ",
+      "→ 209 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: \"丁香酚精油防蚊忌避配方\",",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: \"INVENTION\",",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: 1",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 2",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: [",
+      "                {",
+      "                  Contribution: 100,",
+      "                  Main: true,",
+      "                  InventorID: 52",
+      "                }",
+      "              ]",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: {",
+      "                connect: [",
+      "                  {",
+      "                    KeywordID: 50",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 51",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 52",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 55",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 57",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 53",
+      "                  },",
+      "                  {",
+      "                    KeywordID: 54",
+      "                  }",
+      "                ]",
+      "              }",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: {",
+      "                connect: {",
+      "                  FundingPlanID: 1",
+      "                }",
+      "              }",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: \"白秀華\",",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "          maintenances: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
+  },
+  {
+    "patent": {
+      "狀態": "",
+      "年度": "",
+      "校內編號": "",
+      "學院": "",
+      "單位系所": "",
+      "發明人": "",
+      "共同發明人": [],
+      "發明名稱": "",
+      "發明名稱_英": "",
+      "專利號碼": "",
+      "專利權期間": "",
+      "公告_獲證日期": "",
+      "維護期程": "",
+      "公告_獲證時間_西元": "",
+      "維護期程_西元": "",
+      "維護年度計": "",
+      "領證年度": "",
+      "到期月份": "",
+      "申請日期": "",
+      "申請年度": "",
+      "申請案號": "",
+      "專利類別": "",
+      "專利國家": "",
+      "方案": "",
+      "資助單位": "",
+      "計畫編號": "",
+      "承辦事務所": "",
+      "事務所聯絡人": "",
+      "事務所檔號": "",
+      "研發成果編號_STRIKE": "",
+      "國科會編號_STRIKE": "",
+      "專利已登錄": "",
+      "國際專利分類號_IPC": "",
+      "專利範圍": "",
+      "技術成熟度_TRL": "",
+      "技推委員會審理日期": "",
+      "發明名稱_稿": "",
+      "初評事務所": "",
+      "申請專利範圍": "",
+      "技術關鍵字": "",
+      "進度": "◎◎◎◎◎◎◎",
+      "費用": ""
+    },
+    "dataInserted": {
+      "country": {
+        "connect": {}
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 0
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": []
+        }
+      },
+      "technical": {
+        "create": {}
+      },
+      "funding": {
+        "create": {}
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {}
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      },
+      "maintenances": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:209:47",
+      "",
+      "  206    },",
+      "  207 };",
+      "  208 ",
+      "→ 209 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: undefined,",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: undefined,",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: undefined",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 0",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: undefined",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: undefined",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: undefined,",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "          maintenances: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
+  },
+  {
+    "patent": {
+      "狀態": "",
+      "年度": "",
+      "校內編號": "",
+      "學院": "",
+      "單位系所": "",
+      "發明人": "",
+      "共同發明人": [],
+      "發明名稱": "",
+      "發明名稱_英": "",
+      "專利號碼": "",
+      "專利權期間": "",
+      "公告_獲證日期": "",
+      "維護期程": "",
+      "公告_獲證時間_西元": "",
+      "維護期程_西元": "",
+      "維護年度計": "",
+      "領證年度": "",
+      "到期月份": "",
+      "申請日期": "",
+      "申請年度": "",
+      "申請案號": "",
+      "專利類別": "",
+      "專利國家": "",
+      "方案": "",
+      "資助單位": "",
+      "計畫編號": "",
+      "承辦事務所": "",
+      "事務所聯絡人": "",
+      "事務所檔號": "",
+      "研發成果編號_STRIKE": "",
+      "國科會編號_STRIKE": "",
+      "專利已登錄": "",
+      "國際專利分類號_IPC": "",
+      "專利範圍": "",
+      "技術成熟度_TRL": "",
+      "技推委員會審理日期": "",
+      "發明名稱_稿": "",
+      "初評事務所": "",
+      "申請專利範圍": "",
+      "技術關鍵字": "",
+      "進度": "",
+      "費用": ""
+    },
+    "dataInserted": {
+      "country": {
+        "connect": {}
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 0
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": []
+        }
+      },
+      "technical": {
+        "create": {}
+      },
+      "funding": {
+        "create": {}
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {}
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      },
+      "maintenances": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:209:47",
+      "",
+      "  206    },",
+      "  207 };",
+      "  208 ",
+      "→ 209 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: undefined,",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: undefined,",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: undefined",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 0",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: undefined",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: undefined",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: undefined,",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "          maintenances: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
+  },
+  {
+    "patent": {
+      "狀態": "",
+      "年度": "",
+      "校內編號": "",
+      "學院": "",
+      "單位系所": "",
+      "發明人": "",
+      "共同發明人": [],
+      "發明名稱": "",
+      "發明名稱_英": "",
+      "專利號碼": "",
+      "專利權期間": "",
+      "公告_獲證日期": "",
+      "維護期程": "",
+      "公告_獲證時間_西元": "",
+      "維護期程_西元": "",
+      "維護年度計": "",
+      "領證年度": "",
+      "到期月份": "",
+      "申請日期": "",
+      "申請年度": "",
+      "申請案號": "",
+      "專利類別": "",
+      "專利國家": "",
+      "方案": "",
+      "資助單位": "",
+      "計畫編號": "",
+      "承辦事務所": "",
+      "事務所聯絡人": "",
+      "事務所檔號": "",
+      "研發成果編號_STRIKE": "",
+      "國科會編號_STRIKE": "",
+      "專利已登錄": "",
+      "國際專利分類號_IPC": "",
+      "專利範圍": "",
+      "技術成熟度_TRL": "",
+      "技推委員會審理日期": "",
+      "發明名稱_稿": "",
+      "初評事務所": "",
+      "申請專利範圍": "",
+      "技術關鍵字": "",
+      "進度": "",
+      "費用": ""
+    },
+    "dataInserted": {
+      "country": {
+        "connect": {}
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 0
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": []
+        }
+      },
+      "technical": {
+        "create": {}
+      },
+      "funding": {
+        "create": {}
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {}
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      },
+      "maintenances": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:209:47",
+      "",
+      "  206    },",
+      "  207 };",
+      "  208 ",
+      "→ 209 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: undefined,",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: undefined,",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: undefined",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 0",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: undefined",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: undefined",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: undefined,",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "          maintenances: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
+  },
+  {
+    "patent": {
+      "狀態": "",
+      "年度": "",
+      "校內編號": "",
+      "學院": "",
+      "單位系所": "",
+      "發明人": "",
+      "共同發明人": [],
+      "發明名稱": "",
+      "發明名稱_英": "",
+      "專利號碼": "",
+      "專利權期間": "",
+      "公告_獲證日期": "",
+      "維護期程": "",
+      "公告_獲證時間_西元": "",
+      "維護期程_西元": "",
+      "維護年度計": "",
+      "領證年度": "",
+      "到期月份": "",
+      "申請日期": "",
+      "申請年度": "",
+      "申請案號": "",
+      "專利類別": "",
+      "專利國家": "",
+      "方案": "",
+      "資助單位": "",
+      "計畫編號": "",
+      "承辦事務所": "",
+      "事務所聯絡人": "",
+      "事務所檔號": "",
+      "研發成果編號_STRIKE": "",
+      "國科會編號_STRIKE": "",
+      "專利已登錄": "",
+      "國際專利分類號_IPC": "",
+      "專利範圍": "",
+      "技術成熟度_TRL": "",
+      "技推委員會審理日期": "",
+      "發明名稱_稿": "",
+      "初評事務所": "",
+      "申請專利範圍": "",
+      "技術關鍵字": "",
+      "進度": "",
+      "費用": ""
+    },
+    "dataInserted": {
+      "country": {
+        "connect": {}
+      },
+      "department": {
+        "connect": {
+          "DepartmentID": 0
+        }
+      },
+      "inventors": {
+        "createMany": {
+          "data": []
+        }
+      },
+      "technical": {
+        "create": {}
+      },
+      "funding": {
+        "create": {}
+      },
+      "application": {
+        "create": {}
+      },
+      "external": {
+        "create": {}
+      },
+      "internal": {
+        "create": {}
+      },
+      "patentRecords": {
+        "createMany": {
+          "data": []
+        }
+      },
+      "maintenances": {
+        "createMany": {
+          "data": []
+        }
+      }
+    },
+    "error": [
+      "",
+      "Invalid `prisma.patent.create()` invocation in",
+      "H:\\Repos\\PatentsHub\\.importSystem\\csv-import\\stages\\patent.ts:209:47",
+      "",
+      "  206    },",
+      "  207 };",
+      "  208 ",
+      "→ 209 const patentDb = await prisma.patent.create({",
+      "        data: {",
+      "          DraftTitle: undefined,",
+      "          Title: undefined,",
+      "          TitleEnglish: undefined,",
+      "          Year: undefined,",
+      "          PatentType: undefined,",
+      "          InitialReviewDate: undefined,",
+      "          InitialReviewNumber: undefined,",
+      "          country: {",
+      "            connect: {",
+      "              CountryID: undefined",
+      "            }",
+      "          },",
+      "          department: {",
+      "            connect: {",
+      "              DepartmentID: 0",
+      "            }",
+      "          },",
+      "          inventors: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "          technical: {",
+      "            create: {",
+      "              MaturityLevel: undefined,",
+      "              keywords: undefined",
+      "            }",
+      "          },",
+      "          funding: {",
+      "            create: {",
+      "              plan: undefined",
+      "            }",
+      "          },",
+      "          application: {",
+      "            create: {",
+      "              ApplicationNumber: undefined,",
+      "              FilingDate: undefined,",
+      "              RDResultNumber: undefined,",
+      "              NSCNumber: undefined",
+      "            }",
+      "          },",
+      "          external: {",
+      "            create: {",
+      "              PatentNumber: undefined,",
+      "              StartDate: undefined,",
+      "              EndDate: undefined,",
+      "              PublicationDate: undefined,",
+      "              IPCNumber: undefined,",
+      "              PatentScope: undefined",
+      "            }",
+      "          },",
+      "          internal: {",
+      "            create: {",
+      "              InitialReviewAgencies: undefined,",
+      "              TakerAgencies: undefined",
+      "            }",
+      "          },",
+      "          patentRecords: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "          maintenances: {",
+      "            createMany: {",
+      "              data: []",
+      "            }",
+      "          },",
+      "      +   InternalID: String",
+      "        }",
+      "      })",
+      "",
+      "Argument `InternalID` is missing."
+    ]
+  }
+]

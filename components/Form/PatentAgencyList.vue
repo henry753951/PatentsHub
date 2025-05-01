@@ -44,7 +44,10 @@
                         {{ agency.agencyUnit.Description || "無" }}
                      </p>
                      <p
-                        v-if="isTakerAgencyUnitType(agencies[index]) && props.isTakerAgencyUnit"
+                        v-if="
+                           isTakerAgencyUnitType(agencies[index]) &&
+                              props.isTakerAgencyUnit
+                        "
                         class="text-sm text-foreground flex items-center gap-1"
                      >
                         <CustomContentBlockRow
@@ -177,7 +180,7 @@
             class="items-center gap-1"
             :class="{
                'group-hover:flex hidden': !agencies.length,
-               'flex': agencies.length,
+               flex: agencies.length,
             }"
          >
             <Icon
@@ -227,19 +230,29 @@ const agencies = defineModel({
    default: () => [],
 });
 
+onMounted(() => {
+   agenciesStore.refresh();
+});
+
+const allPersons = computed(() =>
+   agenciesInStore.value.map((agency) => agency.Persons).flat(),
+);
+
 const agenciesViewData = computed(() => {
    return agencies.value.map((agency) => {
-      const allPersons = agenciesInStore.value.flatMap(
-         (agency) => agency.Persons,
-      );
       return {
          agencyUnit: agency.agencyUnit,
          isTakerAgencyUnitType: isTakerAgencyUnitType(agency),
          AgencyUnitID: agency.AgencyUnitID,
-         agencyUnitPersons: allPersons.filter((person) => {
-            return (agency.agencyUnitPersonIds! as number[]).includes(
-               person.ContactInfoID,
-            );
+         agencyUnitPersons: allPersons.value.filter((person) => {
+            try {
+               return (agency.agencyUnitPersonIds as number[]).includes(
+                  person.ContactInfoID,
+               );
+            }
+            catch (e) {
+               return false;
+            }
          }),
       };
    });

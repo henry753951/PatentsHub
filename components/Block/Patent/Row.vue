@@ -1,9 +1,9 @@
 <template>
    <div
-      class="relative overflow-hidden rounded-lg backdrop-blur-sm bg-white/80 dark:bg-zinc-900/90 shadow-md border border-gray-100 dark:border-zinc-800 transition-all duration-300 hover:shadow-lg group cursor-pointer patent-row"
+      class="relative overflow-hidden rounded-lg bg-white/80 dark:bg-zinc-900/90 shadow-md border border-gray-100 dark:border-zinc-800 transition-all duration-300 hover:shadow-lg group cursor-pointer patent-row"
       :data-patent-id="patent.PatentID"
    >
-      <!-- 狀態色條（移至右側） -->
+      <!-- 狀態色條 -->
       <div
          class="absolute top-0 bottom-0 right-0 w-1 h-full"
          :class="{
@@ -13,35 +13,71 @@
             'bg-gray-500': status === '未生效',
          }"
       ></div>
-
+      <div
+         v-if="flexProp"
+         class="absolute h-full flex flex-col justify-center -rotate-90 left-[-0.5rem]"
+      >
+         <div class="font-mono text-xs text-gray-400 font-bold">
+            {{ patent.InternalID }}
+         </div>
+      </div>
       <div class="relative flex items-center w-full px-4 py-3">
          <!-- 左側：發明人 -->
          <div
-            class="flex items-center space-x-3 pr-4 border-r border-gray-100 dark:border-zinc-800"
+            class="flex border-r border-gray-100 dark:border-zinc-800 px-4 w-[130px] flex-col"
          >
-            <div class="flex flex-col items-center">
-               <span class="text-xs font-light text-gray-500 dark:text-gray-400">發明人</span>
-               <span class="text-gray-700 dark:text-gray-200 font-bold">
-                  {{ author?.contactInfo.Name ?? "無資料" }}
-               </span>
-               <div
-                  v-if="coAuthors.length > 0"
-                  class="text-gray-500 dark:text-gray-400 bg-gray-100/80 dark:bg-zinc-700/80 backdrop-blur-sm px-1.5 py-0.5 mt-1 rounded-full flex items-center space-x-1"
-               >
-                  <Icon
-                     name="ic:baseline-people-alt"
-                     size="12"
-                  />
-                  <div class="text-xs">
-                     +{{ coAuthors.length }}
+            <div class="flex flex-col items-start w-full">
+               <div class="flex gap-1 items-center w-full">
+                  <div
+                     class="text-xs font-light text-gray-500 dark:text-gray-400"
+                  >
+                     發明人
+                  </div>
+                  <div
+                     v-if="coAuthors.length > 0"
+                     class="text-gray-500 dark:text-gray-400 bg-gray-100/80 dark:bg-zinc-700/80 backdrop-blur-sm px-1.5 py-0.5 rounded-full flex items-center space-x-1"
+                  >
+                     <Icon
+                        name="ic:baseline-people-alt"
+                        size="10"
+                     />
+                     <TooltipProvider :delay-duration="50">
+                        <Tooltip>
+                           <TooltipTrigger>
+                              <div class="text-[10px]">
+                                 +{{ coAuthors.length }}
+                              </div>
+                           </TooltipTrigger>
+                           <TooltipContent>
+                              {{ coAuthorsStr }}
+                           </TooltipContent>
+                        </Tooltip>
+                     </TooltipProvider>
                   </div>
                </div>
+               <span
+                  class="text-gray-700 dark:text-gray-200 font-bold truncate w-full"
+               >
+                  {{ author?.contactInfo.Name }}
+               </span>
+            </div>
+            <div
+               v-if="!flexProp"
+               class="font-mono"
+            >
+               {{ patent.InternalID }}
+            </div>
+            <div
+               v-else
+               class="text-xs text-gray-400 font-bold"
+            >
+               {{ flexProp.key }} : {{ flexProp.value }}
             </div>
          </div>
 
          <!-- 中間：發明名稱、學院、系所、資助單位 -->
-         <div class="flex flex-col px-4 flex-1 min-w-0">
-            <div class="flex items-center space-x-2">
+         <div class="flex flex-col px-4 flex-1 min-w-0 max-w-full">
+            <div class="flex items-center space-x-2 min-w-0">
                <CustomBadgeWithText
                   :text="patent.department.college.Name"
                   size="xs"
@@ -52,29 +88,29 @@
             </div>
 
             <span
-               class="text-gray-800 dark:text-gray-100 mt-1 line-clamp-1 font-medium"
+               class="text-gray-800 dark:text-gray-100 mt-1 font-medium truncate"
             >
                {{ name }}
             </span>
 
-            <div class="flex items-center space-x-2 mt-1">
+            <div class="flex items-center space-x-2 mt-1 min-w-0">
                <span class="text-gray-500 dark:text-gray-400 text-xs">資助單位:</span>
-               <span class="text-gray-700 dark:text-gray-200 text-xs">{{
-                  fundingUnit
-               }}</span>
+               <span class="text-gray-700 dark:text-gray-200 text-xs truncate">
+                  {{ fundingUnit || "—" }}
+               </span>
             </div>
          </div>
 
          <!-- 右側：專利資訊 -->
          <div
-            class="flex items-center space-x-6 pl-4 border-l border-gray-100 dark:border-zinc-800"
+            class="flex items-center space-x-6 pl-4 border-l border-gray-100 dark:border-zinc-800 w-[360px]"
          >
             <!-- 國家與專利編號 -->
-            <div class="flex flex-col items-start">
-               <div class="flex items-center gap-1 mb-1">
+            <div class="flex flex-col items-start min-w-0 w-[260px]">
+               <div class="flex items-center gap-1 mb-1 min-w-0">
                   <NuxtImg
                      v-if="patent.country"
-                     :src="`https://flagcdn.com/w160/${patent.country.ISOCode.toLowerCase()}.png`"
+                     :src="`https://flagcdn.com/w80/${patent.country.ISOCode.toLowerCase()}.png`"
                      class="h-3 w-5 rounded shadow-sm"
                      :alt="patent.country.CountryName"
                   />
@@ -88,11 +124,13 @@
                         class="text-gray-500 dark:text-gray-400"
                      />
                   </div>
-                  <span class="text-gray-700 dark:text-gray-200 text-xs">
+                  <span
+                     class="text-gray-700 dark:text-gray-200 text-xs truncate"
+                  >
                      {{ patent.external?.PatentNumber || "無專利號碼" }}
                   </span>
                   <span
-                     class="bg-amber-50/80 dark:bg-amber-900/30 backdrop-blur-sm text-amber-700 dark:text-amber-300 px-1.5 py-0.5 text-xs rounded-sm"
+                     class="bg-amber-50/80 dark:bg-amber-900/30 backdrop-blur-sm text-amber-700 dark:text-amber-300 px-1.5 py-0.5 text-xs rounded-sm truncate"
                   >
                      {{ patentTypeStr }}
                   </span>
@@ -100,21 +138,25 @@
 
                <div class="flex items-center space-x-2">
                   <span class="text-gray-500 dark:text-gray-400 text-xs">維護期程</span>
-                  <span class="text-gray-700 dark:text-gray-200 text-xs">{{
-                     maintenancePeriod
-                  }}</span>
+                  <span
+                     class="text-gray-700 dark:text-gray-200 text-xs w-[150px] text-right truncate"
+                  >
+                     {{ maintenancePeriod }}
+                  </span>
                </div>
 
                <div class="flex items-center space-x-2 mt-0.5">
                   <span class="text-gray-500 dark:text-gray-400 text-xs">維護年度</span>
-                  <span class="text-gray-700 dark:text-gray-200 text-xs">{{
-                     maintenanceYear
-                  }}</span>
+                  <span
+                     class="text-gray-700 dark:text-gray-200 text-xs w-[150px] text-right truncate"
+                  >
+                     {{ maintenanceYear }}
+                  </span>
                </div>
             </div>
 
             <!-- 狀態指示器 -->
-            <div class="flex flex-col items-end">
+            <div class="flex flex-col items-end min-w-0 w-[100px]">
                <div class="flex items-center space-x-2">
                   <div
                      class="w-2 h-2 rounded-full"
@@ -126,7 +168,7 @@
                      }"
                   ></div>
                   <span
-                     class="text-sm font-medium"
+                     class="text-sm font-medium truncate"
                      :class="{
                         'text-green-600 dark:text-green-400': status === '有效',
                         'text-amber-600 dark:text-amber-400':
@@ -139,7 +181,7 @@
 
                <span
                   v-if="expiryDate"
-                  class="text-red-500 dark:text-red-400 text-xs mt-1"
+                  class="text-red-500 dark:text-red-400 text-xs mt-1 truncate"
                >
                   {{ expiryDate }} 到期
                </span>
@@ -153,10 +195,20 @@
 import { computed } from "vue";
 import { useNow } from "@vueuse/core";
 import { differenceInDays } from "date-fns";
+import {
+   Tooltip,
+   TooltipContent,
+   TooltipProvider,
+   TooltipTrigger,
+} from "@/components/ui/tooltip";
 type Patent = RouterOutput["data"]["patent"]["getPatents"][0];
 
 const props = defineProps<{
    patent: Patent
+   flexProp?: {
+      key: string
+      value: string
+   }
 }>();
 
 const now = useNow({ interval: 10 * 1000 });
@@ -251,6 +303,10 @@ const author = computed(() => {
 
 const coAuthors = computed(() => {
    return props.patent.inventors.filter((i) => !i.Main).map((i) => i.inventor);
+});
+
+const coAuthorsStr = computed(() => {
+   return coAuthors.value.map((i) => i.contactInfo.Name).join(", ");
 });
 
 const patentTypeStr = computed(() => {

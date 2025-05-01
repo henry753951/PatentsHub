@@ -22,19 +22,22 @@
          :class="{
             'px-2 bg-white dark:bg-zinc-700 w-full': isFocus,
             'cursor-pointer': !isFocus,
+            'dark:hover:bg-zinc-700 px-2 hover:w-full': !disabled,
          }"
-         class="font-bold hover:w-full hover:bg-white hover:px-2 rounded-lg transition-all duration-300 dark:hover:bg-zinc-700 w-[100%] py-1.5 hover:shadow-sm"
+         class="font-bold hover:bg-white rounded-lg transition-all duration-300 w-[100%] py-1.5"
          @dblclick="focus()"
       >
          <div
             v-if="!isFocus"
-            class="border-b border-t-transparent min-h-[30px] flex items-center border-box"
+            class="border-b border-t-transparent min-h-[30px] flex items-center border-box "
             :class="{
                'border-red-300 dark:border-red-500': !isSynced,
                'border-transparent': isSynced,
             }"
          >
-            {{ str }} {{ number }}
+            <div :class="truncate ? 'truncate' : ''">
+               {{ str ?? number }}
+            </div>
             <span
                v-if="!str && !number"
                class="text-gray-300 dark:text-gray-500 font-thin text-sm"
@@ -83,11 +86,15 @@ const {
    isSynced = true,
    icon = undefined,
    placeholder = "點兩下開始編輯",
+   disabled = false,
+   truncate = false,
 } = defineProps({
    title: String,
    isSynced: Boolean,
    icon: String,
    placeholder: String,
+   disabled: Boolean,
+   truncate: Boolean,
 });
 const isFocus = ref(false);
 const str = defineModel({
@@ -100,6 +107,7 @@ const number = defineModel("number", {
 });
 
 const focus = () => {
+   if (disabled) return;
    isFocus.value = true;
    nextTick(() => {
       const input = target.value?.querySelector("textarea");

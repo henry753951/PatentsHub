@@ -16,7 +16,6 @@ export const useDatabaseInventor = (
       "inventor",
       async () => {
          // 若篩選條件為空，則不顯示任何資料 (看需求)
-         console.log(getInventors({ where: filter.value }));
          if (Object.keys(filter.value).length === 0) return [];
          return await getInventors({ where: filter.value });
       },

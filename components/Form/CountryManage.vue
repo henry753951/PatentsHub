@@ -119,11 +119,11 @@ const toggleCountrySelection = (country: Country) => {
                國家管理
             </h1>
             <div
-               class="flex gap-4 px-2.5 py-0 bg-white rounded-xl max-sm:px-2 max-sm:py-0 dark:bg-white dark:border-2 dark:border-white"
+               class="flex gap-4 px-2.5 py-0 bg-white rounded-xl max-sm:px-2 max-sm:py-0 dark:bg-white"
             >
                <button
                   v-tooltip.top="'新增國家'"
-                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
+                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md"
                >
                   <Icon
                      name="uil:create-dashboard"
@@ -141,7 +141,7 @@ const toggleCountrySelection = (country: Country) => {
                </button>
                <button
                   v-tooltip.top="'點選國家可以大量刪除'"
-                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
+                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md"
                   @click="
                      openAutoModal(
                         '確認刪除',
@@ -159,7 +159,7 @@ const toggleCountrySelection = (country: Country) => {
                </button>
                <button
                   v-tooltip.top="'清空所有國家ㄑ'"
-                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md hover:border-2 hover:border-black border-2 border-white"
+                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md"
                   @click="deleteAllCountries"
                >
                   <Icon

@@ -1,5 +1,5 @@
 import type { BrowserWindow } from "electron";
-import { consola } from "consola";
+import logger from "../logger";
 export default (mainWindow: BrowserWindow) => {
    // !! [DEPRECATED] 改用 tRPC
    // ipcMain.handle("isMaximized:app", (event) => {
@@ -26,5 +26,5 @@ export default (mainWindow: BrowserWindow) => {
       mainWindow.webContents.send("window:fullscreenChanged", false),
    );
 
-   consola.log("[-] MODULE::titleBarActions Initialized");
+   logger.log("[⭐] MODULE::titleBarActions Initialized");
 };

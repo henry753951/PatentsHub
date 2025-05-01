@@ -6,6 +6,8 @@
 
 <script lang="ts" setup>
 import "overlayscrollbars/overlayscrollbars.css";
+const discordService = useDiscord();
+provide("discordService", discordService);
 </script>
 
 <style>

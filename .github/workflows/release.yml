@@ -1,0 +1,55 @@
+name: Build and Release Windows Electron App
+
+on:
+   push:
+      branches:
+         - release
+jobs:
+   build-and-release:
+      runs-on: windows-latest
+      steps:
+         - name: Checkout code
+           uses: actions/checkout@v4
+           with:
+              fetch-depth: 0
+              token: ${{ secrets.PERSONAL_GH_TOKEN }}
+
+         - name: Install pnpm
+           uses: pnpm/action-setup@v4
+
+         - name: Setup Node.js
+           uses: actions/setup-node@v4
+           with:
+              node-version: 20
+              cache: "pnpm"
+
+         - name: Install dependencies
+           run: pnpm install
+
+         - name: Setup semantic-release
+           run: pnpm add semantic-release @semantic-release/github @semantic-release/exec semantic-release-gha-output
+
+         - name: Run semantic-release
+           id: semantic-release
+           run: pnpm exec semantic-release
+           env:
+              GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
+
+
+         - name: Overwrite version in package.json
+           run: |
+              echo "Updating version in package.json to ${{ steps.semantic-release.outputs.version }}"
+              node -e "const fs = require('fs'); const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8')); pkg.version = '${{ steps.semantic-release.outputs.version }}'; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
+
+         - name: Build Electron App
+           run: pnpm run cicd-build:all
+           env:
+              GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
+
+        #  - name: Upload Artifact to Release
+        #    uses: softprops/action-gh-release@v2
+        #    with:
+        #       files: .output/electron/*.exe
+        #       tag_name: v${{ steps.semantic-release.outputs.version }}
+        #       fail_on_unmatched_files: true
+        #       token: ${{ secrets.PERSONAL_GH_TOKEN }}

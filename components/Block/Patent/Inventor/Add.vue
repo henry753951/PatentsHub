@@ -24,19 +24,20 @@
             placeholder="搜尋發明人"
             class="w-full mb-4"
          />
-
          <OverlayScrollbarsComponent class="max-h-[300px]">
             <BlockPatentInventorRow
                v-for="inventor in inventors"
                :key="inventor.InventorID"
-               class="h-[88px] mb-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700"
+               tabindex="0"
+               class="h-[88px] mb-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700 focus-visible:bg-zinc-100 dark:focus-visible:bg-zinc-700"
                :name="inventor.contactInfo?.Name ?? ''"
                :job="inventor.contactInfo?.Role ?? ''"
                :belong="{
                   college: inventor.department?.college.Name ?? '',
                   department: inventor.department?.Name ?? '',
                }"
-               @click="
+               @click.enter="
+                  isOpen = false;
                   emits('select', {
                      id: inventor.InventorID,
                      name: inventor.contactInfo?.Name ?? '',
@@ -45,7 +46,7 @@
                         college: inventor.department?.college.Name ?? '',
                         department: inventor.department?.Name ?? '',
                      },
-                  })
+                  });
                "
             />
          </OverlayScrollbarsComponent>
@@ -59,11 +60,13 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
+import { is } from "date-fns/locale";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 
 const { chooseText } = defineProps<{
    chooseText?: string
 }>();
+const isOpen = inject("popoverState", ref(false));
 interface Inventor {
    id: number
    name: string

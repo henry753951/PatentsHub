@@ -26,6 +26,7 @@ div
 </template>
 
 <script lang="ts" setup>
+const { open } = useModals();
 const navItems = [
    {
       title: "首頁",
@@ -45,10 +46,10 @@ const navItems = [
    },
 
    {
-      title: "篩選",
+      title: "篩選專利"
       icon: {
-         normal: "basil:search-outline",
-         active: "basil:search-solid",
+         normal: "basil:filter-outline",
+         active: "basil:filter-solid",
       },
       to: { name: "search" },
    },
@@ -87,18 +88,31 @@ const moreNavItems = [
       },
       to: { name: "common-agencyManage" },
    },
+   {
+      title: "方案管理",
+      icon: {
+         normal: "basil:chart-pie-alt-outline",
+         active: "basil:chart-pie-alt-solid",
+      },
+      to: { name: "common-fundingPlanManage" },
+   },
 ] as INavItem[];
 
 const navActions = [
    {
       title: "備份",
       icon: "basil:save-outline",
-      action: () => {},
+      action: async () => {
+         const { downloadDb } = useBackup();
+         await downloadDb();
+      },
    },
    {
       title: "設定",
       icon: "basil:settings-outline",
-      action: () => {},
+      action: () => {
+         open("SettingsModal");
+      },
    },
 ];
 </script>

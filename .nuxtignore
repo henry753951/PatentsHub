@@ -7,3 +7,4 @@ dist-electron
 server/prisma/migrations
 server/prisma/db
 server/prisma/zod
+.importSystem

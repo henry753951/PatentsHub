@@ -52,11 +52,12 @@ import {
 } from "@/components/ui/dialog";
 import Divider from "primevue/divider";
 import Button from "primevue/button";
+import { computed } from "vue";
+
 const isOpen = defineModel("open", {
    type: Boolean,
    default: false,
 });
-
 const { open } = useModals();
 
 const props = defineProps<{
@@ -67,7 +68,44 @@ const props = defineProps<{
    deleteCallback?: () => void
 }>();
 
-const actionItems = ref([
+const {
+   data: patentInfo,
+   patentStatus,
+   patentRecords,
+   patentMaintainances,
+   refresh,
+   crud,
+   status,
+} = useDatabasePatent(props.patent.PatentId);
+
+// 動態設置「置頂/取消置頂」按鈕的屬性
+const pinAction = computed(() => {
+   const isPinned = patentInfo.value?.Pinned ?? false;
+   return {
+      title: isPinned ? "取消置頂" : "置頂",
+      description: isPinned ? "此動作將取消此專利的置頂狀態。" : "此動作將把此專利置頂。",
+      actions: [
+         {
+            title: isPinned ? "取消置頂" : "置頂",
+            type: "secondary",
+            onClick: async () => {
+               try {
+                  // 根據當前狀態切換 pinned 值
+                  await crud.updatePatent([{ Pinned: !isPinned }]);
+                  console.log(`專利已${isPinned ? "取消置頂" : "置頂"}，pinned: ${!isPinned}`);
+                  isOpen.value = false; // 關閉對話框
+               }
+               catch (error) {
+                  console.error("切換置頂狀態失敗:", error);
+               }
+            },
+         },
+      ],
+   };
+});
+
+// 動態生成 actionItems
+const actionItems = computed(() => [
    {
       title: "移除專利",
       description: "此動作將永久刪除此專利，並無法復原。",
@@ -103,6 +141,7 @@ const actionItems = ref([
          },
       ],
    },
+   pinAction.value, // 動態新增置頂/取消置頂選項
 ]);
 </script>
 

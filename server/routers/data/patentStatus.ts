@@ -1,8 +1,70 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
-import { dbZ } from "~/server";
+import { dbZ, prisma } from "../..";
 
 export default router({
+   addManualStatus: procedure
+      .input(
+         z.object({
+            patentID: z.number(),
+            reason: z.string().min(1, "狀態名稱不可為空"),
+            date: z.date().optional(),
+            active: z.boolean().default(true),
+            override: z.boolean().default(false),
+         }),
+      )
+      .mutation(async ({ input }) => {
+         const { patentID, reason, date, active, override } = input;
+
+         return await prisma.patentManualStatus.create({
+            data: {
+               PatentID: patentID,
+               Reason: reason,
+               Date: date ?? null,
+               Active: active,
+               Override: override,
+            },
+         });
+      }),
+
+   updateManualStatus: procedure
+      .input(
+         z.object({
+            manualStatusID: z.number(),
+            reason: z.string().min(1),
+            date: z.date().optional(),
+            override: z.boolean().optional(),
+         }),
+      )
+      .mutation(async ({ input }) => {
+         const { manualStatusID, reason, date, override } = input;
+
+         return await prisma.patentManualStatus.update({
+            where: {
+               ManualStatusID: manualStatusID,
+            },
+            data: {
+               Reason: reason,
+               Date: date ?? null,
+               ...(override !== undefined && { Override: override }),
+            },
+         });
+      }),
+
+   removeManualStatus: procedure
+      .input(
+         z.object({
+            manualStatusID: z.number(),
+         }),
+      )
+      .mutation(async ({ input }) => {
+         return await prisma.patentManualStatus.delete({
+            where: {
+               ManualStatusID: input.manualStatusID,
+            },
+         });
+      }),
+
    getExpiringPatents: procedure
       .input(
          z.object({
@@ -55,11 +117,8 @@ export default router({
                funding: {
                   include: {
                      plan: true,
-                     fundingUnitsDatas: {
-                        include: {
-                           fundingUnit: true,
-                        },
-                     },
+                     fundingRecords: true,
+                     fundingUnits: true,
                   },
                },
                inventors: {

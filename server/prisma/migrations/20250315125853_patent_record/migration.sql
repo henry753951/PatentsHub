@@ -1,6 +1,0 @@
--- CreateTable
-CREATE TABLE "PatentRecord" (
-    "PatentID" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "Record" JSONB,
-    CONSTRAINT "PatentRecord_PatentID_fkey" FOREIGN KEY ("PatentID") REFERENCES "Patent" ("PatentID") ON DELETE RESTRICT ON UPDATE CASCADE
-);

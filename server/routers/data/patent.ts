@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
 import { CustomZodType } from "~/zod.dto";
-import { dbZ } from "~/server";
+import { dbZ, prisma } from "../../";
 import type { Prisma } from "@prisma/client";
+import Logger from "electron-log";
 
 export default router({
    // [Other]
@@ -15,24 +16,19 @@ export default router({
             .default({ year: new Date().getFullYear() - 1911 }),
       )
       .query(async ({ input }) => {
-         const offset = 4;
+         const offset = 3;
          const lastPatent = await prisma.patent.findFirst({
             where: {
                Year: input.year,
             },
             orderBy: {
-               internal: {
-                  InternalID: "desc",
-               },
-            },
-            include: {
-               internal: true,
+               InternalID: "desc",
             },
          });
-         if (!(lastPatent && lastPatent.internal)) {
+         if (!lastPatent?.InternalID) {
             return `${input.year}${(1).toString().padStart(offset, "0")}`;
          }
-         const nextInteralId = `${input.year}${(parseInt(lastPatent.internal.InternalID.slice(-offset)) + 1).toString().padStart(offset, "0")}`;
+         const nextInteralId = `${input.year}${(parseInt(lastPatent.InternalID.slice(-offset)) + 1).toString().padStart(offset, "0")}`;
          return nextInteralId;
       }),
    getKeywords: procedure.input(z.object({})).query(async () => {
@@ -76,6 +72,9 @@ export default router({
                Year: input.year,
                DepartmentID: input.belongs.departmentID,
                PatentType: input.type,
+               InternalID: input.internalID,
+               InitialReviewDate: input.initialReviewDate,
+               InitialReviewNumber: input.initialReviewNumber,
                technical: {
                   create: {
                      MaturityLevel: input.technical.maturityLevel,
@@ -90,11 +89,12 @@ export default router({
                   },
                },
                internal: {
-                  create: {
-                     InternalID: input.internalID,
-                  },
+                  create: {},
                },
                external: {
+                  create: {},
+               },
+               funding: {
                   create: {},
                },
                inventors: {
@@ -111,6 +111,14 @@ export default router({
                application: {
                   create: {},
                },
+               owners: {
+                  create: [
+                     {
+                        Name: "高雄大學", // 預設所有權人
+                        OwnershipPercentage: 100, // 預設 100%
+                     },
+                  ],
+               },
             },
          });
       }),
@@ -120,6 +128,7 @@ export default router({
          return await prisma.patent.findUnique({
             where: input as Prisma.PatentWhereUniqueInput,
             include: {
+               owners: true,
                manualStatus: true,
                maintenances: true,
                patentRecords: true,
@@ -152,8 +161,16 @@ export default router({
                application: true,
                funding: {
                   include: {
-                     plan: true,
-                     fundingUnitsDatas: {
+                     plan: {
+                        include: {
+                           planAllocations: {
+                              include: {
+                                 target: true,
+                              },
+                           },
+                        },
+                     },
+                     fundingUnits: {
                         include: {
                            fundingUnit: true,
                         },
@@ -215,7 +232,7 @@ export default router({
                funding: {
                   include: {
                      plan: true,
-                     fundingUnitsDatas: {
+                     fundingUnits: {
                         include: {
                            fundingUnit: true,
                         },
@@ -265,6 +282,54 @@ export default router({
       .mutation(async ({ input }) => {
          return await prisma.patent.delete({
             where: input as Prisma.PatentWhereUniqueInput,
+         });
+      }),
+
+   getPatentFunding: procedure
+      .input(dbZ.PatentWhereUniqueInputSchema)
+      .query(async ({ input }) => {
+         return await prisma.patentFunding.findUnique({
+            where: input as Prisma.PatentFundingWhereUniqueInput,
+            include: {
+               plan: {
+                  include: {
+                     planAllocations: {
+                        include: {
+                           target: true,
+                        },
+                     },
+                  },
+               },
+               fundingRecords: {
+                  include: {
+                     canFundingBy: true,
+                  },
+               },
+               fundingUnits: {
+                  include: {
+                     fundingUnit: true,
+                  },
+               },
+               fundingExports: {
+                  include: {
+                     contributions: {
+                        include: {
+                           fundingUnit: true,
+                        },
+                     },
+                     exportRecords: {
+                        include: {
+                           canFundingBy: true,
+                        },
+                     },
+                     internalAllocations: {
+                        include: {
+                           planTarget: true,
+                        },
+                     },
+                  },
+               },
+            },
          });
       }),
 });

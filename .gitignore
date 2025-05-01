@@ -26,3 +26,5 @@ logs
 
 server/prisma/db/app.db
 server/prisma/db/app.db-journal
+
+.importSystem/database/*

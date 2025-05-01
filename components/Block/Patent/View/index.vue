@@ -3,7 +3,7 @@
       <div
          v-if="patent"
          ref="viewRef"
-         class="pt-[200px] transition-all duration-500 pb-[230px]"
+         class="pt-[200px] transition-all duration-500 pb-[230px] h-fit"
       >
          <div
             class="bg-[#f5f5f5] dark:bg-[#1a1a1a] fixed top-0 self-start z-[4] max-h-[230px] min-h-0 transition-all duration-500 w-full overflow-hidden"
@@ -109,7 +109,7 @@
                         title="校內編號"
                         icon="tabler:hash"
                      >
-                        {{ patent.internal ? patent.internal.InternalID : "" }}
+                        {{ patent.InternalID ?? "" }}
                      </CustomStatusBlock>
                      <CustomStatusBlock
                         title="專利編號"
@@ -131,7 +131,7 @@
          </div>
          <div class="relative mb-[6rem] w-full">
             <div
-               class="transform -translate-y-1/2 z-[5] absolute transition-all duration-300 flex gap-2 justify-between container mx-auto left-0 right-0"
+               class="transform z-[5] absolute transition-all duration-300 flex gap-2 justify-between container mx-auto left-0 right-0 top-[-50px]"
                :class="{
                   'opacity-0 pointer-events-none top-[-50px]':
                      !state?.arrivedState.top,
@@ -179,6 +179,12 @@
                         v-if="activeTab === 'maintenance'"
                         v-model="patent"
                         :patent-maintainances-service="patentMaintainances"
+                     />
+                  </TabPanel>
+                  <TabPanel value="finance">
+                     <BlockPatentViewTabFunding
+                        v-if="activeTab === 'finance'"
+                        v-model="patent"
                      />
                   </TabPanel>
                </TabPanels>

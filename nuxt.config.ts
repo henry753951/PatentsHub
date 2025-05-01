@@ -21,6 +21,9 @@ const viteElectronBuildConfig = (type: "es" | "cjs", ext: string) => {
             "~": __dirname,
          },
       },
+      optimizeDeps: {
+         exclude: ["supejson"],
+      },
    } as InlineConfig;
 };
 
@@ -111,6 +114,8 @@ export default defineNuxtConfig({
             "radix-vue",
             "radix-ui",
             "lucide-vue-next",
+            "tailwind-variants",
+            "lodash-es",
          ],
       },
    },

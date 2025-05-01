@@ -1,19 +1,21 @@
 import { createTRPCProxyClient } from "@trpc/client";
 import type { MainRouter } from "~/server/mainRouter";
 import { ipcLink } from "electron-trpc/renderer";
-import superjson from "superjson";
+import supejson from "superjson";
 export default defineNuxtPlugin(() => {
    try {
       const trpc = createTRPCProxyClient<MainRouter>({
          links: [ipcLink()],
-         transformer: superjson,
+         transformer: supejson,
       });
       return {
          provide: {
             trpc,
          },
       };
-   } catch {
+   }
+   catch (err) {
       console.error("Failed to load electron");
+      consola.error(err);
    }
 });

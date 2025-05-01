@@ -5,69 +5,10 @@
    >
       <div class="col-span-3">
          <CustomContentBlock
-            v-if="internalData.data.value && internalData.data.value.internal"
-            :note-key="`${patent.PatentID}:internal`"
-            title="校內資訊"
-            tclass="sticky top-[87px]"
-            :save-button="!internalData.isSynced.value"
-            @save="internalData.save"
-         >
-            <CustomContentBlockRow
-               v-model="internalData.data.value.internal.InternalID"
-               title="校內編號"
-               :is-synced="
-                  internalData.data.value?.internal?.InternalID ===
-                     internalData.refData.value?.internal?.InternalID
-               "
-            />
-            <CustomContentBlockRow
-               title="技推資訊"
-               :is-synced="
-                  format(
-                     internalData.data.value.internal.InitialReviewDate!,
-                     'yyyy-MM-dd',
-                  ) ===
-                     format(
-                        internalData.refData.value?.internal
-                           ?.InitialReviewDate!,
-                        'yyyy-MM-dd',
-                     ) &&
-                     internalData.data.value?.internal?.InitialReviewNumber ===
-                     internalData.refData.value?.internal?.InitialReviewNumber
-               "
-            >
-               <FormPatentReviewInfo
-                  v-model:review-date="
-                     internalData.data.value.internal.InitialReviewDate
-                  "
-                  v-model:review-number="
-                     internalData.data.value.internal.InitialReviewNumber
-                  "
-               />
-            </CustomContentBlockRow>
-            <CustomContentBlockRow
-               title="初評事務所"
-               :is-synced="isSynced.initialReviewAgencies.value"
-            >
-               <FormPatentAgencyList
-                  v-model="
-                     internalData.data.value.internal.InitialReviewAgencies
-                  "
-                  :is-taker-agency-unit="false"
-               />
-            </CustomContentBlockRow>
-            <CustomContentBlockRow
-               title="承辦事務所"
-               :is-synced="isSynced.takerAgencies.value"
-            >
-               <FormPatentAgencyList
-                  v-model="internalData.data.value.internal.TakerAgencies"
-                  :is-taker-agency-unit="true"
-               />
-            </CustomContentBlockRow>
-         </CustomContentBlock>
-         <CustomContentBlock
-            v-if="applicationData.data.value && applicationData.data.value.application"
+            v-if="
+               applicationData.data.value &&
+                  applicationData.data.value.application
+            "
             title="申請資訊"
             tclass="sticky top-[87px]"
             :note-key="`${patent.PatentID}:application`"
@@ -77,43 +18,100 @@
             <div class="grid grid-cols-2 gap-4">
                <CustomContentBlockRow
                   title="申請日期"
-                  :is-synced="JSON.stringify(applicationData.data.value?.application?.FilingDate) === JSON.stringify(applicationData.refData.value?.application?.FilingDate)"
+                  :is-synced="
+                     JSON.stringify(
+                        applicationData.data.value?.application?.FilingDate,
+                     ) ===
+                        JSON.stringify(
+                           applicationData.refData.value?.application?.FilingDate,
+                        )
+                  "
                >
                   <FormDatePicker
                      v-model="applicationData.data.value.application.FilingDate"
                   />
                </CustomContentBlockRow>
                <CustomContentBlockRow
-                  v-model="applicationData.data.value.application.ApplicationNumber"
+                  v-model="
+                     applicationData.data.value.application.ApplicationNumber
+                  "
                   title="申請案號"
-                  :is-synced="applicationData.data.value?.application?.ApplicationNumber === applicationData.refData.value?.application?.ApplicationNumber"
+                  :is-synced="
+                     applicationData.data.value?.application
+                        ?.ApplicationNumber ===
+                        applicationData.refData.value?.application
+                           ?.ApplicationNumber
+                  "
                />
             </div>
             <div class="grid grid-cols-2 gap-4">
                <CustomContentBlockRow
-                  v-model="applicationData.data.value.application.RDResultNumber"
+                  v-model="
+                     applicationData.data.value.application.RDResultNumber
+                  "
                   title="研發成果編號"
-                  :is-synced="applicationData.data.value?.application?.RDResultNumber === applicationData.refData.value?.application?.RDResultNumber"
+                  :is-synced="
+                     applicationData.data.value?.application?.RDResultNumber ===
+                        applicationData.refData.value?.application?.RDResultNumber
+                  "
                />
                <CustomContentBlockRow
                   v-model="applicationData.data.value.application.NSCNumber"
                   title="國科會編號"
-                  :is-synced="applicationData.data.value?.application?.NSCNumber === applicationData.refData.value?.application?.NSCNumber"
+                  :is-synced="
+                     applicationData.data.value?.application?.NSCNumber ===
+                        applicationData.refData.value?.application?.NSCNumber
+                  "
                />
             </div>
          </CustomContentBlock>
          <CustomContentBlock
-            title="資助資訊"
+            v-if="fundingData.data.value && fundingData.data.value.funding"
+            title="帳務資訊"
             tclass="sticky top-[87px]"
             :note-key="`${patent.PatentID}:funding`"
+            :save-button="!fundingData.isSynced.value"
+            @save="fundingData.save"
          >
-            <CustomContentBlockRow title="資助單位">
-               <div
-                  v-for="funding in patent.funding?.fundingUnitsDatas"
-                  :key="funding.FundingUnitID"
-               >
-                  {{ funding.fundingUnit.Name }}
-                  {{ funding.ProjectCode }}
+            <CustomContentBlockRow
+               title="資助單位"
+               :is-synced="
+                  JSON.stringify(
+                     fundingData.data.value.funding.fundingUnits,
+                  ) ===
+                     JSON.stringify(
+                        fundingData.refData.value?.funding?.fundingUnits,
+                     )
+               "
+            >
+               <FormPatentFundingUnitEditList
+                  v-model="fundingData.data.value.funding.fundingUnits"
+                  :patent-i-d="patent.PatentID"
+               />
+            </CustomContentBlockRow>
+            <CustomContentBlockRow
+               title="資助類別"
+               :is-synced="
+                  fundingData.data.value.funding.plan?.FundingPlanID ===
+                     fundingData.refData.value?.funding?.plan?.FundingPlanID
+               "
+            >
+               <div class="grid grid-cols-3 gap-4">
+                  <FormFundingPlanSelect
+                     v-model="fundingData.data.value.funding.plan"
+                     class="col-span-1"
+                  />
+                  <div class="flex gap-2 items-center col-span-2">
+                     <div
+                        v-for="allocation in fundingData.data.value.funding.plan
+                           ?.planAllocations"
+                        :key="allocation.FundingPlanAllocationID"
+                        class="flex items-center gap-1"
+                     >
+                        <Badge>{{ allocation.target.Name }}</Badge>
+                        {{ allocation.Percentage }}%
+                     </div>
+                  </div>
                </div>
             </CustomContentBlockRow>
          </CustomContentBlock>
@@ -192,6 +190,35 @@
                "
             />
          </CustomContentBlock>
+         <CustomContentBlock
+            v-if="internalData.data.value && internalData.data.value.internal"
+            :note-key="`${patent.PatentID}:internal`"
+            title="事務所資訊"
+            tclass="sticky top-[87px]"
+            :save-button="!internalData.isSynced.value"
+            @save="internalData.save"
+         >
+            <CustomContentBlockRow
+               title="初評事務所"
+               :is-synced="isSynced.initialReviewAgencies.value"
+            >
+               <FormPatentAgencyList
+                  v-model="
+                     internalData.data.value.internal.InitialReviewAgencies
+                  "
+                  :is-taker-agency-unit="false"
+               />
+            </CustomContentBlockRow>
+            <CustomContentBlockRow
+               title="承辦事務所"
+               :is-synced="isSynced.takerAgencies.value"
+            >
+               <FormPatentAgencyList
+                  v-model="internalData.data.value.internal.TakerAgencies"
+                  :is-taker-agency-unit="true"
+               />
+            </CustomContentBlockRow>
+         </CustomContentBlock>
       </div>
       <div class="col-span-2 self-start sticky top-[87px]">
          <CustomContentBlock
@@ -201,6 +228,14 @@
             :save-button="!basicData.isSynced.value"
             @save="basicData.save"
          >
+            <CustomContentBlockRow
+               v-model="basicData.data.value.InternalID"
+               title="校內編號"
+               :is-synced="
+                  basicData.data.value?.InternalID ===
+                     basicData.refData.value?.InternalID
+               "
+            />
             <div class="grid grid-cols-5 gap-4">
                <CustomContentBlockRow
                   v-model:number="basicData.data.value.Year"
@@ -245,7 +280,28 @@
                   />
                </CustomContentBlockRow>
             </div>
-
+            <CustomContentBlockRow
+               title="技推資訊"
+               :is-synced="
+                  format(
+                     basicData.data.value.InitialReviewDate!,
+                     'yyyy-MM-dd',
+                  ) ===
+                     format(
+                        basicData.refData.value?.InitialReviewDate!,
+                        'yyyy-MM-dd',
+                     ) &&
+                     basicData.data.value?.InitialReviewNumber ===
+                     basicData.refData.value?.InitialReviewNumber
+               "
+            >
+               <FormPatentReviewInfo
+                  v-model:review-date="basicData.data.value.InitialReviewDate"
+                  v-model:review-number="
+                     basicData.data.value.InitialReviewNumber
+                  "
+               />
+            </CustomContentBlockRow>
             <CustomContentBlockRow
                v-model="basicData.data.value.Title"
                title="發明名稱"
@@ -278,24 +334,26 @@
             </CustomContentBlockRow>
          </CustomContentBlock>
          <CustomContentBlock
+            v-if="inventorData.data.value"
             title="發明人"
-            save-button
+            note-key="`${patent.PatentID}:inventors`"
+            :save-button="!inventorData.isSynced.value"
             @save="inventorData.save"
          >
-            <BlockPatentInventorRow
-               v-for="inventor in patent.inventors"
-               :key="inventor.InventorID"
-               :name="inventor.inventor.contactInfo?.Name ?? ''"
-               :belong="{
-                  college: inventor.inventor.department.college.Name,
-                  department: inventor.inventor.department.Name,
-               }"
-               :job="inventor.inventor.contactInfo?.Role ?? ''"
-               :contribution="inventor.Contribution"
-               :max="100"
-               :contribution-input="true"
-               :show-avatar="false"
-               :compact="true"
+            <BlockPatentInventorLiteEditList
+               v-model="inventorData.data.value.inventors"
+            />
+         </CustomContentBlock>
+         <CustomContentBlock
+            v-if="patentOwnersData.data.value && Array.isArray(patentOwnersData.data.value.owners)"
+            title="專利所有權人"
+            :note-key="`${patent.PatentID}:owners`"
+            :save-button="!patentOwnersData.isSynced.value"
+            @save="patentOwnersData.save"
+         >
+            <BlockPatentOwnershipEditList
+               v-model="patentOwnersData.data.value.owners"
+               :patent-i-d="patent.PatentID"
             />
          </CustomContentBlock>
       </div>
@@ -339,6 +397,9 @@ const basicData = useSyncData(patent, async (newData) => {
          Title: newData.Title,
          TitleEnglish: newData.TitleEnglish,
          PatentType: newData.PatentType,
+         InternalID: newData.InternalID,
+         InitialReviewDate: newData.InitialReviewDate,
+         InitialReviewNumber: newData.InitialReviewNumber,
          country: newData.country
             ? {
                connect: {
@@ -356,7 +417,7 @@ const basicData = useSyncData(patent, async (newData) => {
       },
    ]);
 });
-// 校內資訊
+// 事務所資訊
 const internalData = useSyncData(patent, async (newData) => {
    if (!newData) return;
    await crud.updatePatent([
@@ -364,9 +425,6 @@ const internalData = useSyncData(patent, async (newData) => {
          internal: {
             update: {
                data: {
-                  InternalID: newData.internal?.InternalID,
-                  InitialReviewDate: newData.internal?.InitialReviewDate,
-                  InitialReviewNumber: newData.internal?.InitialReviewNumber,
                   InitialReviewAgencies: {
                      deleteMany: {},
                   },
@@ -504,23 +562,94 @@ const applicationData = useSyncData(patent, async (newData) => {
 
 // 發明人資訊
 const inventorData = useSyncData(patent, async (newData) => {
-   if (!newData?.inventors) return;
+   if (!newData || !Array.isArray(newData.inventors)) return;
 
-   for (const inventor of newData.inventors) {
-      await $trpc.data.patentInventor.update.mutate({
-         where: {
-            PatentID_InventorID: {
-               PatentID: newData.PatentID,
-               InventorID: inventor.InventorID,
-            },
+   await crud.updatePatent([
+      {
+         inventors: {
+            deleteMany: {}, // 先清空專利所有發明人關聯
          },
-         data: {
-            Contribution: inventor.Contribution,
+      },
+      {
+         inventors: {
+            create: newData.inventors.map((i) => ({
+               InventorID: i.InventorID,
+               Contribution: i.Contribution,
+               Main: i.Main,
+            })),
          },
-      });
-   }
+      },
+   ]);
 });
 
+const fundingData = useSyncData(patent, async (newData) => {
+   if (!newData || !Array.isArray(newData.funding?.fundingUnits)) return;
+   await crud.updatePatent([
+      {
+         funding: {
+            update: {
+               data: {
+                  fundingUnits: {
+                     deleteMany: {},
+                  },
+                  plan: newData.funding.plan
+                     ? {
+                        connect: {
+                           FundingPlanID: newData.funding.plan.FundingPlanID,
+                        },
+                     }
+                     : undefined,
+               },
+            },
+         },
+      },
+      {
+         funding: {
+            update: {
+               data: {
+                  fundingUnits: {
+                     create: newData.funding.fundingUnits.map((f) => ({
+                        FundingUnitID: f.FundingUnitID,
+                        ProjectCode: f.ProjectCode,
+                     })),
+                  },
+               },
+            },
+         },
+      },
+   ]);
+});
+// 專利所有權人資訊
+const patentOwnersData = useSyncData(patent, async (newData) => {
+   if (!newData || !Array.isArray(newData.owners)) return;
+
+   // 檢查總持有度
+   const totalOwnership = newData.owners.reduce(
+      (sum, owner) => sum + owner.OwnershipPercentage,
+      0,
+   );
+   if (totalOwnership > 100) {
+      alert("總持有度超過 100%，請調整");
+      return;
+   }
+
+   await crud.updatePatent([
+      {
+         owners: {
+            deleteMany: {}, // 先清空專利所有權人關聯
+         },
+      },
+      {
+         owners: {
+            create: newData.owners.map((owner) => ({
+               OwnerID: owner.OwnerID !== 0 ? owner.OwnerID : undefined, // 映射 id 到 OwnerID
+               Name: owner.Name, // 已使用大寫 Name
+               OwnershipPercentage: owner.OwnershipPercentage,
+            })),
+         },
+      },
+   ]);
+});
 </script>
 
 <style scoped></style>

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
-import { dbZ } from "~/server";
+import { dbZ, prisma } from "../..";
 
 export default router({
    // 獲取 PatentRecords（多條紀錄）
@@ -9,7 +9,7 @@ export default router({
       .query(async ({ input }) => {
          return await prisma.patentRecord.findMany({
             where: { PatentID: input.patentID },
-            orderBy: { Date: "asc" }, // 按日期排序
+            orderBy: { Date: "desc" }, // 按日期排序
          });
       }),
 
