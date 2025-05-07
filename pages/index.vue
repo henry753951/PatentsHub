@@ -36,7 +36,7 @@
                            patentsReminder.settings.value.dateRange.daysAfter
                         "
                         prefix=""
-                        suffix=" 天後"
+                        suffix=" 天內"
                         show-buttons
                         size="small"
                         :min="1"
