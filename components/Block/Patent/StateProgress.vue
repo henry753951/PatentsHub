@@ -143,7 +143,7 @@
                   <div class="flex items-center space-x-2">
                      <Checkbox
                         id="override"
-                        v-model:checked="form.override"
+                        v-model="form.override"
                      />
                      <Label for="override">置於標準流程之後</Label>
                   </div>
@@ -298,7 +298,6 @@ const handleSubmitStatus = async () => {
       date: form.date,
       override: form.override,
    };
-   console.log(payload);
 
    if (editStatusData.value) {
       await statusService.updateManualStatus?.({
