@@ -16,12 +16,14 @@ export const usePatentStatus = (patentService: {
       reason?: string,
       date?: Date | null,
       active?: boolean,
+      override?: boolean,
    ) => {
       const data = {
          status,
          active: false,
          reason: "",
          date: null as Date | null,
+         override: false,
       };
 
       if (!patent.value) return data;
@@ -58,6 +60,7 @@ export const usePatentStatus = (patentService: {
             data.date = date ?? null;
             data.active = active ?? false;
             data.reason = reason ?? "";
+            data.override = override ?? false;
             break;
       }
 
@@ -65,40 +68,46 @@ export const usePatentStatus = (patentService: {
    };
 
    const status = computed(() => {
-      const signed = createStatus("SIGNED");
-      const reviewed = createStatus("REVIEWED");
-      const certified = createStatus("CERTIFIED");
-
-      const base = [signed, reviewed, certified];
-
-      if (certified.active) {
-         base.push(createStatus("EXPIRED"));
-      }
+      const base = [
+         createStatus("SIGNED"),
+         createStatus("REVIEWED"),
+         createStatus("CERTIFIED"),
+      ];
+      if (base[2].active) base.push(createStatus("EXPIRED"));
 
       const manualStatuses = DbManualStatus.value.map((m) => ({
-         ...createStatus("MANUAL", m.Reason, m.Date ?? null, m.Active),
+         ...createStatus(
+            "MANUAL",
+            m.Reason,
+            m.Date ?? null,
+            m.Active,
+            m.Override,
+         ),
          ManualStatusID: m.ManualStatusID,
-         Override: m.Override,
       }));
 
-      // 分成插入流程中與流程之後
-      const inlineManuals = manualStatuses.filter((m) => !m.Override);
-      const overrideManuals = manualStatuses.filter((m) => m.Override);
+      // 拆成兩種
+      const overrideManuals = manualStatuses.filter((m) => m.override);
+      const inlineManuals = manualStatuses.filter((m) => !m.override);
 
-      // 都依照時間排序
-      inlineManuals.sort((a, b) => {
-         const timeA = a.date instanceof Date ? a.date.getTime() : Infinity;
-         const timeB = b.date instanceof Date ? b.date.getTime() : Infinity;
-         return timeA - timeB;
+      // 全部轉為同一格式
+      const combined = [...base, ...inlineManuals];
+
+      // 用日期做排序，沒有日期的放後面
+      combined.sort((a, b) => {
+         const aTime = a.date instanceof Date ? a.date.getTime() : Infinity;
+         const bTime = b.date instanceof Date ? b.date.getTime() : Infinity;
+         return aTime - bTime;
       });
 
+      // override 的永遠放後面（但也可以排序）
       overrideManuals.sort((a, b) => {
-         const timeA = a.date instanceof Date ? a.date.getTime() : Infinity;
-         const timeB = b.date instanceof Date ? b.date.getTime() : Infinity;
-         return timeA - timeB;
+         const aTime = a.date instanceof Date ? a.date.getTime() : Infinity;
+         const bTime = b.date instanceof Date ? b.date.getTime() : Infinity;
+         return aTime - bTime;
       });
 
-      return [...base, ...inlineManuals, ...overrideManuals];
+      return [...combined, ...overrideManuals];
    });
 
    const addManualStatus = async (manual: {
