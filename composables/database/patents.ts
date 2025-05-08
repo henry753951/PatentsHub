@@ -44,9 +44,12 @@ export const useDatabasePatents = (
          if (valueA == null) valueA = "";
          if (valueB == null) valueB = "";
 
-         // Convert to string for consistent comparison
-         const strA = valueA.toString().toLowerCase();
-         const strB = valueB.toString().toLowerCase();
+         const strA: string | number = isNaN(Number(valueA))
+            ? valueA.toString().toLowerCase()
+            : Number(valueA);
+         const strB: string | number = isNaN(Number(valueB))
+            ? valueB.toString().toLowerCase()
+            : Number(valueB);
 
          // Compare based on direction
          if (orderBy.value.direction === "asc") {
