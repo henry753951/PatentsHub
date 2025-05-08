@@ -6,18 +6,18 @@ import {
    useForwardPropsEmits,
 } from "reka-ui";
 
-const { open: open_, ...props } = defineProps<DialogRootProps>();
+const { ...props } = defineProps<DialogRootProps>();
 const emits = defineEmits<DialogRootEmits>();
-const open = ref(open_ ?? false);
+const open = defineModel("open", {
+   type: Boolean,
+   default: false,
+});
 
 const onOpenChange = (value: boolean) => {
    open.value = value;
 };
 const forwarded = useForwardPropsEmits(props, emits);
 
-watchEffect(() => {
-   open.value = open_;
-});
 provide("onOpenChange", onOpenChange);
 </script>
 
