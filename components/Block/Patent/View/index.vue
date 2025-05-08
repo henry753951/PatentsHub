@@ -129,10 +129,18 @@
                </div>
             </div>
          </div>
-         <div class="relative mb-[6rem] w-full">
+         <div
+            class="relative w-full"
+            :class="{
+               'mb-[6rem]': title.english === '',
+               'mb-[8rem]': title.english !== '',
+            }"
+         >
             <div
-               class="transform z-[5] absolute transition-all duration-300 flex gap-2 justify-between container mx-auto left-0 right-0 top-[-50px]"
+               class="transform z-[5] absolute transition-all duration-300 flex gap-2 justify-between container mx-auto left-0 right-0"
                :class="{
+                  'top-[-50px]': title.english === '',
+                  'top-[-30px]': title.english !== '',
                   'opacity-0 pointer-events-none top-[-50px]':
                      !state?.arrivedState.top,
                   'opacity-100 top-0': state?.arrivedState.top,

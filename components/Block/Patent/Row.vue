@@ -275,6 +275,7 @@ const fundingUnit = computed(() => {
 
 // 狀態
 const status = computed(() => {
+   consola.log("status", props.patent.manualStatus);
    if (props.patent.manualStatus.some((s) => s.Override)) {
       return props.patent.manualStatus
          .filter((s) => s.Override)
