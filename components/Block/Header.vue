@@ -1,5 +1,5 @@
 <template>
-   <header>
+   <header class="select-none">
       <div
          class="flex flex-col md:flex-row items-start md:items-center gap-4"
       >
