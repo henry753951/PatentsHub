@@ -72,6 +72,12 @@ export const useDatabasePatent = (
    };
 
    // =================================================
+   onMounted(() => {
+      if (defaultPatentId) {
+         refresh();
+      }
+   });
+
    const crud = {
       getPatent,
       deletePatent,

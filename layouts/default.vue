@@ -52,10 +52,10 @@ watch([width, height], ([w, h]) => {
 
 .scrollarea {
    overflow: auto;
-   /* Scrollbar Styling */
 }
+
 .scrollarea::-webkit-scrollbar {
-   width: 7px;
+   width: 10px;
 }
 
 .scrollarea::-webkit-scrollbar-track {
