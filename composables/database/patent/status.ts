@@ -68,12 +68,12 @@ export const usePatentStatus = (patentService: {
    };
 
    const status = computed(() => {
-      const base = [
-         createStatus("SIGNED"),
-         createStatus("REVIEWED"),
-         createStatus("CERTIFIED"),
-      ];
-      if (base[2].active) base.push(createStatus("EXPIRED"));
+      const signed = createStatus("SIGNED");// 教師登錄 固定在第一個
+
+      const others = [createStatus("REVIEWED"), createStatus("CERTIFIED")];// 其他狀態 按照時間排序
+
+      const expired = others[1].active ? createStatus("EXPIRED") : null;
+      if (expired) others.push(expired);
 
       const manualStatuses = DbManualStatus.value.map((m) => ({
          ...createStatus(
@@ -86,28 +86,23 @@ export const usePatentStatus = (patentService: {
          ManualStatusID: m.ManualStatusID,
       }));
 
-      // 拆成兩種
-      const overrideManuals = manualStatuses.filter((m) => m.override);
       const inlineManuals = manualStatuses.filter((m) => !m.override);
+      const overrideManuals = manualStatuses.filter((m) => m.override);
 
-      // 全部轉為同一格式
-      const combined = [...base, ...inlineManuals];
-
-      // 用日期做排序，沒有日期的放後面
-      combined.sort((a, b) => {
-         const aTime = a.date instanceof Date ? a.date.getTime() : Infinity;
-         const bTime = b.date instanceof Date ? b.date.getTime() : Infinity;
-         return aTime - bTime;
+      const mix = [...others, ...inlineManuals];
+      mix.sort((a, b) => {
+         const timeA = a.date instanceof Date ? a.date.getTime() : Infinity;
+         const timeB = b.date instanceof Date ? b.date.getTime() : Infinity;
+         return timeA - timeB;
       });
 
-      // override 的永遠放後面（但也可以排序）
       overrideManuals.sort((a, b) => {
-         const aTime = a.date instanceof Date ? a.date.getTime() : Infinity;
-         const bTime = b.date instanceof Date ? b.date.getTime() : Infinity;
-         return aTime - bTime;
+         const timeA = a.date instanceof Date ? a.date.getTime() : Infinity;
+         const timeB = b.date instanceof Date ? b.date.getTime() : Infinity;
+         return timeA - timeB;
       });
 
-      return [...combined, ...overrideManuals];
+      return [signed, ...mix, ...overrideManuals];
    });
 
    const addManualStatus = async (manual: {
