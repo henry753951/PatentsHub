@@ -275,6 +275,13 @@ const fundingUnit = computed(() => {
 
 // 狀態
 const status = computed(() => {
+   if (props.patent.manualStatus.some((s) => s.Override)) {
+      return props.patent.manualStatus
+         .filter((s) => s.Override)
+         .sort((a, b) => (b.Date?.getTime() ?? 0) - (a.Date?.getTime() ?? 0))[0]
+         .Reason;
+   }
+
    if (!latestMaintenance.value) {
       return "未生效";
    }

@@ -44,6 +44,7 @@ jobs:
          - name: Build Electron App
            run: pnpm run cicd-build:all
            env:
+              NODE_ENV: production
               GITHUB_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}
 
         #  - name: Upload Artifact to Release
