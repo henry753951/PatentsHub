@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { EditableRoot, useForwardExpose, useForwardPropsEmits } from "radix-vue";
-  import type { EditableRootEmits, EditableRootProps } from "radix-vue";
+  import { EditableRoot, useForwardExpose, useForwardPropsEmits } from "reka-ui";
+  import type { EditableRootEmits, EditableRootProps } from "reka-ui";
 
   const { currentRef, forwardRef } = useForwardExpose();
   const props = defineProps<EditableRootProps>();

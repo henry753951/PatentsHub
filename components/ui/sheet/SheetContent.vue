@@ -9,9 +9,12 @@ import {
    DialogOverlay,
    DialogPortal,
    useForwardPropsEmits,
-} from "radix-vue";
+} from "reka-ui";
 import { computed, type HTMLAttributes } from "vue";
 import { type SheetVariants, sheetVariants } from ".";
+const onOpenChange = inject("onOpenChange", (value: boolean) => {
+   console.warn("onOpenChange not provided", value);
+});
 
 interface SheetContentProps extends DialogContentProps {
    class?: HTMLAttributes["class"]
@@ -47,10 +50,13 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
                props.blur && 'backdrop-blur-sm',
             )
          "
+         @click="onOpenChange(false)"
       />
       <DialogContent
          :class="cn(sheetVariants({ side }), props.class)"
          v-bind="{ ...forwarded, ...$attrs }"
+         @interact-outside.prevent
+         @open-auto-focus.prevent
       >
          <slot />
 

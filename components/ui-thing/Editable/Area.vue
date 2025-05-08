@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { EditableArea } from "radix-vue";
-  import type { EditableAreaProps } from "radix-vue";
+  import { EditableArea } from "reka-ui";
+  import type { EditableAreaProps } from "reka-ui";
 
   const props = defineProps<EditableAreaProps>();
 </script>

@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { TabsRoot, useForwardPropsEmits } from "radix-vue";
-  import type { TabsRootEmits, TabsRootProps } from "radix-vue";
+  import { TabsRoot, useForwardPropsEmits } from "reka-ui";
+  import type { TabsRootEmits, TabsRootProps } from "reka-ui";
 
   const props = withDefaults(defineProps<TabsRootProps>(), {
     orientation: "horizontal",

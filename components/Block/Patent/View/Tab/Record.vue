@@ -87,10 +87,7 @@
             class="dark:bg-zinc-800 dark:text-white z-50"
             @interact-outside="(e) => e.preventDefault()"
          >
-            <div
-               :style="{ width: '400px' }"
-               class="space-y-4"
-            >
+            <div class="space-y-4">
                <DialogHeader>
                   <DialogTitle
                      class="font-bold text-lg text-gray-800 dark:text-gray-200"
@@ -104,38 +101,16 @@
                   </DialogDescription>
                </DialogHeader>
 
-               <FloatLabel
-                  variant="in"
-                  class="w-full"
-               >
-                  <DatePicker
-                     v-model="newRecord.date"
-                     show-icon
-                     fluid
-                     date-format="yy/mm/dd"
-                     icon-display="input"
-                     show-button-bar
-                     manual-input
-                     input-id="review-date_input"
-                     class="w-full"
-                     :class="{
-                        'border-rose-500': !newRecord.date && formSubmitted,
-                        'dark:bg-zinc-700 dark:text-white dark:border-gray-600': true,
-                     }"
-                  />
-                  <label
-                     for="review-date_input"
-                     class="text-gray-600 dark:text-gray-300"
-                  >
-                     紀錄日期
-                  </label>
-               </FloatLabel>
+               <FormDatePicker
+                  v-model="newRecord.date"
+                  label="紀錄日期"
+               />
 
                <div>
                   <Textarea
                      v-model="newRecord.record"
                      placeholder="輸入新的紀錄，例如 '初審開始'"
-                     class="w-full h-32 resize-none border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:text-white"
+                     class="w-full h-32 resize-none"
                      :class="{
                         'border-rose-500': !newRecord.record && formSubmitted,
                      }"

@@ -50,6 +50,9 @@ export default defineNuxtConfig({
       "@pinia/nuxt",
       "pinia-plugin-persistedstate/nuxt",
    ],
+   icon: {
+      serverBundle: "local",
+   },
    tailwindcss: {
       viewer: true,
       cssPath: ["~/assets/css/tailwind.css", { injectPosition: "last" }],
@@ -111,13 +114,15 @@ export default defineNuxtConfig({
             "clsx",
             "overlayscrollbars-vue",
             "primevue/tooltip",
-            "radix-vue",
             "radix-ui",
             "lucide-vue-next",
             "tailwind-variants",
             "lodash-es",
          ],
       },
+   },
+   runtimeConfig: {
+      isProduction: process.env.NODE_ENV === "production",
    },
    compatibilityDate: "2024-11-01",
 });
