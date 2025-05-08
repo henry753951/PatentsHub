@@ -33,7 +33,7 @@
             </template>
             <template #content="slotProps">
                <div
-                  class="bg-white dark:bg-zinc-80"
+                  class="bg-white dark:bg-zinc-800 border-l-4 border-l-gray-300 dark:border-l-gray-600 pl-3 hover:border-l-blue-500 transition-colors duration-200 mb-4"
                >
                   <div
                      class="flex flex-col md:flex-row md:items-center justify-between space-y-2 md:space-y-0"
@@ -62,9 +62,7 @@
                               )
                            "
                         >
-                           <Icon
-                              name="ic:round-delete"
-                           />
+                           <Icon name="ic:round-delete" />
                         </Button>
                      </div>
                   </div>
@@ -86,45 +84,33 @@
             />
          </DialogTrigger>
          <DialogContent
-            :style="{ width: '400px' }"
             class="dark:bg-zinc-800 dark:text-white z-50"
+            @interact-outside="(e) => e.preventDefault()"
          >
-            <DialogHeader>
-               <div class="font-bold text-lg text-gray-800 dark:text-gray-200">
-                  {{ newRecord.id ? "更新記錄" : "新增記錄" }}
-               </div>
-            </DialogHeader>
             <div class="space-y-4">
-               <FloatLabel
-                  variant="in"
-                  class="w-full"
-               >
-                  <DatePicker
-                     v-model="newRecord.date"
-                     show-icon
-                     fluid
-                     date-format="yy/mm/dd"
-                     icon-display="input"
-                     show-button-bar
-                     manual-input
-                     input-id="review-date_input"
-                     class="w-full"
-                     :class="{
-                        'border-rose-500': !newRecord.date && formSubmitted,
-                        'dark:bg-zinc-700 dark:text-white dark:border-gray-600': true,
-                     }"
-                  />
-                  <label
-                     for="review-date_input"
-                     class="text-gray-600 dark:text-gray-300"
-                  >紀錄日期</label>
-               </FloatLabel>
+               <DialogHeader>
+                  <DialogTitle
+                     class="font-bold text-lg text-gray-800 dark:text-gray-200"
+                  >
+                     {{ newRecord.id ? "更新記錄" : "新增記錄" }}
+                  </DialogTitle>
+                  <DialogDescription
+                     class="text-sm text-gray-500 dark:text-gray-400"
+                  >
+                     請輸入紀錄日期和內容以完成操作。
+                  </DialogDescription>
+               </DialogHeader>
+
+               <FormDatePicker
+                  v-model="newRecord.date"
+                  label="紀錄日期"
+               />
 
                <div>
                   <Textarea
                      v-model="newRecord.record"
                      placeholder="輸入新的紀錄，例如 '初審開始'"
-                     class="w-full h-32 resize-none border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:text-white"
+                     class="w-full h-32 resize-none"
                      :class="{
                         'border-rose-500': !newRecord.record && formSubmitted,
                      }"
@@ -133,7 +119,7 @@
                      v-if="!newRecord.record && formSubmitted"
                      class="text-rose-500 text-sm mt-1"
                   >
-                     請輸入紀錄内容
+                     請輸入紀錄內容
                   </p>
                </div>
 
@@ -143,7 +129,9 @@
                      variant="default"
                      @click="submitForm"
                   >
-                     <Icon :name="newRecord.id ? 'ic:round-edit' : 'ic:round-add'" />
+                     <Icon
+                        :name="newRecord.id ? 'ic:round-edit' : 'ic:round-add'"
+                     />
                      {{ newRecord.id ? "更新記錄" : "提交記錄" }}
                   </Button>
                   <Button
@@ -169,7 +157,6 @@ import {
    Dialog,
    DialogContent,
    DialogDescription,
-   DialogFooter,
    DialogHeader,
    DialogTitle,
    DialogTrigger,
@@ -177,8 +164,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import DatePicker from "primevue/datepicker";
 import FloatLabel from "primevue/floatlabel";
-import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import consola from "consola";
 
 const { patentRecordsService } = defineProps<{
    patentRecordsService: ReturnType<typeof usePatentRecords>

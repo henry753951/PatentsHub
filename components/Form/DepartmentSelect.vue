@@ -31,7 +31,7 @@
             </div>
          </PopoverTrigger>
          <PopoverContent
-            class="w-[var(--radix-popper-anchor-width)] rounded-xl"
+            class="w-[var(--reka-popper-anchor-width)] rounded-xl"
          >
             <OverlayScrollbarsComponent>
                <div class="flex gap-8 pb-3 select-none">

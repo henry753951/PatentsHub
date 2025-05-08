@@ -9,9 +9,12 @@
             ref="el"
             class="inner-page flex-1 h-full w-full overflow-hidden"
          >
-            <ScrollArea class="h-full w-full scrollarea">
+            <div
+               ref="viewportRef"
+               class="h-full w-full scrollarea"
+            >
                <slot />
-            </ScrollArea>
+            </div>
          </div>
       </div>
       <ClientOnly>
@@ -24,8 +27,9 @@
 <script lang="ts" setup>
 import { Toaster } from "@/components/ui/sonner";
 import { ModalsService } from "#components";
-import { ScrollArea } from "@/components/ui/scroll-area";
 const el = useTemplateRef("el");
+const viewportRef = useTemplateRef<HTMLElement>("viewportRef");
+provide("viewportRef", viewportRef);
 const { width, height } = useElementSize(el);
 watch([width, height], ([w, h]) => {
    if (w > 0 && h > 0) {
@@ -44,5 +48,25 @@ watch([width, height], ([w, h]) => {
 <style scoped>
 .inner-page {
    border-top-left-radius: 15px;
+}
+
+.scrollarea {
+   overflow: auto;
+   /* Scrollbar Styling */
+}
+.scrollarea::-webkit-scrollbar {
+   width: 7px;
+}
+
+.scrollarea::-webkit-scrollbar-track {
+   background-color: #ebebebab;
+   -webkit-border-radius: 10px;
+   border-radius: 10px;
+}
+
+.scrollarea::-webkit-scrollbar-thumb {
+   -webkit-border-radius: 10px;
+   border-radius: 10px;
+   background: #6d6d6d;
 }
 </style>

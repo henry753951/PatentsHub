@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { TabsTrigger } from "radix-vue";
-  import type { TabsTriggerProps } from "radix-vue";
+  import { TabsTrigger } from "reka-ui";
+  import type { TabsTriggerProps } from "reka-ui";
 
   const props = withDefaults(
     defineProps<

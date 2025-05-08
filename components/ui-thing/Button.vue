@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
   import { reactiveOmit } from "@vueuse/core";
-  import { useForwardProps } from "radix-vue";
+  import { useForwardProps } from "reka-ui";
   import type { NuxtLinkProps } from "#app/components";
 
   type ButtonProps = VariantProps<typeof buttonStyles>;

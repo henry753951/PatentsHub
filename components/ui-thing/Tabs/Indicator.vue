@@ -9,8 +9,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { TabsIndicator } from "radix-vue";
-  import type { TabsIndicatorProps } from "radix-vue";
+  import { TabsIndicator } from "reka-ui";
+  import type { TabsIndicatorProps } from "reka-ui";
 
   defineOptions({ inheritAttrs: false });
 

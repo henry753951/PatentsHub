@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { EditablePreview } from "radix-vue";
-  import type { EditablePreviewProps } from "radix-vue";
+  import { EditablePreview } from "reka-ui";
+  import type { EditablePreviewProps } from "reka-ui";
 
   const props = defineProps<EditablePreviewProps>();
 </script>

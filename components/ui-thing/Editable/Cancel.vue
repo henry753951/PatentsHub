@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { EditableCancelTrigger } from "radix-vue";
-  import type { EditableCancelTriggerProps } from "radix-vue";
+  import { EditableCancelTrigger } from "reka-ui";
+  import type { EditableCancelTriggerProps } from "reka-ui";
 
   const props = defineProps<EditableCancelTriggerProps>();
 </script>
