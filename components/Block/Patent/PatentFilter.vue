@@ -1,10 +1,19 @@
 <template>
-   <div>
+   <div class="relative flex items-center gap-2">
       <Input
          v-model="textInput"
          placeholder="搜尋專利"
          class="w-full"
       />
+      <div
+         v-if="textInput"
+         class="absolute right-2 top-1/2 -translate-y-1/2"
+      >
+         <CustomIconButton
+            name="ic:round-close"
+            @click="textInput = ''"
+         />
+      </div>
    </div>
 </template>
 

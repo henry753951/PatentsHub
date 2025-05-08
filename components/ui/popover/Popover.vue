@@ -6,14 +6,11 @@ const props = defineProps<PopoverRootProps>();
 const emits = defineEmits<PopoverRootEmits>();
 
 const forwarded = useForwardPropsEmits(props, emits);
-const isOpen = ref(false);
-provide("popoverState", isOpen);
 </script>
 
 <template>
    <PopoverRoot
       v-bind="forwarded"
-      v-model:open="isOpen"
    >
       <slot />
    </PopoverRoot>

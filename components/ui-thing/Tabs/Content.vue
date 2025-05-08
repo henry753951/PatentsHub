@@ -8,8 +8,8 @@
 </template>
 
 <script lang="ts" setup>
-import { TabsContent } from "radix-vue";
-import type { TabsContentProps } from "radix-vue";
+import { TabsContent } from "reka-ui";
+import type { TabsContentProps } from "reka-ui";
 
 const props = defineProps<
   TabsContentProps & {

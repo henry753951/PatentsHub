@@ -47,17 +47,25 @@
             </div>
          </BlockHeader>
 
-         <div class="grid grid-cols-1 gap-4">
-            <BlockPatentRow
-               v-for="patent in data"
-               :key="patent.PatentID"
-               :patent="patent"
-               :flex-prop="patent.flexProp"
-               class="rounded-lg"
-               @click="
-                  open('PatentModal', { props: { patentId: patent.PatentID } })
-               "
-            />
+         <div>
+            <Virtualizer
+               v-slot="{ index }"
+               :data="data"
+               :scroll-ref="viewportRef"
+               :overscan="1"
+               :start-margin="100"
+            >
+               <BlockPatentRow
+                  :patent="data[index]"
+                  :flex-prop="data[index].flexProp"
+                  class="rounded-lg mb-3"
+                  @click="
+                     open('PatentModal', {
+                        props: { patentId: data[index].PatentID },
+                     })
+                  "
+               />
+            </Virtualizer>
          </div>
       </div>
    </div>
@@ -65,6 +73,7 @@
 
 <script lang="ts" setup>
 import { Plus } from "lucide-vue-next";
+import { Virtualizer } from "virtua/vue";
 import {
    Select,
    SelectContent,
@@ -79,6 +88,7 @@ definePageMeta({
    name: "patents-view",
 });
 
+const viewportRef = inject<Ref<HTMLElement>>("viewportRef");
 const { data, forceRefresh, filter, order } = useDatabasePatents();
 const { toggleSortDirection, orderBy, orderOptions } = order;
 </script>

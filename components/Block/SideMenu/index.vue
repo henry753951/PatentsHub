@@ -1,4 +1,3 @@
-div
 <template>
    <div class="h-full flex flex-col items-center outter">
       <div class="flex flex-col gap-4 items-center px-1.5">
@@ -12,6 +11,7 @@ div
             <BlockSideMenuNavs :items="moreNavItems" />
          </BlockSideMenuNavsItem>
          <BlockSideMenuNavsItem
+            v-if="!isProduction"
             icon="basil:explore-outline"
             title="Debug"
             @click="() => navigateTo({ name: 'debug' })"
@@ -27,6 +27,7 @@ div
 
 <script lang="ts" setup>
 const { open } = useModals();
+const isProduction = useNuxtApp().$config.isProduction;
 const navItems = [
    {
       title: "首頁",

@@ -8,8 +8,8 @@
 </template>
 <script lang="ts">
   import { reactiveOmit } from "@vueuse/core";
-  import { Primitive } from "radix-vue";
-  import type { PrimitiveProps } from "radix-vue";
+  import { Primitive } from "reka-ui";
+  import type { PrimitiveProps } from "reka-ui";
 
   export type DescriptionDetailsProps = PrimitiveProps & {
     text?: string;

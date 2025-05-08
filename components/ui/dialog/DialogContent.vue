@@ -10,8 +10,11 @@ import {
    DialogOverlay,
    DialogPortal,
    useForwardPropsEmits,
-} from "radix-vue";
+} from "reka-ui";
 import { computed, type HTMLAttributes } from "vue";
+const onOpenChange = inject("onOpenChange", (value: boolean) => {
+   console.warn("onOpenChange not provided", value);
+});
 
 const props = defineProps<
   DialogContentProps & {
@@ -41,6 +44,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
                props.blur && 'backdrop-blur-sm',
             )
          "
+         @click="onOpenChange(false)"
       />
       <DialogContent
          v-bind="forwarded"
@@ -50,6 +54,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
                props.class,
             )
          "
+         @interact-outside.prevent
          @open-auto-focus.prevent
       >
          <slot />

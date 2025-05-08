@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { TabsList } from "radix-vue";
-  import type { TabsListProps } from "radix-vue";
+  import { TabsList } from "reka-ui";
+  import type { TabsListProps } from "reka-ui";
 
   const props = withDefaults(
     defineProps<

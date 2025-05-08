@@ -2,7 +2,7 @@
    <div>
       <!-- 新增紀錄對話框 -->
       <Dialog v-model:open="isOpen">
-         <DialogContent @pointer-down-outside.prevent>
+         <DialogContent>
             <DialogHeader>
                <DialogTitle>
                   {{ recordID ? "編輯" : "新增" }}帳務款項
