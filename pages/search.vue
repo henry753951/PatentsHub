@@ -1,6 +1,9 @@
 <template>
-   <div class="m-4 max-w-[1320px]">
-      <Card>
+   <div class="p-4 overflow-hidden h-full">
+      <Card
+         v-if="true"
+         class="h-full overflow-y-scroll"
+      >
          <template #title>
             <span>專利總覽 (點擊行以查看詳細資訊)</span>
          </template>
@@ -40,10 +43,10 @@
             <DataTable
                ref="dt"
                v-model:filters="filters"
+               paginator
                :value="transformedData"
                filter-display="row"
                class="w-full datatable-small"
-
                show-gridlines
                :rows="10"
                resizable-columns
@@ -109,7 +112,9 @@
                   >
                      <div>
                         <FormPatentAgencyList
-                           v-model="slotProps.data.internal.InitialReviewAgencies"
+                           v-model="
+                              slotProps.data.internal.InitialReviewAgencies
+                           "
                            :is-taker-agency-unit="false"
                         />
                      </div>
@@ -159,6 +164,9 @@
             </DataTable>
          </template>
       </Card>
+      <div v-else>
+         此頁面正在修復中，有點問題先禁用，請見諒。 😅😅
+      </div>
    </div>
 </template>
 
@@ -261,14 +269,19 @@ const filters = ref({
       value: null,
       matchMode: FilterMatchMode.STARTS_WITH,
    },
-   "internal.InitialReviewDate": { value: null, matchMode: FilterMatchMode.DATE_IS },
+   "internal.InitialReviewDate": {
+      value: null,
+      matchMode: FilterMatchMode.DATE_IS,
+   },
    "technical.keywords": { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
 const transformedData = computed(() => {
    return data.value
       ? data.value.map((item) => {
-         const maintenances = Array.isArray(item.maintenances) ? item.maintenances : [];
+         const maintenances = Array.isArray(item.maintenances)
+            ? item.maintenances
+            : [];
 
          const latestMaintenance = maintenances.length
             ? [...maintenances].sort((a, b) => {
@@ -280,17 +293,25 @@ const transformedData = computed(() => {
             : null;
 
          const maintenancePeriod = latestMaintenance
-            ? `${new Date(latestMaintenance.MaintenanceDate).toLocaleDateString(
-               "zh-TW",
-               { year: "numeric", month: "2-digit", day: "2-digit" },
-            )} - ${new Date(latestMaintenance.ExpireDate).toLocaleDateString(
-               "zh-TW",
-               { year: "numeric", month: "2-digit", day: "2-digit" },
-            )}`
+            ? `${new Date(
+               latestMaintenance.MaintenanceDate,
+            ).toLocaleDateString("zh-TW", {
+               year: "numeric",
+               month: "2-digit",
+               day: "2-digit",
+            })} - ${new Date(
+               latestMaintenance.ExpireDate,
+            ).toLocaleDateString("zh-TW", {
+               year: "numeric",
+               month: "2-digit",
+               day: "2-digit",
+            })}`
             : "N/A";
 
          const maintenanceYear = latestMaintenance
-            ? new Date(latestMaintenance.MaintenanceDate).getFullYear().toString()
+            ? new Date(latestMaintenance.MaintenanceDate)
+               .getFullYear()
+               .toString()
             : "N/A";
 
          const maintenanceInfo = latestMaintenance
@@ -327,7 +348,9 @@ const transformedData = computed(() => {
             .join("\n---\n");
          return {
             ...item,
-            inventors: item.inventors?.find((i) => i.Main)?.inventor?.contactInfo?.Name || "無資料",
+            inventors:
+                 item.inventors?.find((i) => i.Main)?.inventor?.contactInfo
+                    ?.Name || "無資料",
             MaintenanceInfo: maintenanceInfo, // 合併的維護資訊欄位
             internal: {
                ...item.internal,
@@ -335,9 +358,11 @@ const transformedData = computed(() => {
             },
             // 事務所攤平欄位
             __InitialAgencyName: initialAgency?.agencyUnit?.Name || "",
-            __InitialAgencyContactIds: initialAgency?.agencyUnitPersonIds?.join(",") || "",
+            __InitialAgencyContactIds:
+                 initialAgency?.agencyUnitPersonIds?.join(",") || "",
             __TakerAgencyName: takerAgency?.agencyUnit?.Name || "",
-            __TakerAgencyContactIds: takerAgency?.agencyUnitPersonIds?.join(",") || "",
+            __TakerAgencyContactIds:
+                 takerAgency?.agencyUnitPersonIds?.join(",") || "",
             __TakerAgencyFileCode: takerAgency?.FileCode || "",
             __TakerAgencyContacts: takerContactsStr,
          };
@@ -440,7 +465,6 @@ const exportCSVpartition = () => {
    // 匯出部分
    dt.value.exportCSV();
 };
-
 </script>
 
 <style scoped></style>
