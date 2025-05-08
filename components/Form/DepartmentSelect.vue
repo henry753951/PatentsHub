@@ -4,7 +4,7 @@
          <PopoverTrigger as-child>
             <div
                v-auto-animate
-               class="bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl w-full border border-slate-200 dark:border-zinc-800 hover:shadow-sm transition-shadow select-none cursor-pointer"
+               class="bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl w-full border border-slate-200 dark:border-zinc-800 hover:shadow-sm transition-shadow cursor-pointer"
             >
                <template
                   v-if="

@@ -18,7 +18,7 @@
          </div>
          <div
             v-if="saveButton"
-            class="py-2 px-3 rounded-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 cursor-pointer hover:bg-zinc-200 hover:dark:bg-zinc-800 dark:text-white transition-all duration-300 gap-1 select-none"
+            class="py-2 px-3 rounded-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 cursor-pointer hover:bg-zinc-200 hover:dark:bg-zinc-800 dark:text-white transition-all duration-300 gap-1"
             @click="emits('save')"
          >
             <Icon name="mdi:content-save" /> <span class="text-xs">保存</span>

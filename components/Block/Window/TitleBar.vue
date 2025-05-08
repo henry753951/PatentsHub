@@ -96,13 +96,6 @@ const { data: version } = useAsyncData(
 </script>
 
 <style lang="css">
-* {
-   -webkit-user-select: none;
-   -moz-user-select: none;
-   -ms-user-select: none;
-   user-select: none;
-}
-
 .window-control {
    padding: 0.3rem;
    user-select: none;
