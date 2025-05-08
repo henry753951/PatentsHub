@@ -13,7 +13,7 @@
          <Button
             variant="default"
             class="gap-2"
-            @click="showAddDialog = true"
+            @click="openAddDialog"
          >
             <PlusIcon class="h-4 w-4" />
             新增維護記錄
@@ -211,7 +211,7 @@
             <Button
                variant="default"
                class="gap-2"
-               @click="showAddDialog = true"
+               @click="openAddDialog"
             >
                <PlusIcon class="h-4 w-4" />
                新增維護記錄
@@ -249,6 +249,7 @@
                   </Label>
                   <Input
                      id="title"
+                     ref="titleInputRef"
                      v-model="form.title"
                      placeholder="輸入維護標題"
                   />
@@ -315,6 +316,7 @@ const {
    maintenanceStatus,
 } = patentMaintainancesService;
 
+const titleInputRef = ref<HTMLInputElement>();
 // Form state
 const showAddDialog = ref(false);
 const editMaintenanceData = ref<{
@@ -324,21 +326,51 @@ const editMaintenanceData = ref<{
 } | null>(null);
 
 const form = ref({
-   maintenanceDate: new Date() as Date,
-   expireDate: (() => {
-      const date = new Date() as Date | null;
-      date!.setFullYear(date!.getFullYear() + 3); // 加三年
-      date!.setDate(date!.getDate() - 1); // 減一天
-      return date;
-   })(),
+   maintenanceDate: null as Date | null,
+   expireDate: null as Date | null,
    title: "",
 });
 
-// 監聽維護日期變化，更新到期日期
+const openAddDialog = () => {
+   editMaintenanceData.value = null;
+
+   let defaultMaintenanceDate = new Date();
+   console.log(maintenances.value.length);
+   if (maintenances.value.length === 0) {
+      // 第一筆預設為公告獲證日期
+      const pubDate = patent.value?.external?.PublicationDate;
+      defaultMaintenanceDate = pubDate ? new Date(pubDate) : new Date();
+   }
+   else {
+      // 後續紀錄的維護日期為上一筆到期日隔天
+      const lastExpireDate = new Date(maintenances.value[maintenances.value.length - 1].ExpireDate);
+      defaultMaintenanceDate = new Date(lastExpireDate.getTime());
+      defaultMaintenanceDate.setDate(defaultMaintenanceDate.getDate() + 1);
+   }
+
+   // 到期日預設為維護日期加三年減一天
+   const defaultExpireDate = new Date(defaultMaintenanceDate);
+   defaultExpireDate.setFullYear(defaultExpireDate.getFullYear() + 3);
+   defaultExpireDate.setDate(defaultExpireDate.getDate() - 1);
+
+   form.value = {
+      maintenanceDate: defaultMaintenanceDate,
+      expireDate: defaultExpireDate,
+      title: "",
+   };
+
+   showAddDialog.value = true;
+
+   nextTick(() => {
+      titleInputRef.value?.focus();
+   });
+};
+
+// 僅在新增模式下變更維護日期時才自動調整到期日期
 watch(
    () => form.value.maintenanceDate,
    (newDate) => {
-      if (newDate) {
+      if (newDate && !editMaintenanceData.value) {
          const newExpire = new Date(newDate);
          newExpire.setFullYear(newExpire.getFullYear() + 3);
          newExpire.setDate(newExpire.getDate() - 1);
@@ -354,13 +386,13 @@ const isSubmitDisabled = computed(() => {
 });
 const minExpireDate = computed(() => {
    if (!maintenanceStatus.value?.nextMaintenanceDate)
-      return form.value.maintenanceDate;
+      return form.value.maintenanceDate || undefined;
    if (
       form.value.maintenanceDate
       && form.value.maintenanceDate > maintenanceStatus.value.nextMaintenanceDate
    )
-      return form.value.maintenanceDate;
-   return maintenanceStatus.value?.nextMaintenanceDate;
+      return form.value.maintenanceDate || undefined;
+   return maintenanceStatus.value?.nextMaintenanceDate || undefined;
 });
 
 // Methods
@@ -425,12 +457,7 @@ const closeDialog = () => {
    editMaintenanceData.value = null;
    form.value = {
       maintenanceDate: new Date(),
-      expireDate: (() => {
-         const date = new Date();
-         date.setFullYear(date.getFullYear() + 3); // 加三年
-         date.setDate(date.getDate() - 1); // 減一天
-         return date;
-      })(),
+      expireDate: null,
       title: "",
    };
 };

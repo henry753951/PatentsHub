@@ -16,12 +16,14 @@ export const usePatentStatus = (patentService: {
       reason?: string,
       date?: Date | null,
       active?: boolean,
+      override?: boolean,
    ) => {
       const data = {
          status,
          active: false,
          reason: "",
          date: null as Date | null,
+         override: false,
       };
 
       if (!patent.value) return data;
@@ -58,6 +60,7 @@ export const usePatentStatus = (patentService: {
             data.date = date ?? null;
             data.active = active ?? false;
             data.reason = reason ?? "";
+            data.override = override ?? false;
             break;
       }
 
@@ -65,28 +68,29 @@ export const usePatentStatus = (patentService: {
    };
 
    const status = computed(() => {
-      const signed = createStatus("SIGNED");
-      const reviewed = createStatus("REVIEWED");
-      const certified = createStatus("CERTIFIED");
+      const signed = createStatus("SIGNED");// 教師登錄 固定在第一個
 
-      const base = [signed, reviewed, certified];
+      const others = [createStatus("REVIEWED"), createStatus("CERTIFIED")];// 其他狀態 按照時間排序
 
-      if (certified.active) {
-         base.push(createStatus("EXPIRED"));
-      }
+      const expired = others[1].active ? createStatus("EXPIRED") : null;
+      if (expired) others.push(expired);
 
       const manualStatuses = DbManualStatus.value.map((m) => ({
-         ...createStatus("MANUAL", m.Reason, m.Date ?? null, m.Active),
+         ...createStatus(
+            "MANUAL",
+            m.Reason,
+            m.Date ?? null,
+            m.Active,
+            m.Override,
+         ),
          ManualStatusID: m.ManualStatusID,
-         Override: m.Override,
       }));
 
-      // 分成插入流程中與流程之後
-      const inlineManuals = manualStatuses.filter((m) => !m.Override);
-      const overrideManuals = manualStatuses.filter((m) => m.Override);
+      const inlineManuals = manualStatuses.filter((m) => !m.override);
+      const overrideManuals = manualStatuses.filter((m) => m.override);
 
-      // 都依照時間排序
-      inlineManuals.sort((a, b) => {
+      const mix = [...others, ...inlineManuals];
+      mix.sort((a, b) => {
          const timeA = a.date instanceof Date ? a.date.getTime() : Infinity;
          const timeB = b.date instanceof Date ? b.date.getTime() : Infinity;
          return timeA - timeB;
@@ -98,7 +102,7 @@ export const usePatentStatus = (patentService: {
          return timeA - timeB;
       });
 
-      return [...base, ...inlineManuals, ...overrideManuals];
+      return [signed, ...mix, ...overrideManuals];
    });
 
    const addManualStatus = async (manual: {
