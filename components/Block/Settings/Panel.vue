@@ -2,7 +2,7 @@
    <UiThingTabs
       default-value="Projects"
       orientation="vertical"
-      class="mx-auto flex w-full justify-center h-[440px] gap-2 overflow-hidden"
+      class="mx-auto flex w-full justify-center h-[60vh] gap-2 overflow-hidden"
    >
       <UiThingTabsList
          :pill="false"

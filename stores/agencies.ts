@@ -2,10 +2,9 @@ import { defineStore } from "pinia";
 
 export const useAgenciesStore = defineStore("agenciesStore", {
    state: () => {
-      const initialState = {
+      return {
          agencies: [] as RouterOutput["data"]["agency"]["getAgencies"],
       };
-      return initialState;
    },
 
    actions: {

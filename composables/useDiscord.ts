@@ -7,7 +7,6 @@ export const useDiscord = () => {
    onMounted(() => {
       discordBus = $trpc.app.discord.onSlashCommand.subscribe(undefined, {
          onData: (event) => {
-            consola.info("Discord event:", event);
             switch (event.type) {
                case "ping":
                   alert("Pong!");
@@ -44,7 +43,7 @@ export const useDiscord = () => {
                   break;
 
                default:
-                  console.info("Unknown command:", event);
+                  break;
             }
          },
       });
