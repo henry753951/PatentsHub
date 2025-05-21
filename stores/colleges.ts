@@ -3,24 +3,7 @@ import type { z } from "zod";
 
 export const useCollegesStore = defineStore("collegesStore", {
    state: () => {
-      const initialState = {
-         colleges: [] as RouterOutput["data"]["college"]["getColleges"],
-         isInitialized: false,
-      };
-      if (!initialState.isInitialized) {
-         (async () => {
-            try {
-               const { $trpc } = useNuxtApp();
-               const data = await $trpc.data.college.getColleges.query();
-               initialState.colleges = data;
-               initialState.isInitialized = true;
-            }
-            catch (error) {
-               console.error("Failed to initialize colleges:", error);
-            }
-         })();
-      }
-      return initialState;
+      return { colleges: [] as RouterOutput["data"]["college"]["getColleges"] };
    },
 
    actions: {

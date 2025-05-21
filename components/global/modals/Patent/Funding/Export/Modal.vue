@@ -212,7 +212,7 @@
                                     class="text-gray-500 flex flex-col gap-1 items-end text-xs"
                                  >
                                     <div>
-                                       已使用 {{ unit.remainingAmount }} 元
+                                       已使用 {{ unit.amount - unit.remainingAmount }} 元
                                     </div>
                                     <div>總共{{ unit.amount }} 元</div>
                                  </div>

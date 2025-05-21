@@ -5,25 +5,79 @@ interface OrderBy {
    direction: "asc" | "desc"
 }
 
+export type PatentFilterType = {
+   where: z.infer<typeof dbZ.PatentWhereInputSchema>
+   static: {
+      status?:
+        | "已登錄"
+        | "已初評"
+        | "有效"
+        | "已到期"
+        | "國科會終止"
+        | "已放棄"
+   }
+};
+
+export type PatentRowType = ReturnType<
+   typeof useDatabasePatents
+>["data"]["value"][number];
+
 export const useDatabasePatents = (
-   defaultFilter: z.infer<typeof dbZ.PatentWhereInputSchema> = {},
+   defaultFilter: PatentFilterType = { where: {}, static: {} },
 ) => {
    const { $trpc } = useNuxtApp();
    // [State]
-   const filter
-      = ref<z.infer<typeof dbZ.PatentWhereInputSchema>>(defaultFilter);
+   const filter = ref<PatentFilterType>(defaultFilter);
 
    const { data, refresh, status } = useAsyncData(
       "patents",
       async () => {
-         const data = await getPatents(filter.value);
-         return data.map((item) => {
-            return {
-               ...item,
-               _status: getStatus(item),
-               _mainInventor: item.inventors?.find((i) => i.Main),
-            };
-         });
+         const data = await getPatents(filter.value.where);
+         return data
+            .map((item) => {
+               return {
+                  ...item,
+                  _status: getStatus(item),
+                  _mainInventor: item.inventors?.find((i) => i.Main),
+               };
+            })
+            .filter((item) => {
+               if (!filter.value.static) return true;
+
+               const lastestStatus = item._status
+                  .toReversed()
+                  .find((s) => s.active);
+               if (!lastestStatus) return true;
+               switch (filter.value.static.status) {
+                  case "已登錄":
+                     return lastestStatus.status === "SIGNED";
+                  case "已初評":
+                     return lastestStatus.status === "REVIEWED";
+                  case "有效":
+                     return lastestStatus.status === "CERTIFIED";
+                  case "已到期":
+                     return lastestStatus.status === "EXPIRED";
+                  case "國科會終止":
+                     return (
+                        lastestStatus.status === "MANUAL"
+                        && lastestStatus.reason.includes("國科會終止")
+                     );
+                  case "已放棄":
+                     return (
+                        lastestStatus.status === "MANUAL"
+                        && lastestStatus.reason.includes("放棄")
+                     );
+                  default:
+                     if (filter.value.static.status)
+                        return (
+                           lastestStatus.status === "MANUAL"
+                           && lastestStatus.reason.includes(
+                              filter.value.static.status as unknown as string,
+                           )
+                        );
+                     return true;
+               }
+            });
       },
       {
          watch: [filter],
@@ -44,9 +98,12 @@ export const useDatabasePatents = (
          if (valueA == null) valueA = "";
          if (valueB == null) valueB = "";
 
-         // Convert to string for consistent comparison
-         const strA = valueA.toString().toLowerCase();
-         const strB = valueB.toString().toLowerCase();
+         const strA: string | number = isNaN(Number(valueA))
+            ? valueA.toString().toLowerCase()
+            : Number(valueA);
+         const strB: string | number = isNaN(Number(valueB))
+            ? valueB.toString().toLowerCase()
+            : Number(valueB);
 
          // Compare based on direction
          if (orderBy.value.direction === "asc") {

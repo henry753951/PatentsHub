@@ -28,12 +28,14 @@
                         <CustomContentBlockRow
                            v-model="dataExported.name"
                            title="匯出名稱"
+                           @update:model-value="handleAutoSave"
                         />
                      </div>
                      <div class="w-full">
                         <CustomContentBlockRow
                            v-model="dataExported.description"
                            title="匯出說明"
+                           @update:model-value="handleAutoSave"
                         />
                      </div>
                   </div>
@@ -169,6 +171,17 @@ onMounted(() => {
    fundingPlan.value = fundingData.value?.plan || null;
    patent.value = patentData.value;
 });
+
+const handleAutoSave = async () => {
+   if (!dataExported.value) return;
+
+   await fundingService.exports.actions.updateExport({
+      ExportID: exportId,
+      name: dataExported.value.name,
+      description: dataExported.value.description,
+   });
+};
+
 </script>
 
 <style scoped>

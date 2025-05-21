@@ -571,6 +571,43 @@ export const usePatentFundings = (patentService: {
       };
    };
 
+   // 更新導出
+   const updateExport = async ({
+      ExportID,
+      name,
+      description,
+   }: {
+      ExportID: number
+      name: string
+      description: string | null
+   }) => {
+      if (!patent.value?.funding) return;
+
+      await $trpc.data.patent.updatePatent.mutate([
+         {
+            data: {
+               funding: {
+                  update: {
+                     fundingExports: {
+                        update: {
+                           where: { ExportID },
+                           data: {
+                              Name: name,
+                              Description: description,
+                           },
+                        },
+                     },
+                  },
+               },
+            },
+            patentID: patent.value.PatentID,
+         },
+      ]);
+
+      if (refreshCallback) await refreshCallback();
+      refresh();
+   };
+
    // 導出 Dialog
    const useExportModal = (selectedRecords: PatentFundingRecord[]) => {
       // 資助單位
@@ -665,6 +702,7 @@ export const usePatentFundings = (patentService: {
             performExport,
             deleteExport,
             getExport,
+            updateExport,
          },
          list: exportedRecords,
          exportableRecords,
