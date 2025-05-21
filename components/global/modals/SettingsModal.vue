@@ -3,7 +3,7 @@
       <Dialog
          v-model:open="isOpen"
       >
-         <DialogContent class="!max-w-screen-md overflow-hidden flex flex-col">
+         <DialogContent class="!max-w-screen-lg overflow-hidden flex flex-col">
             <DialogHeader class="select-none">
                <DialogTitle>設定</DialogTitle>
                <DialogDescription></DialogDescription>

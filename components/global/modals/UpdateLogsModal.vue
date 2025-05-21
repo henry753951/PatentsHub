@@ -1,7 +1,7 @@
 <template>
    <div>
       <Dialog v-model:open="isOpen">
-         <DialogContent>
+         <DialogContent class="max-w-[800px]">
             <DialogHeader class="select-none">
                <DialogTitle>版本日誌 v{{ updateInfo.version }}</DialogTitle>
                <DialogDescription>

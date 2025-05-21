@@ -2,24 +2,9 @@ import { defineStore } from "pinia";
 
 export const useCountriesStore = defineStore("countriesStore", {
    state: () => {
-      const initialState = {
+      return {
          countries: [] as RouterOutput["data"]["country"]["getAllContries"],
-         isInitialized: false,
       };
-      if (!initialState.isInitialized) {
-         (async () => {
-            try {
-               const { $trpc } = useNuxtApp();
-               const data = await $trpc.data.country.getAllContries.query();
-               initialState.countries = data;
-               initialState.isInitialized = true;
-            }
-            catch (error) {
-               console.error("Failed to initialize countries:", error);
-            }
-         })();
-      }
-      return initialState;
    },
 
    actions: {

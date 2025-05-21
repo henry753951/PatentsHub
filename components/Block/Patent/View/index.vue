@@ -97,11 +97,11 @@
                         {{
                            patent.PatentType
                               ? {
-                                 DESIGN: "設計",
-                                 UTILITY_MODEL: "新型",
-                                 INVENTION: "發明",
-                                 PLANT: "植物",
-                              }[patent.PatentType]
+                                   DESIGN: "設計",
+                                   UTILITY_MODEL: "新型",
+                                   INVENTION: "發明",
+                                   PLANT: "植物",
+                                }[patent.PatentType]
                               : ""
                         }}
                      </CustomStatusBlock>
@@ -155,18 +155,10 @@
          <div class="container mx-auto z-[-1]">
             <Tabs v-model:value="activeTab">
                <TabList>
-                  <Tab value="basic">
-                     概要
-                  </Tab>
-                  <Tab value="maintenance">
-                     維護
-                  </Tab>
-                  <Tab value="finance">
-                     帳務
-                  </Tab>
-                  <Tab value="record">
-                     記錄
-                  </Tab>
+                  <Tab value="basic"> 概要 </Tab>
+                  <Tab value="maintenance"> 維護 </Tab>
+                  <Tab value="finance"> 帳務 </Tab>
+                  <Tab value="record"> 記錄 </Tab>
                </TabList>
                <TabPanels>
                   <TabPanel value="basic">
@@ -200,7 +192,7 @@
          </div>
       </div>
       <div
-         v-if="status !== 'pending' && !patent"
+         v-if="!patent && status === 'success'"
          class="container mx-auto py-[10rem]"
       >
          <div class="flex items-center justify-center h-full">
@@ -210,7 +202,7 @@
                class="text-zinc-400 dark:text-zinc-500"
             />
             <span class="text-zinc-500 text-[3rem] font-bold ml-5">
-               專利不存在
+               {{ "專利不存在" }}
             </span>
          </div>
       </div>
@@ -226,7 +218,7 @@ import TabPanel from "primevue/tabpanel";
 import { Button } from "@/components/ui/button";
 import type { z } from "zod";
 const porps = defineProps<{
-   patentId: number
+   patentId: number;
 }>();
 
 const { open } = useModals();
@@ -241,9 +233,9 @@ const title = computed(() => {
    return {
       english: patent.value.TitleEnglish,
       native:
-         patent.value.Title
-         || patent.value.DraftTitle
-         || patent.value.TitleEnglish,
+         patent.value.Title ||
+         patent.value.DraftTitle ||
+         patent.value.TitleEnglish,
    };
 });
 
@@ -258,200 +250,6 @@ const {
    crud,
    status,
 } = useDatabasePatent(porps.patentId);
-
-// const patent = ref<RouterOutput["data"]["patent"]["getPatent"]>({
-//    PatentID: 2, // 假設新的專利ID為2
-//    Year: "2016", // 公告/獲證年度為105年（2016）
-//    Title: "分子拓印薄膜之製備方法及其分子拓印薄膜",
-//    DraftTitle: "以導電高分子拓印荷爾蒙製備生物感測電極", // 發明名稱(稿)
-//    TitleEnglish: "", // 未提供英文名稱，留空
-//    country: {
-//       CountryID: 1,
-//       ISOCode: "TW",
-//       CountryName: "中華民國", // 專利國家
-//    },
-//    inventors: [
-//       {
-//          InventorID: 1,
-//          PatentID: 2,
-//          inventor: {
-//             department: {
-//                CollegeID: 1,
-//                DepartmentID: 2,
-//                Name: "化學工程及材料工程學系", // 單位系所
-//                college: {
-//                   CollegeID: 1,
-//                   Name: "工學院", // 學院
-//                   Description: "",
-//                },
-//                Description: "",
-//             },
-//             DepartmentID: 2,
-//             InventorID: 1,
-//             ContactInfoID: 1,
-//             contactInfo: {
-//                Name: "林宏殷", // 發明人
-//                ContactInfoID: 1,
-//                Email: null,
-//                OfficeNumber: null,
-//                PhoneNumber: null,
-//                Role: "發明人",
-//                Note: null,
-//             },
-//          },
-//          Main: true, // 假設林宏殷為主要發明人
-//          Contribution: null,
-//       },
-//       {
-//          InventorID: 2,
-//          PatentID: 2,
-//          inventor: {
-//             department: {
-//                CollegeID: 1,
-//                DepartmentID: 2,
-//                Name: "化學工程及材料工程學系",
-//                college: {
-//                   CollegeID: 1,
-//                   Name: "工學院",
-//                   Description: "",
-//                },
-//                Description: "",
-//             },
-//             DepartmentID: 2,
-//             InventorID: 2,
-//             ContactInfoID: 2,
-//             contactInfo: {
-//                Name: "李玫樺", // 共同發明人1
-//                ContactInfoID: 2,
-//                Email: null,
-//                OfficeNumber: null,
-//                PhoneNumber: null,
-//                Role: "共同發明人",
-//                Note: null,
-//             },
-//          },
-//          Main: false,
-//          Contribution: null,
-//       },
-//       {
-//          InventorID: 3,
-//          PatentID: 2,
-//          inventor: {
-//             department: {
-//                CollegeID: 1,
-//                DepartmentID: 2,
-//                Name: "化學工程及材料工程學系",
-//                college: {
-//                   CollegeID: 1,
-//                   Name: "工學院",
-//                   Description: "",
-//                },
-//                Description: "",
-//             },
-//             DepartmentID: 2,
-//             InventorID: 3,
-//             ContactInfoID: 3,
-//             contactInfo: {
-//                Name: "郭漢章", // 共同發明人2
-//                ContactInfoID: 3,
-//                Email: null,
-//                OfficeNumber: null,
-//                PhoneNumber: null,
-//                Role: "共同發明人",
-//                Note: null,
-//             },
-//          },
-//          Main: false,
-//          Contribution: null,
-//       },
-//    ],
-//    technical: {
-//       PatentID: 2,
-//       MaturityLevel: "4", // 技術成熟度TRL
-//       keywords: [], // 未提供技術關鍵字，留空
-//    },
-//    PatentType: "INVENTION", // 專利類別：發明
-//    DepartmentID: 2, // 假設化學工程及材料工程學系的ID為2
-//    application: {
-//       PatentID: 2,
-//       ApplicationNumber: "105101952", // 申請案號
-//       FilingDate: "2016-01-22", // 申請日期（105.01.22）
-//       RDResultNumber: "108HFA140019", // 研發成果編號（STRIKE）
-//       NSCNumber: "109-390-001", // 國科會編號（STRIKE）
-//    },
-//    internal: {
-//       PatentID: 2,
-//       InternalID: "10413", // 校內編號
-//       InitialReviewDate: "2015-11-03", // 技推委員會審理日期（104.11.03）
-//       InitialReviewNumber: null,
-//       InitialReviewAgencies: [
-//          {
-//             agencyUnit: {
-//                Name: "初評事務所",
-//                AgencyUnitID: 0,
-//                Description: "",
-//             },
-//             AgencyUnitID: 0,
-//             PatentID: 0,
-//          },
-//       ], // 初評事務所
-//       TakerAgencies: [
-//          {
-//             agencyUnit: {
-//                Name: "台一",
-//                AgencyUnitID: 0,
-//                Description: "",
-//             },
-//             AgencyUnitID: 0,
-//             PatentID: 0,
-//             FileCode: "",
-//          },
-//       ], // 承辦事務所
-//    },
-//    external: {
-//       PatentNumber: "I561821", // 專利號碼
-//       PublicationDate: "2016-12-11", // 公告/獲證日期（105.12.11）
-//       StartDate: "2016-12-11", // 專利權期間開始
-//       EndDate: "2036-01-21", // 專利權期間結束
-//       IPCNumber: null, // 未提供國際專利分類號IPC
-//       PatentScope: null, // 未提供專利範圍
-//       PatentID: 2,
-//    },
-//    department: {
-//       CollegeID: 1,
-//       DepartmentID: 2,
-//       Name: "化學工程及材料工程學系",
-//       college: {
-//          CollegeID: 1,
-//          Name: "工學院",
-//          Description: "",
-//       },
-//       Description: "",
-//    },
-//    CountryID: 1,
-//    funding: {
-//       PatentID: 2,
-//       plan: {
-//          PlanType: 0, // 未明確提供，假設為0
-//          PlanID: 1,
-//          Name: "C", // 方案
-//       },
-//       fundingUnitsDatas: [
-//          {
-//             fundingUnit: {
-//                Name: "科技部",
-//                UnitID: 0,
-//             },
-//             PatentID: 0,
-//             ProjectCode: "",
-//             Amount: 0,
-//             FundingUnitID: 0,
-//             patentFundingPatentID: null,
-//          },
-//       ], // 資助單位
-//       fundingPlanPlanID: 1,
-//    },
-// });
 </script>
 
 <style scoped>

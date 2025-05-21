@@ -8,6 +8,18 @@
 import "overlayscrollbars/overlayscrollbars.css";
 const discordService = useDiscord();
 provide("discordService", discordService);
+const countriesStore = useCountriesStore();
+const collegesStore = useCollegesStore();
+const fundingPlansStore = useFundingPlansStore();
+const agenciesStore = useAgenciesStore();
+
+onMounted(() => {
+   countriesStore.refresh();
+   collegesStore.refresh();
+   fundingPlansStore.refresh();
+   agenciesStore.refresh();
+});
+
 </script>
 
 <style>

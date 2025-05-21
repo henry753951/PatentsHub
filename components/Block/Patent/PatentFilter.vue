@@ -1,57 +1,320 @@
-<template>
-   <div class="relative flex items-center gap-2">
-      <Input
-         v-model="textInput"
-         placeholder="搜尋專利"
-         class="w-full"
-      />
-      <div
-         v-if="textInput"
-         class="absolute right-2 top-1/2 -translate-y-1/2"
-      >
-         <CustomIconButton
-            name="ic:round-close"
-            @click="textInput = ''"
-         />
-      </div>
-   </div>
-</template>
-
-<script lang="ts" setup>
+<script setup lang="ts">
 import type { z } from "zod";
-const textInput = ref("");
-const filter = defineModel("patent-filter", {
-   type: Object as PropType<z.infer<typeof dbZ.PatentWhereInputSchema>>,
+import type { dbZ } from "~/server";
+import { onClickOutside } from "@vueuse/core";
+const countriesStore = useCountriesStore();
+const collegesStore = useCollegesStore();
+const filterItems = {
+   startYear: {
+      label: "起始年度",
+      type: "number",
+      value: ref(110),
+   },
+   endYear: {
+      label: "結束年度",
+      type: "number",
+      value: ref(new Date().getFullYear() - 1911),
+   },
+   startCreatedAt: {
+      label: "起始登錄日期",
+      type: "date",
+      value: ref(new Date()),
+   },
+   endCreatedAt: {
+      label: "結束登錄日期",
+      type: "date",
+      value: ref(new Date()),
+   },
+   status: {
+      label: "狀態",
+      type: "select",
+      value: ref(""),
+      options: ref([
+         {
+            label: "已登錄",
+            value: "已登錄",
+         },
+         {
+            label: "已初評",
+            value: "已初評",
+         },
+         {
+            label: "有效",
+            value: "有效",
+         },
+         {
+            label: "已到期",
+            value: "已到期",
+         },
+         {
+            label: "國科會終止",
+            value: "國科會終止",
+         },
+         {
+            label: "已放棄",
+            value: "已放棄",
+         },
+      ]),
+   },
+   departments: {
+      label: "系所",
+      type: "select",
+      value: ref(""),
+      options: computed(() => {
+         return collegesStore.colleges.flatMap((college) => {
+            return college.departments.map((department) => {
+               return {
+                  label: `${college.Name} - ${department.Name}`,
+                  value: `${department.DepartmentID}`,
+               };
+            });
+         });
+      }),
+   },
+   countrys: {
+      label: "國別",
+      type: "select",
+      value: ref(""),
+      options: computed(() => {
+         return countriesStore.countries.map((country) => {
+            return {
+               label: country.CountryName,
+               value: country.CountryName,
+            };
+         });
+      }),
+   },
+};
+
+const inputRef = useTemplateRef<HTMLInputElement>("input");
+const isHover = ref(false);
+const isOR = ref(false);
+const {
+   toggleFilter,
+   searchTexts,
+   filterComponents,
+   content,
+   currentFilter,
+   getFilterActive,
+} = useFilterComponent(filterItems as Record<string, FilterItem>, inputRef);
+
+const patentFilter = defineModel("patentFilter", {
+   type: Object as PropType<PatentFilterType>,
 });
 
 watchThrottled(
-   textInput,
-   (value) => {
-      filter.value = {
-         OR: [
-            { Title: { contains: value } },
-            { InternalID: { contains: value } },
-            {
-               inventors: {
-                  some: {
-                     inventor: {
-                        contactInfo: {
-                           Name: { contains: value },
+   content,
+   (newValue) => {
+      const Year
+         = getFilterActive("startYear") || getFilterActive("endYear")
+            ? {
+               gte: getFilterActive("startYear")
+                  ? filterItems.startYear.value.value
+                  : undefined,
+               lte: getFilterActive("endYear")
+                  ? filterItems.endYear.value.value
+                  : undefined,
+            }
+            : undefined;
+      const SearchText
+         = searchTexts.value.length > 0
+            ? searchTexts.value.map((text) => {
+               return {
+                  OR: [
+                     { Title: { contains: text } },
+                     { TitleEnglish: { contains: text } },
+                     { DraftTitle: { contains: text } },
+                     { InternalID: { contains: text } },
+                     {
+                        inventors: {
+                           some: {
+                              Main: true,
+                              inventor: {
+                                 contactInfo: {
+                                    Name: {
+                                       contains: text,
+                                    },
+                                 },
+                              },
+                           },
                         },
                      },
-                  },
-               },
+                  ],
+               };
+            })
+            : undefined;
+
+      const Country = getFilterActive("countrys")
+         ? {
+            CountryName: {
+               contains: getFilterActive("countrys")
+                  ? filterItems.countrys.value.value
+                  : undefined,
             },
-            {
-               department: {
-                  Name: { contains: value },
-               },
-            },
-         ],
+         }
+         : undefined;
+
+      const CreatedAt
+         = getFilterActive("startCreatedAt") || getFilterActive("endCreatedAt")
+            ? {
+               gte: getFilterActive("startCreatedAt")
+                  ? filterItems.startCreatedAt.value.value
+                  : undefined,
+               lte: getFilterActive("endCreatedAt")
+                  ? filterItems.endCreatedAt.value.value
+                  : undefined,
+            }
+            : undefined;
+
+      const Department = getFilterActive("departments")
+         ? {
+            DepartmentID: parseInt(filterItems.departments.value.value),
+         }
+         : undefined;
+
+      patentFilter.value = {
+         where: {
+            ...(patentFilter.value?.where ?? {}),
+            Year: Year,
+            country: Country,
+            createdAt: CreatedAt,
+            department: Department,
+            OR: isOR.value ? SearchText : undefined,
+            AND: isOR.value ? undefined : SearchText,
+         },
+         static: {
+            status: getFilterActive("status")
+               ? (filterItems.status.value
+                  .value as PatentFilterType["static"]["status"])
+               : undefined,
+         },
       };
    },
-   { throttle: 100 },
+   {
+      throttle: 500,
+   },
 );
+const filterBoxRef = useTemplateRef<HTMLDivElement>("filterBox");
+onClickOutside(filterBoxRef, (event) => {
+   if ((event.target as HTMLElement).classList.contains("p-select-option")) {
+      return;
+   }
+   isHover.value = false;
+});
 </script>
 
-<style scoped></style>
+<template>
+   <div
+      ref="filterBox"
+      class="rounded-lg bg-zinc-300 dark:bg-zinc-900 p-2 relative"
+      @click="isHover = true"
+   >
+      <input
+         ref="input"
+         v-model="content"
+         class="w-full bg-transparent border-0 focus:outline-none"
+         type="text"
+         placeholder="輸入過濾條件，亦可同時直接輸入發明人、專利名稱、內部編號等"
+      />
+      <div class="absolute top-0 right-0 flex items-center h-full px-2">
+         <TooltipProvider :delay-duration="0">
+            <Tooltip>
+               <TooltipTrigger>
+                  <div
+                     class="bg-zinc-100 dark:bg-zinc-900 rounded-full h-fit flex items-center justify-center p-1 cursor-pointer"
+                     @click="isOR = !isOR"
+                  >
+                     <Icon :name="isOR ? 'mdi:set-or' : 'mdi:set-and'" />
+                  </div>
+               </TooltipTrigger>
+               <TooltipContent>
+                  <div>
+                     <div class="text-sm font-semibold">
+                        {{ isOR ? "AND" : "OR" }}
+                     </div>
+                     文字將會以
+                     <span class="bg-zinc-100/20 rounded px-1">
+                        {{ isOR ? "同時符合" : "任一符合" }}
+                     </span>
+                     的方式進行過濾
+                  </div>
+               </TooltipContent>
+            </Tooltip>
+         </TooltipProvider>
+      </div>
+
+      <Transition name="fade">
+         <template
+            v-if="
+               currentFilter?.type !== 'string' &&
+                  filterComponents.some((filter) => !getFilterActive(filter.id)) &&
+                  isHover
+            "
+         >
+            <div
+               class="absolute bottom-0 left-0 translate-y-[calc(100%)] pt-2 z-50"
+               :class="{
+                  'w-fit min-w-[300px]': currentFilter,
+                  'w-full': !currentFilter,
+               }"
+            >
+               <div
+                  class="bg-white dark:bg-zinc-900 rounded-lg flex flex-col justify-center p-2 border border-zinc-300 dark:border-zinc-700 shadow-lg"
+               >
+                  <template v-if="!currentFilter">
+                     <div
+                        v-for="(filter, index) in filterComponents"
+                        :key="index"
+                     >
+                        <template v-if="!getFilterActive(filter.id)">
+                           <div
+                              class="cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-lg p-2 flex gap-2 items-center"
+                              @click="toggleFilter(filter.id, true)"
+                           >
+                              {{ filter.label }}
+                           </div>
+                        </template>
+                     </div>
+                  </template>
+                  <template v-else>
+                     <component
+                        :is="currentFilter.component"
+                        v-bind="currentFilter.bind"
+                        :key="currentFilter.id"
+                     />
+                  </template>
+               </div>
+            </div>
+         </template>
+      </Transition>
+   </div>
+</template>
+
+<style scoped>
+.filter-box {
+   overflow-y: hidden;
+   overflow-x: scroll;
+}
+.filter-box::-webkit-scrollbar {
+   display: none;
+}
+
+/* Transition */
+
+.fade-enter-active,
+.fade-leave-active {
+   transition: all 0.2s ease;
+}
+.fade-enter-from {
+   opacity: 0;
+   transform: translateY(calc(100% - 0.5rem));
+}
+.fade-leave-to {
+   opacity: 1;
+   transform: translateY(calc(100%));
+}
+.fade-leave-to {
+   opacity: 0;
+   transform: translateY(calc(100% - 0.5rem));
+}
+</style>

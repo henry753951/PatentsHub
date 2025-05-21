@@ -204,7 +204,7 @@ import {
 type Patent = RouterOutput["data"]["patent"]["getPatents"][0];
 
 const props = defineProps<{
-   patent: Patent
+   patent: PatentRowType | Patent
    flexProp?: {
       key: string
       value: string
@@ -270,12 +270,15 @@ const maintenanceYear = computed(() => {
 
 // 資助單位
 const fundingUnit = computed(() => {
-   return "國科會";
+   return props.patent.funding?.fundingUnits
+      ? props.patent.funding?.fundingUnits
+         .map((f) => f.fundingUnit?.Name)
+         .join(", ")
+      : "";
 });
 
 // 狀態
 const status = computed(() => {
-   consola.log("status", props.patent.manualStatus);
    if (props.patent.manualStatus.some((s) => s.Override)) {
       return props.patent.manualStatus
          .filter((s) => s.Override)
@@ -284,7 +287,15 @@ const status = computed(() => {
    }
 
    if (!latestMaintenance.value) {
-      return "未生效";
+      if (props.patent.InitialReviewDate) {
+         return "已初評";
+      }
+      else if (props.patent.external?.PublicationDate) {
+         return "已授權";
+      }
+      else {
+         return "未生效";
+      }
    }
    const expireDate = new Date(latestMaintenance.value.ExpireDate);
    if (now.value > expireDate) {

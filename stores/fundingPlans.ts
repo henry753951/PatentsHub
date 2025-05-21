@@ -2,30 +2,11 @@ import { defineStore } from "pinia";
 
 export const useFundingPlansStore = defineStore("fundingPlansStore", {
    state: () => {
-      const initialState = {
+      return {
          plans: [] as RouterOutput["data"]["fundingPlan"]["getAllFundingPlans"],
          targets:
             [] as RouterOutput["data"]["fundingPlan"]["getAllFundingPlanTarget"],
-         isInitialized: false,
       };
-
-      if (!initialState.isInitialized) {
-         (async () => {
-            try {
-               const { $trpc } = useNuxtApp();
-               initialState.plans
-                  = await $trpc.data.fundingPlan.getAllFundingPlans.query();
-               initialState.targets
-                  = await $trpc.data.fundingPlan.getAllFundingPlanTarget.query();
-               initialState.isInitialized = true;
-            }
-            catch (error) {
-               console.error("Failed to initialize funding plans:", error);
-            }
-         })();
-      }
-
-      return initialState;
    },
 
    actions: {

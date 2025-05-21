@@ -2,37 +2,19 @@
    <div
       class="w-full text-zinc-800 mx-auto container dark:text-zinc-100 min-h-full py-5"
    >
-      <div class="flex gap-6 flex-col">
+      <div class="flex gap-2 flex-col">
          <BlockHeader
             title="專利總表"
             description="查看或篩選專利資料"
          >
-            <div class="flex gap-6 items-center justify-between">
+            <div
+               class="flex gap-6 items-center justify-between w-full max-w-[700px]"
+            >
                <BlockPatentFilter
                   v-model:patent-filter="filter"
                   class="flex-1"
                />
-               <div class="flex gap-1 items-center">
-                  <Select v-model="orderBy.key">
-                     <SelectTrigger class="mr-2 p-2 border rounded">
-                        <SelectValue placeholder="排序依據" />
-                     </SelectTrigger>
-                     <SelectContent>
-                        <SelectGroup>
-                           <SelectItem
-                              v-for="option in orderOptions"
-                              :key="option.key"
-                              :value="option.key"
-                           >
-                              {{ option.label }}
-                           </SelectItem>
-                        </SelectGroup>
-                     </SelectContent>
-                  </Select>
-                  <Button @click="toggleSortDirection">
-                     {{ orderBy.direction === "asc" ? "↑" : "↓" }}
-                  </Button>
-               </div>
+
                <Button
                   class="bg-gradient-to-r from-blue-500 to-indigo-600 border-0 hover:from-blue-600 hover:to-indigo-700 text-white"
                   @click="
@@ -48,6 +30,38 @@
          </BlockHeader>
 
          <div>
+            <div class="flex py-2 justify-end">
+               <div class="flex gap-2 items-center">
+                  <Select v-model="orderBy.key">
+                     <SelectTrigger class="!py-0 !px-0 bg-none!">
+                        <SelectValue placeholder="排序依據" />
+                     </SelectTrigger>
+                     <SelectContent>
+                        <SelectGroup>
+                           <SelectItem
+                              v-for="option in orderOptions"
+                              :key="option.key"
+                              :value="option.key"
+                           >
+                              {{ option.label }}
+                           </SelectItem>
+                        </SelectGroup>
+                     </SelectContent>
+                  </Select>
+                  <button
+                     class="flex items-center"
+                     @click="toggleSortDirection"
+                  >
+                     <Icon
+                        :name="
+                           orderBy.direction === 'asc'
+                              ? 'mdi:arrow-up'
+                              : 'mdi:arrow-down'
+                        "
+                     />
+                  </button>
+               </div>
+            </div>
             <Virtualizer
                v-slot="{ index }"
                :data="data"
