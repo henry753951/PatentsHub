@@ -63,11 +63,7 @@
                         class="mt-1"
                      >
                         {{
-                           isExpired(maintenanceStatus.nextMaintenanceDate)
-                              ? "已過期"
-                              : getRemainingDays(
-                                 maintenanceStatus.nextMaintenanceDate,
-                              ) + " 天後到期"
+                           remainingDays(maintenanceStatus.nextMaintenanceDate)
                         }}
                      </Badge>
                   </div>
@@ -122,18 +118,27 @@
                               <h4
                                  class="text-base font-semibold max-w-3xl h-6 truncate"
                               >
-                                 {{ maintenance.Title || `維護記錄 #${index + 1}` }}
+                                 {{
+                                    maintenance.Title ||
+                                       `維護記錄 #${index + 1}`
+                                 }}
                               </h4>
 
                               <!-- 維護次數 -->
-                              <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                              <div
+                                 class="flex items-center gap-2 text-sm text-muted-foreground"
+                              >
                                  <span>第 {{ index + 1 }} 次維護</span>
                                  <Badge
-                                    :variant="isExpired(maintenance.ExpireDate)
-                                       ? 'destructive'
-                                       : new Date(maintenance.MaintenanceDate) <= new Date()
-                                          ? 'default'
-                                          : 'outline'"
+                                    :variant="
+                                       isExpired(maintenance.ExpireDate)
+                                          ? 'destructive'
+                                          : new Date(
+                                             maintenance.MaintenanceDate,
+                                          ) <= new Date()
+                                             ? 'default'
+                                             : 'outline'
+                                    "
                                  >
                                     {{ getMaintenanceStatus(maintenance) }}
                                  </Badge>
@@ -257,7 +262,11 @@
                <FormDatePicker
                   v-model="form.maintenanceDate"
                   label="維護日期"
-                  :min-date="editMaintenanceData ? undefined : maintenanceStatus?.latestMaintenanceDate"
+                  :min-date="
+                     editMaintenanceData
+                        ? undefined
+                        : maintenanceStatus?.latestMaintenanceDate
+                  "
                />
                <FormDatePicker
                   v-model="form.expireDate"
@@ -343,7 +352,9 @@ const openAddDialog = () => {
    }
    else {
       // 後續紀錄的維護日期為上一筆到期日隔天
-      const lastExpireDate = new Date(maintenances.value[maintenances.value.length - 1].ExpireDate);
+      const lastExpireDate = new Date(
+         maintenances.value[maintenances.value.length - 1].ExpireDate,
+      );
       defaultMaintenanceDate = new Date(lastExpireDate.getTime());
       defaultMaintenanceDate.setDate(defaultMaintenanceDate.getDate() + 1);
    }
@@ -405,15 +416,32 @@ const formatDate = (date: string | number | Date) => {
    });
 };
 
-const getRemainingDays = (date: string | number | Date) => {
+const remainingDays = (date: string | number | Date) => {
    const today = new Date();
    const targetDate = new Date(date);
    const diffTime = targetDate.getTime() - today.getTime();
-   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+   if (diffDays === 0) {
+      return "今日到期";
+   }
+   else if (diffDays === 1) {
+      return "明日到期";
+   }
+   else if (diffDays < 0) {
+      return "已過期";
+   }
+   else {
+      return diffDays + " 天後到期";
+   }
 };
 
 const isExpired = (date: string | number | Date) => {
-   return new Date(date) < new Date();
+   const expireDate = new Date(date);
+   expireDate.setDate(expireDate.getDate() + 1);
+   expireDate.setHours(0, 0, 0, 0);
+   const today = new Date();
+   today.setHours(0, 0, 0, 0);
+   return expireDate < today;
 };
 
 const getMaintenanceStatus = (
@@ -483,5 +511,4 @@ const handleSubmit = async () => {
 
    closeDialog();
 };
-
 </script>

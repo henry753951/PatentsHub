@@ -145,7 +145,7 @@
                         id="override"
                         v-model="form.override"
                      />
-                     <Label for="override">置於標準流程之後</Label>
+                     <Label for="override">結束狀態</Label>
                   </div>
                   <DialogFooter>
                      <Button type="submit">

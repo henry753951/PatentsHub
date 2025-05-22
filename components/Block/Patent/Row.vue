@@ -183,7 +183,7 @@
                   v-if="expiryDate"
                   class="text-red-500 dark:text-red-400 text-xs mt-1 truncate"
                >
-                  {{ expiryDate }} 到期
+                  {{ expiryDate }}
                </span>
             </div>
          </div>
@@ -253,9 +253,14 @@ const expiryDate = computed(() => {
    if (!latestMaintenance.value) {
       return null;
    }
-   return new Date(latestMaintenance.value.ExpireDate)
-      .toISOString()
-      .split("T")[0];
+   return new Date(latestMaintenance.value.ExpireDate).toLocaleDateString(
+      "zh-TW",
+      {
+         year: "numeric",
+         month: "2-digit",
+         day: "2-digit",
+      },
+   );
 });
 
 // 維護年度
@@ -298,10 +303,12 @@ const status = computed(() => {
       }
    }
    const expireDate = new Date(latestMaintenance.value.ExpireDate);
-   if (now.value > expireDate) {
+   const today = new Date().setHours(0, 0, 0, 0);
+
+   if (today > expireDate) {
       return "已到期";
    }
-   if (differenceInDays(expireDate, now.value) <= 30) {
+   if (differenceInDays(expireDate, today) <= 30) {
       return "即將到期";
    }
    return "有效";
