@@ -8,7 +8,7 @@
 
          <Timeline
             :value="patentRecordsService.events.value"
-            class="timeline-custom"
+            class="custom-timeline"
          >
             <template #marker="slotProps">
                <span
@@ -33,10 +33,10 @@
             </template>
             <template #content="slotProps">
                <div
-                  class="bg-white dark:bg-zinc-800 border-l-4 border-l-gray-300 dark:border-l-gray-600 pl-3 hover:border-l-blue-500 transition-colors duration-200 mb-4"
+                  class="bg-white dark:bg-zinc-800 border-l-4 border-l-gray-300 dark:border-l-gray-600 pl-3 hover:border-l-blue-500 transition-colors duration-200 mb-0"
                >
                   <div
-                     class="flex flex-col md:flex-row md:items-center justify-between space-y-2 md:space-y-0"
+                     class="flex flex-col md:flex-row md:items-center justify-between space-y-1 md:space-y-0"
                   >
                      <p
                         class="font-medium text-base text-gray-800 dark:text-gray-200"
@@ -51,18 +51,6 @@
                            @click="editRecord(slotProps.item.id)"
                         >
                            <Icon name="ic:round-edit" />
-                        </Button>
-                        <Button
-                           variant="ghost"
-                           size="sm"
-                           class="text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400"
-                           @click="
-                              patentRecordsService.actions.deleteRecord(
-                                 slotProps.item.id,
-                              )
-                           "
-                        >
-                           <Icon name="ic:round-delete" />
                         </Button>
                      </div>
                   </div>
@@ -87,6 +75,7 @@
             class="dark:bg-zinc-800 dark:text-white z-50"
             @interact-outside="(e) => e.preventDefault()"
          >
+            <ConfirmPopup></ConfirmPopup>
             <div class="space-y-4">
                <DialogHeader>
                   <DialogTitle
@@ -136,12 +125,12 @@
                   </Button>
                   <Button
                      v-if="newRecord.id"
-                     class="w-full flex items-center justify-center gap-1 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-zinc-700"
-                     variant="outline"
-                     @click="showDialog = false"
+                     class="w-full flex items-center justify-center gap-1 dark:bg-red-600 dark:hover:bg-red-700 dark:text-white"
+                     severity="danger"
+                     @click="confirmDelete($event)"
                   >
-                     <Icon name="ic:round-close" />
-                     取消
+                     <Icon name="ic:round-delete" />
+                     刪除
                   </Button>
                </div>
             </div>
@@ -162,10 +151,12 @@ import {
    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import DatePicker from "primevue/datepicker";
-import FloatLabel from "primevue/floatlabel";
+import ConfirmPopup from "primevue/confirmpopup";
+import { useConfirm } from "primevue/useconfirm";
 import { ref, onMounted } from "vue";
 import consola from "consola";
+
+const confirm = useConfirm();
 
 const { patentRecordsService } = defineProps<{
    patentRecordsService: ReturnType<typeof usePatentRecords>
@@ -175,6 +166,7 @@ onMounted(() => {
    consola.log("Patent Records Service:", patentRecordsService.events.value);
 });
 
+// 預設當前日期（2025年5月24日）
 const newRecord = ref<{
    id: number | undefined
    record: string
@@ -182,7 +174,7 @@ const newRecord = ref<{
 }>({
    id: undefined,
    record: "",
-   date: null,
+   date: new Date(), // 預設為當前日期
 });
 
 const formSubmitted = ref(false);
@@ -210,7 +202,7 @@ const createOrUpdateRecord = async () => {
 };
 
 const resetForm = () => {
-   newRecord.value = { id: undefined, record: "", date: null };
+   newRecord.value = { id: undefined, record: "", date: new Date() }; // 重置時也預設當前日期
    formSubmitted.value = false;
    showDialog.value = false;
 };
@@ -221,9 +213,35 @@ const editRecord = (id: number) => {
    newRecord.value = {
       id: record.id,
       record: record.status,
-      date: new Date(record.date),
+      date: new Date(record.date), // 編輯時使用原日期
    };
    showDialog.value = true;
+};
+
+const confirmDelete = (event: Event) => {
+   if (!newRecord.value.id) return;
+
+   confirm.require({
+      target: event.currentTarget as HTMLElement,
+      message: "確定要刪除這筆記錄嗎？此操作無法恢復。",
+      icon: "pi pi-exclamation-triangle",
+      acceptLabel: "確定",
+      rejectLabel: "取消",
+      acceptClass: "p-button-danger",
+      accept: async () => {
+         try {
+            await patentRecordsService.actions.deleteRecord(newRecord.value.id!);
+            showDialog.value = false;
+         }
+         catch (error) {
+            consola.error("刪除記錄失敗:", error);
+            // 可選擇顯示錯誤提示，例如使用 Toast
+         }
+      },
+      reject: () => {
+         // 用戶取消，不執行任何操作
+      },
+   });
 };
 </script>
 
@@ -256,43 +274,48 @@ const editRecord = (id: number) => {
    --os-handle-bg-active: rgba(0, 0, 0, 0.4);
 }
 
-.timeline-custom :deep(.p-timeline-event-opposite) {
+/* 自訂時間線樣式，縮短節點間距 */
+.custom-timeline :deep(.p-timeline-event) {
+   margin-bottom: 0rem !important; /* 移除垂直間距 */
+}
+
+.custom-timeline :deep(.p-timeline-event-opposite) {
    flex: 0 1 auto;
 }
 
-.timeline-custom :deep(.p-timeline-event-content) {
+.custom-timeline :deep(.p-timeline-event-content) {
    flex: 1;
 }
 
-.timeline-custom :deep(.p-timeline-event-separator) {
-   margin: 0 1rem;
+.custom-timeline :deep(.p-timeline-event-separator) {
+   margin: 0 0.25rem !important; /* 保持水平間距不變 */
 }
 
-.timeline-custom :deep(.p-timeline-event-connector) {
+.custom-timeline :deep(.p-timeline-event-connector) {
    background-color: #e5e7eb;
-   height: 1.5rem;
+   height: 0.25rem !important; /* 連接線高度不變 */
 }
 
-.dark .timeline-custom :deep(.p-timeline-event-connector) {
+.dark .custom-timeline :deep(.p-timeline-event-connector) {
    background-color: #4b5563;
 }
 
 @media (max-width: 768px) {
-   .timeline-custom :deep(.p-timeline-event) {
+   .custom-timeline :deep(.p-timeline-event) {
       flex-direction: column;
       align-items: flex-start;
    }
 
-   .timeline-custom :deep(.p-timeline-event-opposite) {
-      margin-bottom: 0.5rem;
+   .custom-timeline :deep(.p-timeline-event-opposite) {
+      margin-bottom: 0rem; /* 小螢幕下也移除垂直間距 */
    }
 
-   .timeline-custom :deep(.p-timeline-event-separator) {
-      margin: 0.5rem 0;
+   .custom-timeline :deep(.p-timeline-event-separator) {
+      margin: 0rem 0; /* 小螢幕下移除垂直間距 */
    }
 
-   .timeline-custom :deep(.p-timeline-event-connector) {
-      height: 1rem;
+   .custom-timeline :deep(.p-timeline-event-connector) {
+      height: 0.25rem !important; /* 連接線高度不變 */
    }
 
    .timeline-container {
