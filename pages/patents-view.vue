@@ -1,8 +1,8 @@
 <template>
    <div
-      class="w-full text-zinc-800 mx-auto container dark:text-zinc-100 min-h-full py-5"
+      class="w-full text-zinc-800 mx-auto container dark:text-zinc-100 min-h-full py-5 relative"
    >
-      <div class="flex gap-2 flex-col">
+      <div class="flex gap-2 flex-col mb-[4rem]">
          <BlockHeader
             title="專利總表"
             description="查看或篩選專利資料"
@@ -28,9 +28,37 @@
                </Button>
             </div>
          </BlockHeader>
-
          <div>
-            <div class="flex py-2 justify-end">
+            <div class="flex py-2 justify-between select-none">
+               <div class="flex gap-2 items-center">
+                  <div
+                     class="text-sm cursor-pointer px-2 py-1 rounded-md"
+                     :class="{
+                        'bg-blue-100 dark:bg-blue-800 hover:bg-blue-200 dark:hover:bg-blue-700 text-blue-800 dark:text-blue-100 border border-blue-300 dark:border-blue-600':
+                           selecte.enabled,
+                        'bg-zinc-50 dark:bg-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-600 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-500':
+                           !selecte.enabled,
+                     }"
+                     @click="
+                        selecte.enabled = !selecte.enabled;
+                        selecte.selectedPatents.clear();
+                     "
+                  >
+                     {{ selecte.enabled ? "退出選取模式" : "選取模式" }}
+                  </div>
+
+                  <div
+                     v-if="selecte.enabled"
+                     class="text-sm cursor-pointer px-2 py-1 rounded-md bg-blue-100 dark:bg-blue-800 hover:bg-blue-200 dark:hover:bg-blue-700 text-blue-800 dark:text-blue-100"
+                     @click="
+                        data.forEach((item) => {
+                           selecte.selectedPatents.add(item.PatentID);
+                        })
+                     "
+                  >
+                     全選
+                  </div>
+               </div>
                <div class="flex gap-2 items-center">
                   <Select v-model="orderBy.key">
                      <SelectTrigger class="!py-0 !px-0 bg-none!">
@@ -62,6 +90,7 @@
                   </button>
                </div>
             </div>
+
             <Virtualizer
                v-slot="{ index }"
                :data="data"
@@ -72,14 +101,55 @@
                <BlockPatentRow
                   :patent="data[index]"
                   :flex-prop="data[index].flexProp"
-                  class="rounded-lg mb-3"
+                  class="rounded-lg mb-3 shadow-md hover:shadow-lg"
+                  :style="{
+                     boxShadow: selecte.enabled
+                        ? selecte.selectedPatents.has(data[index].PatentID)
+                           ? '0 0 0 2px rgba(59, 130, 246, 0.5)'
+                           : undefined
+                        : undefined,
+                  }"
                   @click="
-                     open('PatentModal', {
-                        props: { patentId: data[index].PatentID },
-                     })
+                     selecte.enabled
+                        ? toggleSelect(data[index].PatentID)
+                        : open('PatentModal', {
+                           props: { patentId: data[index].PatentID },
+                        })
                   "
                />
             </Virtualizer>
+         </div>
+      </div>
+      <div
+         v-if="selecte.enabled"
+         class="fixed bottom-5 py-2 px-4 bg-blue-700/70 text-white rounded-lg shadow-lg backdrop-blur-md z-50"
+      >
+         <div class="flex gap-2 items-center justify-between">
+            <div class="flex items-center gap-2">
+               <Icon name="mdi:check" />
+               已選取了 {{ selecte.selectedPatents.size }} 個專利
+            </div>
+
+            <div class="w-px bg-white/20 h-6 mx-2">
+            </div>
+
+            <div class="flex items-center gap-3 font-semibold">
+               <div
+                  v-if="selecte.selectedPatents.size > 0"
+                  class="cursor-pointer hover:underline"
+               >
+                  匯出
+               </div>
+               <div
+                  class="cursor-pointer hover:underline text-gray-300"
+                  @click="
+                     selecte.enabled = false;
+                     selecte.selectedPatents.clear();
+                  "
+               >
+                  取消
+               </div>
+            </div>
          </div>
       </div>
    </div>
@@ -105,6 +175,19 @@ definePageMeta({
 const viewportRef = inject<Ref<HTMLElement>>("viewportRef");
 const { data, forceRefresh, filter, order } = useDatabasePatents();
 const { toggleSortDirection, orderBy, orderOptions } = order;
+
+const selecte = ref({
+   enabled: true,
+   selectedPatents: new Set<number>(),
+});
+const toggleSelect = (patentId: number) => {
+   if (selecte.value.selectedPatents.has(patentId)) {
+      selecte.value.selectedPatents.delete(patentId);
+   }
+   else {
+      selecte.value.selectedPatents.add(patentId);
+   }
+};
 </script>
 
 <style scoped></style>

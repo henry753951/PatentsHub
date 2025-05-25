@@ -216,7 +216,7 @@ onClickOutside(filterBoxRef, (event) => {
 <template>
    <div
       ref="filterBox"
-      class="rounded-lg bg-zinc-300 dark:bg-zinc-900 p-2 relative"
+      class="rounded-lg bg-zinc-200 dark:bg-zinc-900 p-2 relative focus-within:ring-2"
       @click="isHover = true"
    >
       <input
