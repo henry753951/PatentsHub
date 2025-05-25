@@ -136,15 +136,12 @@ const leftColumnText = computed(() => {
                      : "無資料"}
                </p>
                <p>
-                  <b>專利權期間 - 起始日期:</b>
+                  <b>專利權期間:</b>
                   {" "}
                   {patent.value.external.StartDate
                      ? format(patent.value.external.StartDate, "yyyy-MM-dd")
                      : "無資料"}
-               </p>
-               <p>
-                  <b>專利權期間 - 結束日期:</b>
-                  {" "}
+                  ~
                   {patent.value.external.EndDate
                      ? format(patent.value.external.EndDate, "yyyy-MM-dd")
                      : "無資料"}
@@ -274,21 +271,15 @@ const rightColumnText = computed(() => {
                {patent.value.inventors.map((inventor, index: number) => (
                   <p key={index}>
                      <b>
-                        發明人
-                        {index + 1}
+                        {inventor.inventor.contactInfo.Name || "未知發明人"}
+                        {" "}
+                        {inventor.Main ? "(主要發明人) " : ""}
                         :
+                        {" "}
                      </b>
-                     {" "}
-                     名稱:
-                     {" "}
-                     {inventor.inventor.contactInfo.Name || "未知發明人"}
-                     ,
                      貢獻:
                      {" "}
                      {inventor.Contribution || "無資料"}
-                     , 是否主要發明人:
-                     {" "}
-                     {inventor.Main ? "是" : "否"}
                   </p>
                ))}
             </>
