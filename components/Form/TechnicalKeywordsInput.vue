@@ -3,6 +3,8 @@
       v-model="keywords"
       v-model:open="open"
       :ignore-filter="true"
+      :reset-search-term-on-blur="false"
+      :highlight-on-hover="false"
    >
       <ComboboxAnchor as-child>
          <TagsInput
