@@ -15,13 +15,13 @@ const filterItems = {
       type: "number",
       value: ref(new Date().getFullYear() - 1911),
    },
-   startCreatedAt: {
-      label: "起始登錄日期",
+   startApplicationDate: {
+      label: "起始申請日期",
       type: "date",
       value: ref(new Date()),
    },
-   endCreatedAt: {
-      label: "結束登錄日期",
+   endApplicationDate: {
+      label: "結束申請日期",
       type: "date",
       value: ref(new Date()),
    },
@@ -152,14 +152,15 @@ const updateFilter = () => {
       }
       : undefined;
 
-   const CreatedAt
-      = getFilterActive("startCreatedAt") || getFilterActive("endCreatedAt")
+   const ApplicationDate
+      = getFilterActive("startApplicationDate")
+        || getFilterActive("endApplicationDate")
          ? {
-            gte: getFilterActive("startCreatedAt")
-               ? filterItems.startCreatedAt.value.value
+            gte: getFilterActive("startApplicationDate")
+               ? filterItems.startApplicationDate.value.value
                : undefined,
-            lte: getFilterActive("endCreatedAt")
-               ? filterItems.endCreatedAt.value.value
+            lte: getFilterActive("endApplicationDate")
+               ? filterItems.endApplicationDate.value.value
                : undefined,
          }
          : undefined;
@@ -175,7 +176,9 @@ const updateFilter = () => {
          ...(patentFilter.value?.where ?? {}),
          Year: Year,
          country: Country,
-         createdAt: CreatedAt,
+         application: {
+            FilingDate: ApplicationDate,
+         },
          department: Department,
          OR: isOR.value ? SearchText : undefined,
          AND: isOR.value ? undefined : SearchText,
