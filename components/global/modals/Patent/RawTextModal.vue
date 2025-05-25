@@ -15,7 +15,6 @@
                :options="{ scrollbars: { autoHide: 'leave' } }"
             >
                <div class="prose">
-                  <h1>專利資訊</h1>
                   <div class="grid grid-cols-2">
                      <div><leftColumnText /></div>
                      <div><rightColumnText /></div>
