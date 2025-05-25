@@ -96,6 +96,7 @@ function createWindow() {
       roundedCorners: true,
       webPreferences: {
          devTools: true,
+         webSecurity: false,
          contextIsolation: true,
          preload: path.join(__dirname, "preload.js"),
       },

@@ -102,98 +102,105 @@ const patentFilter = defineModel("patentFilter", {
    type: Object as PropType<PatentFilterType>,
 });
 
-watchThrottled(
-   content,
-   (newValue) => {
-      const Year
-         = getFilterActive("startYear") || getFilterActive("endYear")
-            ? {
-               gte: getFilterActive("startYear")
-                  ? filterItems.startYear.value.value
-                  : undefined,
-               lte: getFilterActive("endYear")
-                  ? filterItems.endYear.value.value
-                  : undefined,
-            }
-            : undefined;
-      const SearchText
-         = searchTexts.value.length > 0
-            ? searchTexts.value.map((text) => {
-               return {
-                  OR: [
-                     { Title: { contains: text } },
-                     { TitleEnglish: { contains: text } },
-                     { DraftTitle: { contains: text } },
-                     { InternalID: { contains: text } },
-                     {
-                        inventors: {
-                           some: {
-                              Main: true,
-                              inventor: {
-                                 contactInfo: {
-                                    Name: {
-                                       contains: text,
-                                    },
+const updateFilter = () => {
+   const Year
+      = getFilterActive("startYear") || getFilterActive("endYear")
+         ? {
+            gte: getFilterActive("startYear")
+               ? filterItems.startYear.value.value
+               : undefined,
+            lte: getFilterActive("endYear")
+               ? filterItems.endYear.value.value
+               : undefined,
+         }
+         : undefined;
+   const SearchText
+      = searchTexts.value.length > 0
+         ? searchTexts.value.map((text) => {
+            return {
+               OR: [
+                  { Title: { contains: text } },
+                  { TitleEnglish: { contains: text } },
+                  { DraftTitle: { contains: text } },
+                  { InternalID: { contains: text } },
+                  {
+                     inventors: {
+                        some: {
+                           Main: true,
+                           inventor: {
+                              contactInfo: {
+                                 Name: {
+                                    contains: text,
                                  },
                               },
                            },
                         },
                      },
-                  ],
-               };
-            })
-            : undefined;
-
-      const Country = getFilterActive("countrys")
-         ? {
-            CountryName: {
-               contains: getFilterActive("countrys")
-                  ? filterItems.countrys.value.value
-                  : undefined,
-            },
-         }
+                  },
+               ],
+            };
+         })
          : undefined;
 
-      const CreatedAt
-         = getFilterActive("startCreatedAt") || getFilterActive("endCreatedAt")
-            ? {
-               gte: getFilterActive("startCreatedAt")
-                  ? filterItems.startCreatedAt.value.value
-                  : undefined,
-               lte: getFilterActive("endCreatedAt")
-                  ? filterItems.endCreatedAt.value.value
-                  : undefined,
-            }
-            : undefined;
-
-      const Department = getFilterActive("departments")
-         ? {
-            DepartmentID: parseInt(filterItems.departments.value.value),
-         }
-         : undefined;
-
-      patentFilter.value = {
-         where: {
-            ...(patentFilter.value?.where ?? {}),
-            Year: Year,
-            country: Country,
-            createdAt: CreatedAt,
-            department: Department,
-            OR: isOR.value ? SearchText : undefined,
-            AND: isOR.value ? undefined : SearchText,
-         },
-         static: {
-            status: getFilterActive("status")
-               ? (filterItems.status.value
-                  .value as PatentFilterType["static"]["status"])
+   const Country = getFilterActive("countrys")
+      ? {
+         CountryName: {
+            contains: getFilterActive("countrys")
+               ? filterItems.countrys.value.value
                : undefined,
          },
-      };
+      }
+      : undefined;
+
+   const CreatedAt
+      = getFilterActive("startCreatedAt") || getFilterActive("endCreatedAt")
+         ? {
+            gte: getFilterActive("startCreatedAt")
+               ? filterItems.startCreatedAt.value.value
+               : undefined,
+            lte: getFilterActive("endCreatedAt")
+               ? filterItems.endCreatedAt.value.value
+               : undefined,
+         }
+         : undefined;
+
+   const Department = getFilterActive("departments")
+      ? {
+         DepartmentID: parseInt(filterItems.departments.value.value),
+      }
+      : undefined;
+
+   patentFilter.value = {
+      where: {
+         ...(patentFilter.value?.where ?? {}),
+         Year: Year,
+         country: Country,
+         createdAt: CreatedAt,
+         department: Department,
+         OR: isOR.value ? SearchText : undefined,
+         AND: isOR.value ? undefined : SearchText,
+      },
+      static: {
+         status: getFilterActive("status")
+            ? (filterItems.status.value
+               .value as PatentFilterType["static"]["status"])
+            : undefined,
+      },
+   };
+};
+onMounted(() => {
+   updateFilter();
+});
+watchThrottled(
+   content,
+   (newValue) => {
+      updateFilter();
    },
    {
       throttle: 500,
    },
 );
+
 const filterBoxRef = useTemplateRef<HTMLDivElement>("filterBox");
 onClickOutside(filterBoxRef, (event) => {
    if ((event.target as HTMLElement).classList.contains("p-select-option")) {
@@ -222,7 +229,10 @@ onClickOutside(filterBoxRef, (event) => {
                <TooltipTrigger>
                   <div
                      class="bg-zinc-100 dark:bg-zinc-900 rounded-full h-fit flex items-center justify-center p-1 cursor-pointer"
-                     @click="isOR = !isOR"
+                     @click="
+                        isOR = !isOR;
+                        updateFilter();
+                     "
                   >
                      <Icon :name="isOR ? 'mdi:set-or' : 'mdi:set-and'" />
                   </div>
@@ -230,11 +240,11 @@ onClickOutside(filterBoxRef, (event) => {
                <TooltipContent>
                   <div>
                      <div class="text-sm font-semibold">
-                        {{ isOR ? "AND" : "OR" }}
+                        {{ !isOR ? "AND" : "OR" }}
                      </div>
                      文字將會以
                      <span class="bg-zinc-100/20 rounded px-1">
-                        {{ isOR ? "同時符合" : "任一符合" }}
+                        {{ !isOR ? "同時符合" : "任一符合" }}
                      </span>
                      的方式進行過濾
                   </div>

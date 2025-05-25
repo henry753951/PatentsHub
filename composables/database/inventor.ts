@@ -2,8 +2,7 @@ import type { z } from "zod";
 import type { RouterOutput, dbZ } from "~/server";
 
 export const useDatabaseInventor = (
-   defaultFilter: z.infer<typeof dbZ.InventorWhereInputSchema> = {
-   },
+   defaultFilter: z.infer<typeof dbZ.InventorWhereInputSchema> = {},
 ) => {
    const { $trpc } = useNuxtApp();
    // 篩選條件
@@ -15,8 +14,6 @@ export const useDatabaseInventor = (
    >(
       "inventor",
       async () => {
-         // 若篩選條件為空，則不顯示任何資料 (看需求)
-         if (Object.keys(filter.value).length === 0) return [];
          return await getInventors({ where: filter.value });
       },
       {
@@ -48,7 +45,6 @@ export const useDatabaseInventor = (
       data: z.infer<typeof dbZ.InventorUpdateInputSchema>
    }) => {
       await $trpc.data.inventor.updateInventor.mutate(
-
          serialize({ where: args.where, data: args.data }),
       );
       await refresh();

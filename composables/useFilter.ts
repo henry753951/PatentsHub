@@ -87,7 +87,7 @@ export const useFilterComponent = <T extends Record<string, FilterItem>>(
       })),
    );
 
-   const content = ref("");
+   const content = useState<string>("searchContent", () => "");
    const cursorPosition = ref(0);
 
    // Parse content into filters and search texts
@@ -281,6 +281,8 @@ export const useFilterComponent = <T extends Record<string, FilterItem>>(
          inputRef.value.addEventListener("click", updateCursorPosition);
          inputRef.value.addEventListener("input", updateCursorPosition);
       }
+      updateFiltersFromContent(content.value);
+      consola.log("Filter component initialized with content:", content.value);
    });
 
    const searchTexts = computed(() => {

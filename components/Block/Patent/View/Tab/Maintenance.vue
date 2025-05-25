@@ -25,13 +25,13 @@
          v-if="maintenanceStatus"
          class="overflow-hidden"
       >
-         <CardContent class="p-0">
+         <CardContent
+            class="p-0 bg-gradient-to-br from-blue-50 to-pink-50 dark:from-blue-950/40 dark:to-pink-950/30"
+         >
             <div
                class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x"
             >
-               <div
-                  class="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/30"
-               >
+               <div class="p-6">
                   <h3 class="text-sm font-medium text-muted-foreground mb-1">
                      維護起始日期
                   </h3>
@@ -39,9 +39,7 @@
                      {{ formatDate(maintenanceStatus.maintenanceStartDate) }}
                   </p>
                </div>
-               <div
-                  class="p-6 flex items-center space-x-4 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/40 dark:to-purple-950/30"
-               >
+               <div class="p-6 flex items-center space-x-4">
                   <div
                      class="h-12 w-12 flex items-center justify-center rounded-full bg-primary/10"
                   >
@@ -68,15 +66,58 @@
                      </Badge>
                   </div>
                </div>
-               <div
-                  class="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/40 dark:to-pink-950/30"
-               >
+               <div class="p-6">
                   <h3 class="text-sm font-medium text-muted-foreground mb-1">
                      維護年度計
                   </h3>
                   <p class="text-lg font-semibold">
                      {{ maintenanceStatus.maintenanceYears }} 年
                   </p>
+               </div>
+            </div>
+            <div class="p-6 grid grid-cols-1 md:grid-cols-3 border-t relative">
+               <template v-if="annuityData">
+                  <div>
+                     <h3 class="text-sm font-medium text-muted-foreground">
+                        年費有效日期
+                     </h3>
+                     <p class="text-lg font-semibold">
+                        {{ annuityData.chargeExpirDate }}
+                     </p>
+                  </div>
+                  <div>
+                     <h3 class="text-sm font-medium text-muted-foreground">
+                        年費有效年度
+                     </h3>
+                     <p class="text-lg font-semibold">
+                        {{ annuityData.chargeExpirYear }} 年
+                     </p>
+                  </div>
+                  <div>
+                     <h3 class="text-sm font-medium text-muted-foreground">
+                        年費繳納狀態
+                     </h3>
+                     <p class="text-lg font-semibold">
+                        {{ annuityData.isPaying ? "已繳納" : "未繳納" }}
+                     </p>
+                  </div>
+               </template>
+               <div class="absolute top-4 right-4 flex flex-col gap-3">
+                  <Button
+                     variant="outline"
+                     @click="refresh"
+                  >
+                     刷新年費資料
+                  </Button>
+                  <a
+                     v-if="annuityData"
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     :href="annuityData.caseLink"
+                     class="text-sm text-blue-600 hover:underline"
+                  >
+                     查看年費繳納狀態
+                  </a>
                </div>
             </div>
          </CardContent>
@@ -324,6 +365,8 @@ const {
    maintenances,
    maintenanceStatus,
 } = patentMaintainancesService;
+
+const { data: annuityData, refresh } = useApiAnnuity(patent);
 
 const titleInputRef = ref<HTMLInputElement>();
 // Form state

@@ -17,11 +17,11 @@
                      backgroundColor: slotProps.item.color + '20',
                   }"
                >
-                  <i
-                     :class="slotProps.item.icon"
+                  <Icon
+                     :name="slotProps.item.icon"
                      :style="{ color: slotProps.item.color }"
-                     class="text-xs"
-                  ></i>
+                     class="h-4 w-4 text-gray-800 dark:text-gray-200"
+                  />
                </span>
             </template>
             <template #opposite="slotProps">
@@ -32,9 +32,7 @@
                </div>
             </template>
             <template #content="slotProps">
-               <div
-                  class="bg-white dark:bg-zinc-800 border-l-4 border-l-gray-300 dark:border-l-gray-600 pl-3 hover:border-l-blue-500 transition-colors duration-200 mb-0"
-               >
+               <div>
                   <div
                      class="flex flex-col md:flex-row md:items-center justify-between space-y-1 md:space-y-0"
                   >
@@ -224,22 +222,19 @@ const confirmDelete = (event: Event) => {
    confirm.require({
       target: event.currentTarget as HTMLElement,
       message: "確定要刪除這筆記錄嗎？此操作無法恢復。",
-      icon: "pi pi-exclamation-triangle",
       acceptLabel: "確定",
       rejectLabel: "取消",
       acceptClass: "p-button-danger",
       accept: async () => {
          try {
-            await patentRecordsService.actions.deleteRecord(newRecord.value.id!);
+            await patentRecordsService.actions.deleteRecord(
+               newRecord.value.id!,
+            );
             showDialog.value = false;
          }
          catch (error) {
             consola.error("刪除記錄失敗:", error);
-            // 可選擇顯示錯誤提示，例如使用 Toast
          }
-      },
-      reject: () => {
-         // 用戶取消，不執行任何操作
       },
    });
 };
