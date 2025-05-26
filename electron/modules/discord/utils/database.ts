@@ -160,6 +160,16 @@ async function createDatabaseBackup(
    try {
       await fs.access(dbPath);
       const hash = await hashing.hashFile(dbPath, "sha256");
+
+      // compare with existing backups
+      const existingBackups = await listDatabaseBackups();
+      const existingBackup = existingBackups.find(
+         (backup) => backup.hash === hash,
+      );
+      if (existingBackup) {
+         return null;
+      }
+
       const fileName = isReplacement
          ? `replace_backup_${Date.now()}.db`
          : `backup_${Date.now()}.db`;
