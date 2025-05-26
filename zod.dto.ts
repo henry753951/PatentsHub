@@ -76,6 +76,13 @@ export const ConfigFile = z
             databaseBackup: z.string(),
          }),
       }),
+      backup: z.object({
+         interval: z.number().min(1, "備份間隔時間必須大於0"),
+         backupTrigger: z.object({
+            onTimer: z.boolean(),
+            onExit: z.boolean(),
+         }),
+      }),
    })
    .optional()
    .default({
@@ -95,6 +102,13 @@ export const ConfigFile = z
          channelIds: {
             log: "",
             databaseBackup: "",
+         },
+      },
+      backup: {
+         interval: 240, // 4 hours in minutes
+         backupTrigger: {
+            onTimer: true,
+            onExit: true,
          },
       },
    });

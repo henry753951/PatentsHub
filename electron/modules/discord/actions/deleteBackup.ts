@@ -1,7 +1,7 @@
 import type { Client } from "discord.js";
 import { ActionEvent } from "../baseActionEvent";
 import { z } from "zod";
-import { deleteBackup } from "../utils/database";
+import { deleteDatabaseBackup } from "../utils/database";
 
 const inputSchema = z.object({
    backupId: z.string(),
@@ -9,13 +9,13 @@ const inputSchema = z.object({
 
 export class DeleteBackupAction extends ActionEvent<
    typeof inputSchema,
-   Awaited<ReturnType<typeof deleteBackup>>
+   Awaited<ReturnType<typeof deleteDatabaseBackup>>
 > {
    constructor() {
       super("deleteBackup", inputSchema);
    }
 
    public override async execute(input: { backupId: string }, client: Client) {
-      return await deleteBackup(input.backupId);
+      return await deleteDatabaseBackup(input.backupId);
    }
 }

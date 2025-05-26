@@ -10,6 +10,7 @@ import updaterModule from "./modules/updater";
 import appProtocolModule from "./modules/appProtocol";
 import trpcHandlerModule from "./modules/trpcHandler";
 import discord from "./modules/discord";
+import autoBackup from "./modules/autoBackup";
 import logger from "./logger";
 
 // Initilize
@@ -30,6 +31,7 @@ const modules = [
    trpcHandlerModule,
    appProtocolModule,
    discord,
+   autoBackup
 ];
 
 // Create default user data folders

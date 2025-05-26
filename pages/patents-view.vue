@@ -177,7 +177,7 @@ const { data, forceRefresh, filter, order } = useDatabasePatents();
 const { toggleSortDirection, orderBy, orderOptions } = order;
 
 const selecte = ref({
-   enabled: true,
+   enabled: false,
    selectedPatents: new Set<number>(),
 });
 const toggleSelect = (patentId: number) => {

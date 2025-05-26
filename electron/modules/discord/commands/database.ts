@@ -7,7 +7,7 @@ import {
    ButtonStyle,
 } from "discord.js";
 import type { BrowserWindow } from "electron";
-import { replaceDB, exportDB } from "../utils/database";
+import { replaceDatabase, exportDatabase } from "../utils/database";
 const ephemeral = true;
 
 export class DatabaseCommand extends SlashCommand<"database"> {
@@ -30,12 +30,11 @@ export class DatabaseCommand extends SlashCommand<"database"> {
 
       if (dbAttachment) {
          // 如果提供了 db 附件，直接執行備份和取代
-         await replaceDB(interaction, dbAttachment);
+         await replaceDatabase(interaction, dbAttachment);
          return this.returnEvent({
             type: "replace_db" as const,
          });
-      }
-      else {
+      } else {
          // 否則顯示匯出按鈕
          const buttons = [
             new ButtonBuilder()
@@ -65,7 +64,7 @@ export class DatabaseCommand extends SlashCommand<"database"> {
          );
 
          collector?.on("collect", async (i: MessageComponentInteraction) => {
-            await exportDB(i);
+            await exportDatabase(i);
          });
 
          collector?.on("end", async () => {

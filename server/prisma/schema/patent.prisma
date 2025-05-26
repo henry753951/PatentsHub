@@ -12,6 +12,7 @@ model Patent {
   CountryID     Int?
   createdAt     DateTime                   @default(now())
   Pinned        Boolean                    @default(false)
+  CaseNotFound  Boolean                    @default(false)
   PatentType    EnumPatentType?
   country       Country?                   @relation(fields: [CountryID], references: [CountryID])
   department    Department                 @relation(fields: [DepartmentID], references: [DepartmentID])

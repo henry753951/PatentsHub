@@ -1,6 +1,6 @@
-import { definePreset } from "@primevue/themes";
+import { definePreset } from "@primeuix/themes";
 import type { PrimeVueLocaleOptions } from "primevue/config";
-import Aura from "@primevue/themes/aura";
+import Aura from "@primeuix/themes/aura";
 
 const appPreset = definePreset(Aura, {
    semantic: {
