@@ -94,7 +94,9 @@
             </span>
 
             <div class="flex items-center space-x-2 mt-1 min-w-0">
-               <span class="text-gray-500 dark:text-gray-400 text-xs">資助單位:</span>
+               <span class="text-gray-500 dark:text-gray-400 text-xs"
+                  >資助單位:</span
+               >
                <span class="text-gray-700 dark:text-gray-200 text-xs truncate">
                   {{ fundingUnit || "—" }}
                </span>
@@ -137,7 +139,9 @@
                </div>
 
                <div class="flex items-center space-x-2">
-                  <span class="text-gray-500 dark:text-gray-400 text-xs">維護期程</span>
+                  <span class="text-gray-500 dark:text-gray-400 text-xs"
+                     >維護期程</span
+                  >
                   <span
                      class="text-gray-700 dark:text-gray-200 text-xs w-[150px] text-right truncate"
                   >
@@ -146,7 +150,9 @@
                </div>
 
                <div class="flex items-center space-x-2 mt-0.5">
-                  <span class="text-gray-500 dark:text-gray-400 text-xs">維護年度</span>
+                  <span class="text-gray-500 dark:text-gray-400 text-xs"
+                     >維護年度</span
+                  >
                   <span
                      class="text-gray-700 dark:text-gray-200 text-xs w-[150px] text-right truncate"
                   >
@@ -176,7 +182,8 @@
                         'text-red-600 dark:text-red-400': status === '已到期',
                         'text-gray-600 dark:text-gray-400': status === '未生效',
                      }"
-                  >{{ status }}</span>
+                     >{{ status }}</span
+                  >
                </div>
 
                <span
@@ -204,11 +211,11 @@ import {
 type Patent = RouterOutput["data"]["patent"]["getPatents"][0];
 
 const props = defineProps<{
-   patent: PatentRowType | Patent
+   patent: PatentRowType | Patent;
    flexProp?: {
-      key: string
-      value: string
-   }
+      key: string;
+      value: string;
+   };
 }>();
 
 const now = useNow({ interval: 10 * 1000 });
@@ -216,8 +223,8 @@ const now = useNow({ interval: 10 * 1000 });
 const latestMaintenance = computed(() => {
    const maintenances = [...props.patent.maintenances].sort((a, b) => {
       return (
-         new Date(b.MaintenanceDate).getTime()
-           - new Date(a.MaintenanceDate).getTime()
+         new Date(b.MaintenanceDate).getTime() -
+         new Date(a.MaintenanceDate).getTime()
       );
    });
    if (maintenances.length === 0) {
@@ -277,8 +284,8 @@ const maintenanceYear = computed(() => {
 const fundingUnit = computed(() => {
    return props.patent.funding?.fundingUnits
       ? props.patent.funding?.fundingUnits
-         .map((f) => f.fundingUnit?.Name)
-         .join(", ")
+           .map((f) => f.fundingUnit?.Name)
+           .join(", ")
       : "";
 });
 
@@ -294,16 +301,15 @@ const status = computed(() => {
    if (!latestMaintenance.value) {
       if (props.patent.InitialReviewDate) {
          return "已初評";
-      }
-      else if (props.patent.external?.PublicationDate) {
+      } else if (props.patent.external?.PublicationDate) {
          return "已授權";
-      }
-      else {
+      } else {
          return "未生效";
       }
    }
    const expireDate = new Date(latestMaintenance.value.ExpireDate);
-   const today = new Date().setHours(0, 0, 0, 0);
+   const today = new Date();
+   today.setHours(0, 0, 0, 0);
 
    if (today > expireDate) {
       return "已到期";
