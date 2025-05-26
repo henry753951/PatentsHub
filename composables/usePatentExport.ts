@@ -83,7 +83,7 @@ export const usePatentExport = () => {
          {},
       );
       consola.log("Contact Infos:", contactInfos);
-      const patents = await $trpc.data.patent.getPatents.query({
+      const patents = await $trpc.data.patent.getFullPatents.query({
          PatentID: {
             in: Array.from(patentIds),
          },
@@ -156,7 +156,15 @@ export const usePatentExport = () => {
             applicationYear: () => getROCYear(patent.application?.FilingDate),
             applicationNumber: () =>
                patent.application?.ApplicationNumber || "",
-            patentType: () => patent.PatentType || "",
+            patentType: () => {
+               const typeMap: Record<string, string> = {
+                  INVENTION: "發明專利",
+                  UTILITY_MODEL: "新型專利",
+                  DESIGN: "設計專利",
+                  PLANT: "植物專利",
+               };
+               return patent.PatentType ? typeMap[patent.PatentType] : "";
+            },
             country: () => patent.country?.CountryName || "",
             fundingPlan: () => patent.funding?.plan?.Name || "",
             fundingUnit: () =>
@@ -206,8 +214,20 @@ export const usePatentExport = () => {
                joinArray(
                   patent.technical?.keywords.map((k) => k.Keyword) || [],
                ),
-            records: () => "", // Not Implemented
-            costs: () => "", // Not Implemented
+            records: () => {
+               const records = patent.patentRecords || [];
+               return joinArray(
+                  records.map((r) => `◎${r.Date}: ${r.Record}`),
+                  "\n",
+               );
+            },
+            costs: () => {
+               const costs = patent.funding?.fundingExports || [];
+               return joinArray(
+                  costs.map((c) => `◎${c.ExportDate} ${c.Description} : ${c.exportRecords.map((er) => `${er.Name}-$${er.Amount}`).join(", ")}`),
+                  "\n",
+               );
+            },
          };
 
          // Evaluate anonymous functions to get final row data
