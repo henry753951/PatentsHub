@@ -1,6 +1,6 @@
 <template>
    <div
-      class="relative select-none overflow-hidden rounded-lg bg-white/80 dark:bg-zinc-900/90 shadow-md border border-gray-100 dark:border-zinc-800 transition-all duration-300 hover:shadow-lg group cursor-pointer patent-row"
+      class="relative select-none overflow-hidden rounded-lg bg-white/80 dark:bg-zinc-900/90 border border-gray-100 dark:border-zinc-800 transition-all duration-300 group cursor-pointer patent-row"
       :data-patent-id="patent.PatentID"
    >
       <!-- 查無案件 Icon -->

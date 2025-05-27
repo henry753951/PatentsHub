@@ -21,115 +21,111 @@
             class="space-y-2"
             @submit.prevent="submitForm"
          >
-            <OverlayScrollbarsComponent
-               :options="{ scrollbars: { autoHide: 'leave' } }"
-               class="max-h-96 overflow-auto px-4 py-4"
-            >
-               <div>
-                  <div class="flex justify-between items-center">
-                     <Label
-                        for="name"
-                        class="text-sm font-bold text-slate-700 dark:text-zinc-300"
-                     >
-                        <div v-if="!formData.name.trim() && showValidation">
-                           <span class="text-red-500">發明人姓名 *</span>
-                        </div>
-                        <div v-else>
-                           <span>發明人姓名</span>
-                           <span class="text-red-500"> *</span>
-                        </div>
+            <div>
+               <div class="flex justify-between items-center">
+                  <Label
+                     for="name"
+                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
+                  >
+                     <div v-if="!formData.name.trim() && showValidation">
+                        <span class="text-red-500">發明人姓名 *</span>
+                     </div>
+                     <div v-else>
+                        <span>發明人姓名</span>
+                        <span class="text-red-500"> *</span>
+                     </div>
 
-                     </Label>
-                     <p
-                        v-if="!formData.name.trim() && showValidation"
-                        class="text-red-500 text-sm"
-                     >
-                        姓名不可為空
-                     </p>
-                  </div>
-
-                  <!-- Input 輸入框 -->
-                  <Input
-                     id="name"
-                     ref="nameInputRef"
-                     v-model="formData.name"
-                     @blur="showValidation = true"
-                  />
+                  </Label>
+                  <p
+                     v-if="!formData.name.trim() && showValidation"
+                     class="text-red-500 text-sm"
+                  >
+                     姓名不可為空
+                  </p>
                </div>
 
-               <div>
-                  <Label
-                     for="email"
-                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
-                  >
-                     電子信箱
-                  </Label>
-                  <Input
-                     id="email"
-                     v-model="formData.email"
-                  />
-               </div>
-               <div>
-                  <Label
-                     for="officeNumber"
-                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
-                  >
-                     辦公室電話
-                  </Label>
-                  <Input
-                     id="officeNumber"
-                     v-model="formData.officeNumber"
-                  />
-               </div>
-               <div>
-                  <Label
-                     for="phoneNumber"
-                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
-                  >
-                     手機號碼
-                  </Label>
-                  <Input
-                     id="phoneNumber"
-                     v-model="formData.phoneNumber"
-                  />
-               </div>
-               <div>
-                  <Label
-                     for="role"
-                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
-                  >
-                     職位
-                  </Label>
-                  <Input
-                     id="role"
-                     v-model="formData.role"
-                  />
-               </div>
-               <div>
-                  <Label
-                     for="belongs"
-                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
-                  >
-                     所屬系所
-                  </Label>
-                  <DepartmentSelect
-                     v-model="formData.belongs"
-                     class="mb-2"
-                  />
-               </div>
-               <div>
-                  <Label
-                     for="note"
-                     class="text-sm font-bold text-slate-700 dark:text-zinc-300"
-                  >
-                     備註
-                  </Label>
-                  <Input
-                     id="note"
-                     v-model="formData.note"
-                  />
-               </div>
-            </OverlayScrollbarsComponent>
+               <!-- Input 輸入框 -->
+               <Input
+                  id="name"
+                  ref="nameInputRef"
+                  v-model="formData.name"
+                  @blur="showValidation = true"
+               />
+            </div>
+
+            <div>
+               <Label
+                  for="email"
+                  class="text-sm font-bold text-slate-700 dark:text-zinc-300"
+               >
+                  電子信箱
+               </Label>
+               <Input
+                  id="email"
+                  v-model="formData.email"
+               />
+            </div>
+            <div>
+               <Label
+                  for="officeNumber"
+                  class="text-sm font-bold text-slate-700 dark:text-zinc-300"
+               >
+                  辦公室電話
+               </Label>
+               <Input
+                  id="officeNumber"
+                  v-model="formData.officeNumber"
+               />
+            </div>
+            <div>
+               <Label
+                  for="phoneNumber"
+                  class="text-sm font-bold text-slate-700 dark:text-zinc-300"
+               >
+                  手機號碼
+               </Label>
+               <Input
+                  id="phoneNumber"
+                  v-model="formData.phoneNumber"
+               />
+            </div>
+            <div>
+               <Label
+                  for="role"
+                  class="text-sm font-bold text-slate-700 dark:text-zinc-300"
+               >
+                  職位
+               </Label>
+               <Input
+                  id="role"
+                  v-model="formData.role"
+               />
+            </div>
+            <div>
+               <Label
+                  for="belongs"
+                  class="text-sm font-bold text-slate-700 dark:text-zinc-300"
+               >
+                  所屬系所
+               </Label>
+               <DepartmentSelect
+                  v-model="formData.belongs"
+                  class="mb-2"
+               />
+            </div>
+            <div>
+               <Label
+                  for="note"
+                  class="text-sm font-bold text-slate-700 dark:text-zinc-300"
+               >
+                  備註
+               </Label>
+               <Input
+                  id="note"
+                  v-model="formData.note"
+               />
+            </div>
+
             <DialogFooter>
                <Button
                   type="button"

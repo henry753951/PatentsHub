@@ -78,22 +78,59 @@ const {
    status,
 } = useDatabasePatent(props.patent.PatentId);
 
-// 動態設置「置頂/取消置頂」按鈕的屬性
-const pinAction = computed(() => {
-   const isPinned = patentInfo.value?.Pinned ?? false;
-   return {
-      title: isPinned ? "取消置頂" : "置頂",
-      description: isPinned ? "此動作將取消此專利的置頂狀態。" : "此動作將把此專利置頂。",
+// 動態生成 actionItems
+const actionItems = computed(() => [
+   {
+      title: "刷新專利",
+      description: "此動作將重新抓取此專利的資料。",
       actions: [
          {
-            title: isPinned ? "取消置頂" : "置頂",
+            title: "刷新",
+            type: "secondary",
+            onClick: () => {
+               refreshNuxtData(["patents", `patent-${props.patent.PatentId}`]);
+               isOpen.value = false;
+            },
+         },
+      ],
+   },
+   {
+      title: "純文字顯示",
+      description: "便於複製的純文字顯示。",
+      actions: [
+         {
+            title: "顯示",
+            type: "secondary",
+            onClick: () => {
+               open("PatentRawTextModal", {
+                  props: {
+                     patent: patentInfo.value,
+                  },
+               });
+               isOpen.value = false;
+            },
+         },
+      ],
+   },
+   {
+      title: (patentInfo.value?.Pinned ?? false) ? "取消置頂" : "置頂",
+      description:
+         (patentInfo.value?.Pinned ?? false)
+            ? "此動作將取消此專利的置頂狀態。"
+            : "此動作將把此專利置頂。",
+      actions: [
+         {
+            title: (patentInfo.value?.Pinned ?? false) ? "取消置頂" : "置頂",
             type: "secondary",
             onClick: async () => {
                try {
-                  // 根據當前狀態切換 pinned 值
-                  await crud.updatePatent([{ Pinned: !isPinned }]);
-                  console.log(`專利已${isPinned ? "取消置頂" : "置頂"}，pinned: ${!isPinned}`);
-                  isOpen.value = false; // 關閉對話框
+                  await crud.updatePatent([
+                     { Pinned: !(patentInfo.value?.Pinned ?? false) },
+                  ]);
+                  console.log(
+                     `專利已${(patentInfo.value?.Pinned ?? false) ? "取消置頂" : "置頂"}，pinned: ${!(patentInfo.value?.Pinned ?? false)}`,
+                  );
+                  isOpen.value = false;
                }
                catch (error) {
                   console.error("切換置頂狀態失敗:", error);
@@ -101,11 +138,7 @@ const pinAction = computed(() => {
             },
          },
       ],
-   };
-});
-
-// 動態生成 actionItems
-const actionItems = computed(() => [
+   },
    {
       title: "移除專利",
       description: "此動作將永久刪除此專利，並無法復原。",
@@ -127,21 +160,6 @@ const actionItems = computed(() => [
          },
       ],
    },
-   {
-      title: "刷新專利",
-      description: "此動作將重新抓取此專利的資料。",
-      actions: [
-         {
-            title: "刷新",
-            type: "secondary",
-            onClick: () => {
-               refreshNuxtData(["patents", `patent-${props.patent.PatentId}`]);
-               isOpen.value = false;
-            },
-         },
-      ],
-   },
-   pinAction.value, // 動態新增置頂/取消置頂選項
 ]);
 </script>
 

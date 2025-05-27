@@ -115,9 +115,27 @@
                         title="專利編號"
                         icon="ic:round-fingerprint"
                      >
-                        {{
-                           patent.external ? patent.external.PatentNumber : ""
-                        }}
+                        <template v-if="patent.country?.ISOCode === 'TW'">
+                           <a
+                              v-if="patent.external"
+                              class="text-blue-500 hover:underline"
+                              :href="`https://cloud.tipo.gov.tw/S220/cert/patentRights/detail?QRcode=Y&DataNo=${patent.external.PatentNumber}&DataCls=I`"
+                              target="_blank"
+                           >
+                              {{
+                                 patent.external
+                                    ? patent.external.PatentNumber
+                                    : ""
+                              }}
+                           </a>
+                        </template>
+                        <template v-else>
+                           {{
+                              patent.external
+                                 ? patent.external.PatentNumber
+                                 : ""
+                           }}
+                        </template>
                      </CustomStatusBlock>
                      <CustomStatusBlock
                         title="專利國家"

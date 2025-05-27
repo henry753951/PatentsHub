@@ -232,7 +232,6 @@ import {
    FileIcon,
 } from "lucide-vue-next";
 import { toast } from "vue-sonner";
-import { $t } from "@primevue/themes";
 import { ScrollArea } from "~/components/ui/scroll-area";
 definePageMeta({
    name: "common-fundingPlanManage",

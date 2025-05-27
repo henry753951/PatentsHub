@@ -16,8 +16,16 @@
       <PopoverContent
          class="max-w-[var(--radix-popper-anchor-width)] rounded-xl min-w-[350px]"
       >
-         <div class="pb-4 font-bold">
-            選擇發明人
+         <div class="flex items-center justify-between pb-4">
+            <div class="font-bold">
+               選擇發明人
+            </div>
+            <Button
+               variant="ghost"
+               @click="showAddModal = true"
+            >
+               <Icon name="ic:round-add" />
+            </Button>
          </div>
          <Input
             v-model="search"
@@ -52,6 +60,13 @@
          </OverlayScrollbarsComponent>
       </PopoverContent>
    </Popover>
+   <FormInventorEdit
+      :is-open="showAddModal"
+      title="新增發明人"
+      description="新增發明人至清單"
+      @submit="handleAddSubmit"
+      @close="showAddModal = false"
+   />
 </template>
 
 <script lang="ts" setup>
@@ -60,13 +75,15 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
-import { is } from "date-fns/locale";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 
+const { open } = useModals();
 const { chooseText } = defineProps<{
    chooseText?: string
 }>();
 const isOpen = inject("popoverState", ref(false));
+const showAddModal = ref(false);
+
 interface Inventor {
    id: number
    name: string
@@ -78,20 +95,53 @@ interface Inventor {
 }
 
 const search = ref<string>("");
-const { data: inventors, refresh } = await useAsyncData(async () => {
-   const { $trpc } = useNuxtApp();
-   return await $trpc.data.inventor.getInventors.query({
+const {
+   data: inventors,
+   filter,
+   status,
+   crud,
+   forceRefresh,
+} = useDatabaseInventor({});
+
+const handleAddSubmit = async (data: {
+   name: string
+   email?: string
+   officeNumber?: string
+   phoneNumber?: string
+   role: string
+   departmentID: number
+   note?: string
+}) => {
+   if (!data.departmentID) {
+      throw new Error("請選擇系所");
+   }
+   await crud.createInventor({
+      department: {
+         connect: { DepartmentID: data.departmentID },
+      },
       contactInfo: {
-         Name: {
-            contains: search.value,
+         create: {
+            Name: data.name,
+            Email: data.email,
+            OfficeNumber: data.officeNumber,
+            PhoneNumber: data.phoneNumber,
+            Role: data.role,
+            Note: data.note,
          },
       },
    });
-});
+   showAddModal.value = false;
+};
 watchThrottled(
    search,
    () => {
-      refresh();
+      filter.value = {
+         contactInfo: {
+            Name: {
+               contains: search.value,
+            },
+         },
+      };
    },
    {
       throttle: 500,

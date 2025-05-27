@@ -83,4 +83,11 @@ export default router({
             });
          });
       }),
+
+   // 4️⃣ 查詢聯絡人列表
+   getContactInfos: procedure.input(z.object({})).query(async () => {
+      return await prisma.contactInfo.findMany({
+         orderBy: { Name: "asc" },
+      });
+   }),
 });

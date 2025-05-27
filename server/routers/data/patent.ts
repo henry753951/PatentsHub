@@ -332,4 +332,72 @@ export default router({
             },
          });
       }),
+   getFullPatents: procedure
+      .input(dbZ.PatentWhereInputSchema)
+      .query(async ({ input }) => {
+         return await prisma.patent.findMany({
+            where: input as Prisma.PatentWhereInput,
+            include: {
+               patentRecords: true,
+               maintenances: true,
+               manualStatus: true,
+               country: true,
+               department: {
+                  include: {
+                     college: true,
+                  },
+               },
+               internal: {
+                  include: {
+                     InitialReviewAgencies: {
+                        include: {
+                           agencyUnit: true,
+                        },
+                     },
+                     TakerAgencies: {
+                        include: {
+                           agencyUnit: true,
+                        },
+                     },
+                  },
+               },
+               external: true,
+               technical: {
+                  include: {
+                     keywords: true,
+                  },
+               },
+               application: true,
+               funding: {
+                  include: {
+                     plan: true,
+                     fundingUnits: {
+                        include: {
+                           fundingUnit: true,
+                        },
+                     },
+                     fundingExports: {
+                        include: {
+                           exportRecords: true,
+                        },
+                     },
+                  },
+               },
+               inventors: {
+                  include: {
+                     inventor: {
+                        include: {
+                           contactInfo: true,
+                           department: {
+                              include: {
+                                 college: true,
+                              },
+                           },
+                        },
+                     },
+                  },
+               },
+            },
+         });
+      }),
 });

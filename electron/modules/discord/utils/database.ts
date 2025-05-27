@@ -3,6 +3,8 @@ import {
    type MessageComponentInteraction,
    type CommandInteractionOption,
    ChannelType,
+   type TextChannel,
+   type Message,
 } from "discord.js";
 import { app } from "electron";
 import path from "path";
@@ -10,151 +12,219 @@ import fs from "fs/promises";
 import { readConfig } from "../../../utils/config";
 import { client } from "../../discord";
 import { hashing } from "./hashing";
-const ephemeral = true;
 
-async function replaceDB(
+// 常量
+const EPHEMERAL_REPLY = true;
+
+// 型別介面以確保型別安全
+interface DatabaseInfo {
+   hash: string;
+   lastModified: string;
+}
+
+interface BackupMessage {
+   id: string;
+   hash: string;
+   name: string;
+   url: string;
+   timestamp: Date;
+}
+
+/**
+ * 根據環境構建資料庫路徑。
+ * @returns 資料庫的檔案系統路徑（不含 'file:' 前綴）。
+ */
+function getDatabasePath(): string {
+   const isProduction = app.isPackaged;
+   const dbPath = isProduction
+      ? path.join(app.getPath("userData"), "app.db")
+      : process.env.DATABASE_URL ||
+        path.join(__dirname, "server", "prisma", "db", "app.db");
+   return dbPath.replace(/^file:/, "").replace(/\\/g, "/");
+}
+
+/**
+ * 使用透過 Discord 上傳的檔案替換當前資料庫。
+ * @param interaction - Discord 命令互動。
+ * @param option - 包含附件的互動選項。
+ */
+async function replaceDatabase(
    interaction: CommandInteraction,
-   interactionOption: CommandInteractionOption,
-) {
+   option: CommandInteractionOption,
+): Promise<void> {
    try {
-      const attachment = interactionOption.attachment;
-
-      // 驗證上傳的檔案是否為有效的 .db 檔案
+      const attachment = option.attachment;
       if (!attachment?.name.endsWith(".db") || !attachment.url) {
          await interaction.reply({
             content: "請上傳有效的 .db 檔案！",
-            ephemeral: true,
+            ephemeral: EPHEMERAL_REPLY,
          });
          return;
       }
-      // 使用 backupDB 進行備份並上傳到 Discord
-      const backupMessage = await backupDB(true);
-      // 下載上傳的檔案並取代資料庫
-      await useBackup(attachment.url);
 
-      // 將備份訊息轉發到目前頻道並回覆
-      if (interaction.channel?.type === ChannelType.GuildText) {
-         await backupMessage?.forward(interaction.channel);
+      const backupMessage = await createDatabaseBackup(true);
+      await downloadAndReplaceDatabase(attachment.url);
+
+      const channel = interaction.channel;
+      if (!channel || channel.type !== ChannelType.GuildText) {
          await interaction.reply({
-            content: "資料庫已成功取代並備份！ \n新資料庫:",
-            files: [
-               {
-                  attachment: attachment.url,
-                  name: attachment.name,
-               },
-            ],
-            ephemeral: true,
+            content: "此命令只能在文字頻道中使用。",
+            ephemeral: EPHEMERAL_REPLY,
+         });
+         return;
+      }
+      if (channel && backupMessage) {
+         await backupMessage.forward(channel);
+         await interaction.reply({
+            content: "資料庫已成功替換並備份！\n新資料庫：",
+            files: [{ attachment: attachment.url, name: attachment.name }],
+            ephemeral: EPHEMERAL_REPLY,
          });
       }
-   }
-   catch (error) {
-      console.error("取代資料庫錯誤:", error);
+   } catch (error) {
+      console.error("替換資料庫時發生錯誤：", error);
       await interaction.reply({
-         content: "取代資料庫時發生錯誤，請檢查檔案並重試。",
-         ephemeral: true,
+         content: "替換資料庫時發生錯誤，請檢查檔案並重試。",
+         ephemeral: EPHEMERAL_REPLY,
       });
    }
 }
 
-async function useBackup(url: string) {
-   const userData = app.getPath("userData");
-   const dbPath = path.join(userData, "app.db");
+/**
+ * 從指定 URL 下載資料庫檔案並替換當前資料庫。
+ * @param url - 要下載的資料庫檔案 URL。
+ */
+async function downloadAndReplaceDatabase(url: string): Promise<void> {
+   const dbPath = getDatabasePath();
    const response = await fetch(url);
+   if (!response.ok) {
+      throw new Error(`從 ${url} 下載資料庫失敗`);
+   }
    const buffer = await response.arrayBuffer();
    await fs.writeFile(dbPath, Buffer.from(buffer));
 }
 
-async function exportDB(interaction: MessageComponentInteraction) {
-   backupDB()
-      .then(async (message) => {
-         if (interaction.channel?.type !== ChannelType.GuildText) return;
-         await message?.forward(interaction.channel);
-         interaction.reply({
-            content: "資料庫備份成功！",
-         });
-      })
-      .catch(async (error) => {
+/**
+ * 匯出當前資料庫並上傳至 Discord。
+ * @param interaction - Discord 訊息元件互動。
+ */
+async function exportDatabase(
+   interaction: MessageComponentInteraction,
+): Promise<void> {
+   try {
+      const message = await createDatabaseBackup();
+      if (
+         !interaction.channel ||
+         interaction.channel.type !== ChannelType.GuildText
+      ) {
          await interaction.reply({
-            content: error,
+            content: "此命令只能在文字頻道中使用。",
+            ephemeral: EPHEMERAL_REPLY,
          });
+         return;
+      }
+      const channel = interaction.channel;
+      if (channel && message) {
+         await message.forward(channel);
+         await interaction.reply({ content: "資料庫備份成功！" });
+      }
+   } catch (error) {
+      console.error("匯出資料庫時發生錯誤：", error);
+      await interaction.reply({
+         content: "資料庫備份時發生錯誤，請重試。",
+         ephemeral: EPHEMERAL_REPLY,
       });
+   }
 }
 
-async function backupDB(replace = false) {
-   const userData = app.getPath("userData");
-   const dbPath = path.join(userData, "app.db");
+/**
+ * 建立資料庫備份並上傳至 Discord。
+ * @param isReplacement - 是否為替換操作的備份。
+ * @returns 已發送的 Discord 訊息，若失敗則返回 null。
+ */
+async function createDatabaseBackup(
+   isReplacement = false,
+): Promise<Message | null> {
+   const dbPath = getDatabasePath();
    const config = await readConfig();
    const backupChannel = client.channels.cache.get(
       config.discord.channelIds.databaseBackup,
    );
+
+   if (!backupChannel || backupChannel.type !== ChannelType.GuildText) {
+      throw new Error(
+         "備份頻道未找到或無效。" + config.discord.channelIds.databaseBackup,
+      );
+   }
+
    try {
-      // 檢查資料庫檔案是否存在
       await fs.access(dbPath);
       const hash = await hashing.hashFile(dbPath, "sha256");
-      const fileName = !replace
-         ? `backup_${Date.now()}.db`
-         : `replace_backup_${Date.now()}.db`;
-      // 上傳資料庫檔案到 Discord
-      if (backupChannel?.type === ChannelType.GuildText) {
-         const message = await backupChannel.send({
-            content: "hash: " + hash,
-            files: [
-               {
-                  attachment: dbPath,
-                  name: fileName,
-               },
-            ],
-            embeds: [
-               {
-                  title: "資料庫備份",
-                  description: `資料庫已備份至：\`${fileName}\``,
-                  color: 0x00ff00,
-                  timestamp: new Date().toISOString(),
-               },
-            ],
-         });
-         return message;
+
+      // compare with existing backups
+      const existingBackups = await listDatabaseBackups();
+      const existingBackup = existingBackups.find(
+         (backup) => backup.hash === hash,
+      );
+      if (existingBackup) {
+         return null;
       }
-   }
-   catch (error) {
-      console.error("匯出資料庫錯誤:", error);
-      if (backupChannel?.type === ChannelType.GuildText) {
-         await backupChannel.send({
-            embeds: [
-               {
-                  title: "資料庫備份失敗",
-                  description:
-                     "匯出資料庫時發生錯誤，請確認資料庫檔案存在並重試。",
-                  color: 0xff0000,
-                  timestamp: new Date().toISOString(),
-               },
-            ],
-         });
-      }
-      throw new Error("匯出資料庫時發生錯誤，請確認資料庫檔案存在並重試。");
+
+      const fileName = isReplacement
+         ? `replace_backup_${Date.now()}.db`
+         : `backup_${Date.now()}.db`;
+
+      const message = await backupChannel.send({
+         content: `hash: ${hash}`,
+         files: [{ attachment: dbPath, name: fileName }],
+         embeds: [
+            {
+               title: "資料庫備份",
+               description: `資料庫已備份為：\`${fileName}\``,
+               color: 0x00ff00,
+               timestamp: new Date().toISOString(),
+            },
+         ],
+      });
+      return message;
+   } catch (error) {
+      console.error("建立資料庫備份時發生錯誤：", error);
+      await backupChannel.send({
+         embeds: [
+            {
+               title: "資料庫備份失敗",
+               description: "備份資料庫時發生錯誤，請確認資料庫檔案存在。",
+               color: 0xff0000,
+               timestamp: new Date().toISOString(),
+            },
+         ],
+      });
+      throw new Error("備份資料庫失敗，請確認資料庫檔案存在。");
    }
 }
 
-async function getBackups(): Promise<
-   {
-      id: string
-      hash: string
-      name: string
-      url: string
-      timestamp: Date
-   }[]
-> {
+/**
+ * 從 Discord 頻道取得資料庫備份清單。
+ * @returns 備份元資料陣列。
+ */
+async function listDatabaseBackups(): Promise<BackupMessage[]> {
    const config = await readConfig();
    const backupChannel = client.channels.cache.get(
       config.discord.channelIds.databaseBackup,
    );
-   if (backupChannel?.type !== ChannelType.GuildText) return [];
+
+   if (!backupChannel || backupChannel.type !== ChannelType.GuildText) {
+      return [];
+   }
+
    const messages = await backupChannel.messages.fetch({ limit: 100 });
-   const backupMessages = messages.filter((message) => {
-      return message.attachments.some((attachment) => {
-         return attachment.name?.endsWith(".db") && attachment.url;
-      });
-   });
+   const backupMessages = messages.filter(
+      (message) =>
+         message.attachments.some(
+            (attachment) => attachment.name?.endsWith(".db") && attachment.url,
+         ) && message.author.id === client.user?.id,
+   );
+
    return backupMessages
       .map((message) => {
          const attachment = message.attachments.find((attachment) =>
@@ -169,19 +239,27 @@ async function getBackups(): Promise<
             timestamp: message.createdAt,
          };
       })
-      .filter((backup) => backup !== null);
+      .filter((backup): backup is BackupMessage => backup !== null);
 }
 
-async function deleteBackup(backupId: string) {
+/**
+ * 從 Discord 頻道刪除資料庫備份。
+ * @param backupId - 要刪除的備份訊息 ID。
+ * @returns 若刪除成功返回 true，否則返回 false。
+ */
+async function deleteDatabaseBackup(backupId: string): Promise<boolean> {
    const config = await readConfig();
    const backupChannel = client.channels.cache.get(
       config.discord.channelIds.databaseBackup,
    );
-   if (backupChannel?.type !== ChannelType.GuildText) return;
+
+   if (!backupChannel || backupChannel.type !== ChannelType.GuildText) {
+      return false;
+   }
+
    const backupMessage = await backupChannel.messages
       .fetch(backupId)
       .catch(() => null);
-
    if (backupMessage) {
       await backupMessage.delete();
       return true;
@@ -189,30 +267,32 @@ async function deleteBackup(backupId: string) {
    return false;
 }
 
-const getCurrentInfo = async () => {
-   const userData = app.getPath("userData");
-   const dbPath = path.join(userData, "app.db");
+/**
+ * 取得當前資料庫的資訊。
+ * @returns 資料庫資訊，若發生錯誤則返回 null。
+ */
+async function getDatabaseInfo(): Promise<DatabaseInfo | null> {
+   const dbPath = getDatabasePath();
    try {
       await fs.access(dbPath);
       const hash = await hashing.hashFile(dbPath, "sha256");
-      const lastModified = await fs.stat(dbPath);
-      const lastModifiedDate = new Date(lastModified.mtime).toISOString();
+      const stats = await fs.stat(dbPath);
       return {
          hash,
-         lastModified: lastModifiedDate,
+         lastModified: stats.mtime.toISOString(),
       };
+   } catch (error) {
+      console.error("取得資料庫資訊時發生錯誤：", error);
+      return null;
    }
-   catch (error) {
-      console.error("取得資料庫資訊錯誤:", error);
-   }
-};
+}
 
 export {
-   replaceDB,
-   exportDB,
-   backupDB,
-   getBackups,
-   deleteBackup,
-   getCurrentInfo,
-   useBackup,
+   replaceDatabase,
+   exportDatabase,
+   createDatabaseBackup,
+   listDatabaseBackups,
+   deleteDatabaseBackup,
+   getDatabaseInfo,
+   downloadAndReplaceDatabase,
 };

@@ -3,7 +3,6 @@ import logger from "../logger";
 import { readConfig } from "../utils/config";
 import { app, ipcMain } from "electron";
 import { Client, GatewayIntentBits, SlashCommandBuilder } from "discord.js";
-import { REST } from "@discordjs/rest";
 import { ActivityType, Routes } from "discord-api-types/v10";
 import { loadCommands, registerSlashCommands } from "./discord/utils/init";
 import { slashCommandEmitter } from "~/server/routers/app/discord";

@@ -63,7 +63,7 @@
          </div>
       </OverlayScrollbarsComponent>
 
-      <InventorEditList
+      <FormInventorEdit
          :is-open="showAddModal"
          title="新增發明人"
          description="新增發明人至清單"
@@ -71,7 +71,7 @@
          @submit="handleAddSubmit"
          @close="showAddModal = false"
       />
-      <InventorEditList
+      <FormInventorEdit
          :is-open="showEditModal"
          title="編輯發明人"
          description="更新發明人資料"
@@ -92,8 +92,6 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { PlusIcon, MoreHorizontalIcon } from "lucide-vue-next";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
-import InventorEditList from "~/components/Form/InventorEditList.vue";
-
 type Department =
    RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
 

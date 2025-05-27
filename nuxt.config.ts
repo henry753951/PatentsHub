@@ -114,7 +114,7 @@ export default defineNuxtConfig({
             "clsx",
             "overlayscrollbars-vue",
             "primevue/tooltip",
-            "radix-ui",
+            "reka-ui",
             "lucide-vue-next",
             "tailwind-variants",
             "lodash-es",

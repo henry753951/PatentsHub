@@ -26,7 +26,7 @@ export default (mainWindow: BrowserWindow) => {
                };
                const mimeType = mimeTypes[ext] || "application/octet-stream";
 
-               return new Response(fileContent, {
+               return new Response(fileContent as BodyInit, {
                   status: 200,
                   headers: { "Content-Type": mimeType },
                });
@@ -40,7 +40,7 @@ export default (mainWindow: BrowserWindow) => {
                await fs.access(dbPath);
                const fileContent = await fs.readFile(dbPath);
                const mimeType = "application/octet-stream";
-               return new Response(fileContent, {
+               return new Response(fileContent as BodyInit, {
                   status: 200,
                   headers: { "Content-Type": mimeType },
                });
