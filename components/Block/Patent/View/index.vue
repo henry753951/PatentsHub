@@ -97,11 +97,11 @@
                         {{
                            patent.PatentType
                               ? {
-                                   DESIGN: "設計",
-                                   UTILITY_MODEL: "新型",
-                                   INVENTION: "發明",
-                                   PLANT: "植物",
-                                }[patent.PatentType]
+                                 DESIGN: "設計",
+                                 UTILITY_MODEL: "新型",
+                                 INVENTION: "發明",
+                                 PLANT: "植物",
+                              }[patent.PatentType]
                               : ""
                         }}
                      </CustomStatusBlock>
@@ -149,16 +149,26 @@
                <BlockPatentStateProgress
                   class="flex-1"
                   :status-service="patentStatus"
+                  :patent="patent"
+                  :update-case-not-found="crud.updateCaseNotFound"
                />
             </div>
          </div>
          <div class="container mx-auto z-[-1]">
             <Tabs v-model:value="activeTab">
                <TabList>
-                  <Tab value="basic"> 概要 </Tab>
-                  <Tab value="maintenance"> 維護 </Tab>
-                  <Tab value="finance"> 帳務 </Tab>
-                  <Tab value="record"> 記錄 </Tab>
+                  <Tab value="basic">
+                     概要
+                  </Tab>
+                  <Tab value="maintenance">
+                     維護
+                  </Tab>
+                  <Tab value="finance">
+                     帳務
+                  </Tab>
+                  <Tab value="record">
+                     記錄
+                  </Tab>
                </TabList>
                <TabPanels>
                   <TabPanel value="basic">
@@ -218,7 +228,7 @@ import TabPanel from "primevue/tabpanel";
 import { Button } from "@/components/ui/button";
 import type { z } from "zod";
 const porps = defineProps<{
-   patentId: number;
+   patentId: number
 }>();
 
 const { open } = useModals();
@@ -233,9 +243,9 @@ const title = computed(() => {
    return {
       english: patent.value.TitleEnglish,
       native:
-         patent.value.Title ||
-         patent.value.DraftTitle ||
-         patent.value.TitleEnglish,
+         patent.value.Title
+         || patent.value.DraftTitle
+         || patent.value.TitleEnglish,
    };
 });
 

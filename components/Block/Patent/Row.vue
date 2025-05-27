@@ -3,14 +3,30 @@
       class="relative select-none overflow-hidden rounded-lg bg-white/80 dark:bg-zinc-900/90 shadow-md border border-gray-100 dark:border-zinc-800 transition-all duration-300 hover:shadow-lg group cursor-pointer patent-row"
       :data-patent-id="patent.PatentID"
    >
+      <!-- 查無案件 Icon -->
+      <TooltipProvider>
+         <Tooltip>
+            <TooltipTrigger
+               v-if="props.patent.CaseNotFound"
+               class="absolute top-1 right-1 z-30 text-red-400 dark:text-red-300 bg-white/90 dark:bg-zinc-800/80 p-[2px] rounded-full shadow-sm"
+            >
+               <Icon
+                  name="mdi:alert-circle-outline"
+                  class="text-lg"
+               />
+            </TooltipTrigger>
+            <TooltipContent> 智慧局查無案件 </TooltipContent>
+         </Tooltip>
+      </TooltipProvider>
+
       <!-- 狀態色條 -->
       <div
          class="absolute top-0 bottom-0 right-0 w-1 h-full"
          :class="{
             'bg-green-500': status === '有效',
             'bg-amber-500': status === '即將到期',
-            'bg-red-500': status === '已到期',
-            'bg-gray-500': status === '未生效',
+            'bg-red-500': status === '已過期',
+            'bg-gray-500': status === '期滿終止' || status === '未生效',
          }"
       ></div>
       <div
@@ -163,8 +179,9 @@
                      :class="{
                         'bg-green-500': status === '有效',
                         'bg-amber-500': status === '即將到期',
-                        'bg-red-500': status === '已到期',
-                        'bg-gray-500': status === '未生效',
+                        'bg-red-500': status === '已過期',
+                        'bg-gray-500':
+                           status === '期滿終止' || status === '未生效',
                      }"
                   ></div>
                   <span
@@ -173,17 +190,24 @@
                         'text-green-600 dark:text-green-400': status === '有效',
                         'text-amber-600 dark:text-amber-400':
                            status === '即將到期',
-                        'text-red-600 dark:text-red-400': status === '已到期',
-                        'text-gray-600 dark:text-gray-400': status === '未生效',
+                        'text-red-600 dark:text-red-400': status === '已過期',
+                        'text-gray-600 dark:text-gray-400':
+                           status === '期滿終止' || status === '未生效',
                      }"
                   >{{ status }}</span>
                </div>
 
                <span
                   v-if="expiryDate"
-                  class="text-red-500 dark:text-red-400 text-xs mt-1 truncate"
+                  class="text-xs mt-1 truncate"
+                  :class="{
+                     'text-red-600 dark:text-red-400': status === '已過期',
+                     'text-amber-600 dark:text-amber-400':
+                        status === '即將到期',
+                     'text-gray-600 dark:text-gray-400': status === '期滿終止',
+                  }"
                >
-                  {{ expiryDate }}
+                  {{ format(expiryDate, "yyyy/MM/dd") }}
                </span>
             </div>
          </div>
@@ -194,13 +218,14 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { useNow } from "@vueuse/core";
-import { differenceInDays } from "date-fns";
+import { format } from "date-fns";
 import {
    Tooltip,
    TooltipContent,
    TooltipProvider,
    TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getPatentStatus } from "@/composables/database/patent/status";
 type Patent = RouterOutput["data"]["patent"]["getPatents"][0];
 
 const props = defineProps<{
@@ -283,36 +308,7 @@ const fundingUnit = computed(() => {
 });
 
 // 狀態
-const status = computed(() => {
-   if (props.patent.manualStatus.some((s) => s.Override)) {
-      return props.patent.manualStatus
-         .filter((s) => s.Override)
-         .sort((a, b) => (b.Date?.getTime() ?? 0) - (a.Date?.getTime() ?? 0))[0]
-         .Reason;
-   }
-
-   if (!latestMaintenance.value) {
-      if (props.patent.InitialReviewDate) {
-         return "已初評";
-      }
-      else if (props.patent.external?.PublicationDate) {
-         return "已授權";
-      }
-      else {
-         return "未生效";
-      }
-   }
-   const expireDate = new Date(latestMaintenance.value.ExpireDate);
-   const today = new Date().setHours(0, 0, 0, 0);
-
-   if (today > expireDate) {
-      return "已到期";
-   }
-   if (differenceInDays(expireDate, today) <= 30) {
-      return "即將到期";
-   }
-   return "有效";
-});
+const status = computed(() => getPatentStatus(props.patent));
 
 // 其他既有 computed 屬性保持不變
 const name = computed(() => {

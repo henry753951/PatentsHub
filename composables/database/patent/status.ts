@@ -1,7 +1,10 @@
 import { useNow } from "@vueuse/core";
 
 export const usePatentStatus = (patentService: {
-   data: Ref<RouterOutput["data"]["patent"]["getPatent"] | RouterOutput["data"]["patent"]["getPatents"][number]>
+   data: Ref<
+     | RouterOutput["data"]["patent"]["getPatent"]
+     | RouterOutput["data"]["patent"]["getPatents"][number]
+   >
    refreshCallback?: () => Promise<void>
 }) => {
    const now = useNow({ interval: 10 * 1000 });
@@ -50,12 +53,24 @@ export const usePatentStatus = (patentService: {
                .sort((a, b) => a.ExpireDate.getTime() - b.ExpireDate.getTime())
                .at(-1);
 
-            const isExpired = latest ? now.value > latest.ExpireDate : false;
-            data.date = latest?.ExpireDate ?? null;
+            let isExpired = false;
+            let expireDate: Date | null = null;
+
+            if (latest?.ExpireDate) {
+               const expireDateEnd = new Date(latest.ExpireDate);
+               expireDateEnd.setHours(0, 0, 0, 0);
+               expireDateEnd.setDate(expireDateEnd.getDate() + 1);
+
+               isExpired = now.value > expireDateEnd;
+               expireDate = latest.ExpireDate;
+            }
+
+            data.date = expireDate;
             data.active = isExpired;
             data.reason = reason ?? (isExpired ? "已過期" : "到期");
             break;
          }
+
          case "MANUAL":
             data.date = date ?? null;
             data.active = active ?? false;
@@ -68,9 +83,9 @@ export const usePatentStatus = (patentService: {
    };
 
    const status = computed(() => {
-      const signed = createStatus("SIGNED");// 教師登錄 固定在第一個
+      const signed = createStatus("SIGNED"); // 教師登錄 固定在第一個
 
-      const others = [createStatus("REVIEWED"), createStatus("CERTIFIED")];// 其他狀態 按照時間排序
+      const others = [createStatus("REVIEWED"), createStatus("CERTIFIED")]; // 其他狀態 按照時間排序
 
       const expired = others[1].active ? createStatus("EXPIRED") : null;
       if (expired) others.push(expired);
@@ -151,4 +166,49 @@ export const usePatentStatus = (patentService: {
       removeManualStatus,
       refreshCallback,
    };
+};
+
+export const getPatentStatus = (
+   patent: RouterOutput["data"]["patent"]["getPatents"][number],
+): string => {
+   // override 狀態優先
+   const override = patent.manualStatus
+      .filter((s) => s.Override)
+      .sort((a, b) => (b.Date?.getTime() ?? 0) - (a.Date?.getTime() ?? 0))[0];
+   if (override) return override.Reason;
+
+   // 沒有任何維護紀錄的 fallback
+   const latest = [...(patent.maintenances ?? [])]
+      .sort(
+         (a, b) =>
+            new Date(b.MaintenanceDate).getTime()
+              - new Date(a.MaintenanceDate).getTime(),
+      )
+      .at(0);
+
+   if (!latest) {
+      if (patent.InitialReviewDate) return "已初評";
+      if (patent.external?.PublicationDate) return "已授權";
+      return "未生效";
+   }
+
+   const expireDate = new Date(latest.ExpireDate);
+   expireDate.setHours(0, 0, 0, 0);
+   expireDate.setDate(expireDate.getDate() + 1);
+
+   const now = new Date();
+
+   if (now >= expireDate) {
+      const isNSC = patent.funding?.fundingUnits?.some(
+         (unit) =>
+            unit.fundingUnit?.Name?.includes("國科會")
+            || unit.fundingUnit?.Name?.includes("科技部"),
+      );
+      return isNSC ? "已過期" : "期滿終止";
+   }
+
+   const diff = expireDate.getTime() - now.getTime();
+   if (diff <= 1000 * 60 * 60 * 24 * 30) return "即將到期";
+
+   return "有效";
 };

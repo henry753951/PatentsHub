@@ -71,9 +71,9 @@
          <!-- Summary Cards -->
          <div class="grid grid-cols-3 gap-4 w-full">
             <BlockPatentReminderSummaryCard
-               title="已過期專利"
+               title="已到期專利"
                :value="expiredCount"
-               description="已過期的專利數量"
+               description="已到期的專利數量"
                type="danger"
             />
             <BlockPatentReminderSummaryCard

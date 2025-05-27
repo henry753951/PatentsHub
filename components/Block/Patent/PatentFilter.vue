@@ -43,8 +43,8 @@ const filterItems = {
             value: "有效",
          },
          {
-            label: "已到期",
-            value: "已到期",
+            label: "已過期",
+            value: "已過期",
          },
          {
             label: "國科會終止",

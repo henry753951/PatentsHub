@@ -419,13 +419,12 @@ const formatDate = (date: string | number | Date) => {
 const remainingDays = (date: string | number | Date) => {
    const today = new Date();
    const targetDate = new Date(date);
+
    const diffTime = targetDate.getTime() - today.getTime();
+
    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
    if (diffDays === 0) {
       return "今日到期";
-   }
-   else if (diffDays === 1) {
-      return "明日到期";
    }
    else if (diffDays < 0) {
       return "已過期";

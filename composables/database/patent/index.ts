@@ -63,6 +63,22 @@ export const useDatabasePatent = (
       );
       await refresh();
    };
+
+   const updateCaseNotFound = async (
+      patentID: number,
+      CaseNotFound: boolean,
+   ) => {
+      await $trpc.data.patent.updatePatent.mutate([
+         {
+            patentID,
+            data: {
+               CaseNotFound,
+            },
+         },
+      ]);
+      await refresh();
+   };
+
    // Delete
    const deletePatent = async () => {
       const data = await $trpc.data.patent.deletePatent.mutate({
@@ -82,6 +98,7 @@ export const useDatabasePatent = (
       getPatent,
       deletePatent,
       updatePatent,
+      updateCaseNotFound,
    };
    return {
       data,

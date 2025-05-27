@@ -14,7 +14,8 @@ export default router({
          }),
       )
       .mutation(async ({ input }) => {
-         const { patentID, reason, date, active, override } = input;
+         const { patentID, reason, date, active, override }
+            = input;
 
          return await prisma.patentManualStatus.create({
             data: {
@@ -37,7 +38,8 @@ export default router({
          }),
       )
       .mutation(async ({ input }) => {
-         const { manualStatusID, reason, date, override } = input;
+         const { manualStatusID, reason, date, override }
+            = input;
 
          return await prisma.patentManualStatus.update({
             where: {

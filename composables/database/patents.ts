@@ -12,7 +12,7 @@ export type PatentFilterType = {
         | "已登錄"
         | "已初評"
         | "有效"
-        | "已到期"
+        | "已過期"
         | "國科會終止"
         | "已放棄"
    }
@@ -55,7 +55,7 @@ export const useDatabasePatents = (
                      return lastestStatus.status === "REVIEWED";
                   case "有效":
                      return lastestStatus.status === "CERTIFIED";
-                  case "已到期":
+                  case "已過期":
                      return lastestStatus.status === "EXPIRED";
                   case "國科會終止":
                      return (

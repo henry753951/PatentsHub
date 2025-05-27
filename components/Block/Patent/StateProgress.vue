@@ -33,10 +33,10 @@
                         success: item.type === 'success',
                         none: item.type === 'none',
                         warning: item.type === 'warning',
+                        'opacity-50': item.raw !== currentState?.raw,
                      }"
                      @click="
-                        item.status === 'MANUAL' &&
-                           openEditDialog(item.raw)
+                        item.status === 'MANUAL' && openEditDialog(item.raw)
                      "
                   >
                      <span
@@ -94,14 +94,20 @@
 
          <Dialog
             :open="showAddDialog || editStatusData !== null"
-            @update:open="val => { if (!val) closeDialog() }"
+            @update:open="
+               (val) => {
+                  if (!val) closeDialog();
+               }
+            "
          >
             <DialogContent
                class="sm:max-w-md"
                @pointer-down-outside.prevent
             >
                <DialogHeader>
-                  <DialogTitle>{{ editStatusData ? "編輯自訂狀態" : "新增自訂狀態" }}</DialogTitle>
+                  <DialogTitle>
+                     {{ editStatusData ? "編輯自訂狀態" : "新增自訂狀態" }}
+                  </DialogTitle>
                   <DialogDescription>填寫狀態名稱與日期</DialogDescription>
                </DialogHeader>
 
@@ -116,9 +122,7 @@
                            class="text-sm font-bold"
                            :class="{ 'text-red-500': formErrors.reason }"
                         >
-                           狀態名稱<span
-                              class="text-red-500"
-                           > *</span>
+                           狀態名稱<span class="text-red-500"> *</span>
                         </Label>
                         <span
                            v-if="formErrors.reason"
@@ -131,9 +135,27 @@
                      <Input
                         id="reason"
                         v-model="form.reason"
-                        :class="{ 'border-red-500 focus-visible:ring-red-500': formErrors.reason }"
+                        :class="{
+                           'border-red-500 focus-visible:ring-red-500':
+                              formErrors.reason,
+                        }"
                         placeholder="請輸入狀態名稱"
                      />
+                     <div class="flex flex-wrap gap-2">
+                        <span
+                           v-for="preset in presetStatus"
+                           :key="preset.reason"
+                           class="px-2 py-0.5 text-sm rounded-full cursor-pointer transition border border-gray-300 dark:border-zinc-700 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700"
+                           @click="
+                              () => {
+                                 form.reason = preset.reason;
+                                 form.override = preset.override;
+                              }
+                           "
+                        >
+                           {{ preset.reason }}
+                        </span>
+                     </div>
                   </div>
 
                   <FormDatePicker
@@ -145,7 +167,17 @@
                         id="override"
                         v-model="form.override"
                      />
-                     <Label for="override">結束狀態</Label>
+                     <Label for="override">結尾狀態</Label>
+                  </div>
+                  <div
+                     v-if="form.reason === '國科會同意終止'"
+                     class="flex items-center space-x-2"
+                  >
+                     <Checkbox
+                        id="caseNotFound"
+                        v-model="form.caseNotFound"
+                     />
+                     <Label for="caseNotFound">智慧局查無案件</Label>
                   </div>
                   <DialogFooter>
                      <Button type="submit">
@@ -158,7 +190,11 @@
 
          <Dialog
             :open="deleteTarget !== null"
-            @update:open="val => { if (!val) deleteTarget = null }"
+            @update:open="
+               (val) => {
+                  if (!val) deleteTarget = null;
+               }
+            "
          >
             <DialogContent
                class="sm:max-w-sm"
@@ -166,7 +202,9 @@
             >
                <DialogHeader>
                   <DialogTitle>刪除確認</DialogTitle>
-                  <DialogDescription>確定要刪除這個狀態嗎？此操作無法復原。</DialogDescription>
+                  <DialogDescription>
+                     確定要刪除這個狀態嗎？此操作無法復原。
+                  </DialogDescription>
                </DialogHeader>
                <DialogFooter>
                   <Button
@@ -197,14 +235,23 @@ import {
    TooltipProvider,
    TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+   Dialog,
+   DialogContent,
+   DialogDescription,
+   DialogFooter,
+   DialogHeader,
+   DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { z } from "zod";
 import { over } from "lodash-es";
 
-const { statusService } = defineProps<{
+const { statusService, patent, updateCaseNotFound } = defineProps<{
    statusService: ReturnType<typeof usePatentStatus>
+   patent: RouterOutput["data"]["patent"]["getPatent"]
+   updateCaseNotFound: (id: number, flag: boolean) => Promise<void>
 }>();
 
 const stateProgress = computed(() => {
@@ -223,20 +270,19 @@ const stateProgress = computed(() => {
    }));
 });
 
-const isStopped = computed(() => {
-   const isExpired = stateProgress.value.some(
-      (item) => item.status === "EXPIRED" && item.active,
-   );
-   const isLastManual
-      = stateProgress.value[stateProgress.value.length - 1].status === "MANUAL"
-        && stateProgress.value[stateProgress.value.length - 1].active;
-   return isExpired || isLastManual;
-});
-
 const currentState = computed(() => {
    const reversed = [...stateProgress.value].reverse();
    return reversed.find((item) => item.active) || null;
 }); // 最後一個 active 的狀態
+
+// 快捷狀態
+const presetStatus = [
+   { reason: "申請終止中", override: true },
+   { reason: "國科會同意終止", override: true },
+   { reason: "已讓與", override: true },
+   { reason: "已放棄", override: true },
+   { reason: "已撤案", override: true },
+];
 
 const customStatusSchema = z.object({
    reason: z.string().min(1, "狀態名稱不可為空"),
@@ -252,6 +298,7 @@ const form = reactive({
    reason: "",
    date: new Date(),
    override: false,
+   caseNotFound: patent?.CaseNotFound ?? false,
 });
 
 const openAddDialog = () => {
@@ -263,6 +310,7 @@ const openEditDialog = (manual: any) => {
    form.reason = manual.reason;
    form.date = new Date(manual.date);
    form.override = manual.override ?? false;
+   form.caseNotFound = patent?.CaseNotFound ?? false;
    editStatusData.value = manual;
 };
 
@@ -280,12 +328,14 @@ const resetForm = () => {
    form.reason = "";
    form.date = new Date();
    form.override = false;
+   form.caseNotFound = patent?.CaseNotFound ?? false;
 };
 
 const formErrors = reactive<{ reason?: string }>({});
 
 const handleSubmitStatus = async () => {
    const result = customStatusSchema.safeParse(form);
+
    if (!result.success) {
       formErrors.reason = result.error.formErrors.fieldErrors.reason?.[0] ?? "";
       return;
@@ -309,13 +359,19 @@ const handleSubmitStatus = async () => {
       await statusService.addManualStatus?.(payload);
    }
 
+   if (form.caseNotFound !== patent?.CaseNotFound && patent?.PatentID !== undefined) {
+      await updateCaseNotFound(patent.PatentID, form.caseNotFound);
+   }
+
    await statusService.refreshCallback?.();
    closeDialog();
 };
 
 const handleDeleteStatus = async () => {
    if (deleteTarget.value) {
-      await statusService.removeManualStatus?.(deleteTarget.value.ManualStatusID);
+      await statusService.removeManualStatus?.(
+         deleteTarget.value.ManualStatusID,
+      );
       await statusService.refreshCallback?.();
    }
    deleteTarget.value = null;
