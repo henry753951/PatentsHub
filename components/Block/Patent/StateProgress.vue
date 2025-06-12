@@ -12,6 +12,7 @@
                'text-success text-lg': currentState?.type === 'success',
                'text-warning text-lg': currentState?.type === 'warning',
                'text-none text-lg': currentState?.type === 'none',
+               'text-pending text-lg': currentState?.type === 'pending',
             }"
          >
             {{ currentState?.title }}
@@ -33,6 +34,7 @@
                         success: item.type === 'success',
                         none: item.type === 'none',
                         warning: item.type === 'warning',
+                        pending: item.type === 'pending',
                         'opacity-50': item.raw !== currentState?.raw,
                      }"
                      @click="
@@ -255,19 +257,23 @@ const { statusService, patent, updateCaseNotFound } = defineProps<{
 }>();
 
 const stateProgress = computed(() => {
-   return statusService.status.value.map((s) => ({
-      status: s.status,
-      date: s.date,
-      type: s.active
-         ? s.status === "EXPIRED"
-            ? "warning"
-            : "success"
-         : "none",
-      title: s.reason || s.status,
-      active: s.active,
-      override: s.override,
-      raw: s,
-   }));
+   return statusService.status.value.map((s) => {
+      return {
+         status: s.status,
+         date: s.date,
+         type: s.active
+            ? s.status === "MANUAL" && s.reason === "申請終止中"
+               ? "pending"
+               : s.status === "EXPIRED"
+                  ? "warning"
+                  : "success"
+            : "none",
+         title: s.reason || s.status,
+         active: s.active,
+         override: s.override,
+         raw: s,
+      };
+   });
 });
 
 const currentState = computed(() => {
@@ -359,7 +365,10 @@ const handleSubmitStatus = async () => {
       await statusService.addManualStatus?.(payload);
    }
 
-   if (form.caseNotFound !== patent?.CaseNotFound && patent?.PatentID !== undefined) {
+   if (
+      form.caseNotFound !== patent?.CaseNotFound
+      && patent?.PatentID !== undefined
+   ) {
       await updateCaseNotFound(patent.PatentID, form.caseNotFound);
    }
 
@@ -412,6 +421,10 @@ const handleDeleteStatus = async () => {
    background-color: var(--progress-color);
 }
 .status-block.warning::before {
+   --progress-color: #ef4444;
+   background-color: var(--progress-color);
+}
+.status-block.pending::before {
    --progress-color: #f59e0b;
    background-color: var(--progress-color);
 }
@@ -419,10 +432,13 @@ const handleDeleteStatus = async () => {
 .text-success {
    color: #29b17f;
 }
-.text-warning {
-   color: #f59e0b;
-}
 .text-none {
    color: #d1d5db;
+}
+.text-warning {
+   color: #f87171;
+}
+.text-pending {
+   color: #f59e0b;
 }
 </style>
