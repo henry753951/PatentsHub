@@ -2,7 +2,7 @@
    <div class="w-full text-zinc-800 mx-auto container dark:text-zinc-100 min-h-full py-5">
       <div class="flex gap-6 flex-col">
          <BlockHeader
-            title="至頂專利"
+            title="置頂專利"
             description="查看釘選的專利資料"
          />
 

@@ -14,8 +14,7 @@ export default router({
          }),
       )
       .mutation(async ({ input }) => {
-         const { patentID, reason, date, active, override }
-            = input;
+         const { patentID, reason, date, active, override } = input;
 
          return await prisma.patentManualStatus.create({
             data: {
@@ -38,8 +37,7 @@ export default router({
          }),
       )
       .mutation(async ({ input }) => {
-         const { manualStatusID, reason, date, override }
-            = input;
+         const { manualStatusID, reason, date, override } = input;
 
          return await prisma.patentManualStatus.update({
             where: {
@@ -60,11 +58,25 @@ export default router({
          }),
       )
       .mutation(async ({ input }) => {
-         return await prisma.patentManualStatus.delete({
-            where: {
-               ManualStatusID: input.manualStatusID,
-            },
+         const manualStatus = await prisma.patentManualStatus.findUnique({
+            where: { ManualStatusID: input.manualStatusID },
          });
+
+         if (!manualStatus) throw new Error("Status not found");
+
+         await prisma.patentManualStatus.delete({
+            where: { ManualStatusID: input.manualStatusID },
+         });
+
+         // 如果是「國科會同意終止」，同步更新 Patent.CaseNotFound = false
+         if (manualStatus.Reason === "國科會同意終止") {
+            await prisma.patent.update({
+               where: { PatentID: manualStatus.PatentID },
+               data: { CaseNotFound: false },
+            });
+         }
+
+         return manualStatus;
       }),
 
    getExpiringPatents: procedure

@@ -101,7 +101,9 @@ const {
    status,
    crud,
    forceRefresh,
-} = useDatabaseInventor({});
+} = useDatabaseInventor({
+
+});
 
 const handleAddSubmit = async (data: {
    name: string
@@ -147,6 +149,10 @@ watchThrottled(
       throttle: 500,
    },
 );
+onMounted(() => {
+   // 強制觸發查詢全部發明人
+   filter.value = {};
+});
 
 const emits = defineEmits<{
    (e: "select", inventor: Inventor): void

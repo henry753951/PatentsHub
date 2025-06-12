@@ -1,6 +1,6 @@
 import ExcelJS from "exceljs";
 const EXPORT_COLUMNS = [
-   // 狀態 (Not Implemented)
+   //
    { header: "狀態", key: "status", width: 10 },
    // Patent.Year
    { header: "年度", key: "year", width: 10 },
@@ -113,7 +113,13 @@ export const usePatentExport = () => {
       // Process and add patent data
       patents.forEach((patent) => {
          const rowData = {
-            status: () => "", // Not Implemented
+            status: () => {
+               const current = getPatentStatus(patent);
+               if (current === "國科會同意終止" && patent.CaseNotFound) {
+                  return "智慧局查無案件";
+               }
+               return current;
+            },
             year: () => patent.Year?.toString() || "",
             internalId: () => patent.InternalID || "",
             college: () => patent.department?.college?.Name || "",
@@ -175,8 +181,8 @@ export const usePatentExport = () => {
                ),
             projectCode: () =>
                joinArray(
-                  patent.funding?.fundingUnits.map((fu) => fu.ProjectCode) ||
-                     [],
+                  patent.funding?.fundingUnits.map((fu) => fu.ProjectCode)
+                  || [],
                ),
             takerAgency: () =>
                joinArray(
@@ -198,7 +204,12 @@ export const usePatentExport = () => {
                ),
             rdResultNumber: () => patent.application?.RDResultNumber || "",
             nscNumber: () => patent.application?.NSCNumber || "",
-            isRegistered: () => "", // Not Implemented
+            isRegistered: () => {
+               return patent.external?.PatentNumber
+                 && patent.external?.StartDate
+                  ? "是"
+                  : "否";
+            },
             ipcCode: () => patent.external?.IPCNumber || "",
             patentScope: () => patent.external?.PatentScope || "",
             maturityLevel: () => patent.technical?.MaturityLevel || "",
@@ -224,7 +235,10 @@ export const usePatentExport = () => {
             costs: () => {
                const costs = patent.funding?.fundingExports || [];
                return joinArray(
-                  costs.map((c) => `◎${c.ExportDate} ${c.Description} : ${c.exportRecords.map((er) => `${er.Name}-$${er.Amount}`).join(", ")}`),
+                  costs.map(
+                     (c) =>
+                        `◎${c.ExportDate} ${c.Description} : ${c.exportRecords.map((er) => `${er.Name}-$${er.Amount}`).join(", ")}`,
+                  ),
                   "\n",
                );
             },

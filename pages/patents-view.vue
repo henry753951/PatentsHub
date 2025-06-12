@@ -113,8 +113,8 @@
                      selecte.enabled
                         ? toggleSelect(data[index].PatentID)
                         : open('PatentModal', {
-                             props: { patentId: data[index].PatentID },
-                          })
+                           props: { patentId: data[index].PatentID },
+                        })
                   "
                />
             </Virtualizer>
@@ -130,7 +130,8 @@
                已選取了 {{ selecte.selectedPatents.size }} 個專利
             </div>
 
-            <div class="w-px bg-white/20 h-6 mx-2"></div>
+            <div class="w-px bg-white/20 h-6 mx-2">
+            </div>
 
             <div class="flex items-center gap-3 font-semibold">
                <div
@@ -184,13 +185,16 @@ const selecte = ref({
 const toggleSelect = (patentId: number) => {
    if (selecte.value.selectedPatents.has(patentId)) {
       selecte.value.selectedPatents.delete(patentId);
-   } else {
+   }
+   else {
       selecte.value.selectedPatents.add(patentId);
    }
 };
 
 const exportSelected = async () => {
    await exportPatent(selecte.value.selectedPatents);
+   selecte.value.enabled = false;
+   selecte.value.selectedPatents.clear();
 };
 </script>
 
