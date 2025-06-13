@@ -1,7 +1,7 @@
 <template>
    <UseTimeAgo
       v-slot="{ timeAgo }"
-      :time="adjustedTime"
+      :time="props.time"
       :messages="messages"
       :update-interval="1000"
    >
@@ -30,12 +30,6 @@ const props = defineProps<{
    time: Date
 }>();
 
-const adjustedTime = computed(() => {
-   const d = new Date(props.time);
-   d.setHours(0, 0, 0, 0);
-   d.setDate(d.getDate() + 1);
-   return d;
-});
 </script>
 
 <style scoped></style>
