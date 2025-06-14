@@ -8,11 +8,11 @@
          <Tooltip>
             <TooltipTrigger
                v-if="props.patent.CaseNotFound"
-               class="absolute top-1 right-1 z-30 text-red-400 dark:text-red-300 bg-white/90 dark:bg-zinc-800/80 p-[2px] rounded-full shadow-sm"
+               class="absolute top-1 right-1 z-30 w-6 h-6 flex items-center justify-center text-red-400 dark:text-red-300 bg-white/90 dark:bg-zinc-800/80 rounded-full shadow-sm"
             >
                <Icon
                   name="mdi:alert-circle-outline"
-                  class="text-lg"
+                  class="text-base"
                />
             </TooltipTrigger>
             <TooltipContent> 智慧局查無案件 </TooltipContent>
@@ -24,7 +24,7 @@
          class="absolute top-0 bottom-0 right-0 w-1 h-full"
          :class="{
             'bg-green-500': status === '有效',
-            'bg-amber-500': status === '即將到期',
+            'bg-amber-500': status === '即將到期' || status === '申請終止中',
             'bg-red-500': status === '已過期',
             'bg-gray-500': status === '期滿終止' || status === '未生效',
          }"
@@ -178,10 +178,10 @@
                      class="w-2 h-2 rounded-full"
                      :class="{
                         'bg-green-500': status === '有效',
-                        'bg-amber-500': status === '即將到期',
+                        'bg-amber-500': status === '即將到期' || status === '申請終止中',
                         'bg-red-500': status === '已過期',
                         'bg-gray-500':
-                           status === '期滿終止' || status === '未生效',
+                           status === '期滿終止' || status === '未生效'
                      }"
                   ></div>
                   <span
@@ -189,7 +189,7 @@
                      :class="{
                         'text-green-600 dark:text-green-400': status === '有效',
                         'text-amber-600 dark:text-amber-400':
-                           status === '即將到期',
+                           status === '即將到期' || status === '申請終止中',
                         'text-red-600 dark:text-red-400': status === '已過期',
                         'text-gray-600 dark:text-gray-400':
                            status === '期滿終止' || status === '未生效',
@@ -198,16 +198,17 @@
                </div>
 
                <span
-                  v-if="expiryDate"
+                  v-if="displayDate"
                   class="text-xs mt-1 truncate"
                   :class="{
+                     'text-green-600 dark:text-green-400': status === '有效',
                      'text-red-600 dark:text-red-400': status === '已過期',
                      'text-amber-600 dark:text-amber-400':
-                        status === '即將到期',
+                        status === '即將到期' || status === '申請終止中',
                      'text-gray-600 dark:text-gray-400': status === '期滿終止',
                   }"
                >
-                  {{ format(expiryDate, "yyyy/MM/dd") }}
+                  {{ format(new Date(displayDate), "yyyy/MM/dd") }}
                </span>
             </div>
          </div>
@@ -217,7 +218,6 @@
 
 <script lang="ts" setup>
 import { computed } from "vue";
-import { useNow } from "@vueuse/core";
 import { format } from "date-fns";
 import {
    Tooltip,
@@ -235,8 +235,6 @@ const props = defineProps<{
       value: string
    }
 }>();
-
-const now = useNow({ interval: 10 * 1000 });
 
 const latestMaintenance = computed(() => {
    const maintenances = [...props.patent.maintenances].sort((a, b) => {
@@ -273,21 +271,6 @@ const maintenancePeriod = computed(() => {
    return `${start} - ${end}`;
 });
 
-// 到期日
-const expiryDate = computed(() => {
-   if (!latestMaintenance.value) {
-      return null;
-   }
-   return new Date(latestMaintenance.value.ExpireDate).toLocaleDateString(
-      "zh-TW",
-      {
-         year: "numeric",
-         month: "2-digit",
-         day: "2-digit",
-      },
-   );
-});
-
 // 維護年度
 const maintenanceYear = computed(() => {
    if (!latestMaintenance.value) {
@@ -309,6 +292,38 @@ const fundingUnit = computed(() => {
 
 // 狀態
 const status = computed(() => getPatentStatus(props.patent));
+
+const displayDate = computed(() => {
+   const override = props.patent.manualStatus
+      .filter((s) => s.Override)
+      .sort((a, b) => (b.Date?.getTime() ?? 0) - (a.Date?.getTime() ?? 0))[0];
+
+   const currentStatus = getPatentStatus(props.patent);
+
+   const finalReasons = [
+      "申請終止中",
+      "國科會同意終止",
+      "已讓與",
+      "已放棄",
+      "已撤案",
+      "期滿終止",
+   ];
+
+   const isFinalStatus = finalReasons.includes(currentStatus);
+
+   // 如果是 override 且為目前狀態，但又是結尾狀態，就顯示日期（用 override.Date）
+   if (override && currentStatus === override.Reason) {
+      return isFinalStatus ? override.Date ?? null : null;
+   }
+
+   const latest = [...props.patent.maintenances ?? []].sort(
+      (a, b) =>
+         new Date(b.MaintenanceDate).getTime()
+           - new Date(a.MaintenanceDate).getTime(),
+   )[0];
+
+   return latest?.ExpireDate ?? null;
+});
 
 // 其他既有 computed 屬性保持不變
 const name = computed(() => {
