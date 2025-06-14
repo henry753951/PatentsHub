@@ -13,6 +13,7 @@
                'text-warning text-lg': currentState?.type === 'warning',
                'text-none text-lg': currentState?.type === 'none',
                'text-pending text-lg': currentState?.type === 'pending',
+               'text-ended text-lg': currentState?.type === 'ended',
             }"
          >
             {{ currentState?.title }}
@@ -35,6 +36,7 @@
                         none: item.type === 'none',
                         warning: item.type === 'warning',
                         pending: item.type === 'pending',
+                        ended: item.type === 'ended',
                         'opacity-50': item.raw !== currentState?.raw,
                      }"
                      @click="
@@ -256,19 +258,53 @@ const { statusService, patent, updateCaseNotFound } = defineProps<{
    updateCaseNotFound: (id: number, flag: boolean) => Promise<void>
 }>();
 
+type Patent = RouterOutput["data"]["patent"]["getPatent"];
+const getStatusType = (
+   reason: string,
+   status: string,
+   override: boolean,
+   patent: Patent,
+): "success" | "pending" | "warning" | "none" | "ended" => {
+   if (status === "MANUAL" && reason === "申請終止中") return "pending";
+
+   if (status === "EXPIRED") {
+      const isNSC = patent?.funding?.fundingUnits?.some(
+         (unit) =>
+            unit.fundingUnit?.Name?.includes("國科會")
+            || unit.fundingUnit?.Name?.includes("科技部"),
+      );
+      return isNSC ? "warning" : "ended";
+   }
+
+   const finalReasons = [
+      "國科會同意終止",
+      "已讓與",
+      "已放棄",
+      "已撤案",
+      "期滿終止",
+   ];
+
+   if (finalReasons.includes(reason) || override) return "ended";
+
+   return "success";
+};
+
 const stateProgress = computed(() => {
    return statusService.status.value.map((s) => {
+      const type = s.active
+         ? getStatusType(s.reason, s.status, s.override, patent)
+         : "none";
+
+      const title
+      = s.status === "EXPIRED" && type === "ended"
+         ? "期滿終止"
+         : s.reason || s.status;
+
       return {
          status: s.status,
          date: s.date,
-         type: s.active
-            ? s.status === "MANUAL" && s.reason === "申請終止中"
-               ? "pending"
-               : s.status === "EXPIRED"
-                  ? "warning"
-                  : "success"
-            : "none",
-         title: s.reason || s.status,
+         type,
+         title,
          active: s.active,
          override: s.override,
          raw: s,
@@ -428,6 +464,10 @@ const handleDeleteStatus = async () => {
    --progress-color: #f59e0b;
    background-color: var(--progress-color);
 }
+.status-block.ended::before {
+   --progress-color: #64748b;
+   background-color: var(--progress-color);
+}
 
 .text-success {
    color: #29b17f;
@@ -440,5 +480,8 @@ const handleDeleteStatus = async () => {
 }
 .text-pending {
    color: #f59e0b;
+}
+.text-ended {
+   color: #64748b;
 }
 </style>
