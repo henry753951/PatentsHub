@@ -39,6 +39,10 @@ const filterItems = {
             value: "已初評",
          },
          {
+            label: "已獲證",
+            value: "已獲證",
+         },
+         {
             label: "有效",
             value: "有效",
          },
@@ -47,12 +51,24 @@ const filterItems = {
             value: "已過期",
          },
          {
-            label: "國科會終止",
-            value: "國科會終止",
+            label: "申請終止中",
+            value: "申請終止中",
+         },
+         {
+            label: "國科會同意終止",
+            value: "國科會同意終止",
+         },
+         {
+            label: "已讓與",
+            value: "已讓與",
          },
          {
             label: "已放棄",
             value: "已放棄",
+         },
+         {
+            label: "已撤案",
+            value: "已撤案",
          },
       ]),
    },
@@ -123,6 +139,10 @@ const updateFilter = () => {
                   { TitleEnglish: { contains: text } },
                   { DraftTitle: { contains: text } },
                   { InternalID: { contains: text } },
+                  { application: { ApplicationNumber: { contains: text } } },
+                  { external: { PatentNumber: { contains: text } } },
+                  { internal: { InitialReviewAgencies: { some: { agencyUnit: { Name: { contains: text } } } } } },
+                  { internal: { TakerAgencies: { some: { agencyUnit: { Name: { contains: text } } } } } },
                   {
                      inventors: {
                         some: {
