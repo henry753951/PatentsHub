@@ -26,7 +26,7 @@
             'bg-green-500': status === '有效',
             'bg-amber-500': status === '即將到期' || status === '申請終止中',
             'bg-red-500': status === '已過期',
-            'bg-gray-500': status === '期滿終止' || status === '未生效',
+            'bg-gray-500': status === '期滿終止' || status === '已讓與' || status === '已放棄' || status === '已撤案' || status === '國科會同意終止',
          }"
       ></div>
       <div
@@ -181,7 +181,7 @@
                         'bg-amber-500': status === '即將到期' || status === '申請終止中',
                         'bg-red-500': status === '已過期',
                         'bg-gray-500':
-                           status === '期滿終止' || status === '未生效'
+                           status === '期滿終止' || status === '已讓與' || status === '已放棄' || status === '已撤案' || status === '國科會同意終止',
                      }"
                   ></div>
                   <span
@@ -192,7 +192,7 @@
                            status === '即將到期' || status === '申請終止中',
                         'text-red-600 dark:text-red-400': status === '已過期',
                         'text-gray-600 dark:text-gray-400':
-                           status === '期滿終止' || status === '未生效',
+                           status === '期滿終止' || status === '已讓與' || status === '已放棄' || status === '已撤案' || status === '國科會同意終止',
                      }"
                   >{{ status }}</span>
                </div>
@@ -205,7 +205,7 @@
                      'text-red-600 dark:text-red-400': status === '已過期',
                      'text-amber-600 dark:text-amber-400':
                         status === '即將到期' || status === '申請終止中',
-                     'text-gray-600 dark:text-gray-400': status === '期滿終止',
+                     'text-gray-600 dark:text-gray-400': status === '期滿終止' || status === '已讓與' || status === '已放棄' || status === '已撤案' || status === '國科會同意終止',
                   }"
                >
                   {{ format(new Date(displayDate), "yyyy/MM/dd") }}

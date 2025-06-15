@@ -189,7 +189,7 @@ export const getPatentStatus = (
    if (!latest) {
       if (patent.external?.PublicationDate) return "已獲證";
       if (patent.InitialReviewDate) return "已初評";
-      return "未生效";
+      return "已登錄";
    }
 
    const expireDate = new Date(latest.ExpireDate);
