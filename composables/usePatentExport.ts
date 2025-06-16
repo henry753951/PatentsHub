@@ -60,8 +60,10 @@ const EXPORT_COLUMNS = [
    { header: "專利範圍", key: "patentScope", width: 30 },
    // 技術成熟度TRL Patent.technical.MaturityLevel
    { header: "技術成熟度TRL", key: "maturityLevel", width: 20 },
-   // 技推委員會審理日期 Patent.InitialReviewDate
-   { header: "技推委員會審理日期", key: "reviewDate", width: 20 },
+   // 技推委員會日期 Patent.InitialReviewDate
+   { header: "技推委員會日期", key: "reviewDate", width: 20 },
+   // 技推委員會次數 Patent.InitialReviewNumber
+   { header: "技推委員會次數", key: "initialReviewNumber", width: 20 },
    // 發明名稱(稿) Patent.DraftTitle
    { header: "發明名稱(稿)", key: "draftTitle", width: 30 },
    // 初評事務所 Patent.internal.InitialReviewAgencies[].agencyUnit.Name
@@ -214,6 +216,8 @@ export const usePatentExport = () => {
             patentScope: () => patent.external?.PatentScope || "",
             maturityLevel: () => patent.technical?.MaturityLevel || "",
             reviewDate: () => formatDate(patent.InitialReviewDate),
+            initialReviewNumber: () =>
+               patent.InitialReviewNumber?.toString() || "",
             draftTitle: () => patent.DraftTitle || "",
             initialReviewAgency: () =>
                joinArray(
