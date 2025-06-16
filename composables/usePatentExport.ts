@@ -232,7 +232,7 @@ export const usePatentExport = () => {
             records: () => {
                const records = patent.patentRecords || [];
                return joinArray(
-                  records.map((r) => `◎${r.Date}: ${r.Record}`),
+                  records.map((r) => `◎${formatDate(r.Date)}: ${r.Record}`),
                   "\n",
                );
             },
@@ -241,7 +241,7 @@ export const usePatentExport = () => {
                return joinArray(
                   costs.map(
                      (c) =>
-                        `◎${c.ExportDate} ${c.Description} : ${c.exportRecords.map((er) => `${er.Name}-$${er.Amount}`).join(", ")}`,
+                        `◎${formatDate(c.ExportDate)} ${c.Description}: ${c.exportRecords.map((er) => `${er.Name}-$${er.Amount}`).join(", ")}`,
                   ),
                   "\n",
                );
