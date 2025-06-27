@@ -245,7 +245,7 @@ import TabPanels from "primevue/tabpanels";
 import TabPanel from "primevue/tabpanel";
 import { Button } from "@/components/ui/button";
 import type { z } from "zod";
-const porps = defineProps<{
+const props = defineProps<{
    patentId: number
 }>();
 
@@ -277,7 +277,7 @@ const {
    refresh,
    crud,
    status,
-} = useDatabasePatent(porps.patentId);
+} = useDatabasePatent(props.patentId);
 </script>
 
 <style scoped>
