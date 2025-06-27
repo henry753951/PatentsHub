@@ -49,6 +49,7 @@ const date = ref<Date | null>(null);
 const slots = useSlots();
 const analyzeSlotsDate = () => {
    const slotContent = slots.default?.()[0]?.children;
+   consola.log("Analyzing slot content for date:", slotContent);
    if (typeof slotContent === "string") {
       // 中文日期格式（完整和不完整）
       const chinesePatternFull = /(?:民國)?(\d+)年(\d+)月(\d+)日/;
@@ -61,6 +62,7 @@ const analyzeSlotsDate = () => {
       // 先嘗試匹配中文完整格式
       let match = slotContent.match(chinesePatternFull);
       if (match) {
+         consola.log("1", match);
          const [, yearStr, monthStr, dayStr] = match;
          let year = parseInt(yearStr);
          if (yearStr.length <= 3) {
@@ -78,6 +80,7 @@ const analyzeSlotsDate = () => {
       // 再嘗試匹配中文不完整格式（僅年月）
       match = slotContent.match(chinesePatternPartial);
       if (match) {
+         consola.log("2", match);
          const [, yearStr, monthStr] = match;
          let year = parseInt(yearStr);
          if (yearStr.length <= 3) {
@@ -95,6 +98,7 @@ const analyzeSlotsDate = () => {
       // 再嘗試匹配數字完整格式
       match = slotContent.match(numericPatternFull);
       if (match) {
+         consola.log("3", match);
          const [, yearStr, monthStr, dayStr] = match;
          let year = parseInt(yearStr);
          if (yearStr.length <= 3) {
@@ -112,6 +116,7 @@ const analyzeSlotsDate = () => {
       // 最後嘗試匹配數字不完整格式（僅年月）
       match = slotContent.match(numericPatternPartial);
       if (match) {
+         consola.log("4", match);
          const [, yearStr, monthStr] = match;
          let year = parseInt(yearStr);
          if (yearStr.length <= 3) {

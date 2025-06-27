@@ -74,8 +74,8 @@
                   </div>
                   <div class="mt-1 space-y-1 text-lg font-bold leading-relaxed">
                      <DebugStatusChangerHoverLine
-                        v-for="(line, i) in splitStatus"
-                        :key="'status-' + i"
+                        v-for="line, in splitStatus"
+                        :key="line"
                         @select="handleLineClick"
                      >
                         {{ line }}
@@ -90,8 +90,8 @@
                   </div>
                   <div class="mt-1 space-y-1 text-lg font-bold leading-relaxed">
                      <DebugStatusChangerHoverLine
-                        v-for="(line, i) in splitProgress"
-                        :key="'progress-' + i"
+                        v-for="line in splitProgress"
+                        :key="line"
                         @select="handleLineClick"
                      >
                         {{ line }}
