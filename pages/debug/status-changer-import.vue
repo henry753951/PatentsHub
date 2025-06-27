@@ -18,9 +18,7 @@
             </div>
          </div>
          <div class="flex">
-            <Button @click="() => start()">
-               更新資料庫
-            </Button>
+            <Button @click="() => start()"> 更新資料庫 </Button>
          </div>
       </div>
 
@@ -139,8 +137,7 @@ const start = () => {
          });
          if (matched?.PatentID) {
             filter.value = matched.PatentID;
-         }
-         else {
+         } else {
             filter.value = undefined;
             console.warn("查無對應專利 InternalID：", val.internalId);
          }

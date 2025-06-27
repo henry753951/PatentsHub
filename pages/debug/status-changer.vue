@@ -74,7 +74,7 @@
                   </div>
                   <div class="mt-1 space-y-1 text-lg font-bold leading-relaxed">
                      <DebugStatusChangerHoverLine
-                        v-for="line, in splitStatus"
+                        v-for="line in splitStatus"
                         :key="line"
                         @select="handleLineClick"
                      >
@@ -128,6 +128,13 @@
                狀態變更修改
             </div>
             <div class="space-y-2">
+               <div class="flex flex-wrap gap-2">
+                  <div>已查無案件</div>
+                  <input
+                     v-model="patentStatusChanger.caseNotFoundRef.value"
+                     type="checkbox"
+                  />
+               </div>
                <div class="flex flex-wrap gap-2">
                   <span
                      v-for="preset in patentStatusChanger.presetStatus"
@@ -219,8 +226,7 @@ watch(
                matchedPatent.value = updated;
             },
          });
-      }
-      else {
+      } else {
          statusService.value = null;
       }
    },
@@ -243,8 +249,7 @@ watch(
             where: { PatentID: matched.PatentID },
          });
          console.log("找到對應專利：", matchedPatent.value?.Title);
-      }
-      else {
+      } else {
          filter.value = undefined;
          matchedPatent.value = null;
          console.warn("查無對應專利 InternalID：", cur.校內編號);
