@@ -277,6 +277,22 @@ export default router({
             }),
          );
       }),
+
+   updatePatentByInternalId: procedure
+      .input(
+         z.object({
+            internalID: z.string(),
+            data: dbZ.PatentUpdateInputSchema,
+         }),
+      )
+      .mutation(async ({ input }) => {
+         return await prisma.patent.update({
+            where: {
+               InternalID: input.internalID,
+            },
+            data: input.data as Prisma.PatentUpdateInput,
+         });
+      }),
    deletePatent: procedure
       .input(dbZ.PatentWhereUniqueInputSchema)
       .mutation(async ({ input }) => {
