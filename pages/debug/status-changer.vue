@@ -26,7 +26,16 @@
                   </div>
                </div>
                <div v-if="matchedPatent">
-                  <p class="text-sm text-zinc-500">
+                  <p
+                     class="text-sm text-zinc-500 cursor-pointer hover:underline"
+                     @click="
+                        () =>
+                           matchedPatent &&
+                           open('PatentModal', {
+                              props: { patentId: matchedPatent.PatentID },
+                           })
+                     "
+                  >
                      系統專利名稱：{{ matchedPatent.Title || "（無標題）" }}
                   </p>
                </div>
@@ -152,6 +161,13 @@
                   >
                      {{ preset }}
                   </span>
+
+                  <span
+                     class="px-2 py-0.5 text-sm rounded-full cursor-pointer transition border border-gray-300"
+                     @click="patentStatusChanger.addManualStatus('', null)"
+                  >
+                     +
+                  </span>
                </div>
                <template v-if="patentStatusChanger.recordRef.value">
                   <template
@@ -165,9 +181,25 @@
                         class="flex flex-col gap-2 p-3 rounded-md bg-gray-50 dark:bg-zinc-800 mb-2"
                      >
                         <div
-                           class="font-semibold text-gray-700 dark:text-gray-300"
+                           class="font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2"
                         >
-                           {{ status.type }}
+                           <input
+                              v-model="status.type"
+                              type="text"
+                              class="w-full border rounded-md px-2 py-1"
+                           />
+                           <button
+                              class="text-red-500 hover:text-red-700"
+                              @click="
+                                 patentStatusChanger.deleteManualStatus(
+                                    patentStatusChanger.recordRef.value.indexOf(
+                                       status,
+                                    ),
+                                 )
+                              "
+                           >
+                              ×
+                           </button>
                         </div>
                         <FormDatePicker
                            v-model="status.date"
@@ -186,6 +218,7 @@
 import patentsRaw from "~/public/patents_with_status.json";
 import { format } from "date-fns";
 const allPatents = structuredClone(patentsRaw);
+const { open } = useModals();
 
 const total = computed(() => allPatents.length);
 const index = useState<number>("debug-patent-index", () => {

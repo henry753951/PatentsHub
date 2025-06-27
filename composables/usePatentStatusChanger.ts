@@ -8,7 +8,7 @@ export const ChangedStatusRecordSchema = z.object({
          coerce: true,
       })
       .nullable(),
-   type: z.enum(["申請終止中", "國科會同意終止", "已讓與", "已放棄", "已撤案"]),
+   type: z.string(),
    isEnded: z.boolean(),
 });
 
@@ -74,6 +74,7 @@ export const usePatentStatusChanger = (currentInternalId: Ref<string>) => {
       data.value.records.clear();
       data.value.caseNotFoundRecords.clear();
    };
+
    const recordRef = computed({
       get: () => data.value.records.get(currentInternalId.value) || [],
       set: (newValue: ChangedStatusRecord[]) => {
@@ -84,6 +85,7 @@ export const usePatentStatusChanger = (currentInternalId: Ref<string>) => {
          data.value.records.set(currentInternalId.value, newValue);
       },
    });
+
    const caseNotFoundRef = computed({
       get: () =>
          data.value.caseNotFoundRecords.get(currentInternalId.value) || false,
@@ -99,6 +101,32 @@ export const usePatentStatusChanger = (currentInternalId: Ref<string>) => {
          data.value.caseNotFoundRecords.set(currentInternalId.value, newValue);
       },
    });
+
+   const addManualStatus = (type: string, date: Date | null) => {
+      if (!currentInternalId.value || currentInternalId.value === "") {
+         window.alert("請先選擇一個案件。");
+         return;
+      }
+      const newRecord: ChangedStatusRecord = {
+         date: date || new Date(),
+         type,
+         isEnded: true,
+      };
+      recordRef.value = [...recordRef.value, newRecord];
+   };
+
+   const deleteManualStatus = (index: number) => {
+      if (!currentInternalId.value || currentInternalId.value === "") {
+         window.alert("請先選擇一個案件。");
+         return;
+      }
+      const currentRecords = recordRef.value;
+      if (index < 0 || index >= currentRecords.length) {
+         window.alert("無效的索引。");
+         return;
+      }
+      currentRecords.splice(index, 1);
+   };
 
    const saveChangerData = async () => {
       consola.log(data.value);
@@ -252,6 +280,9 @@ export const usePatentStatusChanger = (currentInternalId: Ref<string>) => {
       isPresetActive: (preset: (typeof presetStatus)[number]) => {
          return recordRef.value.some((record) => record.type === preset);
       },
+
+      addManualStatus,
+      deleteManualStatus,
 
       resetData,
       importJsonFiles,
