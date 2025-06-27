@@ -51,6 +51,36 @@ const analyzeSlotsDate = () => {
    const slotContent = slots.default?.()[0]?.children;
    consola.log("Analyzing slot content for date:", slotContent);
    if (typeof slotContent === "string") {
+      // 新增六位數日期格式處理
+      const sixDigitPattern = /(\d{6})/;
+      const matchSixDigit = slotContent.match(sixDigitPattern);
+      if (matchSixDigit) {
+         const dateStr = matchSixDigit[1];
+         // 嘗試西元年解析：前四位年份，後兩位月份
+         const westYear = parseInt(dateStr.substring(0, 4));
+         const westMonth = dateStr.substring(4, 6).padStart(2, "0");
+         const westDay = "01"; // 缺少日期，設為1號
+         const westDateStr = `${westYear}-${westMonth}-${westDay}`;
+         const westDate = new Date(westDateStr);
+         const currentYear = new Date().getFullYear();
+         if (
+            !isNaN(westDate.getTime())
+            && westYear >= 1900
+            && westYear <= currentYear
+         ) {
+            return westDate; // 合理西元年，返回Date物件
+         }
+         // 嘗試民國年解析：前兩位民國年，中間兩位月，後兩位日
+         const rocYear = parseInt(dateStr.substring(0, 2)) + 1911;
+         const rocMonth = dateStr.substring(2, 4).padStart(2, "0");
+         const rocDay = dateStr.substring(4, 6).padStart(2, "0");
+         const rocDateStr = `${rocYear}-${rocMonth}-${rocDay}`;
+         const rocDate = new Date(rocDateStr);
+         if (!isNaN(rocDate.getTime())) {
+            return rocDate; // 合理民國年，返回Date物件
+         }
+      }
+
       // 中文日期格式（完整和不完整）
       const chinesePatternFull = /(?:民國)?(\d+)年(\d+)月(\d+)日/;
       const chinesePatternPartial = /(?:民國)?(\d+)年(\d+)月/;
