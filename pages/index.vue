@@ -127,7 +127,7 @@
             <div
                v-else-if="
                   patentsReminder.data.value &&
-                  patentsReminder.dateArray.value.result.length > 0
+                     patentsReminder.dateArray.value.result.length > 0
                "
                class="flex flex-col flex-1 gap-4 overflow-hidden"
             >
@@ -145,17 +145,17 @@
                            v-if="
                               selectedMonths.length > 0
                                  ? selectedMonths.some(
-                                      (month) =>
-                                         month.year ===
-                                            period.date.getFullYear() &&
-                                         month.month ===
-                                            period.date.getMonth() + 1,
-                                   )
+                                    (month) =>
+                                       month.year ===
+                                       period.date.getFullYear() &&
+                                       month.month ===
+                                       period.date.getMonth() + 1,
+                                 )
                                  : period.type === 'current' ||
-                                   patentsReminder.settings.value
-                                      .displayEmptyPeriods ||
-                                   period.expireds.length > 0 ||
-                                   period.expirings.length > 0
+                                    patentsReminder.settings.value
+                                       .displayEmptyPeriods ||
+                                    period.expireds.length > 0 ||
+                                    period.expirings.length > 0
                            "
                            class="relative flex items-start gap-4"
                            :class="{
@@ -187,8 +187,7 @@
                                        <span
                                           v-if="period.type === 'current'"
                                           class="ml-2 text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full"
-                                          >當前</span
-                                       >
+                                       >當前</span>
                                     </h3>
                                  </div>
                               </div>
@@ -232,7 +231,7 @@
                               <div
                                  v-if="
                                     period.expireds.length === 0 &&
-                                    period.expirings.length === 0
+                                       period.expirings.length === 0
                                  "
                               >
                                  <p
@@ -251,7 +250,7 @@
             <BlockPatentReminderEmptyState
                v-else-if="
                   patentsReminder.status.value === 'success' ||
-                  patentsReminder.status.value === 'pending'
+                     patentsReminder.status.value === 'pending'
                "
             />
          </div>
@@ -268,14 +267,14 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { RefreshCcw, Plus, AlertTriangle, AlertCircle } from "lucide-vue-next";
 import { format, addDays, endOfWeek, differenceInDays } from "date-fns";
 interface SelectedMonth {
-   year: number;
-   month: number;
+   year: number
+   month: number
 }
 
 interface MonthData {
-   year: number;
-   month: number;
-   expireCount: number;
+   year: number
+   month: number
+   expireCount: number
 }
 
 definePageMeta({
@@ -320,13 +319,16 @@ const formatPeriodDate = (date: Date) => {
    const period = patentsReminder.dateArray.value.period;
    if (period === "days") {
       return format(date, "yyyy年MM月dd日");
-   } else if (period === "weeks") {
+   }
+   else if (period === "weeks") {
       const startDate = date;
       const endDate = endOfWeek(date, { weekStartsOn: 0 });
       return `${format(startDate, "yyyy年MM月dd日")} - ${format(endDate, "yyyy年MM月dd日")}`;
-   } else if (period === "months") {
+   }
+   else if (period === "months") {
       return format(date, "yyyy 年 MM 月");
-   } else {
+   }
+   else {
       return format(date, "yyyy 年");
    }
 };
@@ -362,13 +364,13 @@ const monthData = computed(() => {
    const data: MonthData[] = [];
    for (let i = 0; i < 12; i++) {
       const month = (currentMonth + i) % 12 || 12; // Handle wrap-around for December
-      const year =
-         Math.floor((currentMonth + i - 1) / 12) + new Date().getFullYear();
+      const year
+         = Math.floor((currentMonth + i - 1) / 12) + new Date().getFullYear();
       const expireCount = patentsReminder.data.value?.filter((patent) => {
          const patentDate = new Date(patent.expireDates.toSorted()[0]);
          return (
-            patentDate.getFullYear() === year &&
-            patentDate.getMonth() + 1 === month
+            patentDate.getFullYear() === year
+            && patentDate.getMonth() + 1 === month
          );
       }).length;
       data.push({ year, month, expireCount: expireCount || 0 });
