@@ -27,7 +27,7 @@
 
 <script lang="ts" setup>
 const { open } = useModals();
-const isProduction = useNuxtApp().$config.isProduction;
+const isProduction = process.env.NODE_ENV !== "development";
 const navItems = [
    {
       title: "首頁",
