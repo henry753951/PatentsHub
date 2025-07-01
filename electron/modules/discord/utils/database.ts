@@ -14,20 +14,20 @@ import { client } from "../../discord";
 import { hashing } from "./hashing";
 
 // 常量
-const EPHEMERAL_REPLY = true;
+const EPHEMERAL_REPLY = false;
 
 // 型別介面以確保型別安全
 interface DatabaseInfo {
-   hash: string;
-   lastModified: string;
+   hash: string
+   lastModified: string
 }
 
 interface BackupMessage {
-   id: string;
-   hash: string;
-   name: string;
-   url: string;
-   timestamp: Date;
+   id: string
+   hash: string
+   name: string
+   url: string
+   timestamp: Date
 }
 
 /**
@@ -38,8 +38,8 @@ function getDatabasePath(): string {
    const isProduction = app.isPackaged;
    const dbPath = isProduction
       ? path.join(app.getPath("userData"), "app.db")
-      : process.env.DATABASE_URL ||
-        path.join(__dirname, "server", "prisma", "db", "app.db");
+      : process.env.DATABASE_URL
+        || path.join(__dirname, "server", "prisma", "db", "app.db");
    return dbPath.replace(/^file:/, "").replace(/\\/g, "/");
 }
 
@@ -81,7 +81,8 @@ async function replaceDatabase(
             ephemeral: EPHEMERAL_REPLY,
          });
       }
-   } catch (error) {
+   }
+   catch (error) {
       console.error("替換資料庫時發生錯誤：", error);
       await interaction.reply({
          content: "替換資料庫時發生錯誤，請檢查檔案並重試。",
@@ -114,8 +115,8 @@ async function exportDatabase(
    try {
       const message = await createDatabaseBackup();
       if (
-         !interaction.channel ||
-         interaction.channel.type !== ChannelType.GuildText
+         !interaction.channel
+         || interaction.channel.type !== ChannelType.GuildText
       ) {
          await interaction.reply({
             content: "此命令只能在文字頻道中使用。",
@@ -128,7 +129,8 @@ async function exportDatabase(
          await message.forward(channel);
          await interaction.reply({ content: "資料庫備份成功！" });
       }
-   } catch (error) {
+   }
+   catch (error) {
       console.error("匯出資料庫時發生錯誤：", error);
       await interaction.reply({
          content: "資料庫備份時發生錯誤，請重試。",
@@ -167,7 +169,10 @@ async function createDatabaseBackup(
          (backup) => backup.hash === hash,
       );
       if (existingBackup) {
-         return null;
+         const existingBackupMessage = await backupChannel.messages
+            .fetch(existingBackup.id)
+            .catch(() => null);
+         return existingBackupMessage || null;
       }
 
       const fileName = isReplacement
@@ -187,7 +192,8 @@ async function createDatabaseBackup(
          ],
       });
       return message;
-   } catch (error) {
+   }
+   catch (error) {
       console.error("建立資料庫備份時發生錯誤：", error);
       await backupChannel.send({
          embeds: [
@@ -281,7 +287,8 @@ async function getDatabaseInfo(): Promise<DatabaseInfo | null> {
          hash,
          lastModified: stats.mtime.toISOString(),
       };
-   } catch (error) {
+   }
+   catch (error) {
       console.error("取得資料庫資訊時發生錯誤：", error);
       return null;
    }

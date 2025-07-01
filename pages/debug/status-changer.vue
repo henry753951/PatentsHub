@@ -259,7 +259,8 @@ watch(
                matchedPatent.value = updated;
             },
          });
-      } else {
+      }
+      else {
          statusService.value = null;
       }
    },
@@ -282,7 +283,8 @@ watch(
             where: { PatentID: matched.PatentID },
          });
          console.log("找到對應專利：", matchedPatent.value?.Title);
-      } else {
+      }
+      else {
          filter.value = undefined;
          matchedPatent.value = null;
          console.warn("查無對應專利 InternalID：", cur.校內編號);

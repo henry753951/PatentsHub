@@ -34,7 +34,8 @@ export class DatabaseCommand extends SlashCommand<"database"> {
          return this.returnEvent({
             type: "replace_db" as const,
          });
-      } else {
+      }
+      else {
          // 否則顯示匯出按鈕
          const buttons = [
             new ButtonBuilder()
