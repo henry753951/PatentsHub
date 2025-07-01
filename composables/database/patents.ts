@@ -1,5 +1,6 @@
 import type { z } from "zod";
 import type { RouterOutput, dbZ } from "~/server";
+import { useStorage } from "@vueuse/core";
 interface OrderBy {
    key: string
    direction: "asc" | "desc"
@@ -85,7 +86,10 @@ export const useDatabasePatents = (
       },
    );
 
-   const orderBy = ref<OrderBy>({ key: "InternalID", direction: "desc" });
+   const orderBy = useStorage<OrderBy>("patentsOrderBy", {
+      key: "InternalID",
+      direction: "desc",
+   });
    const dataOrdered = computed(() => {
       if (!data.value) return [];
 

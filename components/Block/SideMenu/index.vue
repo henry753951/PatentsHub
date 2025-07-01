@@ -46,15 +46,14 @@ const navItems = [
       },
       to: { name: "patents-view" },
    },
-
-   {
-      title: "篩選專利",
-      icon: {
-         normal: "basil:filter-outline",
-         active: "basil:filter-solid",
-      },
-      to: { name: "search" },
-   },
+   // {
+   //    title: "篩選專利",
+   //    icon: {
+   //       normal: "basil:filter-outline",
+   //       active: "basil:filter-solid",
+   //    },
+   //    to: { name: "search" },
+   // },
    {
       title: "釘選專利",
       icon: {
