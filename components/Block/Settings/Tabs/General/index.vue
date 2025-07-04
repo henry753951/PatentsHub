@@ -54,11 +54,11 @@
          <div
             v-tippy="
                '強制開啟開發者模式' +
-                  (isDebugMode ? ' (當前為鎖定開發模式)' : '')
+                  (!isProduction ? ' (當前為鎖定開發模式)' : '')
             "
             class="flex gap-4 items-center justify-between"
             :class="{
-               'text-gray-500 cursor-not-allowed': isDebugMode,
+               'text-gray-500 cursor-not-allowed': !isProduction,
             }"
          >
             <div>開發者模式</div>
