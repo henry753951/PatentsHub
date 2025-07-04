@@ -58,6 +58,9 @@ export default defineNuxtConfig({
       cssPath: ["~/assets/css/tailwind.css", { injectPosition: "last" }],
       editorSupport: true,
    },
+   css:[
+      "~/assets/css/tippy.css",
+   ],
    electron: {
       build: [
          {

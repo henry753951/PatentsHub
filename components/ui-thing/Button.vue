@@ -42,6 +42,7 @@
   import { reactiveOmit } from "@vueuse/core";
   import { useForwardProps } from "reka-ui";
   import type { NuxtLinkProps } from "#app/components";
+import type { VariantProps } from "class-variance-authority";
 
   type ButtonProps = VariantProps<typeof buttonStyles>;
   const props = withDefaults(

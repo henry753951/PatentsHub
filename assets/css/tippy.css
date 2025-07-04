@@ -1,0 +1,17 @@
+@import "tippy.js//animations/scale.css";
+@import "tippy.js/animations/shift-away.css";
+@import "tippy.js/animations/shift-toward.css";
+@import "tippy.js/animations/perspective.css";
+
+[data-tippy-root] {
+   .tippy-box {
+      @apply rounded-md bg-background px-1 py-1 text-foreground shadow ring-1 ring-border;
+      .tippy-content {
+         @apply text-[13px];
+      }
+   }
+
+   .tippy-box[data-theme~="error"] {
+      @apply bg-destructive text-destructive-foreground ring-destructive;
+   }
+}

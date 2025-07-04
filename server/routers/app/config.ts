@@ -19,12 +19,24 @@ export default router({
    }),
 
    openDirectory: procedure
-      .input(z.object({ directory: z.string() }))
+      .input(
+         z.object({
+            directory: z.string(),
+            selectedFile: z.string().optional(),
+         }),
+      )
       .mutation(async ({ input }) => {
          const { directory } = input;
          const userDataDir = app.getPath("userData");
          const dirPath = path.join(userDataDir, directory);
-         await shell.openPath(dirPath);
+
+         if (input.selectedFile) {
+            const filePath = path.join(dirPath, input.selectedFile);
+            await shell.showItemInFolder(filePath)
+
+         } else {
+            await shell.openPath(dirPath);
+         }
       }),
 
    getUserDataFiles: procedure

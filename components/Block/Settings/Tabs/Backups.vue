@@ -4,30 +4,66 @@
          v-if="currentDBInfo"
          class="flex flex-col gap-2"
       >
-         <h1 class="text-2xl font-bold">
-            當前資料庫資訊
-         </h1>
+         <h1 class="text-xl font-bold">當前資料庫資訊</h1>
+
          <div
-            class="flex flex-col text-pretty text-xs text-muted-foreground p-4 border rounded-lg bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+            class="flex justify-between items-center p-4 border rounded-lg border-gray-200 dark:border-gray-700"
          >
-            <div>HASH: {{ currentDBInfo?.hash }}</div>
             <div>
-               最後更改時間:
-               {{
-                  format(
-                     new Date(currentDBInfo?.lastModified),
-                     "yyyy/MM/dd HH:mm:ss",
-                  )
-               }}
+               <div class="text-md font-semibold">app.db</div>
+               <div class="text-pretty text-xs text-muted-foreground">
+                  HASH: {{ currentDBInfo?.hash }}
+               </div>
+               <div class="text-pretty text-xs">
+                  最後更改時間:
+                  {{
+                     format(
+                        new Date(currentDBInfo?.lastModified),
+                        "yyyy/MM/dd HH:mm:ss",
+                     )
+                  }}
+               </div>
+            </div>
+            <div class="flex items-center gap-2">
+               <UiThingButton
+                  variant="secondary"
+                  size="sm"
+                  class="w-9 p-0"
+                  v-tippy="'另存資料庫為檔案'"
+                  @click="
+                     () => {
+                        downloadDb();
+                     }
+                  "
+               >
+                  <Icon
+                     name="ic:round-save-alt"
+                     class="w-5 h-5"
+                  />
+               </UiThingButton>
+               <UiThingButton
+                  variant="secondary"
+                  size="sm"
+                  class="w-9 p-0"
+                  v-tippy="'開啟資料庫位置'"
+                  @click="
+                     () => {
+                        openBackupFileDir();
+                     }
+                  "
+               >
+                  <Icon
+                     name="ic:round-folder-open"
+                     class="w-5 h-5"
+                  />
+               </UiThingButton>
             </div>
          </div>
       </div>
 
       <div>
          <div class="flex">
-            <h1 class="text-2xl font-bold mr-auto">
-               雲端備份
-            </h1>
+            <h1 class="text-xl font-bold mr-auto">雲端備份</h1>
             <Button
                size="sm"
                :disabled="isBackuping"
@@ -44,7 +80,7 @@
                <div
                   v-for="(backup, index) in backups.cloudBackups.value"
                   :key="index"
-                  class="flex flex-col justify-center p-4 border rounded-lg gap-2 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-300 group"
+                  class="flex flex-col justify-center p-4 border rounded-lg gap-2 bg-gray-50 dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 hover:shadow hover:scale-[99%] transition-all duration-300 group"
                >
                   <div class="flex justify-between items-center">
                      <div class="flex flex-col">
@@ -71,7 +107,7 @@
                      >
                         {{
                            new Date(currentDBInfo.lastModified) >
-                              backup.timestamp
+                           backup.timestamp
                               ? "(較舊)"
                               : "(較新)"
                         }}
@@ -114,8 +150,15 @@
 <script lang="ts" setup>
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
-const { backups, currentDBInfo, isBackuping, isRestoring, useBackupUrl }
-   = useBackup();
+const {
+   backups,
+   currentDBInfo,
+   isBackuping,
+   isRestoring,
+   useBackupUrl,
+   downloadDb,
+   openBackupFileDir,
+} = useBackup();
 </script>
 
 <style scoped></style>

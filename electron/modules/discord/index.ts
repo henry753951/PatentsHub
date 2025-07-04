@@ -6,7 +6,7 @@ import { CreateBackupAction } from "./actions/createBackup";
 import { DatabaseCommand } from "./commands/database";
 import { MessageCommand } from "./commands/message";
 import { PingCommand } from "./commands/ping";
-import { UseBackupAction } from "./actions/useBackup";
+import { UseBackupUrlAction } from "./actions/useBackupUrl";
 
 export const events = {
    commandEvents: [PingCommand, DatabaseCommand, MessageCommand],
@@ -16,6 +16,6 @@ export const events = {
       getBackups: GetBackupsAction,
       deleteBackup: DeleteBackupAction,
       createBackup: CreateBackupAction,
-      useBackup: UseBackupAction,
+      useBackupUrl: UseBackupUrlAction,
    },
 } as const;

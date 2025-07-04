@@ -135,31 +135,31 @@ export const useDatabasePatentsReminder = () => {
          const expirings: (typeof array)[number]["expirings"] = [];
          for (const item of data.value) {
             const patent = item.patent;
-            const expireDatesInPeriod = item.expireDates.filter(
-               (d) => d >= period.start && d <= period.end,
-            );
-            if (expireDatesInPeriod.length > 0) {
-               const maxExpireDate = new Date(
-                  Math.max(...item.expireDates.map((d) => d.getTime())),
-               );
-               const maxExpireDateInPeriod = expireDatesInPeriod.reduce(
-                  (max, d) => (d > max ? d : max),
-                  new Date(0),
-               );
-               if (maxExpireDate < currentDate) {
-                  // 已經過期的
-                  expireds.push({
-                     patent,
-                     expireDate: maxExpireDateInPeriod,
-                  });
-               }
-               else {
-                  // 查詢周期內即將到期的
-                  expirings.push({
-                     patent,
-                     expireDate: maxExpireDateInPeriod,
-                  });
-               }
+            const { status } = usePatentStatus({ data: ref(item.patent) });
+            const lastStatus = status.value.reverse().find((s) => s.active);
+            if (!lastStatus || !lastStatus.date) continue;
+
+            if (lastStatus.status === "EXPIRED") {
+               if (
+                  lastStatus.date < period.start
+                  || lastStatus.date > period.end
+               )
+                  continue;
+               expireds.push({
+                  patent,
+                  expireDate: lastStatus.date,
+               });
+            }
+            else if (lastStatus.status === "CERTIFIED") {
+               const expireDate = status.value.find(
+                  (s) => s.status === "EXPIRED",
+               )?.date;
+               if (!expireDate || expireDate < period.start || expireDate > period.end)
+                  continue;
+               expirings.push({
+                  patent,
+                  expireDate: lastStatus.date,
+               });
             }
          }
          const type

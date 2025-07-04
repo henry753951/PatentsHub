@@ -15,7 +15,13 @@ export const usePatentStatus = (patentService: {
    const DbManualStatus = computed(() => patent.value?.manualStatus ?? []);
 
    const createStatus = (
-      status: "SIGNED" | "REVIEWED" | "CERTIFIED" | "EXPIRED" | "MANUAL",
+      status:
+        | "SIGNED"
+        | "REVIEWED"
+        | "APPLIED"
+        | "CERTIFIED"
+        | "EXPIRED"
+        | "MANUAL",
       reason?: string,
       date?: Date | null,
       active?: boolean,
@@ -36,6 +42,11 @@ export const usePatentStatus = (patentService: {
             data.date = patent.value.createdAt ?? null;
             data.active = active ?? true;
             data.reason = "教師登錄";
+            break;
+         case "APPLIED":
+            data.date = patent.value.application?.FilingDate ?? null;
+            data.active = active ?? !!data.date;
+            data.reason = reason ?? (data.active ? "已申請" : "未申請");
             break;
          case "REVIEWED":
             data.date = patent.value.InitialReviewDate ?? null;
@@ -85,7 +96,11 @@ export const usePatentStatus = (patentService: {
    const status = computed(() => {
       const signed = createStatus("SIGNED"); // 教師登錄 固定在第一個
 
-      const others = [createStatus("REVIEWED"), createStatus("CERTIFIED")]; // 其他狀態 按照時間排序
+      const others = [
+         createStatus("REVIEWED"),
+         createStatus("APPLIED"),
+         createStatus("CERTIFIED"),
+      ];
 
       const expired = others[1].active ? createStatus("EXPIRED") : null;
       if (expired) others.push(expired);

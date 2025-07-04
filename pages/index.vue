@@ -73,13 +73,13 @@
             <BlockPatentReminderSummaryCard
                title="已到期專利"
                :value="expiredCount"
-               description="已到期的專利數量"
+               :description="`${patentsReminder.settings.value.dateRange.daysAfter} 內已到期的專利數量`"
                type="danger"
             />
             <BlockPatentReminderSummaryCard
                title="即將到期專利"
                :value="expiringCount"
-               description="即將到期的專利數量"
+               :description="`${patentsReminder.settings.value.dateRange.daysAfter} 天內即將到期的專利數量`"
                type="warning"
             />
             <BlockPatentReminderSummaryCard

@@ -392,6 +392,10 @@ const patent = defineModel({
    required: true,
 });
 
+const { crud } = defineProps<{
+   crud: UseDatabasePatent["crud"]
+}>();
+
 const isSynced = {
    initialReviewAgencies: computed(() => {
       return (
@@ -411,7 +415,6 @@ const isSynced = {
    }),
 };
 
-const { crud, refresh } = useDatabasePatent(patent.value?.PatentID);
 // 基本資訊
 const basicData = useSyncData(patent, async (newData) => {
    if (!newData) return;

@@ -7,7 +7,7 @@ import {
    ButtonStyle,
 } from "discord.js";
 import type { BrowserWindow } from "electron";
-import { replaceDatabase, exportDatabase } from "../utils/database";
+import { replaceDatabaseFromDiscord, exportDatabase } from "../utils/database";
 const ephemeral = true;
 
 export class DatabaseCommand extends SlashCommand<"database"> {
@@ -30,7 +30,7 @@ export class DatabaseCommand extends SlashCommand<"database"> {
 
       if (dbAttachment) {
          // 如果提供了 db 附件，直接執行備份和取代
-         await replaceDatabase(interaction, dbAttachment);
+         await replaceDatabaseFromDiscord(interaction, dbAttachment);
          return this.returnEvent({
             type: "replace_db" as const,
          });

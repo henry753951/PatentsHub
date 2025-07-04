@@ -127,10 +127,6 @@ const actionItems = computed(() => [
                   await crud.updatePatent([
                      { Pinned: !(patentInfo.value?.Pinned ?? false) },
                   ]);
-                  console.log(
-                     `專利已${(patentInfo.value?.Pinned ?? false) ? "取消置頂" : "置頂"}，pinned: ${!(patentInfo.value?.Pinned ?? false)}`,
-                  );
-                  isOpen.value = false;
                }
                catch (error) {
                   console.error("切換置頂狀態失敗:", error);

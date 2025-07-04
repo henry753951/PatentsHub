@@ -1,9 +1,7 @@
 <template>
    <div class="flex flex-col h-full">
       <div class="flex items-center justify-between pt-6 pb-2 px-6">
-         <h1 class="text-2xl font-bold">
-            發明人列表
-         </h1>
+         <h1 class="text-2xl font-bold">發明人列表</h1>
          <Button
             :disabled="!props.department"
             @click="openAddModal"
@@ -11,6 +9,14 @@
             <PlusIcon class="mr-2 h-4 w-4" />
             新增發明人
          </Button>
+      </div>
+      <div class="flex items-center mb-4 px-6">
+         <input
+            v-model="search"
+            type="text"
+            placeholder="搜尋發明人..."
+            class="w-full p-2 border rounded-md focus:outline-none"
+         />
       </div>
       <OverlayScrollbarsComponent
          :options="{ scrollbars: { autoHide: 'leave' } }"
@@ -96,16 +102,23 @@ type Department =
    RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
 
 const props = defineProps<{
-   department?: Department
+   department?: Department;
 }>();
 
-const {
-   data: inventors,
-   filter,
-   status,
-   crud,
-} = useDatabaseInventor({
+const { data, filter, status, crud } = useDatabaseInventor({
    DepartmentID: props.department?.DepartmentID,
+});
+const search = ref("");
+const inventors = computed(() => {
+   const filteredData = (data.value || []).filter((inventor) => {
+      const name = inventor.contactInfo?.Name || "";
+      return name.includes(search.value);
+   });
+   return filteredData.slice().sort((a, b) => {
+      const nameA = a.contactInfo?.Name || "";
+      const nameB = b.contactInfo?.Name || "";
+      return nameA.localeCompare(nameB, "zh-Hant-u-co-stroke");
+   });
 });
 
 // watch(
@@ -121,8 +134,7 @@ watch(
    (department) => {
       if (department) {
          filter.value = { DepartmentID: department.DepartmentID };
-      }
-      else {
+      } else {
          filter.value = {};
       }
    },
@@ -132,14 +144,14 @@ watch(
 const showAddModal = ref(false);
 const showEditModal = ref(false);
 const editData = ref<{
-   name: string
-   email?: string
-   officeNumber?: string
-   phoneNumber?: string
-   role: string
-   note?: string
-   departmentID: number
-   collegeID: number
+   name: string;
+   email?: string;
+   officeNumber?: string;
+   phoneNumber?: string;
+   role: string;
+   note?: string;
+   departmentID: number;
+   collegeID: number;
 }>();
 const editInventorID = ref<number>();
 
@@ -176,13 +188,13 @@ const openEditModal = (
 };
 
 const handleAddSubmit = async (data: {
-   name: string
-   email?: string
-   officeNumber?: string
-   phoneNumber?: string
-   role: string
-   departmentID: number
-   note?: string
+   name: string;
+   email?: string;
+   officeNumber?: string;
+   phoneNumber?: string;
+   role: string;
+   departmentID: number;
+   note?: string;
 }) => {
    const departmentID = data.departmentID || props.department?.DepartmentID;
    if (!departmentID) throw new Error("系所 ID 未提供");
@@ -206,13 +218,13 @@ const handleAddSubmit = async (data: {
 };
 
 const handleEditSubmit = async (data: {
-   departmentID: number
-   name: string
-   email?: string
-   officeNumber?: string
-   phoneNumber?: string
-   role: string
-   note?: string
+   departmentID: number;
+   name: string;
+   email?: string;
+   officeNumber?: string;
+   phoneNumber?: string;
+   role: string;
+   note?: string;
 }) => {
    if (!editInventorID.value) return;
    await crud.updateInventor({

@@ -1,12 +1,12 @@
 <template>
-   <div class="p-4">
-      <template v-if="configData?.discord">
-         <h1 class="text-xl font-semibold mb-4 text-gray-800">
-            連線設定
-         </h1>
-         <div class="space-y-4">
+   <template v-if="configData?.discord">
+      <BlockSettingsRow
+         title="Discord 連線設定"
+         collapsible
+      >
+         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-               <label class="block text-sm text-gray-600 mb-1">Discord Token</label>
+               <label class="block text-sm mb-1">Discord Token</label>
                <InputText
                   v-model="configData.discord.token"
                   class="w-full"
@@ -14,7 +14,7 @@
                />
             </div>
             <div>
-               <label class="block text-sm text-gray-600 mb-1">Guild ID</label>
+               <label class="block text-sm mb-1">Guild ID</label>
                <InputText
                   v-model="configData.discord.guildId"
                   class="w-full"
@@ -22,7 +22,7 @@
                />
             </div>
             <div>
-               <label class="block text-sm text-gray-600 mb-1">Log Channel ID</label>
+               <label class="block text-sm mb-1">Log Channel ID</label>
                <InputText
                   v-model="configData.discord.channelIds.log"
                   class="w-full"
@@ -30,23 +30,28 @@
                />
             </div>
             <div>
-               <label class="block text-sm text-gray-600 mb-1">Database Backup Channel ID</label>
+               <label class="block text-sm mb-1"
+                  >Database Backup Channel ID</label
+               >
                <InputText
                   v-model="configData.discord.channelIds.databaseBackup"
                   class="w-full"
                   placeholder="輸入 Database Backup Channel ID"
                />
             </div>
-            <Button
-               label="儲存"
-               class="w-full"
+         </div>
+         <div class="flex justify-end">
+            <UiThingButton
+               variant="secondary"
                :disabled="isSaving"
                :loading="isSaving"
                @click="saveConfig"
-            />
+            >
+               儲存設定
+            </UiThingButton>
          </div>
-      </template>
-   </div>
+      </BlockSettingsRow>
+   </template>
 </template>
 
 <script lang="ts" setup>
@@ -72,9 +77,38 @@ const saveConfig = async () => {
    isSaving.value = true;
    try {
       await $trpc.app.config.writeConfig.mutate(configData.value);
-   }
-   finally {
+   } finally {
       isSaving.value = false;
    }
 };
 </script>
+
+<style scoped>
+.CollapsibleContent {
+   overflow: hidden;
+}
+.CollapsibleContent[data-state="open"] {
+   animation: slideDown 300ms ease-out;
+}
+.CollapsibleContent[data-state="closed"] {
+   animation: slideUp 300ms ease-out;
+}
+
+@keyframes slideDown {
+   from {
+      height: 0;
+   }
+   to {
+      height: var(--reka-collapsible-content-height);
+   }
+}
+
+@keyframes slideUp {
+   from {
+      height: var(--reka-collapsible-content-height);
+   }
+   to {
+      height: 0;
+   }
+}
+</style>

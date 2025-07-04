@@ -19,8 +19,7 @@ export const useBackup = () => {
          await $trpc.app.discord.actions.deleteBackup.mutate({ backupId });
          toast.success("備份刪除成功");
          await refreshCloudBackups();
-      }
-      catch (error) {
+      } catch (error) {
          toast.error("備份刪除失敗");
          console.error("刪除備份失敗:", error);
       }
@@ -33,8 +32,7 @@ export const useBackup = () => {
          await $trpc.app.discord.actions.createBackup.mutate({});
          await refreshCloudBackups();
          toast.success("備份創建成功");
-      }
-      catch (error) {
+      } catch (error) {
          toast.error("備份創建失敗");
          console.error("創建備份失敗:", error);
       }
@@ -64,8 +62,7 @@ export const useBackup = () => {
          await writable.close();
 
          console.log("檔案下載成功");
-      }
-      catch (error) {
+      } catch (error) {
          console.error("下載失敗:", error);
       }
    };
@@ -73,7 +70,7 @@ export const useBackup = () => {
    const useBackupUrl = async (url: string) => {
       isRestoring.value = true;
       try {
-         await $trpc.app.discord.actions.useBackup.mutate({ url });
+         await $trpc.app.discord.actions.useBackupUrl.mutate({ url });
          refreshCloudBackups();
          refreshCurrentDBInfo();
          toast.info("資料庫已被更新", {
@@ -85,17 +82,24 @@ export const useBackup = () => {
                },
             },
          });
-      }
-      catch (error) {
+      } catch (error) {
          toast.error("使用備份失敗");
          console.error("使用備份失敗:", error);
       }
       isRestoring.value = false;
    };
 
+   const openBackupFileDir = async () => {
+      await $trpc.app.config.openDirectory.mutate({
+         directory: "",
+         selectedFile: "app.db",
+      });
+   };
+
    return {
       downloadDb,
       useBackupUrl,
+      openBackupFileDir,
       currentDBInfo,
       isBackuping,
       isRestoring,

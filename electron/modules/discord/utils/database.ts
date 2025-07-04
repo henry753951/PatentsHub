@@ -18,16 +18,16 @@ const EPHEMERAL_REPLY = false;
 
 // 型別介面以確保型別安全
 interface DatabaseInfo {
-   hash: string
-   lastModified: string
+   hash: string;
+   lastModified: string;
 }
 
 interface BackupMessage {
-   id: string
-   hash: string
-   name: string
-   url: string
-   timestamp: Date
+   id: string;
+   hash: string;
+   name: string;
+   url: string;
+   timestamp: Date;
 }
 
 /**
@@ -38,8 +38,8 @@ function getDatabasePath(): string {
    const isProduction = app.isPackaged;
    const dbPath = isProduction
       ? path.join(app.getPath("userData"), "app.db")
-      : process.env.DATABASE_URL
-        || path.join(__dirname, "server", "prisma", "db", "app.db");
+      : process.env.DATABASE_URL ||
+        path.join(__dirname, "server", "prisma", "db", "app.db");
    return dbPath.replace(/^file:/, "").replace(/\\/g, "/");
 }
 
@@ -48,7 +48,7 @@ function getDatabasePath(): string {
  * @param interaction - Discord 命令互動。
  * @param option - 包含附件的互動選項。
  */
-async function replaceDatabase(
+async function replaceDatabaseFromDiscord(
    interaction: CommandInteraction,
    option: CommandInteractionOption,
 ): Promise<void> {
@@ -81,8 +81,7 @@ async function replaceDatabase(
             ephemeral: EPHEMERAL_REPLY,
          });
       }
-   }
-   catch (error) {
+   } catch (error) {
       console.error("替換資料庫時發生錯誤：", error);
       await interaction.reply({
          content: "替換資料庫時發生錯誤，請檢查檔案並重試。",
@@ -106,6 +105,19 @@ async function downloadAndReplaceDatabase(url: string): Promise<void> {
 }
 
 /**
+ * 替換當前資料庫。
+ * @param file - 要替換的資料庫檔案。
+ */
+async function replaceDatabase(file: File): Promise<void> {
+   const dbPath = getDatabasePath();
+   if (file.type !== "application/octet-stream") {
+      throw new Error("無效的檔案類型，請上傳 .db 檔案。");
+   }
+   const buffer = await file.arrayBuffer();
+   await fs.writeFile(dbPath, Buffer.from(buffer));
+}
+
+/**
  * 匯出當前資料庫並上傳至 Discord。
  * @param interaction - Discord 訊息元件互動。
  */
@@ -115,8 +127,8 @@ async function exportDatabase(
    try {
       const message = await createDatabaseBackup();
       if (
-         !interaction.channel
-         || interaction.channel.type !== ChannelType.GuildText
+         !interaction.channel ||
+         interaction.channel.type !== ChannelType.GuildText
       ) {
          await interaction.reply({
             content: "此命令只能在文字頻道中使用。",
@@ -129,8 +141,7 @@ async function exportDatabase(
          await message.forward(channel);
          await interaction.reply({ content: "資料庫備份成功！" });
       }
-   }
-   catch (error) {
+   } catch (error) {
       console.error("匯出資料庫時發生錯誤：", error);
       await interaction.reply({
          content: "資料庫備份時發生錯誤，請重試。",
@@ -192,8 +203,7 @@ async function createDatabaseBackup(
          ],
       });
       return message;
-   }
-   catch (error) {
+   } catch (error) {
       console.error("建立資料庫備份時發生錯誤：", error);
       await backupChannel.send({
          embeds: [
@@ -287,19 +297,19 @@ async function getDatabaseInfo(): Promise<DatabaseInfo | null> {
          hash,
          lastModified: stats.mtime.toISOString(),
       };
-   }
-   catch (error) {
+   } catch (error) {
       console.error("取得資料庫資訊時發生錯誤：", error);
       return null;
    }
 }
 
 export {
-   replaceDatabase,
+   replaceDatabaseFromDiscord,
    exportDatabase,
    createDatabaseBackup,
    listDatabaseBackups,
    deleteDatabaseBackup,
    getDatabaseInfo,
    downloadAndReplaceDatabase,
+   replaceDatabase,
 };

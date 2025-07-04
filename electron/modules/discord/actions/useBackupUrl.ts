@@ -4,15 +4,16 @@ import { z } from "zod";
 import {
    createDatabaseBackup,
    downloadAndReplaceDatabase,
+   replaceDatabase,
 } from "../utils/database";
 
 const inputSchema = z.object({
-   url: z.string(),
+   url: z.string().url("請提供有效的 URL"),
 });
 
-export class UseBackupAction extends ActionEvent<typeof inputSchema, void> {
+export class UseBackupUrlAction extends ActionEvent<typeof inputSchema, void> {
    constructor() {
-      super("useBackup", inputSchema);
+      super("useBackupUrl", inputSchema);
    }
 
    public override async execute(input: { url: string }, client: Client) {

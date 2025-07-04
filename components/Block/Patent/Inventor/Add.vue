@@ -36,6 +36,7 @@
             <BlockPatentInventorRow
                v-for="inventor in inventors"
                :key="inventor.InventorID"
+               :contact-info-id="inventor.contactInfo.ContactInfoID"
                tabindex="0"
                class="h-[88px] mb-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700 focus-visible:bg-zinc-100 dark:focus-visible:bg-zinc-700"
                :name="inventor.contactInfo?.Name ?? ''"
@@ -101,9 +102,7 @@ const {
    status,
    crud,
    forceRefresh,
-} = useDatabaseInventor({
-
-});
+} = useDatabaseInventor({});
 
 const handleAddSubmit = async (data: {
    name: string

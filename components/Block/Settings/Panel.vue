@@ -1,6 +1,6 @@
 <template>
    <UiThingTabs
-      default-value="Projects"
+      :default-value="props.defaultPage"
       orientation="vertical"
       class="mx-auto flex w-full justify-center h-[60vh] gap-2 overflow-hidden"
    >
@@ -47,7 +47,14 @@
 import type { Component } from "vue";
 import Version from "./Tabs/Version.vue";
 import Backups from "./Tabs/Backups.vue";
-import General from "./Tabs/General.vue";
+import General from "./Tabs/General/index.vue";
+
+const props = defineProps({
+   defaultPage: {
+      type: String,
+      default: "一般",
+   },
+});
 
 interface Tab {
    title: string

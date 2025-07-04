@@ -141,7 +141,8 @@
                      },
                      t.service.template,
                      `[${patent.InternalID}] ${mainInventor?.inventor.contactInfo.Name}${patent.Title}-${t.title} (${formatTaiwanDate(
-                        dataExported?.date,'YY.MM.DD',
+                        dataExported?.date,
+                        'YY.MM.DD',
                      )})`,
                   )
                "
@@ -159,14 +160,14 @@ import Select from "primevue/select";
 import { Button } from "@/components/ui/button";
 const props = defineProps<{
    dataExported: {
-      name: string
-      description: string | null
-      records: PatentFundingRecord[]
-      fundingUnitAccounting: FundingUnitAccounting[]
-      internalAccounting: InternalAccountingAdjustment[]
-      date: Date
-   } | null
-   fundingService: UsePatentFundings
+      name: string;
+      description: string | null;
+      records: PatentFundingRecord[];
+      fundingUnitAccounting: FundingUnitAccounting[];
+      internalAccounting: InternalAccountingAdjustment[];
+      date: Date;
+   } | null;
+   fundingService: UsePatentFundings;
 }>();
 const fundingService = props.fundingService;
 const dataExported = toRef(() => props.dataExported);
@@ -211,22 +212,22 @@ const tabs = ref([
       service: await exportService.docs.internalCostAllocationTable(),
    },
 ] as {
-   title: string
-   key: keyof RouterOutput["app"]["config"]["readConfig"]["funding"]["templates"]
+   title: string;
+   key: keyof RouterOutput["app"]["config"]["readConfig"]["funding"]["templates"];
    service: {
-      computedData: ComputedRef<Record<string, any>>
-      refData: Ref<Record<string, any>>
-      template: Ref<string>
-   }
-   icon?: string
+      computedData: ComputedRef<Record<string, any>>;
+      refData: Ref<Record<string, any>>;
+      template: Ref<string>;
+   };
+   icon?: string;
 }[]);
 
 const canExport = (key: string) => {
    const service = tabs.value.find((t) => t.key === key)?.service;
    if (!service) return false;
    return (
-      service.template
-      && exportService.templateList.value.some(
+      service.template &&
+      exportService.templateList.value.some(
          (template) => template.name === service.template,
       )
    );

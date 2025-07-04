@@ -31,6 +31,7 @@
                :key="inventor.InventorID"
                tabindex="0"
                class="h-[88px] mb-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700 focus-visible:bg-zinc-100 dark:focus-visible:bg-zinc-700"
+               :contact-info-id="inventor.contactInfo.ContactInfoID"
                :name="inventor.contactInfo?.Name ?? ''"
                :job="inventor.contactInfo?.Role ?? ''"
                :belong="{

@@ -1,7 +1,11 @@
 <template>
    <div
       class="py-4 px-6 rounded-xl bg-zinc-50 dark:bg-zinc-800 w-full"
-      :class="[compact ? 'flex flex-col gap-2' : 'flex items-center justify-between gap-6 whitespace-nowrap']"
+      :class="[
+         compact
+            ? 'flex flex-col gap-2'
+            : 'flex items-center justify-between gap-6 whitespace-nowrap',
+      ]"
       @mouseenter="isHovering = true"
       @mouseleave="isHovering = false"
    >
@@ -18,7 +22,16 @@
 
             <!-- 文字資訊 -->
             <div :class="[compact ? 'text-sm' : 'text-base']">
-               <div class="flex items-center gap-2 whitespace-nowrap">
+               <div
+                  class="flex items-center gap-2 whitespace-nowrap"
+                  @click.stop="
+                     open('ContactModal', {
+                        props: {
+                           contactInfoId: props.contactInfoId,
+                        },
+                     })
+                  "
+               >
                   <div
                      :class="[compact ? 'text-xl' : 'text-2xl', 'font-bold']"
                      class="truncate max-w-[100px]"
@@ -62,7 +75,7 @@
             v-if="!compact && props.contributionInput"
             class="flex items-center gap-4 flex-1"
          >
-            <div class="flex flex-col gap-1 w-full pl-8 ">
+            <div class="flex flex-col gap-1 w-full pl-8">
                <div class="flex justify-between text-sm">
                   <div class="font-bold">
                      貢獻度
@@ -120,20 +133,25 @@
 </template>
 
 <script lang="ts" setup>
-const props = withDefaults(defineProps<{
-   name: string
-   job: string
-   belong: {
-      college: string
-      department: string
-   }
-   contributionInput?: boolean
-   max?: number
-   compact?: boolean
-}>(), {
-   compact: false,
-});
+const props = withDefaults(
+   defineProps<{
+      name: string
+      job: string
+      contactInfoId: number
+      belong: {
+         college: string
+         department: string
+      }
+      contributionInput?: boolean
+      max?: number
+      compact?: boolean
+   }>(),
+   {
+      compact: false,
+   },
+);
 
+const { open } = useModals();
 const contribution = defineModel<number>("contribution", {
    required: false,
    default: 50,
@@ -144,7 +162,6 @@ const avatarColor = computed(() => {
 });
 
 const isHovering = ref(false);
-
 </script>
 
 <style scoped></style>

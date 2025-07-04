@@ -47,7 +47,15 @@
                v-else-if="updateStatus?.type === 'update-not-available'"
                class="text-sm text-muted-foreground"
             >
-               無更新可用
+               <span class="text-sm text-muted-foreground">
+                  當前 v{{ updateInfo?.version }} 已為最新版本
+               </span>
+               <span
+                  class="cursor-pointer text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                  @click="openUpdateLog"
+               >
+                  更新日誌
+               </span>
             </div>
          </div>
          <div class="flex flex-col items-end gap-2 justify-between">

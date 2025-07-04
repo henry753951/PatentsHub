@@ -91,18 +91,12 @@
                         {{ patent.Year }}
                      </CustomStatusBlock>
                      <CustomStatusBlock
-                        title="類別"
-                        icon="ic:baseline-category"
+                        title="主發明人"
+                        icon="ic:round-person"
                      >
                         {{
-                           patent.PatentType
-                              ? {
-                                 DESIGN: "設計",
-                                 UTILITY_MODEL: "新型",
-                                 INVENTION: "發明",
-                                 PLANT: "植物",
-                              }[patent.PatentType]
-                              : ""
+                           patent.inventors.find((i) => i.Main)?.inventor
+                              .contactInfo?.Name ?? "無主發明人"
                         }}
                      </CustomStatusBlock>
                      <CustomStatusBlock
@@ -193,6 +187,7 @@
                      <BlockPatentViewTabBasic
                         v-if="activeTab === 'basic'"
                         v-model="patent"
+                        :crud="crud"
                      />
                   </TabPanel>
                   <TabPanel value="record">
@@ -247,6 +242,7 @@ import { Button } from "@/components/ui/button";
 import type { z } from "zod";
 const props = defineProps<{
    patentId: number
+   defaultPage?: "basic" | "maintenance" | "finance" | "record"
 }>();
 
 const { open } = useModals();
@@ -267,7 +263,7 @@ const title = computed(() => {
    };
 });
 
-const activeTab = ref("basic");
+const activeTab = ref(props.defaultPage || "basic");
 
 const {
    data: patent,

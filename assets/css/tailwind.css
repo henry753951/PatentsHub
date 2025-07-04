@@ -46,8 +46,8 @@
       --chart-5: 27 87% 67%;
 
       /* Primevue */
-      --p-tabs-tabpanel-background: unset!important;
-      --p-tabs-tablist-background: unset!important;
+      --p-tabs-tabpanel-background: unset !important;
+      --p-tabs-tablist-background: unset !important;
    }
 
    .dark {

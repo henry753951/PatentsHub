@@ -29,14 +29,8 @@
             </div>
          </div>
       </div>
-      <div class="flex gap-1 ml-auto box">
-         <Icon
-            name="ic:round-dark-mode"
-            size="20"
-            @click="loopSwitchTheme"
-         />
-      </div>
-      <div class="flex gap-1">
+
+      <div class="flex gap-1 ml-auto px-[1.5px]">
          <div
             class="box"
             @click="minimize"
@@ -69,7 +63,6 @@
 </template>
 
 <script setup lang="ts">
-const { options, loopSwitchTheme } = useTheme();
 const { close, maximize, minimize } = useElectronWindow();
 const modalService = useModals();
 const draggableStyle = computed(() => {
@@ -101,7 +94,7 @@ const { data: version } = useAsyncData(
    user-select: none;
 }
 
-.window-control > *{
+.window-control > * {
    -webkit-app-region: no-drag;
    app-region: no-drag;
 }
@@ -120,7 +113,7 @@ const { data: version } = useAsyncData(
 }
 
 .box:hover {
-   background-color: rgba(231, 231, 231, 0.3);
+   background-color: rgba(188, 188, 188, 0.586);
 }
 
 .box:last-child:hover {

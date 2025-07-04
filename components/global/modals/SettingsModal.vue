@@ -1,14 +1,15 @@
 <template>
    <div>
-      <Dialog
-         v-model:open="isOpen"
-      >
-         <DialogContent class="!max-w-screen-lg overflow-hidden flex flex-col">
-            <DialogHeader class="select-none">
-               <DialogTitle>設定</DialogTitle>
+      <Dialog v-model:open="isOpen">
+         <DialogContent
+            :blur="true"
+            class="!max-w-screen-lg overflow-hidden flex flex-col py-2 px-2"
+         >
+            <DialogHeader class="select-none pt-2 px-2">
+               <DialogTitle class="text-2xl">設定</DialogTitle>
                <DialogDescription></DialogDescription>
             </DialogHeader>
-            <BlockSettingsPanel />
+            <BlockSettingsPanel :default-page="props.defaultPage" />
          </DialogContent>
       </Dialog>
    </div>
@@ -27,6 +28,12 @@ const isOpen = defineModel("open", {
    default: false,
 });
 
+const props = defineProps({
+   defaultPage: {
+      type: String,
+      default: "一般",
+   },
+});
 </script>
 
 <style scoped></style>

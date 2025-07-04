@@ -9,6 +9,7 @@
                v-if="mainInventor"
                v-model:contribution="mainInventor.Contribution"
                class="h-full"
+               :contact-info-id="mainInventor.InventorID"
                :name="mainInventor.inventor.contactInfo.Name"
                :job="mainInventor.inventor.contactInfo.Role || ''"
                :belong="{
@@ -47,6 +48,7 @@
                v-for="inventor in otherInventors"
                :key="inventor.InventorID"
                v-model:contribution="inventor.Contribution"
+               :contact-info-id="inventor.InventorID"
                class="h-[88px]"
                :name="inventor.inventor.contactInfo.Name"
                :job="inventor.inventor.contactInfo.Role || ''"

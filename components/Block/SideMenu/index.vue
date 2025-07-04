@@ -11,7 +11,7 @@
             <BlockSideMenuNavs :items="moreNavItems" />
          </BlockSideMenuNavsItem>
          <BlockSideMenuNavsItem
-            v-if="!isProduction"
+            v-if="isDebugMode"
             icon="basil:explore-outline"
             title="Debug"
             @click="() => navigateTo({ name: 'debug' })"
@@ -27,8 +27,7 @@
 
 <script lang="ts" setup>
 const { open } = useModals();
-// const isProduction = process.env.NODE_ENV !== "development";
-const isProduction = false; // For testing purposes, always show debug menu
+const { isDebugMode } = useDebug();
 const navItems = [
    {
       title: "首頁",
@@ -103,9 +102,12 @@ const navActions = [
    {
       title: "備份",
       icon: "basil:save-outline",
-      action: async () => {
-         const { downloadDb } = useBackup();
-         await downloadDb();
+      action: () => {
+         open("SettingsModal", {
+            props: {
+               defaultPage: "資料與備份",
+            },
+         });
       },
    },
    {

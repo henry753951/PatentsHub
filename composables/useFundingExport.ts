@@ -19,7 +19,9 @@ export const useFundingExport = (params: UseFundingExportParams) => {
    const { $trpc } = useNuxtApp();
 
    const templateList = ref<{ name: string }[]>([]);
-
+   onMounted(() => {
+      loadTemplates();
+   });
    const loadTemplates = async () => {
       const files = await getTemplates();
       templateList.value = files
