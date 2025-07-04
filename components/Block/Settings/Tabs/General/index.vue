@@ -32,8 +32,8 @@
       </BlockSettingsRow>
       <BlockSettingsRow title="一般設定">
          <div
-            class="flex gap-4 items-center justify-between"
             v-tippy="'切換主題'"
+            class="flex gap-4 items-center justify-between"
          >
             <div>主題</div>
             <Select v-model="currentTheme">
@@ -52,16 +52,19 @@
             </Select>
          </div>
          <div
+            v-tippy="
+               '強制開啟開發者模式' +
+                  (isDebugMode ? ' (當前為鎖定開發模式)' : '')
+            "
             class="flex gap-4 items-center justify-between"
             :class="{
                'text-gray-500 cursor-not-allowed': isDebugMode,
             }"
-            v-tippy="'強制開啟開發者模式' + (isDebugMode ? ' (當前為鎖定開發模式)' : '')"
          >
             <div>開發者模式</div>
             <Switch
                v-model="isDebugMode"
-               :disabled="isDebugMode"
+               :disabled="!isProduction"
             />
          </div>
       </BlockSettingsRow>
@@ -70,8 +73,6 @@
 </template>
 
 <script lang="ts" setup>
-const { options, loopSwitchTheme, currentTheme } = useTheme();
-const { isForceDebugMode, isDebugMode } = useDebug();
 import {
    Select,
    SelectContent,
@@ -82,6 +83,8 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+const { options, loopSwitchTheme, currentTheme } = useTheme();
+const { isForceDebugMode, isDebugMode, isProduction } = useDebug();
 </script>
 
 <style scoped></style>
