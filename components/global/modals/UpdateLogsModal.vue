@@ -15,18 +15,18 @@
                   </div>
                </DialogDescription>
             </DialogHeader>
-            <div
+            <ScrollArea
                class="max-h-[60vh] overflow-y-auto bg-zinc-100 dark:bg-zinc-800 border rounded-md"
             >
                <div class="p-4">
                   <div class="text-sm text-muted-foreground">
                      <div
-                        class="prose dark:prose-invert"
+                        class="prose dark:prose-invert prose-sm"
                         v-html="updateLogsHtml"
                      ></div>
                   </div>
                </div>
-            </div>
+            </ScrollArea>
          </DialogContent>
       </Dialog>
    </div>
@@ -82,12 +82,11 @@ const updateLogsHtml = computed(() => {
          "li",
          "h3",
          "h2",
+         "img",
       ],
-      ALLOWED_ATTR: ["href"], // Allow href for <a> tags
+      ALLOWED_ATTR: ["href", "src"], // Allow href for <a> tags
    });
 });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

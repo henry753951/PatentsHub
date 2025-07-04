@@ -52,7 +52,10 @@ export async function registerSlashCommands(
             body: commandData,
          },
       );
-      console.log("Slash Commands successfully registered:", commandData.map(cmd => cmd.name).join(", "));
+      console.log(
+         "Slash Commands successfully registered:",
+         commandData.map((cmd) => cmd.name).join(", "),
+      );
    }
    catch (error) {
       console.error("Error registering slash commands:", error);

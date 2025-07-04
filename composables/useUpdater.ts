@@ -1,16 +1,38 @@
 import type { Unsubscribable } from "@trpc/server/observable";
 import type { UpdateInfo } from "electron-updater";
 import type { UpdaterStatus } from "~/server/routers/app/update";
+import { useStorage } from "@vueuse/core";
 
 export const useUpdater = () => {
    const { $trpc } = useNuxtApp();
+   const { open } = useModals();
    let updateStatusBus: Unsubscribable;
    const updateStatus = useState<UpdaterStatus | null>(
       "updateStatus",
       () => null,
    );
    const updateInfo = useState<UpdateInfo | null>("updateInfo", () => null);
-   const currentVersion = ref<string>("");
+   const currentVersion = useStorage("currentVersion", () => {
+      return "0.0.1";
+   });
+
+   watch(
+      () => updateInfo.value,
+      async (newValue) => {
+         if (!newValue) return;
+         const _currentVersion = await $trpc.app.version.query();
+         if (_currentVersion !== "0.0.1") {
+            if (currentVersion.value !== _currentVersion) {
+               currentVersion.value = _currentVersion;
+               open("UpdateLogsModal", {
+                  props: {
+                     updateInfo: newValue,
+                  },
+               });
+            }
+         }
+      },
+   );
 
    onMounted(async () => {
       updateStatusBus = $trpc.app.update.onStatusChange.subscribe(undefined, {
@@ -35,7 +57,7 @@ export const useUpdater = () => {
             }
          },
       });
-      currentVersion.value = await $trpc.app.version.query();
+
       if (
          updateInfo.value === null
          && updateStatus.value?.type !== "download-progress"

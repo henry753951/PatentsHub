@@ -154,7 +154,7 @@
                   <ProgressBar
                      :value="Math.round(updateStatus?.data.percent)"
                      class="w-[200px]"
-                     style="--p-progressbar-value-background: #3b82f6;"
+                     style="--p-progressbar-value-background: #3b82f6"
                   />
                </div>
             </div>
@@ -171,9 +171,21 @@
                </button>
             </div>
             <div v-else-if="updateStatus?.type === 'checking-for-update'">
+               <span class="text-sm"> 檢查更新中... </span>
+            </div>
+            <div
+               v-else-if="updateStatus?.type === 'update-not-available'"
+               class="text-sm"
+            >
                <span class="text-sm">
-                  檢查更新中...
+                  當前 v{{ updateInfo?.version }} 已為最新版本
                </span>
+               <button
+                  class="text-sm text-blue-400 hover:text-blue-300 dark:text-blue-400 dark:hover:text-blue-300"
+                  @click="openUpdateLog"
+               >
+                  更新日誌
+               </button>
             </div>
          </TooltipContent>
       </Tooltip>

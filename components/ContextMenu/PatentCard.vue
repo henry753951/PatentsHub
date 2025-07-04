@@ -111,5 +111,6 @@ const togglePinned = async () => {
          },
       },
    ]);
+   refreshNuxtData(["patents"]);
 };
 </script>
