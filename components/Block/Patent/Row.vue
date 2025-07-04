@@ -1,6 +1,6 @@
 <template>
    <div>
-      <ContextMenuPatentCard>
+      <ContextMenuPatentCard :patent="patent">
          <div
             class="relative select-none overflow-hidden rounded-lg bg-white/80 dark:bg-zinc-900/90 border border-gray-100 dark:border-zinc-800 transition-all duration-300 group cursor-pointer patent-row"
             :data-patent-id="patent.PatentID"
@@ -281,7 +281,7 @@ const props = defineProps<{
    }
 }>();
 
-const patent = toRef(props.patent);
+const patent = toRef(props, "patent");
 provide("patent", patent);
 
 const latestMaintenance = computed(() => {
