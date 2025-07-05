@@ -81,9 +81,9 @@ export const usePatentExport = () => {
 
    const exportPatent = async (patentIds: Set<number>) => {
       // Fetch patent data
-      const contactInfos = await $trpc.data.contactInfo.getContactInfos.query(
-         {},
-      );
+      const contactInfos = await $trpc.data.contactInfo.getContactInfos.query({
+         where: {},
+      });
       consola.log("Contact Infos:", contactInfos);
       const patents = await $trpc.data.patent.getFullPatents.query({
          PatentID: {
