@@ -113,7 +113,7 @@ const handleAddSubmit = async (data: {
    departmentID: number
    note?: string
 }) => {
-   if (!data.departmentID) {
+   if (data.departmentID === undefined) {
       throw new Error("請選擇系所");
    }
    await crud.createInventor({

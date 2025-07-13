@@ -1,7 +1,9 @@
 <template>
    <div class="flex flex-col h-full">
       <div class="flex items-center justify-between pt-6 pb-2 px-6">
-         <h1 class="text-2xl font-bold">發明人列表</h1>
+         <h1 class="text-2xl font-bold">
+            發明人列表
+         </h1>
          <Button
             :disabled="!props.department"
             @click="openAddModal"
@@ -102,7 +104,7 @@ type Department =
    RouterOutput["data"]["college"]["getColleges"][0]["departments"][0];
 
 const props = defineProps<{
-   department?: Department;
+   department?: Department
 }>();
 
 const { data, filter, status, crud } = useDatabaseInventor({
@@ -134,7 +136,8 @@ watch(
    (department) => {
       if (department) {
          filter.value = { DepartmentID: department.DepartmentID };
-      } else {
+      }
+      else {
          filter.value = {};
       }
    },
@@ -144,14 +147,14 @@ watch(
 const showAddModal = ref(false);
 const showEditModal = ref(false);
 const editData = ref<{
-   name: string;
-   email?: string;
-   officeNumber?: string;
-   phoneNumber?: string;
-   role: string;
-   note?: string;
-   departmentID: number;
-   collegeID: number;
+   name: string
+   email?: string
+   officeNumber?: string
+   phoneNumber?: string
+   role: string
+   note?: string
+   departmentID: number
+   collegeID: number
 }>();
 const editInventorID = ref<number>();
 
@@ -188,16 +191,18 @@ const openEditModal = (
 };
 
 const handleAddSubmit = async (data: {
-   name: string;
-   email?: string;
-   officeNumber?: string;
-   phoneNumber?: string;
-   role: string;
-   departmentID: number;
-   note?: string;
+   name: string
+   email?: string
+   officeNumber?: string
+   phoneNumber?: string
+   role: string
+   departmentID: number
+   note?: string
 }) => {
    const departmentID = data.departmentID || props.department?.DepartmentID;
-   if (!departmentID) throw new Error("系所 ID 未提供");
+   if (departmentID === undefined) {
+      throw new Error("請選擇系所");
+   }
    await crud.createInventor({
       department: {
          connect: { DepartmentID: departmentID },
@@ -218,13 +223,13 @@ const handleAddSubmit = async (data: {
 };
 
 const handleEditSubmit = async (data: {
-   departmentID: number;
-   name: string;
-   email?: string;
-   officeNumber?: string;
-   phoneNumber?: string;
-   role: string;
-   note?: string;
+   departmentID: number
+   name: string
+   email?: string
+   officeNumber?: string
+   phoneNumber?: string
+   role: string
+   note?: string
 }) => {
    if (!editInventorID.value) return;
    await crud.updateInventor({
