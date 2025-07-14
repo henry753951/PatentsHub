@@ -131,7 +131,11 @@
       <Tooltip>
          <TooltipTrigger as-child>
             <button
-               class="flex items-center justify-between gap-2 p-1.5 bg-zinc-100 dark:bg-zinc-800/70 border border-zinc-300/50 dark:border-zinc-700/50 rounded-full"
+               class="flex items-center justify-between gap-2 p-1.5 rounded-full"
+               :class="
+                  updateStatus?.type === 'update-downloaded'
+                     ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-900/80 dark:text-emerald-200 dark:hover:bg-emerald-900 border border-emerald-400 dark:border-emerald-600'
+                     : 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800/80 dark:text-gray-200 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-700' "
                @click="quitAndInstall"
             >
                <Icon
