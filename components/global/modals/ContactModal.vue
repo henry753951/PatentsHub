@@ -13,7 +13,7 @@
                      variant="ghost"
                      @click="toggleEditMode"
                   >
-                     {{ isEditing ? "取消編輯" : "編輯" }}
+                     {{ isEditing ? "完成編輯" : "編輯" }}
                   </UiThingButton>
                </div>
                <DialogDescription class="text-base text-gray-500 mt-1">

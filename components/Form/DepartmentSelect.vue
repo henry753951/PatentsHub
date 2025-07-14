@@ -49,7 +49,7 @@
                         <div
                            v-for="department in college.departments"
                            :key="department.DepartmentID"
-                           class="department-option letter-vertical truncate max-h-[160px]"
+                           class="department-option letter-vertical truncate max-h-[260px]"
                            :class="{
                               'bg-blue-100 dark:bg-blue-950':
                                  belongs?.departmentID ===

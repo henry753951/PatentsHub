@@ -23,7 +23,7 @@
             <!-- 文字資訊 -->
             <div :class="[compact ? 'text-sm' : 'text-base']">
                <div
-                  class="flex items-center gap-2 whitespace-nowrap"
+                  class="flex items-center gap-2 whitespace-nowrap cursor-pointer group"
                   @click.stop="
                      open('ContactModal', {
                         props: {
@@ -34,7 +34,7 @@
                >
                   <div
                      :class="[compact ? 'text-xl' : 'text-2xl', 'font-bold']"
-                     class="truncate max-w-[100px]"
+                     class="truncate max-w-[100px] group-hover:underline"
                   >
                      {{ props.name }}
                   </div>

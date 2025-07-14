@@ -106,7 +106,7 @@
                   for="belongs"
                   class="text-sm font-bold text-slate-700 dark:text-zinc-300"
                >
-                  所屬系所 {{ formData.belongs }}
+                  所屬系所
                </Label>
                <DepartmentSelect
                   v-model="formData.belongs"

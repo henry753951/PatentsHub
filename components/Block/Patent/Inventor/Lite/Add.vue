@@ -25,7 +25,7 @@
             placeholder="搜尋發明人"
             class="w-full mb-4"
          />
-         <OverlayScrollbarsComponent class="max-h-[300px]">
+         <OverlayScrollbarsComponent class="max-h-[400px]">
             <BlockPatentInventorRow
                v-for="inventor in inventors"
                :key="inventor.InventorID"
@@ -86,13 +86,18 @@ const search = ref("");
 
 const { data: inventors, refresh } = await useAsyncData(async () => {
    const { $trpc } = useNuxtApp();
-   return await $trpc.data.inventor.getInventors.query({
+   const data = await $trpc.data.inventor.getInventors.query({
       contactInfo: {
          Name: {
             contains: search.value,
          },
       },
    });
+   return data.toSorted((a, b) =>
+      a.department.DepartmentID === b.department.DepartmentID
+         ? a.contactInfo.Name.localeCompare(b.contactInfo.Name)
+         : a.department.DepartmentID - b.department.DepartmentID,
+   );
 });
 
 watchThrottled(

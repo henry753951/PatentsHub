@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { procedure, router } from "../../trpc";
 import { Prisma } from "@prisma/client";
-import { dbZ, prisma } from "../..";
+import type { dbZ } from "../..";
+import { prisma } from "../..";
 
 export default router({
    // === Agency CRUD ===
@@ -151,7 +152,10 @@ export default router({
             agencyUnitID: z.number(),
             contactInfo: z.object({
                Name: z.string().min(1, "姓名不可為空"),
-               Email: z.string().email("請輸入有效的電子郵件").optional(),
+               Email: z
+                  .string()
+                  .max(0, "請輸入有效的電子郵件")
+                  .or(z.string().email("請輸入有效的電子郵件")),
                OfficeNumber: z.string().optional(),
                PhoneNumber: z.string().optional(),
                Role: z.string().optional(),
@@ -233,7 +237,11 @@ export default router({
             contactInfo: z
                .object({
                   Name: z.string().min(1, "姓名不可為空").optional(),
-                  Email: z.string().email("請輸入有效的電子郵件").optional(),
+                  Email: z
+                     .string()
+                     .email("請輸入有效的電子郵件")
+                     .optional()
+                     .or(z.literal("")),
                   OfficeNumber: z.string().optional(),
                   PhoneNumber: z.string().optional(),
                   Role: z.string().optional(),
@@ -321,5 +329,274 @@ export default router({
             }
             throw new Error("無法刪除聯絡人：");
          }
+      }),
+
+   mergeAgencies: procedure
+      .input(
+         z.object({
+            sourceAgencyUnitIDs: z.array(z.number()),
+            targetAgencyUnitID: z.number(),
+         }),
+      )
+      .mutation(async ({ input }) => {
+         //
+         // Step 1:
+         // 1. 有這些事務所初評的案件
+         // 2. 有這些事務所的承辦的案件
+         //
+         const patentIds = {
+            beReviewed: [] as number[],
+            beHandled: [] as number[],
+         };
+         patentIds.beReviewed = await prisma.patent
+            .findMany({
+               where: {
+                  internal: {
+                     InitialReviewAgencies: {
+                        some: {
+                           AgencyUnitID: {
+                              in: input.sourceAgencyUnitIDs,
+                           },
+                        },
+                     },
+                  },
+               },
+               select: { PatentID: true },
+            })
+            .then((p) => p.map((p) => p.PatentID));
+
+         patentIds.beHandled = await prisma.patent
+            .findMany({
+               where: {
+                  internal: {
+                     TakerAgencies: {
+                        some: {
+                           AgencyUnitID: {
+                              in: input.sourceAgencyUnitIDs,
+                           },
+                        },
+                     },
+                  },
+               },
+               select: { PatentID: true },
+            })
+            .then((p) => p.map((p) => p.PatentID));
+
+         //
+         // Step 2:
+         // 獲取所有擁有該事務所的案件
+         //
+         await prisma.patentTakerAgencyUnit.updateMany({
+            where: {
+               AND: [
+                  { PatentID: { in: patentIds.beHandled } },
+
+                  {
+                     AgencyUnitID: { in: input.sourceAgencyUnitIDs },
+                  },
+               ],
+            },
+            data: {
+               AgencyUnitID: input.targetAgencyUnitID,
+            },
+         });
+
+         await prisma.patentInitiatorAgencyUnit.updateMany({
+            where: {
+               AND: [
+                  { PatentID: { in: patentIds.beReviewed } },
+
+                  {
+                     AgencyUnitID: { in: input.sourceAgencyUnitIDs },
+                  },
+               ],
+            },
+            data: {
+               AgencyUnitID: input.targetAgencyUnitID,
+            },
+         });
+
+         //
+         // Step 3:
+         // 合併人員
+         //
+         await prisma.agencyUnitPerson.updateMany({
+            where: {
+               AgencyUnitID: { in: input.sourceAgencyUnitIDs },
+            },
+            data: {
+               AgencyUnitID: input.targetAgencyUnitID,
+            },
+         });
+
+         // Step 4:
+         // 刪除源事務所
+         //
+         await prisma.agencyUnit.deleteMany({
+            where: {
+               AgencyUnitID: { in: input.sourceAgencyUnitIDs },
+            },
+         });
+      }),
+
+   mergeContacts: procedure
+      .input(
+         z.object({
+            sourceContactInfoIDs: z.array(z.number()),
+            targetContactInfoID: z.number(),
+         }),
+      )
+      .mutation(async ({ input }) => {
+         const { sourceContactInfoIDs, targetContactInfoID } = input;
+
+         // Step 1: 獲取目標聯絡人和來源聯絡人的資訊
+         const targetContact = await prisma.contactInfo.findUnique({
+            where: { ContactInfoID: targetContactInfoID },
+         });
+
+         if (!targetContact) {
+            throw new Error(
+               `Target contact with ID ${targetContactInfoID} not found`,
+            );
+         }
+
+         const sourceContacts = await prisma.contactInfo.findMany({
+            where: { ContactInfoID: { in: sourceContactInfoIDs } },
+         });
+
+         // Step 2: 合併聯絡人資訊（優先取目標值，若目標值為空則取來源第一個非空值）
+         const mergedData: Partial<z.infer<typeof dbZ.ContactInfoSchema>> = {
+            Name: targetContact.Name,
+            Email: targetContact.Email || undefined,
+            OfficeNumber: targetContact.OfficeNumber || undefined,
+            PhoneNumber: targetContact.PhoneNumber || undefined,
+            Role: targetContact.Role || undefined,
+            Note: targetContact.Note || undefined,
+         };
+
+         for (const sourceContact of sourceContacts) {
+            if (!mergedData.Email && sourceContact.Email) {
+               mergedData.Email = sourceContact.Email;
+            }
+            if (!mergedData.OfficeNumber && sourceContact.OfficeNumber) {
+               mergedData.OfficeNumber = sourceContact.OfficeNumber;
+            }
+            if (!mergedData.PhoneNumber && sourceContact.PhoneNumber) {
+               mergedData.PhoneNumber = sourceContact.PhoneNumber;
+            }
+            if (!mergedData.Role && sourceContact.Role) {
+               mergedData.Role = sourceContact.Role;
+            }
+            if (!mergedData.Note && sourceContact.Note) {
+               mergedData.Note = sourceContact.Note;
+            }
+         }
+
+         // 更新目標聯絡人資訊
+         await prisma.contactInfo.update({
+            where: { ContactInfoID: targetContactInfoID },
+            data: mergedData,
+         });
+
+         // Step 3: 更新 AgencyUnitPerson 表，將來源聯絡人指向目標聯絡人
+         await prisma.agencyUnitPerson.deleteMany({
+            where: {
+               ContactInfoID: { in: sourceContactInfoIDs },
+            },
+         });
+
+         // Step 4: 更新 PatentTakerAgencyUnit 和 PatentInitiatorAgencyUnit 的 agencyUnitPersonIds
+         // 4.1: 處理 PatentTakerAgencyUnit
+         const takerRecords = await prisma.patentTakerAgencyUnit.findMany({
+            where: {
+               agencyUnitPersonIds: {
+                  not: "[]", // 只處理非空的 JSON 陣列
+               },
+            },
+         });
+
+         for (const record of takerRecords) {
+            const personIds = record.agencyUnitPersonIds as number[];
+            if (personIds instanceof Array && personIds.length > 0) {
+               if (personIds.some((id) => sourceContactInfoIDs.includes(id))) {
+                  // 將 sourceContactInfoIDs 替換為 targetContactInfoID，並移除重複
+                  const updatedPersonIds = Array.from(
+                     new Set(
+                        personIds
+                           .filter((id) => !sourceContactInfoIDs.includes(id))
+                           .concat(targetContactInfoID),
+                     ),
+                  );
+                  await prisma.patentTakerAgencyUnit.update({
+                     where: {
+                        PatentID_AgencyUnitID: {
+                           PatentID: record.PatentID,
+                           AgencyUnitID: record.AgencyUnitID,
+                        },
+                     },
+                     data: {
+                        agencyUnitPersonIds: JSON.stringify(updatedPersonIds),
+                     },
+                  });
+               }
+            }
+         }
+
+         // 4.2: 處理 PatentInitiatorAgencyUnit
+         const initiatorRecords
+            = await prisma.patentInitiatorAgencyUnit.findMany({
+               where: {
+                  agencyUnitPersonIds: {
+                     not: "[]", // 只處理非空的 JSON 陣列
+                  },
+               },
+            });
+
+         for (const record of initiatorRecords) {
+            const personIds = record.agencyUnitPersonIds as number[];
+            if (personIds.some((id) => sourceContactInfoIDs.includes(id))) {
+               // 將 sourceContactInfoIDs 替換為 targetContactInfoID，並移除重複
+               const updatedPersonIds = Array.from(
+                  new Set(
+                     personIds
+                        .filter((id) => !sourceContactInfoIDs.includes(id))
+                        .concat(targetContactInfoID),
+                  ),
+               );
+               await prisma.patentInitiatorAgencyUnit.update({
+                  where: {
+                     PatentID_AgencyUnitID: {
+                        PatentID: record.PatentID,
+                        AgencyUnitID: record.AgencyUnitID,
+                     },
+                  },
+                  data: {
+                     agencyUnitPersonIds: JSON.stringify(updatedPersonIds),
+                  },
+               });
+            }
+         }
+
+         // Step 5: 刪除來源聯絡人
+         await prisma.contactInfo.deleteMany({
+            where: {
+               ContactInfoID: { in: sourceContactInfoIDs },
+            },
+         });
+      }),
+
+   moveContact: procedure
+      .input(
+         z.object({
+            contactInfoID: z.number(),
+            targetAgencyUnitID: z.number(),
+         }),
+      )
+      .mutation(async ({ input }) => {
+         const { contactInfoID, targetAgencyUnitID } = input;
+         await prisma.agencyUnitPerson.updateMany({
+            where: { ContactInfoID: contactInfoID },
+            data: { AgencyUnitID: targetAgencyUnitID },
+         });
       }),
 });

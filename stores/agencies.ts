@@ -45,7 +45,7 @@ export const useAgenciesStore = defineStore("agenciesStore", {
          agencyUnitID: number,
          contactInfo: {
             Name: string
-            Email?: string
+            Email: string
             OfficeNumber?: string
             PhoneNumber?: string
             Role?: string
@@ -57,7 +57,6 @@ export const useAgenciesStore = defineStore("agenciesStore", {
             agencyUnitID,
             contactInfo,
          });
-         console.log("insertContact", agencyUnitID, contactInfo);
          await this.refresh();
       },
 
@@ -89,6 +88,39 @@ export const useAgenciesStore = defineStore("agenciesStore", {
          await $trpc.data.agency.deleteAgencyContactPerson.mutate({
             agencyUnitID,
             contactInfoID,
+         });
+         await this.refresh();
+      },
+
+      async mergeAgencies(
+         targetAgencyUnitID: number,
+         sourceAgencyUnitIDs: number[],
+      ) {
+         const { $trpc } = useNuxtApp();
+         await $trpc.data.agency.mergeAgencies.mutate({
+            targetAgencyUnitID,
+            sourceAgencyUnitIDs,
+         });
+         await this.refresh();
+      },
+
+      async mergeContacts(
+         targetContactInfoID: number,
+         sourceContactInfoIDs: number[],
+      ) {
+         const { $trpc } = useNuxtApp();
+         await $trpc.data.agency.mergeContacts.mutate({
+            targetContactInfoID,
+            sourceContactInfoIDs,
+         });
+         await this.refresh();
+      },
+
+      async moveContact(contactInfoID: number, targetAgencyUnitID: number) {
+         const { $trpc } = useNuxtApp();
+         await $trpc.data.agency.moveContact.mutate({
+            contactInfoID,
+            targetAgencyUnitID,
          });
          await this.refresh();
       },

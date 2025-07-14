@@ -8,6 +8,24 @@
          <h1 class="text-2xl font-bold">
             事務所管理
          </h1>
+         <div class="flex items-center gap-2">
+            <Button
+               v-if="mergeMode && selectedForMerge.length > 0"
+               variant="destructive"
+               size="sm"
+               @click="executeMerge"
+            >
+               合併所選事務所
+            </Button>
+            <Button
+               v-if="selectedAgencyUnit"
+               :variant="mergeMode ? 'ghost' : 'outline'"
+               size="sm"
+               @click="toggleMergeMode"
+            >
+               {{ mergeMode ? "取消合併" : "啟動合併模式" }}
+            </Button>
+         </div>
       </div>
 
       <!-- 事務所列表 -->
@@ -19,13 +37,20 @@
             <div
                v-for="agency in agencies"
                :key="agency.AgencyUnitID"
-               class="flex items-center justify-between border cursor-pointer rounded-lg shadow-sm transition-all py-3 px-2"
+               class="flex items-center justify-between border border-[2px] cursor-pointer rounded-lg shadow-sm transition-all py-3 px-2"
                :class="[
                   isSelected(agency)
                      ? 'bg-blue-100 border-blue-300 dark:bg-blue-900 dark:border-blue-700'
-                     : 'bg-white dark:bg-zinc-800 border-zinc-100',
+                     : selectedForMerge.includes(agency.AgencyUnitID)
+                        ? 'bg-orange-100 border-orange-300 dark:bg-orange-900 dark:border-orange-700'
+                        : 'bg-white dark:bg-zinc-800 border-zinc-100',
+                  { 'drag-over': isDragOver(agency.AgencyUnitID) },
                ]"
-               @click="selectAgency(agency)"
+               draggable="false"
+               @dragover.prevent="onDragOver($event, agency.AgencyUnitID)"
+               @dragleave="onDragLeave($event, agency.AgencyUnitID)"
+               @drop="onDrop($event, agency.AgencyUnitID)"
+               @click="handleAgencyClick(agency)"
             >
                <span class="text-lg font-medium flex-1">
                   {{ agency.Name }}
@@ -54,6 +79,7 @@
             </div>
             <li
                class="flex justify-center cursor-pointer rounded-lg shadow-sm bg-zinc-100 dark:bg-zinc-800 border-zinc-300 border-dashed border"
+               draggable="false"
                @click="
                   openAutoModal(
                      '新增事務所',
@@ -93,40 +119,85 @@ import { ref, onMounted } from "vue";
 
 type AgencyUnit = RouterOutput["data"]["agency"]["getAgencies"][0];
 
-// Pinia store
 const agenciesStore = useAgenciesStore();
 const { agencies } = storeToRefs(agenciesStore);
 
-// Props
 const props = defineProps<{
    noHeader?: boolean
 }>();
 
-// 管理選中的系所（單選）
 const selectedAgencyUnit = defineModel({
    type: Object as PropType<AgencyUnit | null>,
    default: null,
 });
 
 const { openAutoModal } = useModals();
+const mergeMode = ref(false);
+const selectedForMerge = ref<number[]>([]);
+const dragOverAgencyId = ref<number | null>(null);
 
-// 載入初始資料
 onMounted(async () => {
    await agenciesStore.refresh();
 });
 
-// 檢查事務所是否被選中
 const isSelected = (agency: AgencyUnit) => {
    return selectedAgencyUnit.value?.AgencyUnitID === agency.AgencyUnitID;
 };
 
-// 選擇事務所
-const selectAgency = (agencyUnit: AgencyUnit) => {
-   if (isSelected(agencyUnit)) {
-      selectedAgencyUnit.value = null; // 取消選擇
+const isDragOver = (agencyUnitID: number) => {
+   return dragOverAgencyId.value === agencyUnitID;
+};
+
+const toggleMergeMode = () => {
+   mergeMode.value = !mergeMode.value;
+   if (!mergeMode.value) {
+      selectedForMerge.value = [];
+   }
+};
+
+const handleAgencyClick = (agency: AgencyUnit) => {
+   if (
+      mergeMode.value
+      && selectedAgencyUnit.value
+      && agency.AgencyUnitID !== selectedAgencyUnit.value.AgencyUnitID
+   ) {
+      const index = selectedForMerge.value.indexOf(agency.AgencyUnitID);
+      if (index === -1) {
+         selectedForMerge.value.push(agency.AgencyUnitID);
+      }
+      else {
+         selectedForMerge.value.splice(index, 1);
+      }
    }
    else {
-      selectedAgencyUnit.value = agencyUnit; // 選擇
+      if (isSelected(agency)) {
+         selectedAgencyUnit.value = null;
+      }
+      else {
+         selectedAgencyUnit.value = agency;
+         selectedForMerge.value = [];
+         mergeMode.value = false;
+      }
+   }
+};
+
+const executeMerge = async () => {
+   if (selectedAgencyUnit.value && selectedForMerge.value.length > 0) {
+      try {
+         await mergeAgency(
+            selectedForMerge.value,
+            selectedAgencyUnit.value.AgencyUnitID,
+         );
+         console.log(
+            `Merged agencies ${selectedForMerge.value} into ${selectedAgencyUnit.value.AgencyUnitID}`,
+         );
+         await agenciesStore.refresh();
+         selectedForMerge.value = [];
+         mergeMode.value = false;
+      }
+      catch (error) {
+         console.error("Failed to merge agencies:", error);
+      }
    }
 };
 
@@ -145,8 +216,6 @@ const fields = {
       description: { label: "備註", type: "textarea" },
    } as Config<z.infer<typeof schemas.agency>>,
 };
-
-// CRUD Modal Methods
 
 const openEditAgencyModal = (agency: AgencyUnit) => {
    const defaultValues = {
@@ -178,26 +247,127 @@ const editAgency = async (
 const deleteAgency = async (agencyUnitID: number) => {
    await agenciesStore.delete(agencyUnitID);
 };
+
+const mergeAgency = async (
+   agencyUnitIDs: number[],
+   targetAgencyUnitID: number,
+) => {
+   await agenciesStore.mergeAgencies(targetAgencyUnitID, agencyUnitIDs);
+};
+
+const moveContactToAgency = async (
+   contactInfoID: number,
+   targetAgencyUnitID: number,
+) => {
+   await agenciesStore.moveContact(contactInfoID, targetAgencyUnitID);
+};
+
+const onDragOver = (event: DragEvent, agencyUnitID: number) => {
+   if (event.dataTransfer?.types.includes("application/contact-id")) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      dragOverAgencyId.value = agencyUnitID;
+   }
+   else {
+      event.dataTransfer!.dropEffect = "none";
+   }
+};
+
+const onDragLeave = (event: DragEvent, agencyUnitID: number) => {
+   event.preventDefault();
+   if (dragOverAgencyId.value === agencyUnitID) {
+      dragOverAgencyId.value = null;
+   }
+};
+
+const onDrop = async (event: DragEvent, targetAgencyUnitID: number) => {
+   event.preventDefault();
+   if (dragOverAgencyId.value === targetAgencyUnitID) {
+      dragOverAgencyId.value = null;
+   }
+   if (event.dataTransfer) {
+      const contactInfoID = event.dataTransfer.getData(
+         "application/contact-id",
+      );
+      if (contactInfoID) {
+         try {
+            await moveContactToAgency(
+               parseInt(contactInfoID),
+               targetAgencyUnitID,
+            );
+            console.log(
+               `Moved contact ${contactInfoID} to agency ${targetAgencyUnitID}`,
+            );
+            await agenciesStore.refresh();
+         }
+         catch (error) {
+            console.error("Failed to move contact:", error);
+         }
+      }
+      else {
+         console.warn("Invalid drag data: No contactInfoID found");
+      }
+   }
+};
+
+const onDragEnd = (event: DragEvent) => {
+   dragOverAgencyId.value = null;
+};
 </script>
 
 <style scoped>
 li {
-  padding: 0.5rem 0;
+   padding: 0.5rem 0;
 }
 
-/* 移除懸浮時的背景色變化 */
 li.flex {
-  transition: none; /* 移除所有懸浮過渡效果 */
+   transition: none;
 }
 
-/* 確保層次不遮擋 */
 li {
-  position: relative;
-  z-index: 0;
+   position: relative;
+   z-index: 0;
 }
 
-/* 確保滾動容器高度 */
 .overlay-scrollbars-host {
-  height: 100% !important;
+   height: 100% !important;
+}
+
+.drag-over {
+   background-color: #e6f3ff;
+   border: 2px dashed #3b82f6;
+   transition:
+      background-color 0.2s ease,
+      border 0.2s ease;
+}
+
+.dark .drag-over {
+   background-color: #1e293b;
+   border-color: #60a5fa;
+}
+
+tr[data-contact-id] {
+   cursor: move;
+}
+
+*[draggable="false"],
+*:not([data-contact-id]) {
+   cursor: default !important;
+}
+
+.bg-orange-100 {
+   background-color: #ffe4b5;
+}
+
+.border-orange-300 {
+   border-color: #ff8c00;
+}
+
+.dark .bg-orange-900 {
+   background-color: #e65100;
+}
+
+.dark .border-orange-700 {
+   border-color: #f97316;
 }
 </style>
