@@ -31,7 +31,7 @@ const modules = [
    trpcHandlerModule,
    appProtocolModule,
    discord,
-   autoBackup
+   autoBackup,
 ];
 
 // Create default user data folders

@@ -13,8 +13,12 @@ declare global {
 }
 
 export default async (mainWindow: BrowserWindow) => {
-   const config = await readConfig();
+   await bootupDiscord(mainWindow);
+};
+
+export const bootupDiscord = async (mainWindow: BrowserWindow) => {
    global.discordClient = client;
+   const config = await readConfig();
    const commands = await loadCommands();
 
    // 當機器人準備好時註冊指令
