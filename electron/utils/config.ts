@@ -11,7 +11,8 @@ export const readConfig = async () => {
 
       const config = ConfigFile.parse(JSON.parse(data));
       return config;
-   } catch (error) {
+   }
+   catch (error) {
       const oldConfigExists = await fs.stat(configPath);
       if (oldConfigExists) {
          const oldConfigData = await fs.readFile(configPath, "utf-8");
@@ -25,7 +26,8 @@ export const readConfig = async () => {
             "utf-8",
          );
          return validatedConfig;
-      } else {
+      }
+      else {
          const defaultConfig = ConfigFile.parse(undefined);
          await fs.writeFile(
             configPath,
@@ -40,7 +42,8 @@ export const writeConfig = async (config: z.infer<typeof ConfigFile>) => {
    try {
       await fs.writeFile(configPath, JSON.stringify(config, null, 2), "utf-8");
       return true;
-   } catch (error) {
+   }
+   catch (error) {
       console.error("Error writing config file:", error);
       return false;
    }

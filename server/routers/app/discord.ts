@@ -5,7 +5,6 @@ import { app, shell } from "electron";
 import EventEmitter from "events";
 import type { events } from "../../../electron/modules/discord/index";
 import { loadActions } from "../../../electron/modules/discord/utils/init";
-import { client } from "../../../electron/modules/discord";
 export const slashCommandEmitter = new EventEmitter();
 
 export default router({

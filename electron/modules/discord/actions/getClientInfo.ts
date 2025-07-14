@@ -21,13 +21,12 @@ export class GetClientInfoAction extends ActionEvent<
       super("GetClientInfo", inputSchema);
    }
 
-   public override async execute(
-      input: { ping?: string | undefined },
-      client: Client,
-   ) {
+   public override async execute(input: object, client: Client) {
       const data = {
          userId: client.user?.id,
-         userName: client.user?.username + "#" + client.user?.discriminator,
+         userName: client.user?.username
+            ? `${client.user.username}#${client.user.discriminator}`
+            : undefined,
          userAvatar: client.user?.displayAvatarURL(),
          health: {
             status: client.ws.status,
@@ -35,9 +34,11 @@ export class GetClientInfoAction extends ActionEvent<
          },
       };
 
+      const success = client.ws.status !== 5 && client.user !== null && client.isReady();
+      console.log("Discord client isReady:", client.isReady());
       return {
-         success: data.userId !== undefined,
-         data: data,
+         success,
+         data,
       };
    }
 }

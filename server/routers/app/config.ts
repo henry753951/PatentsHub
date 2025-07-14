@@ -32,9 +32,9 @@ export default router({
 
          if (input.selectedFile) {
             const filePath = path.join(dirPath, input.selectedFile);
-            await shell.showItemInFolder(filePath)
-
-         } else {
+            await shell.showItemInFolder(filePath);
+         }
+         else {
             await shell.openPath(dirPath);
          }
       }),

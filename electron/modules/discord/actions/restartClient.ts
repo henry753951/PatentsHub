@@ -1,8 +1,9 @@
-import { ChannelType, type Client } from "discord.js";
+import type { Client } from "discord.js";
+import { ChannelType, GatewayIntentBits } from "discord.js";
 import { ActionEvent } from "../baseActionEvent";
 import { z } from "zod";
 import { readConfig } from "~/electron/utils/config";
-import { bootupDiscord } from "../../discord";
+import { bootupDiscord, getClient } from "../../discord";
 import { BrowserWindow } from "electron";
 
 const inputSchema = z.object({});
@@ -15,13 +16,20 @@ export class RestartClientAction extends ActionEvent<
       super("RestartClient", inputSchema);
    }
 
-   public override async execute(
-      input: { ping?: string | undefined },
-      client: Client,
-   ) {
+   public override async execute(input: object, client_: Client) {
+      const client = getClient();
       const mainWindow = BrowserWindow.getAllWindows()[0];
       await client.destroy();
-      await bootupDiscord(mainWindow);
+      try {
+         await bootupDiscord(mainWindow);
+      }
+      catch (error) {
+         console.error("Failed to restart Discord client:", error);
+         return {
+            success: false,
+            message: "Failed to restart Discord client",
+         };
+      }
       return {
          success: true,
          message: "Client is restarting...",

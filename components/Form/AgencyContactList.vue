@@ -7,6 +7,9 @@
          >
             <h2 class="text-xl font-bold">
                聯絡人管理
+               <span class="text-sm text-muted-foreground">
+                  拖拉聯絡人可以移轉至其他單位
+               </span>
             </h2>
             <div class="flex items-center gap-2">
                <Button

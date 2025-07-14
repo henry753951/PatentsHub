@@ -1,15 +1,16 @@
 import type { BrowserWindow } from "electron";
 import logger from "../logger";
 import { readConfig } from "../utils/config";
-import { app, ipcMain } from "electron";
+import { app } from "electron";
 import { Client, GatewayIntentBits, SlashCommandBuilder } from "discord.js";
-import { ActivityType, Routes } from "discord-api-types/v10";
+import { ActivityType } from "discord-api-types/v10";
 import { loadCommands, registerSlashCommands } from "./discord/utils/init";
 import { slashCommandEmitter } from "~/server/routers/app/discord";
 
+// 全局變數，用於存儲當前 Client 實例
 declare global {
    // eslint-disable-next-line no-var
-   var discordClient: Client;
+   var discordClient: Client | undefined;
 }
 
 export default async (mainWindow: BrowserWindow) => {
@@ -17,7 +18,12 @@ export default async (mainWindow: BrowserWindow) => {
 };
 
 export const bootupDiscord = async (mainWindow: BrowserWindow) => {
+   // 創建全新的 Client 實例
+   const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+   // 更新全局變數和導出的 client
    global.discordClient = client;
+   setClient(client); // 更新導出的 client
+
    const config = await readConfig();
    const commands = await loadCommands();
 
@@ -51,9 +57,22 @@ export const bootupDiscord = async (mainWindow: BrowserWindow) => {
       }
    });
 
-   client.login(config.discord.token);
+   await client.login(config.discord.token);
    logger.info("[⭐] MODULE::Discord Bot Initialized");
 };
 
-export const client
-   = global.discordClient || new Client({ intents: [GatewayIntentBits.Guilds] });
+// 管理導出的 client 實例
+let clientInstance: Client | undefined;
+
+// 提供獲取 client 的函數
+export const getClient = (): Client => {
+   if (!clientInstance) {
+      throw new Error("Discord client is not initialized");
+   }
+   return clientInstance;
+};
+
+// 更新 client 實例
+export const setClient = (newClient: Client) => {
+   clientInstance = newClient;
+};

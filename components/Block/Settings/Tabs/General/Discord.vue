@@ -13,7 +13,7 @@
                   v-tippy="
                      discordClientInfo?.success
                         ? 'Discord 客戶端已連線 ' +
-                           `(連線時長: ${discordClientInfo.data.health.uptime} 秒)`
+                           `(連線時長: ${discordClientInfo?.data?.health?.uptime ? Math.round(discordClientInfo.data.health.uptime / 1000) : '未知'} 秒)`
                         : 'Discord 客戶端未連線'
                   "
                   severity="secondary"
@@ -89,12 +89,9 @@ import { reactive, ref } from "vue";
 import { useAsyncData, useNuxtApp } from "nuxt/app";
 
 const { $trpc } = useNuxtApp();
-
+const { readConfig } = useConfig();
 // 從伺服器獲取配置
-const { data: configData } = useAsyncData(
-   "config",
-   async () => await $trpc.app.config.readConfig.query(),
-);
+const configData = ref(await readConfig());
 
 // 儲存狀態
 const isSaving = ref(false);
@@ -109,7 +106,10 @@ const saveDiscordConfig = async () => {
    try {
       await $trpc.app.config.writeConfig.mutate(configData.value);
       await $trpc.app.discord.actions.restartClient.mutate({});
-      discordClientInfo.value = await $trpc.app.discord.actions.getClientInfo.mutate({});
+      setTimeout(async () => {
+         discordClientInfo.value
+            = await $trpc.app.discord.actions.getClientInfo.mutate({});
+      }, 1000);
    }
    finally {
       isSaving.value = false;

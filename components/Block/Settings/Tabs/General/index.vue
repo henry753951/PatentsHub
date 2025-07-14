@@ -68,6 +68,7 @@
             />
          </div>
       </BlockSettingsRow>
+      <BlockSettingsTabsGeneralBackup />
       <BlockSettingsTabsGeneralDiscord />
    </div>
 </template>
@@ -83,8 +84,10 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { InputNumber } from "primevue";
 const { options, loopSwitchTheme, currentTheme } = useTheme();
 const { isForceDebugMode, isDebugMode, isProduction } = useDebug();
+
 </script>
 
 <style scoped></style>

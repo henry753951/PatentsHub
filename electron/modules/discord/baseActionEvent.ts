@@ -1,7 +1,7 @@
 import type { z } from "zod";
 import { procedure, router } from "../../../server/trpc";
 import type { Client } from "discord.js";
-import { client } from "../discord";
+import { getClient } from "../discord";
 
 export abstract class ActionEvent<T extends z.ZodTypeAny, TOutput> {
    public name: string;
@@ -16,6 +16,7 @@ export abstract class ActionEvent<T extends z.ZodTypeAny, TOutput> {
 
    public getProcedure() {
       return procedure.input(this.inputSchema).mutation(async ({ input }) => {
+         const client = getClient();
          if (!client) {
             throw new Error("Client is not initialized.");
          }

@@ -15,7 +15,8 @@ export const timerBackup = async (enabled: boolean, interval: number) => {
    }
 
    global.backupTimer = setInterval(() => {
+      console.log("[⭐] Auto backup triggered");
       createDatabaseBackup();
-   }, interval * 1000);
+   }, interval * 1000 * 60);
    return global.backupTimer;
 };
