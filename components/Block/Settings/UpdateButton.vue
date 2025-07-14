@@ -89,17 +89,38 @@
          class="flex w-full items-center gap-2"
       >
          <ProgressBar
+            style="--p-progressbar-value-background: #3b82f6"
             :value="Math.round(updateStatus?.data.percent)"
             class="flex-1"
          />
-         <div>
+         <Badge class="text-sm w-[100px] flex justify-center">
             {{
                Math.round(
                   (updateStatus?.data.bytesPerSecond / 1024 ** 2) * 100,
                ) / 100
             }}
             MB/s
-         </div>
+         </Badge>
+      </div>
+      <div
+         v-else-if="updateStatus?.type === 'error'"
+         class="text-sm text-red-500"
+      >
+         {{ updateStatus?.data || "更新檢查失敗" }}
+      </div>
+
+      <div
+         v-else-if="!updateStatus"
+         class="text-sm text-muted-foreground flex items-center gap-2"
+      >
+         <span>無更新資訊</span>
+         <Badge
+            v-if="!isProduction"
+            severity="contrast"
+            size="small"
+         >
+            DEV
+         </Badge>
       </div>
    </div>
 
@@ -115,7 +136,7 @@
             >
                <Icon
                   :name="statusIcon"
-                  size="16"
+                  size="20"
                />
             </button>
          </TooltipTrigger>
@@ -187,6 +208,24 @@
                   更新日誌
                </button>
             </div>
+            <div
+               v-else-if="updateStatus?.type === 'error'"
+               class="text-sm"
+            >
+               {{ updateStatus?.data || "更新檢查失敗" }}
+            </div>
+            <div
+               v-else
+               class="text-sm flex items-center justify-center gap-2"
+            >
+               <span>無更新資訊</span>
+               <Badge
+                  v-if="!isProduction"
+                  severity="secondary"
+               >
+                  開發環境
+               </Badge>
+            </div>
          </TooltipContent>
       </Tooltip>
    </TooltipProvider>
@@ -194,6 +233,7 @@
 
 <script lang="ts" setup>
 import { Button } from "~/components/ui/button";
+import Badge from "primevue/badge";
 import { ProgressBar } from "primevue";
 import {
    Tooltip,
@@ -210,6 +250,8 @@ const props = withDefaults(defineProps<Props>(), {
    rounded: false,
 });
 
+const { isProduction } = useDebug();
+
 const updaterService = useUpdater();
 const { open } = useModals();
 
@@ -219,7 +261,7 @@ const updateInfo = computed(() => updaterService.updateInfo.value);
 const currentVersion = computed(() => updaterService.currentVersion.value);
 
 const statusIcon = computed(() => {
-   if (!updateStatus.value) return "line-md:loading-loop";
+   if (!updateStatus.value) return "mage:box-3d-question-mark-fill";
    switch (updateStatus.value.type) {
       case "checking-for-update":
          return "line-md:loading-loop";
@@ -228,11 +270,11 @@ const statusIcon = computed(() => {
       case "update-downloaded":
          return "mage:box-3d-check-fill";
       case "update-not-available":
-         return "mage:check";
+         return "mage:box-3d-question-mark";
       case "error":
          return "mage:box-3d-cross-fill";
       default:
-         return "line-md:loading-loop";
+         return "mage:box-3d-question-mark-fill";
    }
 });
 

@@ -9,7 +9,8 @@ export default router({
    window: window,
    config: config,
    version: procedure.input(z.object({}).nullish()).query(() => {
-      return app.getVersion();
+      const currentVersion = app.getVersion();
+      return currentVersion;
    }),
    update: update,
    discord: discord,

@@ -6,7 +6,8 @@ const { autoUpdater } = pkg;
 // Config
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
-autoUpdater.forceDevUpdateConfig = true;
+autoUpdater.forceDevUpdateConfig = false;
+autoUpdater.autoRunAppAfterInstall = true;
 autoUpdater.setFeedURL({
    owner: "henry753951",
    repo: "PatentsHub",

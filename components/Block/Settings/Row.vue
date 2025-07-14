@@ -4,10 +4,17 @@
       :default-open="collapsible ? false : true"
    >
       <div class="flex items-center justify-between">
-         <h1 class="text-xl font-semibold">{{ title }}</h1>
+         <div class="flex items-center space-x-2">
+            <h1 class="text-xl font-semibold">
+               {{ title }}
+            </h1>
+            <div class="flex items-center">
+               <slot name="title-tail" />
+            </div>
+         </div>
          <UiThingCollapsibleTrigger
-            as-child
             v-if="collapsible"
+            as-child
          >
             <UiThingButton
                variant="ghost"
@@ -29,8 +36,8 @@
 
 <script lang="ts" setup>
 const props = defineProps<{
-   title: string;
-   collapsible?: boolean;
+   title: string
+   collapsible?: boolean
 }>();
 </script>
 

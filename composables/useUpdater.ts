@@ -6,7 +6,10 @@ import { useStorage } from "@vueuse/core";
 export const useUpdater = () => {
    const { $trpc } = useNuxtApp();
    const { open } = useModals();
-   let updateStatusBus: Unsubscribable;
+   const updateStatusBus = useState<Unsubscribable | null>(
+      "updateStatusBus",
+      () => null,
+   );
    const updateStatus = useState<UpdaterStatus | null>(
       "updateStatus",
       () => null,
@@ -20,10 +23,25 @@ export const useUpdater = () => {
       () => updateInfo.value,
       async (newValue) => {
          if (!newValue) return;
-         const _currentVersion = await $trpc.app.version.query();
-         if (_currentVersion !== "0.0.1") {
-            if (currentVersion.value !== _currentVersion) {
-               currentVersion.value = _currentVersion;
+         const currentVersionAbs = await $trpc.app.version.query();
+         if (typeof currentVersionAbs !== "string") {
+            console.error(
+               "Invalid version format from server:",
+               currentVersionAbs,
+            );
+            return;
+         }
+
+         if (currentVersionAbs !== "0.0.1") {
+            if (currentVersion.value !== currentVersionAbs) {
+               consola.success(
+                  "新版本可用",
+                  "更新版本:",
+                  newValue.version,
+                  "當前版本:",
+                  currentVersion.value,
+               );
+               currentVersion.value = currentVersionAbs;
                open("UpdateLogsModal", {
                   props: {
                      updateInfo: newValue,
@@ -35,28 +53,32 @@ export const useUpdater = () => {
    );
 
    onMounted(async () => {
-      updateStatusBus = $trpc.app.update.onStatusChange.subscribe(undefined, {
-         onData: (data) => {
-            updateStatus.value = data;
-            if (data.type === "update-available") {
-               updateInfo.value = data.data;
-            }
-            else if (data.type === "update-not-available") {
-               updateInfo.value = data.data;
-            }
-            else if (data.type === "error") {
-               updateInfo.value = null;
-               console.error("Update error:", data.data);
-            }
-            else if (data.type === "download-progress") {
-               updateInfo.value = null;
-            }
-            else if (data.type === "update-downloaded") {
-               updateInfo.value = data.data;
-               console.log("Update downloaded, ready to install.");
-            }
+      if (updateStatusBus.value !== null) return;
+      updateStatusBus.value = $trpc.app.update.onStatusChange.subscribe(
+         undefined,
+         {
+            onData: (data) => {
+               updateStatus.value = data;
+               if (data.type === "update-available") {
+                  updateInfo.value = data.data;
+               }
+               else if (data.type === "update-not-available") {
+                  updateInfo.value = data.data;
+               }
+               else if (data.type === "error") {
+                  updateInfo.value = null;
+                  console.error("Update error:", data.data);
+               }
+               else if (data.type === "download-progress") {
+                  updateInfo.value = null;
+               }
+               else if (data.type === "update-downloaded") {
+                  updateInfo.value = data.data;
+                  console.log("Update downloaded, ready to install.");
+               }
+            },
          },
-      });
+      );
 
       if (
          updateInfo.value === null
@@ -68,11 +90,6 @@ export const useUpdater = () => {
          catch (error) {
             console.error("Error checking for updates on mount:", error);
          }
-      }
-   });
-   onUnmounted(() => {
-      if (updateStatusBus) {
-         updateStatusBus.unsubscribe();
       }
    });
 

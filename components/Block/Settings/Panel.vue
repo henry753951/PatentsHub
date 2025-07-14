@@ -23,8 +23,10 @@
          </UiThingTabsTrigger>
       </UiThingTabsList>
 
-      <div className="grow flex-1 rounded-lg border border-border text-start">
-         <ScrollArea class="h-full w-full overflow-hidden px-3 py-2">
+      <div className="grow flex-1 rounded-lg border border-border text-start flex flex-col">
+         <ScrollArea
+            class="w-full overflow-hidden px-3 py-2 flex-1"
+         >
             <UiThingTabsContent
                v-for="t in tabs"
                :key="t.title"
@@ -39,6 +41,8 @@
                />
             </UiThingTabsContent>
          </ScrollArea>
+         <div id="settings-panel-footer">
+         </div>
       </div>
    </UiThingTabs>
 </template>
@@ -91,4 +95,5 @@ const tabs = shallowRef<Tab[]>([
 ]);
 </script>
 
-<style scoped></style>
+<style>
+</style>
