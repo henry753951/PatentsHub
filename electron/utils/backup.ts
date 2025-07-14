@@ -6,6 +6,10 @@ declare global {
 }
 
 export const timerBackup = async (enabled: boolean, interval: number) => {
+   if (interval < 60) {
+      throw new Error("Interval must be at least 60 seconds");
+   }
+
    if (global.backupTimer) {
       clearInterval(global.backupTimer);
    }
@@ -17,6 +21,6 @@ export const timerBackup = async (enabled: boolean, interval: number) => {
    global.backupTimer = setInterval(() => {
       console.log("[⭐] Auto backup triggered");
       createDatabaseBackup();
-   }, interval * 1000 * 60);
+   }, interval * 1000);
    return global.backupTimer;
 };

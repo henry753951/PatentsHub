@@ -28,12 +28,12 @@
          >
             <div>
                備份週期
-               <span class="text-xs text-muted-foreground">(分鐘)</span>
+               <span class="text-xs text-muted-foreground">(秒)</span>
             </div>
             <div class="flex gap-4 items-center">
                <NumberField
                   v-model="config.backup.interval"
-                  :min="0"
+                  :min="60"
                   class="w-32"
                   @update:model-value="reloadBackupService"
                >
