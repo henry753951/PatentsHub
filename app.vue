@@ -6,6 +6,7 @@
 
 <script lang="ts" setup>
 import "overlayscrollbars/overlayscrollbars.css";
+
 const discordService = useDiscord();
 provide("discordService", discordService);
 const countriesStore = useCountriesStore();

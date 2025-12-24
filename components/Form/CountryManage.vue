@@ -115,11 +115,13 @@ const toggleCountrySelection = (country: Country) => {
    <div class="px-8 py-2.5 min-h-screen">
       <div class="flex px-8 py-2.5 mt-2 mb-6 max-sm:px-4 max-sm:py-2.5">
          <div class="flex flex-col">
-            <h1 class="flex text-2xl font-bold mb-8 dark:text-white dark:bg-none rounded-lg">
+            <h1
+               class="flex text-2xl font-bold mb-8 dark:text-white dark:bg-none rounded-lg"
+            >
                國家管理
             </h1>
             <div
-               class="flex gap-4 px-2.5 py-0 bg-white rounded-xl max-sm:px-2 max-sm:py-0 dark:bg-white"
+               class="flex gap-4 px-2.5 py-0 bg-white rounded-xl dark:bg-white w-fit"
             >
                <button
                   v-tooltip.top="'新增國家'"
@@ -139,34 +141,6 @@ const toggleCountrySelection = (country: Country) => {
                      "
                   />
                </button>
-               <button
-                  v-tooltip.top="'點選國家可以大量刪除'"
-                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md"
-                  @click="
-                     openAutoModal(
-                        '確認刪除',
-                        '你確定要刪除選擇的國家嗎？',
-                        z.object({}),
-                        deleteSelectedCountries,
-                        undefined,
-                     )
-                  "
-               >
-                  <Icon
-                     name="mdi:delete-sweep-outline"
-                     class="w-6 h-6 text-black dark:text-black"
-                  />
-               </button>
-               <button
-                  v-tooltip.top="'清空所有國家ㄑ'"
-                  class="flex items-center justify-center p-2 hover:bg-gray-200 rounded-md"
-                  @click="deleteAllCountries"
-               >
-                  <Icon
-                     name="icon-park-outline:clear"
-                     class="w-6 h-6 text-black dark:text-black"
-                  />
-               </button>
             </div>
          </div>
       </div>
@@ -177,12 +151,26 @@ const toggleCountrySelection = (country: Country) => {
          <CountryCard
             v-for="country in countries"
             :key="country.CountryID"
+            class="cursor-pointer hover:shadow-lg transition-shadow dark:hover:shadow-zinc-850"
             :title="country.CountryName"
             :iso-code="country.ISOCode"
-            :case-count="95"
-            :is-selected="isSelected(country)"
-            @click="toggleCountrySelection(country)"
+            @click="
+               navigateTo({
+                  name: 'patents-view',
+                  query: { filter: `國別:${country.CountryName}` },
+               })
+            "
             @edit="editCountryByCard(country)"
+            @delete="
+               openAutoModal(
+                  '確認刪除',
+                  '你確定要刪除此國家嗎？',
+                  z.object({}),
+                  deleteCountry,
+                  undefined,
+                  { countryID: country.CountryID },
+               )
+            "
          />
       </div>
    </div>

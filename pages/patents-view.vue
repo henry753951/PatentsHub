@@ -196,6 +196,7 @@ const exportSelected = async () => {
    selecte.value.enabled = false;
    selecte.value.selectedPatents.clear();
 };
+
 </script>
 
 <style scoped></style>

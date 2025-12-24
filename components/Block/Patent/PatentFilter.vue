@@ -119,6 +119,10 @@ const patentFilter = defineModel("patentFilter", {
 });
 
 const updateFilter = () => {
+   const url = new URL(window.location.href);
+   url.searchParams.set("filter", content.value);
+   window.history.replaceState({}, "", url.toString());
+
    const Year
       = getFilterActive("startYear") || getFilterActive("endYear")
          ? {
@@ -212,6 +216,9 @@ const updateFilter = () => {
    };
 };
 onMounted(() => {
+   const urlParams = new URLSearchParams(window.location.search);
+   const filterParam = urlParams.get("filter");
+   content.value = filterParam || "";
    updateFilter();
 });
 watchThrottled(
