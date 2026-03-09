@@ -3,9 +3,11 @@ import fs from "fs/promises";
 import { ConfigFile } from "../../zod.dto";
 import type { z } from "zod";
 import { app } from "electron";
-const configPath = `${path.join(app.getPath("userData"), "config.json")}`;
+
+const getConfigPath = () => path.join(app.getPath("userData"), "config.json");
 
 export const readConfig = async () => {
+   const configPath = getConfigPath();
    try {
       const data = await fs.readFile(configPath, "utf-8");
       const config = ConfigFile.parse(JSON.parse(data));
@@ -49,6 +51,7 @@ export const readConfig = async () => {
    }
 };
 export const writeConfig = async (config: z.infer<typeof ConfigFile>) => {
+   const configPath = getConfigPath();
    try {
       await fs.writeFile(configPath, JSON.stringify(config, null, 2), "utf-8");
       return true;

@@ -12,6 +12,8 @@ import trpcHandlerModule from "./modules/trpcHandler";
 import discord from "./modules/discord";
 import autoBackup from "./modules/autoBackup";
 import logger from "./logger";
+import { readConfig } from "./utils/config";
+import { PrismaClient } from "@prisma/client";
 
 // Initilize
 // =========
@@ -124,6 +126,7 @@ function createWindow() {
 // App events
 // ==========
 app.whenReady().then(async () => {
+   await readConfig();
    await initializeDatabase();
    const mainWindow = createWindow();
    if (!mainWindow) return;
@@ -192,6 +195,7 @@ function getSourceDbPath() {
 async function initializeDatabase() {
    const userDataPath = app.getPath("userData");
    const dbFilePath = path.join(userDataPath, "app.db");
+   await fs.mkdir(path.dirname(dbFilePath), { recursive: true });
 
    try {
       // 檢查 dbFilePath 是否存在
@@ -206,10 +210,67 @@ async function initializeDatabase() {
          logger.log(`[📦] Created database file: ${dbFilePath}`);
       }
       catch (copyErr) {
-         logger.error(
-            `[❌] Error creating database file: ${dbFilePath}`,
-            copyErr,
-         );
+         logger.warn(`[⚠️] Could not copy template DB, initializing from migrations: ${dbFilePath}`, copyErr);
+         await initializeDatabaseFromMigrations(dbFilePath);
       }
+   }
+}
+
+function splitSqlStatements(sql: string) {
+   return sql
+      .split(";")
+      .map(stmt => stmt.trim())
+      .filter(stmt => stmt.length > 0)
+      .map(stmt => `${stmt};`);
+}
+
+async function resolveMigrationsDir() {
+   const candidates = [
+      path.join(app.getAppPath(), "server", "prisma", "schema", "migrations"),
+      path.join(process.resourcesPath, "server", "prisma", "schema", "migrations"),
+      path.join(__dirname, "../server/prisma/schema/migrations"),
+   ];
+
+   for (const migrationsPath of candidates) {
+      const exists = await fs
+         .stat(migrationsPath)
+         .then(stat => stat.isDirectory())
+         .catch(() => false);
+      if (exists) return migrationsPath;
+   }
+
+   throw new Error("Prisma migrations directory not found.");
+}
+
+async function initializeDatabaseFromMigrations(dbFilePath: string) {
+   const migrationsDir = await resolveMigrationsDir();
+   const migrationFolders = (await fs.readdir(migrationsDir, { withFileTypes: true }))
+      .filter(entry => entry.isDirectory())
+      .map(entry => entry.name)
+      .sort((a, b) => a.localeCompare(b));
+
+   const prisma = new PrismaClient({
+      datasources: {
+         db: { url: `file:${dbFilePath}` },
+      },
+   });
+
+   try {
+      for (const folder of migrationFolders) {
+         const migrationFile = path.join(migrationsDir, folder, "migration.sql");
+         const sql = await fs.readFile(migrationFile, "utf-8");
+         const statements = splitSqlStatements(sql);
+         for (const statement of statements) {
+            await prisma.$executeRawUnsafe(statement);
+         }
+      }
+      logger.log(`[📦] Initialized database from migrations: ${dbFilePath}`);
+   }
+   catch (error) {
+      logger.error(`[❌] Failed to initialize database from migrations: ${dbFilePath}`, error);
+      throw error;
+   }
+   finally {
+      await prisma.$disconnect();
    }
 }

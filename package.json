@@ -10,17 +10,18 @@
       "url": "git+https://github.com/henry753951/PatentsHub.git"
    },
    "scripts": {
-      "cicd-build:all": "pnpm dlx prisma generate && nuxt build && electron-builder build --config electron-builder.cjs -p onTagOrDraft",
+      "prisma:generate": "prisma generate --schema ./server/prisma/schema/schema.prisma",
+      "cicd-build:all": "pnpm run prisma:generate && nuxt build && electron-builder build --config electron-builder.cjs -p onTagOrDraft",
       "build:all": "nuxt build && electron-builder build --config electron-builder.cjs",
       "build:app": "electron-builder build --config electron-builder.cjs",
       "build": "nuxt build",
       "dev": "nuxt dev --host 127.0.0.1 --dotenv .env",
       "generate": "nuxt generate",
       "preview": "nuxt preview",
-      "postinstall": "pnpm dlx prisma generate && nuxt prepare"
+      "postinstall": "pnpm run prisma:generate && nuxt prepare"
    },
    "prisma": {
-      "schema": "./server/prisma/schema"
+      "schema": "./server/prisma/schema/schema.prisma"
    },
    "dependencies": {
       "@formkit/auto-animate": "^0.8.2",

@@ -14,6 +14,10 @@ const builderConfig = {
          to: "public",
       },
       {
+         from: "server/prisma/schema/migrations",
+         to: "server/prisma/schema/migrations",
+      },
+      {
          from: "node_modules/@prisma/client/node_modules/.prisma",
          to: "node_modules/.prisma",
       },
