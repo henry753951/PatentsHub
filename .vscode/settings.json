@@ -26,5 +26,6 @@
    "editor.tokenColorCustomizations": {
       "comments": "",
       "textMateRules": []
-   }
+   },
+   "prisma.pinToPrisma6": true
 }

@@ -10,7 +10,8 @@
       "url": "git+https://github.com/henry753951/PatentsHub.git"
    },
    "scripts": {
-      "prisma:generate": "prisma generate --schema ./server/prisma/schema/schema.prisma",
+      "prisma:generate": "prisma generate --schema ./server/prisma/schema",
+      "prisma:generate:client": "prisma generate --schema ./server/prisma/schema --generator client",
       "cicd-build:all": "pnpm run prisma:generate && nuxt build && electron-builder build --config electron-builder.cjs -p onTagOrDraft",
       "build:all": "nuxt build && electron-builder build --config electron-builder.cjs",
       "build:app": "electron-builder build --config electron-builder.cjs",
@@ -21,7 +22,7 @@
       "postinstall": "pnpm run prisma:generate && nuxt prepare"
    },
    "prisma": {
-      "schema": "./server/prisma/schema/schema.prisma"
+      "schema": "./server/prisma/schema"
    },
    "dependencies": {
       "@formkit/auto-animate": "^0.8.2",
@@ -31,7 +32,7 @@
       "@primevue/core": "^4.3.2",
       "@primevue/forms": "^4.3.2",
       "@primevue/nuxt-module": "^4.2.5",
-      "@prisma/client": "6.9.0",
+      "@prisma/client": "6.6.0",
       "@trpc/client": "^10.45.2",
       "@trpc/server": "^10.45.2",
       "@vee-validate/zod": "^4.15.0",
@@ -61,7 +62,7 @@
       "pinia-plugin-persistedstate": "^4.2.0",
       "primeicons": "^7.0.0",
       "primevue": "^4.3.2",
-      "prisma": "^6.9.0",
+      "prisma": "6.6.0",
       "reka-ui": "^2.2.1",
       "semantic-release-gha-output": "^1.1.1",
       "shadcn-nuxt": "0.11.3",
