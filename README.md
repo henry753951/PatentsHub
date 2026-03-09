@@ -1,5 +1,8 @@
 # PatentsHub
 
+> Copyright (c) 2026 National University of Kaohsiung (NUK) and JYBK ORG. All rights reserved.  
+> This project is proprietary and not open source.
+
 - [PatentsHub](#patentshub)
    - [Technologies Used](#technologies-used)
    - [Project setup](#project-setup)
